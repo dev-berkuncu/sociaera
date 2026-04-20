@@ -5,11 +5,11 @@
  */
 $activeNav = $activeNav ?? '';
 $notifCount = 0;
-if (Auth::check()) {
+if (Auth::check() && class_exists('NotificationModel')) {
     try {
         $notifModel = new NotificationModel();
         $notifCount = $notifModel->getUnreadCount(Auth::id());
-    } catch (Exception $e) {}
+    } catch (\Throwable $e) {}
 }
 ?>
 <nav class="navbar-main">
