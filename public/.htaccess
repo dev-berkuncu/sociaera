@@ -1,0 +1,79 @@
+# ========================================================
+# Sociaera — Public .htaccess
+# Apache Rewrite + Güvenlik Başlıkları
+# ========================================================
+
+# PHP hata gösterimini kapat (production)
+php_flag display_errors off
+
+# ── Rewrite Engine ─────────────────────────────────────────
+RewriteEngine On
+RewriteBase /
+
+# HTTPS yönlendirme (production)
+# RewriteCond %{HTTPS} off
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# ── Clean URLs (.php uzantısız) ────────────────────────────
+# Dosya veya klasör değilse .php ekle
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^(.+)$ $1.php [L,QSA]
+
+# API endpoint'ler
+RewriteRule ^api/(.+)$ api/$1 [L,QSA]
+
+# ── Güvenli dosya erişimi ──────────────────────────────────
+# .ht dosyalarına erişimi engelle
+<FilesMatch "^\.ht">
+    Require all denied
+</FilesMatch>
+
+# .env dosyasına erişimi engelle
+<Files ".env">
+    Require all denied
+</Files>
+
+# app klasörüne doğrudan erişimi engelle
+RewriteRule ^app/ - [F,L]
+
+# ── Güvenlik Başlıkları ────────────────────────────────────
+<IfModule mod_headers.c>
+    # Clickjacking koruması
+    Header always set X-Frame-Options "SAMEORIGIN"
+
+    # XSS koruması
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-XSS-Protection "1; mode=block"
+
+    # Referrer politikası
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+    # Permissions policy
+    Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+</IfModule>
+
+# ── Sıkıştırma ─────────────────────────────────────────────
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript application/json
+</IfModule>
+
+# ── Önbellek ───────────────────────────────────────────────
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/jpeg "access plus 1 month"
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType image/gif "access plus 1 month"
+    ExpiresByType image/webp "access plus 1 month"
+    ExpiresByType image/svg+xml "access plus 1 month"
+    ExpiresByType text/css "access plus 1 week"
+    ExpiresByType application/javascript "access plus 1 week"
+    ExpiresByType application/x-font-woff2 "access plus 1 month"
+</IfModule>
+
+# ── Dosya boyutu limitleri ─────────────────────────────────
+php_value upload_max_filesize 10M
+php_value post_max_size 12M
+php_value max_execution_time 30
+php_value memory_limit 128M

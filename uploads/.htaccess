@@ -1,0 +1,4 @@
+# uploads/ alt dizini — güvenlik
+<FilesMatch "\.php$">
+    Require all denied
+</FilesMatch>

@@ -1,0 +1,11 @@
+.env
+storage/logs/*
+storage/ratelimits/*
+uploads/avatars/*
+uploads/banners/*
+uploads/posts/*
+uploads/ads/*
+!.gitkeep
+*.log
+.DS_Store
+Thumbs.db
