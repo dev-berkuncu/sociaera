@@ -19,7 +19,7 @@
             <div class="footer-grid">
                 <div class="footer-about">
                     <h3><i class="bi bi-pin-map-fill"></i> <?php echo APP_NAME; ?></h3>
-                    <p>GTA World TR için sosyal keşif & check-in platformu. Favori mekanlarını keşfet, anlarını paylaş.</p>
+                    <p>Sosyal keşif & check-in platformu. Favori mekanlarını keşfet, anlarını paylaş.</p>
                 </div>
                 <div class="footer-links">
                     <h4>Keşfet</h4>

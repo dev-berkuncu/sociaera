@@ -8,8 +8,8 @@ require_once __DIR__ . '/../app/Config/app.php';
 
 if (Auth::check()) { header('Location: ' . BASE_URL . '/dashboard'); exit; }
 
-$pageTitle = 'GTA World TR Sosyal Keşif Platformu';
-$pageDescription = 'Sociaera — GTA World TR topluluğu için sosyal keşif ve check-in platformu. Mekanları keşfet, anlarını paylaş.';
+$pageTitle = 'Sosyal Keşif Platformu';
+$pageDescription = 'Sociaera — Sosyal keşif ve check-in platformu. Mekanları keşfet, anlarını paylaş.';
 require_once __DIR__ . '/partials/header.php';
 require_once __DIR__ . '/partials/navbar.php';
 ?>
@@ -23,7 +23,7 @@ require_once __DIR__ . '/partials/navbar.php';
             Keşfet. Paylaş.<br><span style="color:var(--primary);">Bağlan.</span>
         </h1>
         <p style="font-size:1.1rem; color:var(--text-muted); margin-bottom:32px; line-height:1.7;">
-            <?php echo APP_NAME; ?>, GTA World TR topluluğu için sosyal keşif ve check-in platformudur. Favori mekanlarını keşfet, deneyimlerini paylaş ve topluluğunla bağlan.
+            <?php echo APP_NAME; ?>, sosyal keşif ve check-in platformudur. Favori mekanlarını keşfet, deneyimlerini paylaş ve topluluğunla bağlan.
         </p>
         <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
             <a href="<?php echo BASE_URL; ?>/login" class="btn-primary-orange btn-lg">

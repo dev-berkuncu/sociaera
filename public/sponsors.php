@@ -21,7 +21,7 @@ require_once __DIR__ . '/partials/flash.php';
         <div class="card-box empty-state">
             <i class="bi bi-stars" style="color:var(--primary); opacity:1;"></i>
             <h3 style="font-weight:700; margin:12px 0 8px;">Sponsor Olmak İster Misin?</h3>
-            <p>Markanı binlerce GTA World TR oyuncusuna tanıt. Reklam alanlarımız hakkında bilgi almak için bizimle iletişime geç.</p>
+            <p>Markanı binlerce oyuncuya tanıt. Reklam alanlarımız hakkında bilgi almak için bizimle iletişime geç.</p>
             <a href="mailto:info@sociaera.online" class="btn-primary-orange" style="margin-top:16px;">
                 <i class="bi bi-envelope"></i> İletişime Geç
             </a>
