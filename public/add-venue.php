@@ -28,19 +28,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (strlen($name) > 100) {
         $error = 'Mekan adı en fazla 100 karakter olabilir.';
     } else {
-        $venueModel = new VenueModel();
-        $venueModel->create([
-            'name' => $name,
-            'description' => $desc,
-            'address' => $addr,
-            'website' => $website,
-            'category' => $category,
-            'facebrowser_url' => $fb,
-            'status' => 'pending',
-            'created_by' => Auth::id(),
-        ]);
-        $success = true;
-        Auth::setFlash('success', 'Mekan önerisi gönderildi! Admin onayından sonra yayınlanacak.');
+        try {
+            $venueModel = new VenueModel();
+            $isAdmin = Auth::isAdmin();
+            $venueModel->create([
+                'name' => $name,
+                'description' => $desc,
+                'address' => $addr,
+                'website' => $website,
+                'category' => $category,
+                'facebrowser_url' => $fb,
+                'status' => $isAdmin ? 'approved' : 'pending',
+                'created_by' => Auth::id(),
+            ]);
+            $success = true;
+            if ($isAdmin) {
+                Auth::setFlash('success', 'Mekan başarıyla eklendi! ✅');
+            } else {
+                Auth::setFlash('success', 'Mekan önerisi gönderildi! Admin onayından sonra yayınlanacak.');
+            }
+        } catch (\Throwable $e) {
+            $error = 'Mekan eklenirken hata oluştu: ' . $e->getMessage();
+        }
     }
 }
 
