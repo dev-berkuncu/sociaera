@@ -78,6 +78,11 @@ $_SESSION['oauth_user_id'] = $result['user']['id'];
 
 // 6. Karakter zaten seçilmişse direkt giriş yap
 if (!empty($result['user']['gta_character_id'])) {
+    // Mevcut kullanıcıların username'ini karakter adıyla senkronla
+    if (!empty($result['user']['gta_character_name']) && $result['user']['username'] !== $result['user']['gta_character_name']) {
+        $userModel->updateCharacter($result['user']['id'], $result['user']['gta_character_id'], $result['user']['gta_character_name']);
+        $result['user'] = $userModel->getById($result['user']['id']);
+    }
     Auth::login($result['user']);
     Csrf::regenerate();
     Logger::info('OAuth login (existing character)', ['user_id' => $result['user']['id']]);

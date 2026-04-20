@@ -45,7 +45,7 @@ class Auth
     {
         session_regenerate_id(true);
         $_SESSION['user_id']    = (int) $user['id'];
-        $_SESSION['username']   = $user['username'];
+        $_SESSION['username']   = !empty($user['gta_character_name']) ? $user['gta_character_name'] : $user['username'];
         $_SESSION['email']      = $user['email'] ?? '';
         $_SESSION['is_admin']   = (bool) ($user['is_admin'] ?? false);
         $_SESSION['avatar']     = $user['avatar'] ?? null;
