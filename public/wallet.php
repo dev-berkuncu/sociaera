@@ -16,6 +16,17 @@ $walletModel->ensureWallet(Auth::id());
 $balance = $walletModel->getBalance(Auth::id());
 $transactions = $walletModel->getTransactions(Auth::id());
 
+// Ödeme sonucu mesajları
+$paymentSuccess = $_GET['payment'] ?? '';
+$paymentMsg = '';
+if ($paymentSuccess === 'success') {
+    $paymentMsg = 'Bakiye başarıyla yüklendi!';
+} elseif ($paymentSuccess === 'failed') {
+    $paymentMsg = 'Ödeme doğrulanamadı. Lütfen tekrar deneyin.';
+} elseif ($paymentSuccess === 'already') {
+    $paymentMsg = 'Bu ödeme daha önce işlenmiş.';
+}
+
 $pageTitle = 'Cüzdan';
 $activeNav = 'wallet';
 require_once __DIR__ . '/partials/header.php';
@@ -28,6 +39,15 @@ require_once __DIR__ . '/partials/flash.php';
         <div class="page-header">
             <h1><i class="bi bi-wallet2" style="color:var(--primary)"></i> Cüzdan</h1>
         </div>
+
+        <?php if ($paymentMsg): ?>
+            <div class="flash-message flash-<?php echo $paymentSuccess === 'success' ? 'success' : 'error'; ?>" style="position:static; transform:none; margin-bottom:16px; width:100%;">
+                <div class="flash-content">
+                    <i class="bi bi-<?php echo $paymentSuccess === 'success' ? 'check-circle-fill' : 'exclamation-circle-fill'; ?>"></i>
+                    <span><?php echo escape($paymentMsg); ?></span>
+                </div>
+            </div>
+        <?php endif; ?>
 
         <div class="wallet-balance-card">
             <div class="wallet-label">Mevcut Bakiye</div>
@@ -81,7 +101,7 @@ require_once __DIR__ . '/partials/flash.php';
         </div>
         <div class="topup-actions">
             <button class="topup-cancel-btn" onclick="closeTopupModal()">VAZGEÇ</button>
-            <button class="topup-pay-btn" id="topupPayBtn" onclick="processFleecaPayment()" disabled>
+            <button class="topup-pay-btn" id="topupPayBtn" onclick="redirectToFleeca()" disabled>
                 <i class="bi bi-lock-fill"></i> FLEECA İLE ÖDE
             </button>
         </div>
@@ -92,6 +112,10 @@ require_once __DIR__ . '/partials/flash.php';
 </div>
 
 <script>
+const FLEECA_GATEWAY_BASE = '<?php echo FLEECA_GATEWAY_BASE; ?>';
+const FLEECA_GATEWAY_ID = '<?php echo FLEECA_GATEWAY_ID; ?>';
+const CURRENT_USER_ID = <?php echo Auth::id(); ?>;
+
 function openTopupModal() {
     document.getElementById('topupOverlay').classList.add('active');
     document.body.style.overflow = 'hidden';
@@ -111,36 +135,22 @@ function updateAmount() {
     document.getElementById('topupPayBtn').disabled = amount <= 0;
 
     const bar = document.getElementById('amountBar');
-    if (amount > 0) {
-        bar.classList.add('has-value');
-    } else {
-        bar.classList.remove('has-value');
-    }
+    bar.classList.toggle('has-value', amount > 0);
 }
 
-async function processFleecaPayment() {
-    const amount = parseFloat(document.getElementById('topupAmount').value) || 0;
+function redirectToFleeca() {
+    const amount = parseInt(document.getElementById('topupAmount').value) || 0;
     if (amount <= 0) return;
 
     const btn = document.getElementById('topupPayBtn');
     btn.disabled = true;
-    btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> İşleniyor...';
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Yönlendiriliyor...';
 
-    const formData = new FormData();
-    formData.append('csrf_token', App.csrfToken);
-    formData.append('amount', amount);
+    // Fleeca Gateway URL: /gateway/<GATEWAY_ID>/0/<AMOUNT>?userId=X
+    const gatewayUrl = `${FLEECA_GATEWAY_BASE}/${FLEECA_GATEWAY_ID}/0/${amount}?userId=${CURRENT_USER_ID}`;
 
-    const res = await App.post(App.baseUrl + '/api/fleeca-payment', formData);
-
-    if (res.ok) {
-        App.flash('Ödeme talebi oluşturuldu. Fleeca Banking üzerinden onaylayın.', 'success');
-        closeTopupModal();
-        setTimeout(() => location.reload(), 1500);
-    } else {
-        App.flash(res.error || 'Ödeme işlemi başarısız.', 'error');
-        btn.disabled = false;
-        btn.innerHTML = '<i class="bi bi-lock-fill"></i> FLEECA İLE ÖDE';
-    }
+    // Kullanıcıyı Fleeca ödeme sayfasına yönlendir
+    window.location.href = gatewayUrl;
 }
 
 document.addEventListener('keydown', (e) => {
