@@ -7,11 +7,16 @@
 
 # ── Rewrite Engine ─────────────────────────────────────────
 RewriteEngine On
-RewriteBase /public/
+RewriteBase /
 
 # HTTPS yönlendirme (production)
 # RewriteCond %{HTTPS} off
 # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# ── Admin klasörü — DirectoryIndex garantiyle ──────────────
+RewriteCond %{REQUEST_URI} ^/admin/?$
+RewriteCond %{REQUEST_FILENAME}/index.php -f
+RewriteRule ^admin/?$ admin/index.php [L]
 
 # ── Clean URLs (.php uzantısız) ────────────────────────────
 # Dosya veya klasör değilse .php ekle
