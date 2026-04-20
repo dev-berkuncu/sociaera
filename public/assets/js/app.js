@@ -4,7 +4,7 @@
  */
 
 const App = {
-    baseUrl: document.querySelector('meta[name="csrf-token"]')?.closest('head')?.querySelector('base')?.href || '',
+    baseUrl: window.BASE_URL || '',
     csrfToken: document.querySelector('meta[name="csrf-token"]')?.content || '',
 
     // ── AJAX Helper ───────────────────────────────────────
@@ -75,7 +75,7 @@ const App = {
         formData.append('action', isLiked ? 'unlike' : 'like');
         formData.append('checkin_id', checkinId);
 
-        const res = await this.post('api/interactions', formData);
+        const res = await this.post(this.baseUrl + '/api/interactions', formData);
 
         if (res.ok) {
             btn.classList.toggle('liked');
@@ -218,7 +218,7 @@ const App = {
             if (q.length < 2) { dropdownEl.classList.remove('show'); return; }
 
             this.venueSearchTimer = setTimeout(async () => {
-                const res = await this.get(`api/venue-search?q=${encodeURIComponent(q)}`);
+                const res = await this.get(`${this.baseUrl}/api/venue-search?q=${encodeURIComponent(q)}`);
                 if (res.ok && res.data?.length) {
                     dropdownEl.innerHTML = res.data.map(v =>
                         `<div class="venue-picker-item" data-id="${v.id}" data-name="${v.name}">
@@ -252,7 +252,7 @@ const App = {
     userSearchTimer: null,
     async searchUsers(query) {
         if (query.length < 2) return [];
-        const res = await this.get(`api/search-users?q=${encodeURIComponent(query)}`);
+        const res = await this.get(`${this.baseUrl}/api/search-users?q=${encodeURIComponent(query)}`);
         return res.ok ? (res.data || []) : [];
     },
 
@@ -293,7 +293,7 @@ const App = {
         formData.append('csrf_token', this.csrfToken);
         formData.append('action', 'clear');
 
-        const res = await this.post('api/notifications', formData);
+        const res = await this.post(this.baseUrl + '/api/notifications', formData);
         if (res.ok) {
             const list = document.querySelector('.notif-list');
             if (list) list.innerHTML = '<div class="empty-state"><i class="bi bi-bell-slash"></i><p>Bildirim yok</p></div>';

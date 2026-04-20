@@ -29,5 +29,7 @@
 
     <!-- CSRF Meta -->
     <?php echo csrfMeta(); ?>
+    <meta name="base-url" content="<?php echo BASE_URL; ?>">
+    <script>window.BASE_URL = '<?php echo BASE_URL; ?>';</script>
 </head>
 <body>

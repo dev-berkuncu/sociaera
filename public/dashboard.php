@@ -164,7 +164,7 @@ composeForm.addEventListener('submit', async (e) => {
     composeBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
 
     const formData = new FormData(composeForm);
-    const res = await App.post('api/create-post', formData);
+    const res = await App.post(App.baseUrl + '/api/create-post', formData);
 
     if (res.ok) {
         App.flash('Check-in başarılı! 📍', 'success');
