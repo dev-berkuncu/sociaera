@@ -19,6 +19,9 @@ RewriteCond %{REQUEST_URI} ^/admin/?$
 RewriteCond %{REQUEST_FILENAME}/index.php -f
 RewriteRule ^admin/?$ admin/index.php [L]
 
+# ── Fleeca Banking Callback (token URL'ye yapıştırılıyor) ───
+RewriteRule ^api/bank-callback(.+)$ api/bank-callback.php?token=$1 [L,QSA]
+
 # ── Clean URLs (.php uzantısız) ────────────────────────────
 # Dosya veya klasör değilse .php ekle
 RewriteCond %{REQUEST_FILENAME} !-f
