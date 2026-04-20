@@ -112,10 +112,6 @@ require_once __DIR__ . '/partials/flash.php';
 </div>
 
 <script>
-const FLEECA_GATEWAY_BASE = '<?php echo FLEECA_GATEWAY_BASE; ?>';
-const FLEECA_GATEWAY_ID = '<?php echo FLEECA_GATEWAY_ID; ?>';
-const CURRENT_USER_ID = <?php echo Auth::id(); ?>;
-
 function openTopupModal() {
     document.getElementById('topupOverlay').classList.add('active');
     document.body.style.overflow = 'hidden';
@@ -138,19 +134,36 @@ function updateAmount() {
     bar.classList.toggle('has-value', amount > 0);
 }
 
-function redirectToFleeca() {
+async function redirectToFleeca() {
     const amount = parseInt(document.getElementById('topupAmount').value) || 0;
     if (amount <= 0) return;
 
     const btn = document.getElementById('topupPayBtn');
     btn.disabled = true;
-    btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Yönlendiriliyor...';
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Token üretiliyor...';
 
-    // Fleeca Gateway URL: /gateway/<GATEWAY_ID>/0/<AMOUNT>?userId=X
-    const gatewayUrl = `${FLEECA_GATEWAY_BASE}/${FLEECA_GATEWAY_ID}/0/${amount}?userId=${CURRENT_USER_ID}`;
+    try {
+        // Backend'den Fleeca token üret
+        const formData = new FormData();
+        formData.append('csrf_token', App.csrfToken);
+        formData.append('amount', amount);
 
-    // Kullanıcıyı Fleeca ödeme sayfasına yönlendir
-    window.location.href = gatewayUrl;
+        const res = await App.post(App.baseUrl + '/api/fleeca-payment', formData);
+
+        if (res.ok && res.data && res.data.gateway_url) {
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Fleeca\'ya yönlendiriliyor...';
+            // Fleeca ödeme sayfasına yönlendir
+            window.location.href = res.data.gateway_url;
+        } else {
+            App.flash(res.error || 'Token üretilemedi. Lütfen tekrar deneyin.', 'error');
+            btn.disabled = false;
+            btn.innerHTML = '<i class="bi bi-lock-fill"></i> FLEECA İLE ÖDE';
+        }
+    } catch (err) {
+        App.flash('Bağlantı hatası. Lütfen tekrar deneyin.', 'error');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-lock-fill"></i> FLEECA İLE ÖDE';
+    }
 }
 
 document.addEventListener('keydown', (e) => {
