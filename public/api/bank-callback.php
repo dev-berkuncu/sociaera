@@ -100,8 +100,9 @@ if ($paymentAuthKey && $paymentAuthKey !== FLEECA_AUTH_KEY) {
     exit;
 }
 
-// Mesaj kontrolü — successful_payment olmalı
-if ($paymentMessage !== 'successful_payment') {
+// Mesaj kontrolü
+$validMessages = ['successful_payment', 'payment_successful'];
+if (!in_array($paymentMessage, $validMessages)) {
     Auth::setFlash('error', 'Ödeme durumu: "' . $paymentMessage . '". Beklenen: "successful_payment"');
     header('Location: ' . BASE_URL . '/wallet');
     exit;
