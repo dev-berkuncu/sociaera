@@ -2,8 +2,6 @@
 require_once __DIR__ . '/../app/Config/env.php';
 loadEnv(dirname(__DIR__) . '/.env');
 require_once __DIR__ . '/../app/Config/app.php';
-require_once __DIR__ . '/../app/Config/database.php';
-require_once __DIR__ . '/../app/Core/View.php';
 require_once __DIR__ . '/../app/Services/Logger.php';
 require_once __DIR__ . '/../app/Models/User.php';
 
@@ -23,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     foreach ($characters as $char) {
         if ((int)($char['id'] ?? 0) === $charId) {
-            $charName = $char['name'] ?? ($char['firstname'] . ' ' . $char['lastname']);
+            $charName = $char['name'] ?? trim(($char['firstname'] ?? '') . ' ' . ($char['lastname'] ?? ''));
             break;
         }
     }
@@ -67,16 +65,14 @@ require_once __DIR__ . '/partials/flash.php';
                 <?php echo csrfField(); ?>
                 <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:24px;">
                     <?php foreach ($characters as $char):
-                        $name = $char['name'] ?? (($char['firstname'] ?? '') . ' ' . ($char['lastname'] ?? ''));
+                        $name = $char['name'] ?? trim(($char['firstname'] ?? '') . ' ' . ($char['lastname'] ?? ''));
                         $cid = $char['id'] ?? 0;
                     ?>
                     <label class="card-box" style="display:flex; align-items:center; gap:16px; padding:16px; cursor:pointer; transition: border-color 0.2s;">
                         <input type="radio" name="character_id" value="<?php echo $cid; ?>" required style="accent-color: var(--primary); width:18px; height:18px;">
                         <div>
                             <div style="font-weight:700; font-size:1rem;"><?php echo escape($name); ?></div>
-                            <?php if (!empty($char['faction'])): ?>
-                                <div style="font-size:0.82rem; color:var(--text-muted);"><?php echo escape($char['faction']); ?></div>
-                            <?php endif; ?>
+                            <div style="font-size:0.82rem; color:var(--text-muted);">ID: <?php echo $cid; ?></div>
                         </div>
                     </label>
                     <?php endforeach; ?>
