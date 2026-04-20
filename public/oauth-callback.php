@@ -1,8 +1,11 @@
 <?php
 /**
- * OAuth Callback — GTA World UCP'den dönüş
+ * OAuth Callback — GTA World UCP'den dönüş + Fleeca Banking callback
  *
- * Akış:
+ * Fleeca Banking ödeme sonrası da bu URL'e token ile dönülür.
+ * Token parametresi varsa Fleeca callback'e yönlendirilir.
+ *
+ * OAuth Akışı:
  * 1. State doğrula
  * 2. Code → Access Token
  * 3. Access Token → /api/user (kullanıcı + karakter bilgisi)
@@ -12,6 +15,17 @@
 require_once __DIR__ . '/../app/Config/env.php';
 loadEnv(dirname(__DIR__) . '/.env');
 require_once __DIR__ . '/../app/Config/app.php';
+
+// ── Fleeca Banking Token Kontrolü ────────────────────────
+// Fleeca ödeme sonrası bu URL'e token ile döner
+$fleecaToken = $_GET['token'] ?? null;
+if ($fleecaToken) {
+    // Fleeca callback handler'a yönlendir
+    require_once __DIR__ . '/api/fleeca-callback.php';
+    exit;
+}
+
+// ── OAuth Akışı ──────────────────────────────────────────
 require_once __DIR__ . '/../app/Services/OAuthGtaWorld.php';
 require_once __DIR__ . '/../app/Services/Logger.php';
 require_once __DIR__ . '/../app/Models/User.php';
