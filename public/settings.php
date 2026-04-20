@@ -104,7 +104,7 @@ require_once __DIR__ . '/partials/flash.php';
                     <?php echo csrfField(); ?>
                     <input type="hidden" name="action" value="update_avatar">
                     <input type="file" name="avatar" accept="image/*" required class="form-control-styled" style="font-size:0.85rem;">
-                    <div class="form-hint">Maks. 2MB, JPEG / PNG / WebP</div>
+                    <div class="form-hint">Maks. 10MB, JPEG / PNG / WebP</div>
                     <button type="submit" class="btn-primary-orange btn-sm" style="margin-top:8px;">Yükle</button>
                 </form>
             </div>
@@ -118,7 +118,7 @@ require_once __DIR__ . '/partials/flash.php';
                 <?php echo csrfField(); ?>
                 <input type="hidden" name="action" value="update_banner">
                 <input type="file" name="banner" accept="image/*" required class="form-control-styled" style="font-size:0.85rem;">
-                <div class="form-hint">Maks. 5MB, önerilen 1500x500px</div>
+                <div class="form-hint">Maks. 10MB, önerilen 1500x500px</div>
                 <button type="submit" class="btn-primary-orange btn-sm" style="margin-top:8px;">Yükle</button>
             </form>
         </div>

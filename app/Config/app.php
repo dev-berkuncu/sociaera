@@ -38,9 +38,9 @@ date_default_timezone_set($timezone);
 define('APP_TIMEZONE', $timezone);
 
 // Upload limitleri (byte)
-define('MAX_AVATAR_SIZE',  2 * 1024 * 1024);   // 2 MB
-define('MAX_BANNER_SIZE',  5 * 1024 * 1024);   // 5 MB
-define('MAX_POST_SIZE',    5 * 1024 * 1024);   // 5 MB
+define('MAX_AVATAR_SIZE',  10 * 1024 * 1024);  // 10 MB
+define('MAX_BANNER_SIZE',  10 * 1024 * 1024);  // 10 MB
+define('MAX_POST_SIZE',    10 * 1024 * 1024);  // 10 MB
 define('MAX_AD_SIZE',      5 * 1024 * 1024);   // 5 MB
 
 // Upload boyut limitleri (px)
