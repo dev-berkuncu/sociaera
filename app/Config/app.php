@@ -18,7 +18,7 @@ define('APP_ENV',     env('APP_ENV', 'production'));
 define('ROOT_PATH',    dirname(__DIR__, 2));
 define('APP_PATH',     ROOT_PATH . '/app');
 define('PUBLIC_PATH',  ROOT_PATH . '/public');
-define('UPLOAD_PATH',  ROOT_PATH . '/uploads');
+define('UPLOAD_PATH',  PUBLIC_PATH . '/uploads');
 define('STORAGE_PATH', ROOT_PATH . '/storage');
 
 // Base URL (trailing slash yok)
