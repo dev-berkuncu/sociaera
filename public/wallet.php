@@ -31,7 +31,7 @@ require_once __DIR__ . '/partials/flash.php';
 
         <div class="wallet-balance-card">
             <div class="wallet-label">Mevcut Bakiye</div>
-            <div class="wallet-balance"><?php echo number_format($balance, 2, ',', '.'); ?> <span class="wallet-currency">SparkC</span></div>
+            <div class="wallet-balance">$<?php echo number_format($balance, 2, ',', '.'); ?></div>
             <button class="wallet-topup-btn" onclick="openTopupModal()">
                 <i class="bi bi-plus-circle-fill"></i> Bakiye Yükle
             </button>
@@ -54,7 +54,7 @@ require_once __DIR__ . '/partials/flash.php';
                         <div style="font-size:0.78rem; color:var(--text-muted);"><?php echo formatDate($tx['created_at'], true); ?></div>
                     </div>
                     <div style="font-weight:700; color:<?php echo $isIn ? 'var(--success)' : 'var(--error)'; ?>;">
-                        <?php echo $isIn ? '+' : '-'; ?><?php echo number_format($tx['amount'], 2, ',', '.'); ?> SC
+                        <?php echo $isIn ? '+' : '-'; ?>$<?php echo number_format($tx['amount'], 2, ',', '.'); ?>
                     </div>
                 </div>
                 <?php endforeach; ?>
@@ -72,13 +72,12 @@ require_once __DIR__ . '/partials/flash.php';
         <h2 class="topup-title">Bakiye Yükle</h2>
         <p class="topup-desc">
             Güvenli Fleeca altyapısı ile bakiyenizi yükleyin.
-            <br><strong>1 USD = 1 SparkC</strong>
         </p>
         <div class="topup-input-group">
-            <input type="number" id="topupAmount" class="topup-input" placeholder="Tutar (USD)" min="1" max="10000" step="1" oninput="updateSparkC()">
+            <input type="number" id="topupAmount" class="topup-input" placeholder="Tutar (USD)" min="1" max="10000" step="1" oninput="updateAmount()">
         </div>
-        <div class="topup-sparkc-bar" id="sparkcBar">
-            Kazanılacak: <span id="sparkcValue">0</span> SPARKC
+        <div class="topup-amount-bar" id="amountBar">
+            Yüklenecek: $<span id="amountValue">0.00</span>
         </div>
         <div class="topup-actions">
             <button class="topup-cancel-btn" onclick="closeTopupModal()">VAZGEÇ</button>
@@ -97,7 +96,7 @@ function openTopupModal() {
     document.getElementById('topupOverlay').classList.add('active');
     document.body.style.overflow = 'hidden';
     document.getElementById('topupAmount').value = '';
-    updateSparkC();
+    updateAmount();
 }
 
 function closeTopupModal(e) {
@@ -106,12 +105,12 @@ function closeTopupModal(e) {
     document.body.style.overflow = '';
 }
 
-function updateSparkC() {
+function updateAmount() {
     const amount = parseFloat(document.getElementById('topupAmount').value) || 0;
-    document.getElementById('sparkcValue').textContent = amount;
+    document.getElementById('amountValue').textContent = amount.toFixed(2);
     document.getElementById('topupPayBtn').disabled = amount <= 0;
 
-    const bar = document.getElementById('sparkcBar');
+    const bar = document.getElementById('amountBar');
     if (amount > 0) {
         bar.classList.add('has-value');
     } else {
@@ -119,16 +118,31 @@ function updateSparkC() {
     }
 }
 
-function processFleecaPayment() {
+async function processFleecaPayment() {
     const amount = parseFloat(document.getElementById('topupAmount').value) || 0;
     if (amount <= 0) return;
 
-    // Fleeca Banking ödeme sayfasına yönlendir
-    App.flash('Fleeca Banking ödeme sistemi yakında aktif olacak.', 'info');
-    closeTopupModal();
+    const btn = document.getElementById('topupPayBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> İşleniyor...';
+
+    const formData = new FormData();
+    formData.append('csrf_token', App.csrfToken);
+    formData.append('amount', amount);
+
+    const res = await App.post(App.baseUrl + '/api/fleeca-payment', formData);
+
+    if (res.ok) {
+        App.flash('Ödeme talebi oluşturuldu. Fleeca Banking üzerinden onaylayın.', 'success');
+        closeTopupModal();
+        setTimeout(() => location.reload(), 1500);
+    } else {
+        App.flash(res.error || 'Ödeme işlemi başarısız.', 'error');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-lock-fill"></i> FLEECA İLE ÖDE';
+    }
 }
 
-// ESC ile kapatma
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeTopupModal();
 });
