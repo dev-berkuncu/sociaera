@@ -69,35 +69,58 @@ class CheckinModel
     {
         $offset = ($page - 1) * $perPage;
 
-        $stmt = $this->db->prepare("
-            (SELECT c.*, u.username, u.tag, u.avatar, u.is_premium,
-                   v.name as venue_name, v.category as venue_category,
-                   (SELECT COUNT(*) FROM post_likes WHERE checkin_id = c.id) as like_count,
-                   (SELECT COUNT(*) FROM post_comments WHERE checkin_id = c.id AND is_deleted = 0) as comment_count,
-                   (SELECT COUNT(*) FROM post_reposts WHERE checkin_id = c.id) as repost_count,
-                   NULL as reposted_by, NULL as reposted_by_tag, c.created_at as sort_time
-            FROM checkins c
-            JOIN users u ON c.user_id = u.id
-            JOIN venues v ON c.venue_id = v.id
-            WHERE c.is_deleted = 0 AND u.is_active = 1)
-            UNION ALL
-            (SELECT c.*, u.username, u.tag, u.avatar, u.is_premium,
-                   v.name as venue_name, v.category as venue_category,
-                   (SELECT COUNT(*) FROM post_likes WHERE checkin_id = c.id) as like_count,
-                   (SELECT COUNT(*) FROM post_comments WHERE checkin_id = c.id AND is_deleted = 0) as comment_count,
-                   (SELECT COUNT(*) FROM post_reposts WHERE checkin_id = c.id) as repost_count,
-                   ru.username as reposted_by, ru.tag as reposted_by_tag, pr.created_at as sort_time
-            FROM post_reposts pr
-            JOIN checkins c ON pr.checkin_id = c.id
-            JOIN users u ON c.user_id = u.id
-            JOIN venues v ON c.venue_id = v.id
-            JOIN users ru ON pr.user_id = ru.id
-            WHERE c.is_deleted = 0 AND u.is_active = 1)
-            ORDER BY sort_time DESC
-            LIMIT ? OFFSET ?
-        ");
-        $stmt->execute([$perPage, $offset]);
-        $posts = $stmt->fetchAll();
+        try {
+            $stmt = $this->db->prepare("
+                (SELECT c.id, c.user_id, c.venue_id, c.note, c.image, c.created_at,
+                       u.username, u.tag, u.avatar, u.is_premium,
+                       v.name as venue_name, v.category as venue_category,
+                       (SELECT COUNT(*) FROM post_likes WHERE checkin_id = c.id) as like_count,
+                       (SELECT COUNT(*) FROM post_comments WHERE checkin_id = c.id AND is_deleted = 0) as comment_count,
+                       (SELECT COUNT(*) FROM post_reposts WHERE checkin_id = c.id) as repost_count,
+                       NULL as reposted_by, NULL as reposted_by_tag, c.created_at as sort_time
+                FROM checkins c
+                JOIN users u ON c.user_id = u.id
+                JOIN venues v ON c.venue_id = v.id
+                WHERE c.is_deleted = 0 AND u.is_active = 1)
+                UNION ALL
+                (SELECT c.id, c.user_id, c.venue_id, c.note, c.image, c.created_at,
+                       u.username, u.tag, u.avatar, u.is_premium,
+                       v.name as venue_name, v.category as venue_category,
+                       (SELECT COUNT(*) FROM post_likes WHERE checkin_id = c.id) as like_count,
+                       (SELECT COUNT(*) FROM post_comments WHERE checkin_id = c.id AND is_deleted = 0) as comment_count,
+                       (SELECT COUNT(*) FROM post_reposts WHERE checkin_id = c.id) as repost_count,
+                       ru.username as reposted_by, ru.tag as reposted_by_tag, pr.created_at as sort_time
+                FROM post_reposts pr
+                JOIN checkins c ON pr.checkin_id = c.id
+                JOIN users u ON c.user_id = u.id
+                JOIN venues v ON c.venue_id = v.id
+                JOIN users ru ON pr.user_id = ru.id
+                WHERE c.is_deleted = 0 AND u.is_active = 1)
+                ORDER BY sort_time DESC
+                LIMIT ? OFFSET ?
+            ");
+            $stmt->execute([$perPage, $offset]);
+            $posts = $stmt->fetchAll();
+        } catch (\Throwable $e) {
+            // Fallback: UNION başarısız olursa basit sorguya dön
+            $stmt = $this->db->prepare("
+                SELECT c.id, c.user_id, c.venue_id, c.note, c.image, c.created_at,
+                       u.username, u.tag, u.avatar, u.is_premium,
+                       v.name as venue_name, v.category as venue_category,
+                       (SELECT COUNT(*) FROM post_likes WHERE checkin_id = c.id) as like_count,
+                       (SELECT COUNT(*) FROM post_comments WHERE checkin_id = c.id AND is_deleted = 0) as comment_count,
+                       (SELECT COUNT(*) FROM post_reposts WHERE checkin_id = c.id) as repost_count,
+                       NULL as reposted_by, NULL as reposted_by_tag
+                FROM checkins c
+                JOIN users u ON c.user_id = u.id
+                JOIN venues v ON c.venue_id = v.id
+                WHERE c.is_deleted = 0 AND u.is_active = 1
+                ORDER BY c.created_at DESC
+                LIMIT ? OFFSET ?
+            ");
+            $stmt->execute([$perPage, $offset]);
+            $posts = $stmt->fetchAll();
+        }
 
         // Viewer etkileşimleri
         if ($viewerId) {

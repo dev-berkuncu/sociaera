@@ -3,6 +3,8 @@
  * Sociaera — Header Partial
  * Tüm sayfalarda include edilir. $pageTitle değişkeni dışarıdan gelir.
  */
+header('Cache-Control: no-cache, must-revalidate');
+header('Pragma: no-cache');
 ?>
 <!DOCTYPE html>
 <html lang="tr">
