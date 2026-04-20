@@ -76,14 +76,18 @@ img { max-width: 100%; height: auto; }
 }
 
 .navbar-inner {
-    display: flex; align-items: center; justify-content: space-between;
+    display: flex; align-items: center; justify-content: flex-end;
     height: 100%; padding: 0 24px; max-width: 1320px; margin: 0 auto;
+    position: relative;
 }
 
 .navbar-brand {
     display: flex; align-items: center; gap: 10px;
     font-size: 1.35rem; font-weight: 800; color: var(--primary) !important;
     text-decoration: none;
+}
+.navbar-brand-center {
+    position: absolute; left: 50%; transform: translateX(-50%);
 }
 .navbar-brand i { font-size: 1.5rem; }
 

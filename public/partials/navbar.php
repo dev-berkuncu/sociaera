@@ -14,44 +14,21 @@ if (Auth::check() && class_exists('NotificationModel')) {
 ?>
 <nav class="navbar-main">
     <div class="navbar-inner container-xl">
-        <!-- Logo -->
-        <a href="<?php echo BASE_URL; ?>/dashboard" class="navbar-brand">
+        <!-- Logo (Centered) -->
+        <a href="<?php echo BASE_URL; ?>/dashboard" class="navbar-brand navbar-brand-center">
             <i class="bi bi-pin-map-fill"></i>
             <span><?php echo APP_NAME; ?></span>
         </a>
 
-        <!-- Desktop Nav -->
-        <?php if (Auth::check()): ?>
-        <div class="navbar-nav-center d-none d-md-flex">
-            <a href="<?php echo BASE_URL; ?>/dashboard" class="nav-item <?php echo $activeNav === 'dashboard' ? 'active' : ''; ?>" title="Ana Sayfa">
-                <i class="bi bi-house-door<?php echo $activeNav === 'dashboard' ? '-fill' : ''; ?>"></i>
-                <span class="nav-label">Ana Sayfa</span>
-            </a>
-            <a href="<?php echo BASE_URL; ?>/venues" class="nav-item <?php echo $activeNav === 'venues' ? 'active' : ''; ?>" title="Mekanlar">
-                <i class="bi bi-geo-alt<?php echo $activeNav === 'venues' ? '-fill' : ''; ?>"></i>
-                <span class="nav-label">Mekanlar</span>
-            </a>
-            <a href="<?php echo BASE_URL; ?>/leaderboard" class="nav-item <?php echo $activeNav === 'leaderboard' ? 'active' : ''; ?>" title="Sıralama">
-                <i class="bi bi-trophy<?php echo $activeNav === 'leaderboard' ? '-fill' : ''; ?>"></i>
-                <span class="nav-label">Sıralama</span>
-            </a>
-            <a href="<?php echo BASE_URL; ?>/members" class="nav-item <?php echo $activeNav === 'members' ? 'active' : ''; ?>" title="Üyeler">
-                <i class="bi bi-people<?php echo $activeNav === 'members' ? '-fill' : ''; ?>"></i>
-                <span class="nav-label">Üyeler</span>
-            </a>
-            <a href="<?php echo BASE_URL; ?>/notifications" class="nav-item <?php echo $activeNav === 'notifications' ? 'active' : ''; ?>" title="Bildirimler">
-                <i class="bi bi-bell<?php echo $activeNav === 'notifications' ? '-fill' : ''; ?>"></i>
-                <?php if ($notifCount > 0): ?>
-                    <span class="notif-badge"><?php echo $notifCount > 9 ? '9+' : $notifCount; ?></span>
-                <?php endif; ?>
-                <span class="nav-label">Bildirimler</span>
-            </a>
-        </div>
-        <?php endif; ?>
-
         <!-- Right -->
         <div class="navbar-right">
             <?php if (Auth::check()): ?>
+                <?php if ($notifCount > 0): ?>
+                    <a href="<?php echo BASE_URL; ?>/notifications" class="btn-nav-icon" title="Bildirimler" style="position:relative;">
+                        <i class="bi bi-bell-fill"></i>
+                        <span class="notif-badge"><?php echo $notifCount > 9 ? '9+' : $notifCount; ?></span>
+                    </a>
+                <?php endif; ?>
                 <a href="<?php echo BASE_URL; ?>/profile" class="nav-avatar" title="Profil">
                     <?php echo avatarHtml(Auth::check() ? ($_SESSION['avatar'] ?? null) : null, Auth::username() ?? 'U', '32'); ?>
                 </a>
