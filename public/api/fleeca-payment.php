@@ -1,11 +1,6 @@
 <?php
 /**
  * API: Fleeca Banking — Gateway Token Üret ve Yönlendir
- * 
- * 1. Amount alır
- * 2. Fleeca API'den encrypted token üretir
- * 3. Session'a userId + amount kaydeder
- * 4. Gateway URL döndürür
  */
 require_once __DIR__ . '/../../app/Config/env.php';
 loadEnv(dirname(__DIR__, 2) . '/.env');
@@ -16,8 +11,17 @@ require_once __DIR__ . '/../../app/Services/Logger.php';
 require_once __DIR__ . '/../../app/Models/User.php';
 require_once __DIR__ . '/../../app/Models/Notification.php';
 
-Response::requirePost();
-Response::requireAuthApi();
+// POST kontrolü
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    Response::error('Geçersiz istek metodu.', 405);
+}
+
+// Auth kontrolü
+if (!Auth::check()) {
+    Response::error('Oturum açmanız gerekiyor.', 401);
+}
+
+// CSRF kontrolü
 Csrf::requireValid();
 
 $amount = (float) ($_POST['amount'] ?? 0);
@@ -32,16 +36,19 @@ if ($amount > 10000) {
 
 $userId = Auth::id();
 
-// ── Fleeca API'den token üret ────────────────────────────
-$generateUrl = FLEECA_VERIFY_BASE . '/generateToken?' . http_build_query([
-    'price' => $amount,
+// ── Fleeca API'den encrypted token üret ──────────────────
+$generateUrl = 'https://banking-tr.gta.world/gateway_token/generateToken?' . http_build_query([
+    'price' => (int) $amount,
     'type'  => 0,
 ]);
+
+Logger::info('Fleeca generateToken request', ['url' => $generateUrl, 'amount' => $amount]);
 
 $ch = curl_init($generateUrl);
 curl_setopt_array($ch, [
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_TIMEOUT        => 15,
+    CURLOPT_SSL_VERIFYPEER => false,
     CURLOPT_HTTPHEADER     => [
         'Authorization: Bearer ' . FLEECA_AUTH_KEY,
         'Accept: application/json',
@@ -52,40 +59,43 @@ $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 $curlError = curl_error($ch);
 curl_close($ch);
 
+Logger::info('Fleeca generateToken response', [
+    'http_code' => $httpCode,
+    'response'  => substr($response, 0, 200),
+    'curl_err'  => $curlError,
+]);
+
 if ($curlError) {
-    Logger::error('Fleeca generateToken curl error', ['error' => $curlError]);
-    Response::error('Fleeca Banking bağlantı hatası.');
+    Response::error('Fleeca Banking bağlantı hatası: ' . $curlError);
 }
 
 if ($httpCode < 200 || $httpCode >= 300) {
-    Logger::error('Fleeca generateToken failed', [
-        'http_code' => $httpCode,
-        'response'  => $response,
-    ]);
     Response::error('Fleeca Banking token üretilemedi. (HTTP ' . $httpCode . ')');
 }
 
-// Token'ı parse et (JSON string veya düz string olabilir)
-$token = json_decode($response, true);
-if (is_array($token)) {
-    // JSON yanıt — token alanını al
-    $token = $token['token'] ?? $token['data'] ?? $response;
+// Token'ı parse et
+$token = $response;
+
+// JSON yanıt olabilir
+$decoded = json_decode($response, true);
+if (is_array($decoded)) {
+    $token = $decoded['token'] ?? $decoded['data'] ?? $decoded[0] ?? $response;
 }
-// JSON string ise tırnak temizle
-$token = trim($token, '"');
+
+// Tırnak temizle
+$token = trim($token, "\" \n\r\t");
 
 if (empty($token)) {
-    Logger::error('Fleeca generateToken empty', ['response' => $response]);
     Response::error('Fleeca Banking token alınamadı.');
 }
 
 Logger::info('Fleeca token generated', [
-    'userId' => $userId,
-    'amount' => $amount,
-    'token'  => substr($token, 0, 20) . '...',
+    'userId'      => $userId,
+    'amount'      => $amount,
+    'token_start' => substr($token, 0, 20),
 ]);
 
-// ── Session'a kaydet (callback'te userId'yi bulmak için) ──
+// ── Session'a kaydet ─────────────────────────────────────
 $_SESSION['fleeca_pending'] = [
     'user_id' => $userId,
     'amount'  => $amount,
@@ -93,8 +103,8 @@ $_SESSION['fleeca_pending'] = [
     'time'    => time(),
 ];
 
-// Gateway URL'i döndür
-$gatewayUrl = FLEECA_GATEWAY_BASE . '/' . rawurlencode($token);
+// Gateway URL
+$gatewayUrl = 'https://banking-tr.gta.world/gateway/' . rawurlencode($token);
 
 Response::success([
     'gateway_url' => $gatewayUrl,
