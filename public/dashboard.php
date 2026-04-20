@@ -125,56 +125,62 @@ require_once __DIR__ . '/partials/flash.php';
     <?php require_once __DIR__ . '/partials/sidebar-right.php'; ?>
 </div>
 
+<?php require_once __DIR__ . '/partials/footer.php'; ?>
+
 <script>
-// Compose Form
-const composeForm = document.getElementById('composeForm');
-const composeNote = document.getElementById('composeNote');
-const composeBtn = document.getElementById('composeSubmitBtn');
-const venueIdInput = document.getElementById('selectedVenueId');
+document.addEventListener('DOMContentLoaded', function() {
+    // Compose Form
+    const composeForm = document.getElementById('composeForm');
+    const composeNote = document.getElementById('composeNote');
+    const composeBtn = document.getElementById('composeSubmitBtn');
+    const venueIdInput = document.getElementById('selectedVenueId');
 
-// Enable/disable post button
-function checkCompose() {
-    composeBtn.disabled = !(venueIdInput.value && composeNote.value.trim());
-}
-composeNote.addEventListener('input', checkCompose);
+    if (!composeForm || !composeNote) return;
 
-// Venue search
-App.initVenueSearch(
-    document.getElementById('venueSearchInput'),
-    document.getElementById('venueDropdown'),
-    (id, name) => {
-        venueIdInput.value = id;
-        document.getElementById('selectedVenueName').textContent = name;
-        document.getElementById('selectedVenueDisplay').style.display = 'inline-flex';
-        document.getElementById('venueSearchWrap').style.display = 'none';
+    // Enable/disable post button
+    function checkCompose() {
+        composeBtn.disabled = !(venueIdInput.value && composeNote.value.trim());
+    }
+    composeNote.addEventListener('input', checkCompose);
+
+    // Venue search
+    const venueInput = document.getElementById('venueSearchInput');
+    const venueDropdown = document.getElementById('venueDropdown');
+
+    if (venueInput && venueDropdown) {
+        App.initVenueSearch(venueInput, venueDropdown, (id, name) => {
+            venueIdInput.value = id;
+            document.getElementById('selectedVenueName').textContent = name;
+            document.getElementById('selectedVenueDisplay').style.display = 'inline-flex';
+            document.getElementById('venueSearchWrap').style.display = 'none';
+            checkCompose();
+        });
+    }
+
+    // Remove venue
+    window.removeVenue = function() {
+        venueIdInput.value = '';
+        document.getElementById('selectedVenueDisplay').style.display = 'none';
         checkCompose();
-    }
-);
+    };
 
-function removeVenue() {
-    venueIdInput.value = '';
-    document.getElementById('selectedVenueDisplay').style.display = 'none';
-    checkCompose();
-}
+    // Submit compose
+    composeForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        composeBtn.disabled = true;
+        composeBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
 
-// Submit compose
-composeForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    composeBtn.disabled = true;
-    composeBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+        const formData = new FormData(composeForm);
+        const res = await App.post(App.baseUrl + '/api/create-post', formData);
 
-    const formData = new FormData(composeForm);
-    const res = await App.post(App.baseUrl + '/api/create-post', formData);
-
-    if (res.ok) {
-        App.flash('Check-in başarılı! 📍', 'success');
-        setTimeout(() => location.reload(), 800);
-    } else {
-        App.flash(res.error || 'Hata oluştu.', 'error');
-        composeBtn.disabled = false;
-        composeBtn.innerHTML = 'Post';
-    }
+        if (res.ok) {
+            App.flash('Check-in başarılı! 📍', 'success');
+            setTimeout(() => location.reload(), 800);
+        } else {
+            App.flash(res.error || 'Hata oluştu.', 'error');
+            composeBtn.disabled = false;
+            composeBtn.innerHTML = 'Post';
+        }
+    });
 });
 </script>
-
-<?php require_once __DIR__ . '/partials/footer.php'; ?>
