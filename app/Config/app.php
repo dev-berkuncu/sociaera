@@ -56,6 +56,10 @@ define('OAUTH_REDIRECT_URI',  env('OAUTH_REDIRECT_URI', BASE_URL . '/oauth-callb
 
 // Fleeca Bank
 define('FLEECA_AUTH_KEY', env('FLEECA_AUTH_KEY', ''));
+define('FLEECA_GATEWAY_ID', env('FLEECA_GATEWAY_ID', ''));
+define('FLEECA_CALLBACK_URL', env('FLEECA_CALLBACK_URL', ''));
+define('FLEECA_GATEWAY_BASE', 'https://banking-tr.gta.world/gateway');
+define('FLEECA_VERIFY_BASE', 'https://banking-tr.gta.world/gateway_token');
 
 // ── Session başlat ──────────────────────────────────────────
 if (session_status() === PHP_SESSION_NONE) {
