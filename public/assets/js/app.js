@@ -103,7 +103,7 @@ const App = {
         formData.append('action', isReposted ? 'unrepost' : 'repost');
         formData.append('checkin_id', checkinId);
 
-        const res = await this.post('api/interactions', formData);
+        const res = await this.post(this.baseUrl + '/api/interactions', formData);
 
         if (res.ok) {
             btn.classList.toggle('reposted');
@@ -129,7 +129,7 @@ const App = {
         formData.append('action', 'follow');
         formData.append('user_id', userId);
 
-        const res = await this.post('api/interactions', formData);
+        const res = await this.post(this.baseUrl + '/api/interactions', formData);
 
         if (res.ok) {
             if (res.data?.following) {
@@ -157,7 +157,7 @@ const App = {
         formData.append('action', 'delete');
         formData.append('checkin_id', checkinId);
 
-        const res = await this.post('api/interactions', formData);
+        const res = await this.post(this.baseUrl + '/api/interactions', formData);
 
         if (res.ok) {
             const card = btn.closest('.post-card');
@@ -194,7 +194,7 @@ const App = {
             formData.append('image', fileInput.files[0]);
         }
 
-        const res = await this.post('api/interactions', formData);
+        const res = await this.post(this.baseUrl + '/api/interactions', formData);
 
         if (res.ok) {
             input.value = '';
@@ -311,6 +311,89 @@ const App = {
             textarea.style.height = 'auto';
             textarea.style.height = Math.min(textarea.scrollHeight, 200) + 'px';
         });
+    },
+
+    // ── Inline Comments Toggle ────────────────────────────
+    toggleComments(btn, checkinId) {
+        const section = document.getElementById(`comments-section-${checkinId}`);
+        if (!section) return;
+
+        if (section.style.display === 'none') {
+            section.style.display = 'block';
+            btn.classList.add('active-comment');
+            this.loadComments(checkinId);
+            // Focus input
+            setTimeout(() => {
+                const input = section.querySelector('.comment-input-inline');
+                if (input) input.focus();
+            }, 100);
+        } else {
+            section.style.display = 'none';
+            btn.classList.remove('active-comment');
+        }
+    },
+
+    // ── Load Comments via AJAX ────────────────────────────
+    async loadComments(checkinId) {
+        const listEl = document.getElementById(`comments-list-${checkinId}`);
+        if (!listEl) return;
+
+        const res = await this.get(this.baseUrl + `/api/interactions?action=get_comments&checkin_id=${checkinId}`);
+
+        if (res.ok && res.data) {
+            if (res.data.length === 0) {
+                listEl.innerHTML = '<div style="text-align:center; padding:16px; color:var(--text-muted); font-size:0.85rem;">Henüz yorum yok. İlk yorumu sen yaz!</div>';
+            } else {
+                listEl.innerHTML = res.data.map(c => this.renderComment(c)).join('');
+            }
+        } else {
+            listEl.innerHTML = '<div style="text-align:center; padding:16px; color:var(--text-muted);">Yorumlar yüklenemedi.</div>';
+        }
+    },
+
+    renderComment(c) {
+        const avatar = c.avatar
+            ? `<img src="${this.baseUrl}/uploads/avatars/${c.avatar}" class="avatar-img" width="28" height="28" style="border-radius:50%; object-fit:cover;">`
+            : `<div class="avatar-default" style="width:28px; height:28px; font-size:0.7rem;">${(c.username || 'U')[0].toUpperCase()}</div>`;
+        return `
+            <div class="comment-item">
+                <a href="${this.baseUrl}/profile?u=${c.tag || c.username}">${avatar}</a>
+                <div class="comment-body">
+                    <a href="${this.baseUrl}/profile?u=${c.tag || c.username}" class="comment-author">${c.username}</a>
+                    <span class="comment-text">${c.comment}</span>
+                    <span class="comment-time">${c.time_ago || ''}</span>
+                </div>
+            </div>
+        `;
+    },
+
+    // ── Submit Inline Comment ─────────────────────────────
+    async submitInlineComment(form, checkinId) {
+        const input = form.querySelector('.comment-input-inline');
+        const comment = input?.value?.trim();
+        if (!comment) return;
+
+        const btn = form.querySelector('.comment-send-btn');
+        if (btn) btn.disabled = true;
+
+        const formData = new FormData();
+        formData.append('csrf_token', this.csrfToken);
+        formData.append('action', 'comment');
+        formData.append('checkin_id', checkinId);
+        formData.append('comment', comment);
+
+        const res = await this.post(this.baseUrl + '/api/interactions', formData);
+
+        if (res.ok) {
+            input.value = '';
+            this.loadComments(checkinId);
+            // Yorum sayısını güncelle
+            const countEl = document.querySelector(`[data-comment-count="${checkinId}"]`);
+            if (countEl) countEl.textContent = parseInt(countEl.textContent || 0) + 1;
+        } else {
+            this.flash(res.error || 'Hata oluştu.', 'error');
+        }
+        if (btn) btn.disabled = false;
     }
 };
 
