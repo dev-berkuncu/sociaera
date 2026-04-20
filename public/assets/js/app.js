@@ -20,6 +20,7 @@ const App = {
             const res = await fetch(url, {
                 method: 'POST',
                 headers,
+                credentials: 'same-origin',
                 body: formData || JSON.stringify(data),
             });
             return await res.json();
@@ -32,7 +33,8 @@ const App = {
     async get(url) {
         try {
             const res = await fetch(url, {
-                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                credentials: 'same-origin',
             });
             return await res.json();
         } catch (e) {
