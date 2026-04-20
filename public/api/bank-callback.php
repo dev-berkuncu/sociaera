@@ -46,8 +46,8 @@ if (!$userId) {
     exit;
 }
 
-// ── Token doğrulama (strict mode) ────────────────────────
-$verifyUrl = 'https://banking-tr.gta.world/gateway_token/' . rawurlencode($token) . '/strict';
+// ── Token doğrulama (standard mode — sandbox + expired da döner) ──
+$verifyUrl = 'https://banking-tr.gta.world/gateway_token/' . rawurlencode($token);
 
 Logger::info('Fleeca verify request', ['url' => $verifyUrl]);
 
