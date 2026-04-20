@@ -74,4 +74,21 @@ require_once APP_PATH . '/Core/Csrf.php';
 require_once APP_PATH . '/Core/Auth.php';
 require_once APP_PATH . '/Core/View.php';
 require_once APP_PATH . '/Core/Response.php';
+require_once APP_PATH . '/Core/RateLimit.php';
 require_once APP_PATH . '/Config/database.php';
+
+// ── Servisler ─────────────────────────────────────────────
+require_once APP_PATH . '/Services/Logger.php';
+require_once APP_PATH . '/Services/ImageUploader.php';
+require_once APP_PATH . '/Services/OAuthGtaWorld.php';
+
+// ── Modeller (navbar, sidebar vb. her yerde lazım) ────────
+require_once APP_PATH . '/Models/User.php';
+require_once APP_PATH . '/Models/Venue.php';
+require_once APP_PATH . '/Models/Checkin.php';
+require_once APP_PATH . '/Models/Notification.php';
+require_once APP_PATH . '/Models/Leaderboard.php';
+require_once APP_PATH . '/Models/Ad.php';
+require_once APP_PATH . '/Models/Settings.php';
+require_once APP_PATH . '/Models/Wallet.php';
+require_once APP_PATH . '/Helpers/ads_logic.php';
