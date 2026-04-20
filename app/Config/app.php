@@ -72,3 +72,6 @@ if (session_status() === PHP_SESSION_NONE) {
 require_once APP_PATH . '/Helpers/functions.php';
 require_once APP_PATH . '/Core/Csrf.php';
 require_once APP_PATH . '/Core/Auth.php';
+require_once APP_PATH . '/Core/View.php';
+require_once APP_PATH . '/Core/Response.php';
+require_once APP_PATH . '/Config/database.php';
