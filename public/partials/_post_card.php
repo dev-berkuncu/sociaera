@@ -6,6 +6,12 @@
 if (!isset($post)) return;
 ?>
 <div class="post-card" id="post-<?php echo $post['id']; ?>">
+    <?php if (!empty($post['reposted_by'])): ?>
+    <div class="post-repost-indicator">
+        <i class="bi bi-arrow-repeat"></i>
+        <a href="<?php echo BASE_URL; ?>/profile?u=<?php echo escape($post['reposted_by_tag'] ?: $post['reposted_by']); ?>"><?php echo escape($post['reposted_by']); ?></a> paylaştı
+    </div>
+    <?php endif; ?>
     <div class="post-header">
         <a href="<?php echo BASE_URL; ?>/profile?u=<?php echo escape($post['tag'] ?: $post['username']); ?>" class="post-avatar">
             <?php echo avatarHtml($post['avatar'] ?? null, $post['username'], '44'); ?>

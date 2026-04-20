@@ -376,6 +376,15 @@ img { max-width: 100%; height: auto; }
 }
 .post-card:hover { box-shadow: var(--shadow-md); }
 
+.post-repost-indicator {
+    padding: 8px 20px 0;
+    font-size: 0.8rem; color: var(--text-muted);
+    display: flex; align-items: center; gap: 6px;
+}
+.post-repost-indicator i { color: var(--success); font-size: 0.9rem; }
+.post-repost-indicator a { color: var(--text-secondary); font-weight: 600; text-decoration: none; }
+.post-repost-indicator a:hover { text-decoration: underline; }
+
 .post-header {
     display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px;
 }
