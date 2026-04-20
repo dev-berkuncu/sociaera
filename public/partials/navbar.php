@@ -64,8 +64,7 @@ if (Auth::check() && class_exists('NotificationModel')) {
                     <i class="bi bi-box-arrow-right"></i>
                 </a>
             <?php else: ?>
-                <a href="<?php echo BASE_URL; ?>/login" class="btn btn-sm btn-outline-light me-2">Giriş</a>
-                <a href="<?php echo BASE_URL; ?>/register" class="btn btn-sm btn-primary-orange">Kayıt Ol</a>
+                <a href="<?php echo BASE_URL; ?>/login" class="btn btn-sm btn-primary-orange">Giriş Yap</a>
             <?php endif; ?>
         </div>
     </div>

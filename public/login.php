@@ -32,9 +32,7 @@ require_once __DIR__ . '/partials/flash.php';
             Şifreniz bizimle paylaşılmaz.
         </p>
 
-        <div class="auth-footer">
-            Hesabın yok mu? <a href="<?php echo BASE_URL; ?>/register">Kayıt Ol</a>
-        </div>
+
     </div>
 </div>
 
