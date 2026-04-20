@@ -22,7 +22,14 @@ define('UPLOAD_PATH',  ROOT_PATH . '/uploads');
 define('STORAGE_PATH', ROOT_PATH . '/storage');
 
 // Base URL (trailing slash yok)
-$baseUrl = rtrim(env('BASE_URL', 'http://localhost'), '/');
+// .env yoksa sunucu ortamından otomatik algıla
+$envBaseUrl = env('BASE_URL', null);
+if ($envBaseUrl === null) {
+    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $host   = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    $envBaseUrl = $scheme . '://' . $host;
+}
+$baseUrl = rtrim($envBaseUrl, '/');
 define('BASE_URL', $baseUrl);
 
 // Timezone
