@@ -44,7 +44,7 @@ try {
     $notifModel = new NotificationModel();
     $notifModel->create(
         $userId,
-        null,
+        $userId,
         'deposit',
         '$' . number_format($amount, 2) . ' bakiye yüklendi.'
     );
