@@ -11,7 +11,7 @@ header('Pragma: no-cache');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="<?php echo escape($pageDescription ?? 'Sociaera — GTA World TR Sosyal Keşif & Check-in Platformu'); ?>">
+    <meta name="description" content="<?php echo escape($pageDescription ?? 'Sociaera — Sosyal Keşif & Check-in Platformu'); ?>">
     <title><?php echo View::title($pageTitle ?? ''); ?></title>
 
     <!-- Favicon -->
