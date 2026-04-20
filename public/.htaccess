@@ -3,12 +3,11 @@
 # Apache Rewrite + Güvenlik Başlıkları
 # ========================================================
 
-# PHP hata gösterimini kapat (production)
-php_flag display_errors off
+# PHP hata gösterimi app.php tarafından yönetilir
 
 # ── Rewrite Engine ─────────────────────────────────────────
 RewriteEngine On
-RewriteBase /
+RewriteBase /public/
 
 # HTTPS yönlendirme (production)
 # RewriteCond %{HTTPS} off
@@ -73,7 +72,10 @@ RewriteRule ^app/ - [F,L]
 </IfModule>
 
 # ── Dosya boyutu limitleri ─────────────────────────────────
-php_value upload_max_filesize 10M
-php_value post_max_size 12M
-php_value max_execution_time 30
-php_value memory_limit 128M
+# Not: Hostinger shared hosting'de php_value yerine .user.ini kullanılabilir
+<IfModule mod_php.c>
+    php_value upload_max_filesize 10M
+    php_value post_max_size 12M
+    php_value max_execution_time 30
+    php_value memory_limit 128M
+</IfModule>
