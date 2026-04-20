@@ -16,6 +16,27 @@ require_once __DIR__ . '/../../app/Models/Checkin.php';
 require_once __DIR__ . '/../../app/Models/Notification.php';
 require_once __DIR__ . '/../../app/Models/Settings.php';
 
+// GET requests — yorumları çek
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    $action = $_GET['action'] ?? '';
+    $checkinId = (int) ($_GET['checkin_id'] ?? 0);
+
+    if ($action === 'get_comments' && $checkinId) {
+        if (!Auth::check()) Response::error('Giriş gerekli.', 401);
+        $checkinModel = new CheckinModel();
+        $comments = $checkinModel->getComments($checkinId);
+
+        // timeAgo ekle
+        $result = [];
+        foreach ($comments as $c) {
+            $c['time_ago'] = timeAgo($c['created_at']);
+            $result[] = $c;
+        }
+        Response::success($result);
+    }
+    Response::error('Geçersiz istek.', 400);
+}
+
 Response::requirePost();
 Response::requireAuthApi();
 Csrf::requireValid();

@@ -48,10 +48,10 @@ if (!isset($post)) return;
     <?php endif; ?>
 
     <div class="post-actions">
-        <a href="<?php echo BASE_URL; ?>/post?id=<?php echo $post['id']; ?>" class="post-action" title="Yorumlar">
+        <button class="post-action" onclick="App.toggleComments(this, <?php echo $post['id']; ?>)" title="Yorumlar">
             <i class="bi bi-chat"></i>
             <span class="action-count" data-comment-count="<?php echo $post['id']; ?>"><?php echo (int)($post['comment_count'] ?? 0); ?></span>
-        </a>
+        </button>
         <button class="post-action <?php echo !empty($post['viewer_reposted']) ? 'reposted' : ''; ?>" onclick="App.toggleRepost(this, <?php echo $post['id']; ?>)" title="Paylaş">
             <i class="bi bi-arrow-repeat"></i>
             <span class="action-count"><?php echo (int)($post['repost_count'] ?? 0); ?></span>
@@ -63,5 +63,25 @@ if (!isset($post)) return;
         <button class="post-action" title="Paylaş" onclick="navigator.clipboard.writeText('<?php echo BASE_URL; ?>/post?id=<?php echo $post['id']; ?>'); App.flash('Link kopyalandı!', 'success');">
             <i class="bi bi-share"></i>
         </button>
+    </div>
+
+    <!-- Inline Yorum Alanı (gizli) -->
+    <div class="post-comments-section" id="comments-section-<?php echo $post['id']; ?>" style="display:none;">
+        <div class="post-comments-list" id="comments-list-<?php echo $post['id']; ?>">
+            <div class="comments-loading" style="text-align:center; padding:16px; color:var(--text-muted); font-size:0.85rem;">
+                <i class="bi bi-arrow-clockwise spin"></i> Yorumlar yükleniyor...
+            </div>
+        </div>
+        <?php if (Auth::check()): ?>
+        <form class="post-comment-form" onsubmit="App.submitInlineComment(this, <?php echo $post['id']; ?>); return false;">
+            <div class="comment-input-row">
+                <?php echo avatarHtml($_SESSION['avatar'] ?? null, Auth::username(), '28'); ?>
+                <input type="text" class="comment-input-inline" placeholder="Yorumunu yaz..." maxlength="500" required>
+                <button type="submit" class="comment-send-btn" title="Gönder">
+                    <i class="bi bi-send-fill"></i>
+                </button>
+            </div>
+        </form>
+        <?php endif; ?>
     </div>
 </div>
