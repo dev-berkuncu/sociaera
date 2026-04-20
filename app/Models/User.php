@@ -132,10 +132,26 @@ class UserModel
 
     public function updateCharacter(int $userId, int $characterId, string $characterName): void
     {
+        $tag = strtolower(preg_replace('/[^a-zA-Z0-9_]/', '', str_replace(' ', '_', $characterName)));
+
+        // Tag çakışma kontrolü
+        $originalTag = $tag;
+        $counter = 0;
+        while (true) {
+            $checkTag = $counter > 0 ? $originalTag . $counter : $tag;
+            $stmt = $this->db->prepare("SELECT id FROM users WHERE tag = ? AND id != ?");
+            $stmt->execute([$checkTag, $userId]);
+            if (!$stmt->fetch()) {
+                $tag = $checkTag;
+                break;
+            }
+            $counter++;
+        }
+
         $stmt = $this->db->prepare("
-            UPDATE users SET gta_character_id = ?, gta_character_name = ? WHERE id = ?
+            UPDATE users SET gta_character_id = ?, gta_character_name = ?, username = ?, tag = ? WHERE id = ?
         ");
-        $stmt->execute([$characterId, $characterName, $userId]);
+        $stmt->execute([$characterId, $characterName, $characterName, $tag, $userId]);
     }
 
     // ── CRUD ──────────────────────────────────────────────

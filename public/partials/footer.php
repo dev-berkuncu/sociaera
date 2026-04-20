@@ -39,7 +39,6 @@
                             <li><a href="<?php echo BASE_URL; ?>/wallet">Cüzdan</a></li>
                         <?php else: ?>
                             <li><a href="<?php echo BASE_URL; ?>/login">Giriş Yap</a></li>
-                            <li><a href="<?php echo BASE_URL; ?>/register">Kayıt Ol</a></li>
                         <?php endif; ?>
                     </ul>
                 </div>

@@ -81,7 +81,8 @@ if (!empty($result['user']['gta_character_id'])) {
     Auth::login($result['user']);
     Csrf::regenerate();
     Logger::info('OAuth login (existing character)', ['user_id' => $result['user']['id']]);
-    Auth::setFlash('success', 'Hoş geldin, ' . $result['user']['username'] . '! 👋');
+    $displayName = $result['user']['gta_character_name'] ?: $result['user']['username'];
+    Auth::setFlash('success', 'Hoş geldin, ' . $displayName . '! 👋');
     header('Location: ' . BASE_URL . '/dashboard');
     exit;
 }

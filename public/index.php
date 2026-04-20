@@ -26,10 +26,7 @@ require_once __DIR__ . '/partials/navbar.php';
             <?php echo APP_NAME; ?>, GTA World TR topluluğu için sosyal keşif ve check-in platformudur. Favori mekanlarını keşfet, deneyimlerini paylaş ve topluluğunla bağlan.
         </p>
         <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
-            <a href="<?php echo BASE_URL; ?>/register" class="btn-primary-orange btn-lg">
-                <i class="bi bi-rocket-takeoff"></i> Hemen Başla
-            </a>
-            <a href="<?php echo BASE_URL; ?>/login" class="btn-outline-orange btn-lg" style="padding:14px 36px;">
+            <a href="<?php echo BASE_URL; ?>/login" class="btn-primary-orange btn-lg">
                 <i class="bi bi-box-arrow-in-right"></i> Giriş Yap
             </a>
         </div>
