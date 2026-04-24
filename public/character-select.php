@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $pageTitle = 'Karakter Seçimi';
-require_once __DIR__ . '/partials/header.php';
+require_once __DIR__ . '/partials/app_header.php';
 require_once __DIR__ . '/partials/flash.php';
 ?>
 
@@ -107,4 +107,4 @@ require_once __DIR__ . '/partials/flash.php';
 .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
 </style>
 
-<?php require_once __DIR__ . '/partials/footer.php'; ?>
+<?php require_once __DIR__ . '/partials/app_footer.php'; ?>
