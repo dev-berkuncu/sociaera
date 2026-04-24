@@ -125,24 +125,10 @@ if (Auth::check()) { header('Location: ' . BASE_URL . '/dashboard'); exit; }
 <body class="bg-background text-on-background antialiased selection:bg-primary-container selection:text-white">
 <!-- TopNavBar -->
 <nav class="bg-[#0F172A]/80 backdrop-blur-xl font-['Manrope'] text-sm tracking-wide font-medium docked full-width top-0 sticky border-b border-white/10 shadow-[0_30px_30px_rgba(15,23,42,0.15)] z-50">
-<div class="flex justify-between items-center w-full px-8 py-4 max-w-7xl mx-auto">
+<div class="flex justify-center items-center w-full px-8 py-4 max-w-7xl mx-auto">
 <div class="text-2xl font-bold tracking-tighter text-[#FF6B35]">
                 <?php echo APP_NAME; ?>
             </div>
-<div class="hidden md:flex items-center gap-8">
-<a class="text-[#FF6B35] border-b-2 border-[#FF6B35] pb-1 scale-95 active:scale-90 transition-transform" href="#">Discover</a>
-<a class="text-slate-400 hover:text-white transition-colors hover:bg-white/5 duration-300 px-2 py-1 rounded scale-95 active:scale-90 transition-transform" href="#">Places</a>
-<a class="text-slate-400 hover:text-white transition-colors hover:bg-white/5 duration-300 px-2 py-1 rounded scale-95 active:scale-90 transition-transform" href="#">Leaderboards</a>
-<a class="text-slate-400 hover:text-white transition-colors hover:bg-white/5 duration-300 px-2 py-1 rounded scale-95 active:scale-90 transition-transform" href="#">Community</a>
-</div>
-<div class="flex items-center gap-4">
-<a href="<?php echo BASE_URL; ?>/login" class="text-slate-400 hover:text-white transition-colors hidden md:block scale-95 active:scale-90 transition-transform font-label-md text-label-md">
-                    Sign In
-                </a>
-<a href="<?php echo BASE_URL; ?>/register" class="bg-primary-container text-white px-5 py-2.5 rounded-lg btn-glow hover:bg-opacity-90 transition-all font-label-md text-label-md scale-95 active:scale-90 transition-transform inline-block">
-                    Join Now
-                </a>
-</div>
 </div>
 </nav>
 <main class="w-full flex flex-col items-center">
@@ -161,7 +147,7 @@ if (Auth::check()) { header('Location: ' . BASE_URL . '/dashboard'); exit; }
                     <?php echo APP_NAME; ?>, sosyal keşif ve check-in platformudur. Favori mekanlarını keşfet, deneyimlerini paylaş ve topluluğunla bağlan.
                 </p>
 <div class="flex items-center gap-4 mt-4">
-<a href="<?php echo BASE_URL; ?>/login" class="bg-primary-container text-white px-8 py-4 rounded-xl btn-glow hover:bg-opacity-90 transition-all font-label-md text-label-md flex items-center gap-2 inline-block">
+<a href="<?php echo BASE_URL; ?>/login" class="bg-primary-container text-white px-8 py-4 rounded-xl btn-glow hover:bg-opacity-90 transition-all font-label-md text-label-md inline-flex items-center justify-center gap-2 w-fit">
                         Giriş Yap
                         <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">arrow_forward</span>
 </a>
@@ -230,10 +216,10 @@ if (Auth::check()) { header('Location: ' . BASE_URL . '/dashboard'); exit; }
                 <?php echo APP_NAME; ?>
             </div>
 <div class="flex flex-wrap items-center justify-center gap-6">
-<a class="text-slate-500 hover:text-slate-300 hover:underline decoration-[#FF6B35] underline-offset-4 opacity-80 hover:opacity-100 transition-opacity" href="#">Terms of Service</a>
-<a class="text-slate-500 hover:text-slate-300 hover:underline decoration-[#FF6B35] underline-offset-4 opacity-80 hover:opacity-100 transition-opacity" href="#">Privacy Policy</a>
-<a class="text-slate-500 hover:text-slate-300 hover:underline decoration-[#FF6B35] underline-offset-4 opacity-80 hover:opacity-100 transition-opacity" href="#">Cookie Settings</a>
-<a class="text-slate-500 hover:text-slate-300 hover:underline decoration-[#FF6B35] underline-offset-4 opacity-80 hover:opacity-100 transition-opacity" href="#">Contact Us</a>
+<a class="text-slate-500 hover:text-slate-300 hover:underline decoration-[#FF6B35] underline-offset-4 opacity-80 hover:opacity-100 transition-opacity" href="#">Kullanım Koşulları</a>
+<a class="text-slate-500 hover:text-slate-300 hover:underline decoration-[#FF6B35] underline-offset-4 opacity-80 hover:opacity-100 transition-opacity" href="#">Gizlilik Politikası</a>
+<a class="text-slate-500 hover:text-slate-300 hover:underline decoration-[#FF6B35] underline-offset-4 opacity-80 hover:opacity-100 transition-opacity" href="#">Çerez Ayarları</a>
+<a class="text-slate-500 hover:text-slate-300 hover:underline decoration-[#FF6B35] underline-offset-4 opacity-80 hover:opacity-100 transition-opacity" href="#">İletişim</a>
 </div>
 <div class="text-center md:text-right">
                 © <?php echo date('Y'); ?> <?php echo APP_NAME; ?>. Executive Social Discovery.
