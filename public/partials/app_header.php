@@ -187,7 +187,7 @@ if (!isset($currentUser) && Auth::check()) {
         <?php $avatarUrl = $currentUser['avatar'] ? BASE_URL . '/uploads/avatars/' . $currentUser['avatar'] : 'https://ui-avatars.com/api/?name=' . urlencode($currentUser['username']) . '&background=random'; ?>
         <a href="<?php echo BASE_URL; ?>/profile"><img alt="User Avatar" class="w-12 h-12 rounded-full border-2 border-white/10 object-cover shadow-lg" src="<?php echo $avatarUrl; ?>"/></a>
         <div>
-            <h1 class="text-2xl font-black tracking-tight text-[#FF6B35]">Sociaera</h1>
+            <h1 class="text-2xl font-black tracking-tight text-[#FF6B35]"><?php echo escape($currentUser['gta_character_name'] ?: $currentUser['username']); ?></h1>
             <a href="<?php echo BASE_URL; ?>/profile" class="text-label-sm font-label-sm text-slate-400 hover:text-white transition-colors">@<?php echo escape($currentUser['tag'] ?: $currentUser['username']); ?></a>
         </div>
     </div>
