@@ -24,83 +24,126 @@ $week = LeaderboardModel::getWeekRange();
 
 $pageTitle = 'Sıralama';
 $activeNav = 'leaderboard';
-require_once __DIR__ . '/partials/header.php';
-require_once __DIR__ . '/partials/navbar.php';
-require_once __DIR__ . '/partials/flash.php';
+require_once __DIR__ . '/partials/app_header.php';
 ?>
 
-<div class="app-layout">
-    <?php require_once __DIR__ . '/partials/sidebar-left.php'; ?>
+<section class="flex-1 flex flex-col gap-stack-md max-w-3xl w-full mx-auto lg:mx-0">
+    <div class="mb-6">
+        <h1 class="text-3xl font-bold flex items-center gap-2 text-on-surface mb-2"><span class="material-symbols-outlined text-primary-container text-[32px]">emoji_events</span> Haftalık Sıralama</h1>
+        <p class="text-slate-400 font-label-md text-label-md"><?php echo formatDate($week['start']); ?> — <?php echo formatDate($week['end']); ?></p>
+    </div>
 
-    <main class="main-feed" style="max-width:720px;">
-        <div class="page-header">
-            <h1><i class="bi bi-trophy" style="color:var(--primary)"></i> Haftalık Sıralama</h1>
-            <p><?php echo formatDate($week['start']); ?> — <?php echo formatDate($week['end']); ?></p>
+    <?php if ($myRank): ?>
+    <div class="bg-gradient-to-r from-primary-container/20 to-[#1E293B]/80 backdrop-blur-[20px] border border-primary-container/30 rounded-xl p-6 shadow-[0_15px_30px_-15px_rgba(255,107,53,0.15)] flex items-center gap-5 mb-4">
+        <div class="w-14 h-14 rounded-full bg-primary-container text-white flex items-center justify-center font-bold text-xl shadow-[0_0_15px_rgba(255,107,53,0.5)] flex-shrink-0">
+            #<?php echo $myRank; ?>
         </div>
-
-        <?php if ($myRank): ?>
-        <div class="card-box" style="padding:20px; margin-bottom:20px; display:flex; align-items:center; gap:16px;">
-            <div class="lb-rank-lg" style="width:48px;height:48px;font-size:1.1rem;">
-                <?php echo $myRank; ?>
-            </div>
-            <div>
-                <div style="font-weight:700;">Senin Sıran: #<?php echo $myRank; ?></div>
-                <div style="font-size:0.85rem; color:var(--text-muted);">Bu hafta <?php echo (new CheckinModel())->getWeeklyCheckinCount(Auth::id()); ?> check-in</div>
-            </div>
+        <div>
+            <div class="font-bold text-lg text-on-surface">Senin Sıran: #<?php echo $myRank; ?></div>
+            <div class="text-sm text-primary-fixed-dim mt-1">Bu hafta <?php echo (new CheckinModel())->getWeeklyCheckinCount(Auth::id()); ?> check-in</div>
         </div>
-        <?php endif; ?>
+    </div>
+    <?php endif; ?>
 
-        <!-- Top Kullanıcılar -->
-        <h2 style="font-size:1.1rem; font-weight:700; margin-bottom:12px;"><i class="bi bi-people" style="color:var(--primary)"></i> En Aktif Kullanıcılar</h2>
-        <div class="leaderboard-table" style="margin-bottom:24px;">
-            <?php if (empty($topUsers)): ?>
-                <div class="empty-state"><i class="bi bi-trophy"></i><p>Bu hafta henüz check-in yok.</p></div>
-            <?php else: ?>
+    <!-- Top Kullanıcılar -->
+    <h2 class="text-xl font-bold flex items-center gap-2 text-on-surface mt-2 mb-2"><span class="material-symbols-outlined text-primary-container">groups</span> En Aktif Kullanıcılar</h2>
+    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl overflow-hidden shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)] mb-8">
+        <?php if (empty($topUsers)): ?>
+            <div class="p-8 text-center text-slate-400">
+                <span class="material-symbols-outlined text-[48px] mb-2 opacity-50">emoji_events</span>
+                <p>Bu hafta henüz check-in yok.</p>
+            </div>
+        <?php else: ?>
+            <div class="flex flex-col">
                 <?php foreach ($topUsers as $i => $u):
-                    $rankClass = $i === 0 ? 'gold' : ($i === 1 ? 'silver' : ($i === 2 ? 'bronze' : ''));
+                    $isTop3 = $i < 3;
+                    $rankColor = 'text-slate-400 bg-surface-container border-white/10';
+                    $rowBg = 'hover:bg-white/5';
+                    if ($i === 0) {
+                        $rankColor = 'text-white bg-[#FFD700] border-[#FFD700] shadow-[0_0_10px_rgba(255,215,0,0.5)]';
+                        $rowBg = 'bg-[#FFD700]/5 hover:bg-[#FFD700]/10 border-b border-white/5';
+                    } elseif ($i === 1) {
+                        $rankColor = 'text-slate-800 bg-[#C0C0C0] border-[#C0C0C0] shadow-[0_0_10px_rgba(192,192,192,0.5)]';
+                        $rowBg = 'bg-[#C0C0C0]/5 hover:bg-[#C0C0C0]/10 border-b border-white/5';
+                    } elseif ($i === 2) {
+                        $rankColor = 'text-white bg-[#CD7F32] border-[#CD7F32] shadow-[0_0_10px_rgba(205,127,50,0.5)]';
+                        $rowBg = 'bg-[#CD7F32]/5 hover:bg-[#CD7F32]/10 border-b border-white/5';
+                    } else {
+                        $rowBg = 'hover:bg-white/5 border-b border-white/5 last:border-0';
+                    }
                 ?>
-                <a href="<?php echo BASE_URL; ?>/profile?u=<?php echo escape($u['tag'] ?: $u['username']); ?>" class="leaderboard-row">
-                    <div class="lb-rank-lg <?php echo $rankClass; ?>"><?php echo $i + 1; ?></div>
-                    <?php echo avatarHtml($u['avatar'] ?? null, $u['username'], '40'); ?>
-                    <div style="flex:1;">
-                        <div style="font-weight:600;"><?php echo escape($u['username']); ?></div>
-                        <?php if ($u['tag']): ?><div style="font-size:0.8rem; color:var(--text-muted);">@<?php echo escape($u['tag']); ?></div><?php endif; ?>
+                <a href="<?php echo BASE_URL; ?>/profile?u=<?php echo escape($u['tag'] ?: $u['username']); ?>" class="flex items-center gap-4 p-4 transition-colors <?php echo $rowBg; ?> group">
+                    <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg border flex-shrink-0 <?php echo $rankColor; ?> transition-transform group-hover:scale-110"><?php echo $i + 1; ?></div>
+                    
+                    <div class="relative flex-shrink-0">
+                        <?php $uAvatar = $u['avatar'] ? BASE_URL . '/uploads/avatars/' . $u['avatar'] : 'https://ui-avatars.com/api/?name=' . urlencode($u['username']) . '&background=random'; ?>
+                        <img alt="User avatar" class="w-12 h-12 rounded-full object-cover border-2 border-white/10 group-hover:border-primary-container/50 transition-colors" src="<?php echo $uAvatar; ?>"/>
                     </div>
-                    <div style="text-align:right;">
-                        <div style="font-weight:700; color:var(--primary); font-size:1.1rem;"><?php echo $u['checkin_count']; ?></div>
-                        <div style="font-size:0.75rem; color:var(--text-muted);">check-in</div>
+                    
+                    <div class="flex-grow min-w-0">
+                        <div class="font-bold text-on-surface group-hover:text-primary-container transition-colors truncate text-lg"><?php echo escape($u['username']); ?></div>
+                        <?php if ($u['tag']): ?><div class="text-sm text-slate-400 truncate">@<?php echo escape($u['tag']); ?></div><?php endif; ?>
+                    </div>
+                    
+                    <div class="text-right flex-shrink-0">
+                        <div class="font-black text-xl text-primary-container"><?php echo $u['checkin_count']; ?></div>
+                        <div class="text-xs text-slate-500 uppercase tracking-wider font-semibold">check-in</div>
                     </div>
                 </a>
                 <?php endforeach; ?>
-            <?php endif; ?>
-        </div>
+            </div>
+        <?php endif; ?>
+    </div>
 
-        <!-- Top Mekanlar -->
-        <h2 style="font-size:1.1rem; font-weight:700; margin-bottom:12px;"><i class="bi bi-geo-alt" style="color:var(--primary)"></i> En Popüler Mekanlar</h2>
-        <div class="leaderboard-table">
-            <?php if (empty($topVenues)): ?>
-                <div class="empty-state"><i class="bi bi-geo-alt"></i><p>Bu hafta henüz check-in yok.</p></div>
-            <?php else: ?>
+    <!-- Top Mekanlar -->
+    <h2 class="text-xl font-bold flex items-center gap-2 text-on-surface mb-2"><span class="material-symbols-outlined text-primary-container">store</span> En Popüler Mekanlar</h2>
+    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl overflow-hidden shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)] mb-8">
+        <?php if (empty($topVenues)): ?>
+            <div class="p-8 text-center text-slate-400">
+                <span class="material-symbols-outlined text-[48px] mb-2 opacity-50">location_off</span>
+                <p>Bu hafta henüz check-in yok.</p>
+            </div>
+        <?php else: ?>
+            <div class="flex flex-col">
                 <?php foreach ($topVenues as $i => $v):
-                    $rankClass = $i === 0 ? 'gold' : ($i === 1 ? 'silver' : ($i === 2 ? 'bronze' : ''));
+                    $rankColor = 'text-slate-400 bg-surface-container border-white/10';
+                    $rowBg = 'hover:bg-white/5 border-b border-white/5 last:border-0';
+                    if ($i === 0) {
+                        $rankColor = 'text-white bg-[#FFD700] border-[#FFD700] shadow-[0_0_10px_rgba(255,215,0,0.5)]';
+                        $rowBg = 'bg-[#FFD700]/5 hover:bg-[#FFD700]/10 border-b border-white/5';
+                    } elseif ($i === 1) {
+                        $rankColor = 'text-slate-800 bg-[#C0C0C0] border-[#C0C0C0] shadow-[0_0_10px_rgba(192,192,192,0.5)]';
+                        $rowBg = 'bg-[#C0C0C0]/5 hover:bg-[#C0C0C0]/10 border-b border-white/5';
+                    } elseif ($i === 2) {
+                        $rankColor = 'text-white bg-[#CD7F32] border-[#CD7F32] shadow-[0_0_10px_rgba(205,127,50,0.5)]';
+                        $rowBg = 'bg-[#CD7F32]/5 hover:bg-[#CD7F32]/10 border-b border-white/5';
+                    }
                 ?>
-                <a href="<?php echo BASE_URL; ?>/venue-detail?id=<?php echo $v['id']; ?>" class="leaderboard-row">
-                    <div class="lb-rank-lg <?php echo $rankClass; ?>"><?php echo $i + 1; ?></div>
-                    <div style="flex:1;">
-                        <div style="font-weight:600;"><?php echo escape($v['name']); ?></div>
-                        <div style="font-size:0.8rem; color:var(--text-muted);"><?php echo escape($v['category'] ?? ''); ?></div>
+                <a href="<?php echo BASE_URL; ?>/venue-detail?id=<?php echo $v['id']; ?>" class="flex items-center gap-4 p-4 transition-colors <?php echo $rowBg; ?> group">
+                    <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg border flex-shrink-0 <?php echo $rankColor; ?> transition-transform group-hover:scale-110"><?php echo $i + 1; ?></div>
+                    
+                    <div class="w-12 h-12 rounded-lg bg-surface-container-high flex items-center justify-center text-primary-container border border-white/10 group-hover:border-primary-container/50 transition-colors flex-shrink-0 relative overflow-hidden">
+                        <?php if(!empty($v['image'])): ?>
+                            <img src="<?php echo uploadUrl('posts', $v['image']); ?>" class="w-full h-full object-cover">
+                        <?php else: ?>
+                            <span class="material-symbols-outlined">store</span>
+                        <?php endif; ?>
                     </div>
-                    <div style="text-align:right;">
-                        <div style="font-weight:700; color:var(--primary); font-size:1.1rem;"><?php echo $v['checkin_count']; ?></div>
-                        <div style="font-size:0.75rem; color:var(--text-muted);">check-in</div>
+                    
+                    <div class="flex-grow min-w-0">
+                        <div class="font-bold text-on-surface group-hover:text-primary-container transition-colors truncate text-lg"><?php echo escape($v['name']); ?></div>
+                        <div class="text-sm text-slate-400 truncate"><?php echo escape($v['category'] ?? 'Genel'); ?></div>
+                    </div>
+                    
+                    <div class="text-right flex-shrink-0">
+                        <div class="font-black text-xl text-primary-container"><?php echo $v['checkin_count']; ?></div>
+                        <div class="text-xs text-slate-500 uppercase tracking-wider font-semibold">check-in</div>
                     </div>
                 </a>
                 <?php endforeach; ?>
-            <?php endif; ?>
-        </div>
-    </main>
+            </div>
+        <?php endif; ?>
+    </div>
+</section>
 
-    <?php require_once __DIR__ . '/partials/sidebar-right.php'; ?>
-</div>
-
-<?php require_once __DIR__ . '/partials/footer.php'; ?>
+<?php require_once __DIR__ . '/partials/app_footer.php'; ?>
