@@ -22,6 +22,13 @@ $topVenues = $lb->getTopVenues(10);
 $myRank = $lb->getUserRank(Auth::id());
 $week = LeaderboardModel::getWeekRange();
 
+$trendVenues = [];
+$miniLeaderboard = [];
+try {
+    $trendVenues = (new VenueModel())->getTrending(5);
+    $miniLeaderboard = $lb->getTopUsers(5);
+} catch (Exception $e) {}
+
 $pageTitle = 'Sıralama';
 $activeNav = 'leaderboard';
 require_once __DIR__ . '/partials/app_header.php';
