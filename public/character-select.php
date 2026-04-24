@@ -52,13 +52,10 @@ require_once __DIR__ . '/partials/flash.php';
         <div class="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-[#ff9e7d]/20 rounded-full blur-[80px] opacity-40 mix-blend-screen"></div>
     </div>
     
-    <div class="w-full max-w-lg relative z-10">
-        <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl p-8 md:p-10 shadow-[0_20px_40px_-15px_rgba(15,23,42,0.5)]">
-            <div class="text-center mb-8">
-                <div class="w-16 h-16 mx-auto bg-primary-container text-white rounded-2xl flex items-center justify-center mb-4 shadow-[0_10px_20px_-5px_rgba(255,107,53,0.4)] transform -rotate-6">
-                    <span class="material-symbols-outlined text-[32px]">group</span>
-                </div>
-                <h1 class="text-3xl font-black text-on-surface mb-2">Karakter Seçimi</h1>
+    <div class="w-full max-w-3xl relative z-10">
+        <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl p-8 md:p-12 shadow-[0_20px_40px_-15px_rgba(15,23,42,0.5)]">
+            <div class="text-center mb-10">
+                <h1 class="text-3xl font-light text-on-surface mb-2">Karakter Seçimi</h1>
                 <p class="text-slate-400 text-sm">Hangi karakter ile devam etmek istiyorsun?</p>
             </div>
 
@@ -69,31 +66,33 @@ require_once __DIR__ . '/partials/flash.php';
                 </div>
                 <a href="<?php echo BASE_URL; ?>/login" class="block w-full bg-white/10 hover:bg-white/20 text-white text-center py-3 rounded-xl font-bold transition-colors border border-white/10">Giriş Sayfasına Dön</a>
             <?php else: ?>
-                <form method="POST" class="flex flex-col gap-6">
+                <form method="POST" class="flex flex-col gap-10">
                     <?php echo csrfField(); ?>
                     
-                    <div class="flex flex-col gap-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <?php foreach ($characters as $char):
                             $name = $char['name'] ?? trim(($char['firstname'] ?? '') . ' ' . ($char['lastname'] ?? ''));
                             $cid = $char['id'] ?? 0;
                         ?>
-                        <label class="flex items-center gap-4 bg-background hover:bg-white/5 border border-white/10 hover:border-primary-container/50 rounded-xl p-4 cursor-pointer transition-colors group">
-                            <div class="relative flex items-center justify-center">
-                                <input type="radio" name="character_id" value="<?php echo $cid; ?>" required class="peer appearance-none w-5 h-5 border-2 border-slate-500 rounded-full checked:border-primary-container transition-colors cursor-pointer">
-                                <div class="absolute w-2.5 h-2.5 bg-primary-container rounded-full opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none"></div>
-                            </div>
-                            
-                            <div>
-                                <div class="font-bold text-lg text-on-surface group-hover:text-primary-container transition-colors"><?php echo escape($name); ?></div>
-                                <div class="text-sm text-slate-500">ID: <?php echo $cid; ?></div>
+                        <label class="relative cursor-pointer group">
+                            <input type="radio" name="character_id" value="<?php echo $cid; ?>" required class="peer sr-only">
+                            <div class="bg-background border border-white/10 rounded-xl p-8 flex flex-col items-center justify-center gap-1 hover:bg-white/5 hover:border-primary-container/30 peer-checked:border-primary-container peer-checked:bg-primary-container/5 transition-all">
+                                <div class="w-16 h-16 rounded-full bg-primary-container/20 text-primary-container flex items-center justify-center mb-3 group-hover:scale-110 transition-transform peer-checked:bg-primary-container peer-checked:text-white shadow-[0_0_15px_rgba(255,107,53,0.1)]">
+                                    <span class="material-symbols-outlined text-[32px] font-light">account_circle</span>
+                                </div>
+                                
+                                <div class="font-light text-xl text-on-surface text-center mb-1"><?php echo escape($name); ?></div>
+                                <div class="text-sm text-slate-500 text-center font-light tracking-wide">ID: <?php echo $cid; ?></div>
                             </div>
                         </label>
                         <?php endforeach; ?>
                     </div>
                     
-                    <button type="submit" class="w-full bg-primary-container text-white py-4 rounded-xl font-bold shadow-[0_0_15px_rgba(255,107,53,0.3)] hover:bg-primary-container/90 transition-all flex items-center justify-center gap-2 active:scale-95">
-                        <span class="material-symbols-outlined">check_circle</span> Bu Karakteri Seç
-                    </button>
+                    <div class="flex justify-center">
+                        <button type="submit" class="bg-primary-container text-white px-8 py-4 rounded-xl font-bold shadow-[0_0_15px_rgba(255,107,53,0.3)] hover:bg-primary-container/90 transition-all flex items-center justify-center gap-3 active:scale-95 text-sm uppercase tracking-wider">
+                            <span class="material-symbols-outlined text-[20px]">login</span> Seçili Karakterle Devam Et
+                        </button>
+                    </div>
                 </form>
             <?php endif; ?>
         </div>
