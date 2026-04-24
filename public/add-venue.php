@@ -57,73 +57,77 @@ $categories = VenueModel::categories();
 
 $pageTitle = 'Mekan Ekle';
 $activeNav = 'venues';
-require_once __DIR__ . '/partials/header.php';
-require_once __DIR__ . '/partials/navbar.php';
-require_once __DIR__ . '/partials/flash.php';
+require_once __DIR__ . '/partials/app_header.php';
 ?>
 
-<div class="app-layout">
-    <main class="main-feed" style="max-width:640px; margin:0 auto;">
-        <div class="page-header">
-            <a href="<?php echo BASE_URL; ?>/venues" class="btn-secondary-soft btn-sm" style="margin-bottom:16px;">
-                <i class="bi bi-arrow-left"></i> Mekanlar
-            </a>
-            <h1><i class="bi bi-plus-circle" style="color:var(--primary)"></i> Yeni Mekan Öner</h1>
-            <p>Mekan öneriniz admin onayından sonra yayınlanacaktır.</p>
+<section class="flex-1 flex flex-col gap-stack-md max-w-2xl w-full mx-auto">
+    <div class="mb-4">
+        <a href="<?php echo BASE_URL; ?>/venues" class="flex items-center gap-2 text-slate-400 hover:text-white transition-colors w-fit mb-4">
+            <span class="material-symbols-outlined text-[20px]">arrow_back</span> Mekanlar
+        </a>
+        <h1 class="text-3xl font-bold flex items-center gap-2 text-on-surface"><span class="material-symbols-outlined text-primary-container text-[32px]">add_circle</span> Yeni Mekan Öner</h1>
+        <p class="text-slate-400 mt-2">Mekan öneriniz admin onayından sonra yayınlanacaktır.</p>
+    </div>
+
+    <?php if ($success): ?>
+        <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-8 text-center text-slate-400 shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)]">
+            <span class="material-symbols-outlined text-[64px] mb-4 text-[#10b981]">check_circle</span>
+            <p class="text-xl text-on-surface mb-6">Mekan öneriniz başarıyla gönderildi!</p>
+            <a href="<?php echo BASE_URL; ?>/venues" class="inline-block bg-primary-container text-white px-6 py-3 rounded-lg font-label-md text-label-md shadow-[0_0_10px_rgba(255,107,53,0.2)] hover:bg-primary-container/90 transition-all">Mekanlara Dön</a>
         </div>
+    <?php else: ?>
+        <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-6 md:p-8 shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)]">
+            <?php if ($error): ?>
+                <div class="bg-error/10 border border-error/50 text-error px-4 py-3 rounded-lg mb-6 flex items-center gap-3">
+                    <span class="material-symbols-outlined">error</span>
+                    <span><?php echo escape($error); ?></span>
+                </div>
+            <?php endif; ?>
 
-        <?php if ($success): ?>
-            <div class="card-box empty-state">
-                <i class="bi bi-check-circle" style="color:var(--success); opacity:1;"></i>
-                <p>Mekan öneriniz başarıyla gönderildi!</p>
-                <a href="<?php echo BASE_URL; ?>/venues" class="btn-primary-orange" style="margin-top:16px;">Mekanlara Dön</a>
-            </div>
-        <?php else: ?>
-            <div class="settings-card">
-                <?php if ($error): ?>
-                    <div class="flash-message flash-error" style="position:static; transform:none; margin-bottom:20px; width:100%;">
-                        <div class="flash-content"><i class="bi bi-exclamation-circle-fill"></i><span><?php echo escape($error); ?></span></div>
-                    </div>
-                <?php endif; ?>
+            <form method="POST" class="flex flex-col gap-5">
+                <?php echo csrfField(); ?>
+                
+                <div class="flex flex-col gap-2">
+                    <label for="name" class="font-label-md text-label-md text-slate-300">Mekan Adı <span class="text-error">*</span></label>
+                    <input type="text" id="name" name="name" value="<?php echo escape($_POST['name'] ?? ''); ?>" required maxlength="100" class="bg-background border border-white/10 rounded-lg px-4 py-3 text-on-surface focus:border-primary-container focus:outline-none transition-colors shadow-sm">
+                </div>
+                
+                <div class="flex flex-col gap-2">
+                    <label for="category" class="font-label-md text-label-md text-slate-300">Kategori</label>
+                    <select name="category" id="category" class="bg-background border border-white/10 rounded-lg px-4 py-3 text-on-surface focus:border-primary-container focus:outline-none transition-colors shadow-sm appearance-none cursor-pointer">
+                        <option value="" class="bg-background text-slate-400">Seçiniz</option>
+                        <?php foreach ($categories as $key => $label): ?>
+                            <option value="<?php echo $key; ?>" <?php echo ($_POST['category'] ?? '') === $key ? 'selected' : ''; ?> class="bg-background text-on-surface"><?php echo escape($label); ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                
+                <div class="flex flex-col gap-2">
+                    <label for="description" class="font-label-md text-label-md text-slate-300">Açıklama</label>
+                    <textarea name="description" id="description" rows="3" class="bg-background border border-white/10 rounded-lg px-4 py-3 text-on-surface focus:border-primary-container focus:outline-none transition-colors shadow-sm resize-y min-h-[100px]"><?php echo escape($_POST['description'] ?? ''); ?></textarea>
+                </div>
+                
+                <div class="flex flex-col gap-2">
+                    <label for="address" class="font-label-md text-label-md text-slate-300">Adres</label>
+                    <input type="text" id="address" name="address" value="<?php echo escape($_POST['address'] ?? ''); ?>" placeholder="Los Santos, Vinewood Blvd." class="bg-background border border-white/10 rounded-lg px-4 py-3 text-on-surface placeholder:text-slate-600 focus:border-primary-container focus:outline-none transition-colors shadow-sm">
+                </div>
+                
+                <div class="flex flex-col gap-2">
+                    <label for="facebrowser_url" class="font-label-md text-label-md text-slate-300">Facebrowser URL</label>
+                    <input type="url" id="facebrowser_url" name="facebrowser_url" value="<?php echo escape($_POST['facebrowser_url'] ?? ''); ?>" placeholder="https://face.gta.world/pages/..." class="bg-background border border-white/10 rounded-lg px-4 py-3 text-on-surface placeholder:text-slate-600 focus:border-primary-container focus:outline-none transition-colors shadow-sm">
+                </div>
+                
+                <div class="flex flex-col gap-2">
+                    <label for="website" class="font-label-md text-label-md text-slate-300">Website</label>
+                    <input type="url" id="website" name="website" value="<?php echo escape($_POST['website'] ?? ''); ?>" placeholder="https://..." class="bg-background border border-white/10 rounded-lg px-4 py-3 text-on-surface placeholder:text-slate-600 focus:border-primary-container focus:outline-none transition-colors shadow-sm">
+                </div>
+                
+                <button type="submit" class="mt-4 bg-primary-container text-white px-6 py-3 rounded-lg font-label-md text-label-md shadow-[0_0_15px_rgba(255,107,53,0.3)] hover:bg-primary-container/90 transition-all flex items-center justify-center gap-2 active:scale-95">
+                    <span class="material-symbols-outlined">send</span> Mekan Öner
+                </button>
+            </form>
+        </div>
+    <?php endif; ?>
+</section>
 
-                <form method="POST">
-                    <?php echo csrfField(); ?>
-                    <div class="form-group">
-                        <label for="name">Mekan Adı *</label>
-                        <input type="text" id="name" name="name" class="form-control-styled" value="<?php echo escape($_POST['name'] ?? ''); ?>" required maxlength="100">
-                    </div>
-                    <div class="form-group">
-                        <label for="category">Kategori</label>
-                        <select name="category" id="category" class="form-control-styled">
-                            <option value="">Seçiniz</option>
-                            <?php foreach ($categories as $key => $label): ?>
-                                <option value="<?php echo $key; ?>" <?php echo ($_POST['category'] ?? '') === $key ? 'selected' : ''; ?>><?php echo escape($label); ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="description">Açıklama</label>
-                        <textarea name="description" id="description" class="form-control-styled" rows="3"><?php echo escape($_POST['description'] ?? ''); ?></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="address">Adres</label>
-                        <input type="text" id="address" name="address" class="form-control-styled" value="<?php echo escape($_POST['address'] ?? ''); ?>" placeholder="Los Santos, Vinewood Blvd.">
-                    </div>
-                    <div class="form-group">
-                        <label for="facebrowser_url">Facebrowser URL</label>
-                        <input type="url" id="facebrowser_url" name="facebrowser_url" class="form-control-styled" value="<?php echo escape($_POST['facebrowser_url'] ?? ''); ?>" placeholder="https://face.gta.world/pages/...">
-                    </div>
-                    <div class="form-group">
-                        <label for="website">Website</label>
-                        <input type="url" id="website" name="website" class="form-control-styled" value="<?php echo escape($_POST['website'] ?? ''); ?>" placeholder="https://...">
-                    </div>
-                    <button type="submit" class="btn-primary-orange btn-full btn-lg">
-                        <i class="bi bi-send"></i> Mekan Öner
-                    </button>
-                </form>
-            </div>
-        <?php endif; ?>
-    </main>
-</div>
-
-<?php require_once __DIR__ . '/partials/footer.php'; ?>
+<?php require_once __DIR__ . '/partials/app_footer.php'; ?>

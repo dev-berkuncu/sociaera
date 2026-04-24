@@ -8,6 +8,8 @@ require_once __DIR__ . '/../app/Core/View.php';
 require_once __DIR__ . '/../app/Services/ImageUploader.php';
 require_once __DIR__ . '/../app/Models/User.php';
 require_once __DIR__ . '/../app/Models/Notification.php';
+require_once __DIR__ . '/../app/Models/Leaderboard.php';
+require_once __DIR__ . '/../app/Models/Venue.php';
 
 Auth::requireLogin();
 
@@ -75,102 +77,133 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+$trendVenues = [];
+$miniLeaderboard = [];
+try {
+    $trendVenues = (new VenueModel())->getTrending(5);
+    $miniLeaderboard = (new LeaderboardModel())->getTopUsers(5);
+} catch (Exception $e) {}
+
 $pageTitle = 'Ayarlar';
 $activeNav = 'settings';
-require_once __DIR__ . '/partials/header.php';
-require_once __DIR__ . '/partials/navbar.php';
-require_once __DIR__ . '/partials/flash.php';
+require_once __DIR__ . '/partials/app_header.php';
 ?>
 
-<div class="app-layout">
-    <main class="main-feed" style="max-width:640px; margin:0 auto;">
-        <div class="page-header">
-            <h1><i class="bi bi-gear" style="color:var(--primary)"></i> Ayarlar</h1>
+<section class="flex-1 flex flex-col gap-stack-md max-w-2xl w-full mx-auto lg:mx-0">
+    <div class="mb-4">
+        <h1 class="text-3xl font-bold flex items-center gap-2 text-on-surface"><span class="material-symbols-outlined text-primary-container text-[32px]">settings</span> Ayarlar</h1>
+    </div>
+
+    <?php if ($error): ?>
+        <div class="bg-error/10 border border-error/50 text-error px-4 py-3 rounded-lg mb-2 flex items-center gap-3">
+            <span class="material-symbols-outlined">error</span>
+            <span><?php echo escape($error); ?></span>
         </div>
+    <?php endif; ?>
+    <?php if ($success): ?>
+        <div class="bg-[#10b981]/10 border border-[#10b981]/50 text-[#10b981] px-4 py-3 rounded-lg mb-2 flex items-center gap-3">
+            <span class="material-symbols-outlined">check_circle</span>
+            <span><?php echo escape($success); ?></span>
+        </div>
+    <?php endif; ?>
 
-        <?php if ($error): ?>
-            <div class="flash-message flash-error" style="position:static; transform:none; margin-bottom:16px; width:100%;"><div class="flash-content"><i class="bi bi-exclamation-circle-fill"></i><span><?php echo escape($error); ?></span></div></div>
-        <?php endif; ?>
-        <?php if ($success): ?>
-            <div class="flash-message flash-success" style="position:static; transform:none; margin-bottom:16px; width:100%;"><div class="flash-content"><i class="bi bi-check-circle-fill"></i><span><?php echo escape($success); ?></span></div></div>
-        <?php endif; ?>
+    <!-- Avatar -->
+    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-6 shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)]">
+        <h2 class="text-xl font-bold flex items-center gap-2 mb-4 text-on-surface"><span class="material-symbols-outlined text-primary-container">account_circle</span> Avatar</h2>
+        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+            <?php $pAvatar = $user['avatar'] ? BASE_URL . '/uploads/avatars/' . $user['avatar'] : 'https://ui-avatars.com/api/?name=' . urlencode($user['username']) . '&background=random'; ?>
+            <img src="<?php echo $pAvatar; ?>" class="w-24 h-24 rounded-full object-cover border-2 border-white/10 flex-shrink-0">
+            
+            <form method="POST" enctype="multipart/form-data" class="flex-1 w-full">
+                <?php echo csrfField(); ?>
+                <input type="hidden" name="action" value="update_avatar">
+                
+                <div class="flex flex-col gap-2">
+                    <input type="file" name="avatar" accept="image/*" required class="block w-full text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary-container/20 file:text-primary-container hover:file:bg-primary-container/30 cursor-pointer">
+                    <div class="text-xs text-slate-500">Maks. 10MB, JPEG / PNG / WebP</div>
+                    <button type="submit" class="w-fit mt-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors border border-white/10">Yükle</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-        <!-- Avatar -->
-        <div class="settings-card">
-            <h2><i class="bi bi-person-circle"></i> Avatar</h2>
-            <div style="display:flex; align-items:center; gap:16px; margin-bottom:16px;">
-                <?php echo avatarHtml($user['avatar'], $user['username'], '64'); ?>
-                <form method="POST" enctype="multipart/form-data" style="flex:1;">
-                    <?php echo csrfField(); ?>
-                    <input type="hidden" name="action" value="update_avatar">
-                    <input type="file" name="avatar" accept="image/*" required class="form-control-styled" style="font-size:0.85rem;">
-                    <div class="form-hint">Maks. 10MB, JPEG / PNG / WebP</div>
-                    <button type="submit" class="btn-primary-orange btn-sm" style="margin-top:8px;">Yükle</button>
-                </form>
+    <!-- Banner -->
+    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-6 shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)]">
+        <h2 class="text-xl font-bold flex items-center gap-2 mb-4 text-on-surface"><span class="material-symbols-outlined text-primary-container">image</span> Banner</h2>
+        <div class="h-32 rounded-xl overflow-hidden bg-surface-container relative mb-4 border border-white/10">
+            <?php if (bannerUrl($user['banner'])): ?>
+                <img src="<?php echo bannerUrl($user['banner']); ?>" class="w-full h-full object-cover">
+            <?php else: ?>
+                <div class="w-full h-full bg-gradient-to-r from-primary-container/40 to-surface-container-high"></div>
+            <?php endif; ?>
+        </div>
+        <form method="POST" enctype="multipart/form-data">
+            <?php echo csrfField(); ?>
+            <input type="hidden" name="action" value="update_banner">
+            
+            <div class="flex flex-col gap-2">
+                <input type="file" name="banner" accept="image/*" required class="block w-full text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary-container/20 file:text-primary-container hover:file:bg-primary-container/30 cursor-pointer">
+                <div class="text-xs text-slate-500">Maks. 10MB, önerilen 1500x500px</div>
+                <button type="submit" class="w-fit mt-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors border border-white/10">Yükle</button>
             </div>
-        </div>
+        </form>
+    </div>
 
-        <!-- Banner -->
-        <div class="settings-card">
-            <h2><i class="bi bi-image"></i> Banner</h2>
-            <div style="border-radius:var(--radius-md); height:120px; margin-bottom:12px; background:var(--primary-gradient); background-size:cover; background-position:center; <?php if (bannerUrl($user['banner'])): ?>background-image:url('<?php echo bannerUrl($user['banner']); ?>')<?php endif; ?>"></div>
-            <form method="POST" enctype="multipart/form-data">
-                <?php echo csrfField(); ?>
-                <input type="hidden" name="action" value="update_banner">
-                <input type="file" name="banner" accept="image/*" required class="form-control-styled" style="font-size:0.85rem;">
-                <div class="form-hint">Maks. 10MB, önerilen 1500x500px</div>
-                <button type="submit" class="btn-primary-orange btn-sm" style="margin-top:8px;">Yükle</button>
-            </form>
-        </div>
+    <!-- Profil Bilgileri -->
+    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-6 shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)]">
+        <h2 class="text-xl font-bold flex items-center gap-2 mb-4 text-on-surface"><span class="material-symbols-outlined text-primary-container">contact_mail</span> Profil Bilgileri</h2>
+        <form method="POST" class="flex flex-col gap-4">
+            <?php echo csrfField(); ?>
+            <input type="hidden" name="action" value="update_profile">
+            
+            <div class="flex flex-col gap-1.5">
+                <label class="text-sm font-bold text-slate-300">Kullanıcı Adı</label>
+                <input type="text" name="username" value="<?php echo escape($user['username']); ?>" required class="bg-background border border-white/10 rounded-lg px-4 py-2 text-on-surface focus:border-primary-container focus:outline-none transition-colors shadow-sm">
+            </div>
+            
+            <div class="flex flex-col gap-1.5">
+                <label class="text-sm font-bold text-slate-300">Etiket (@tag)</label>
+                <div class="relative">
+                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 font-bold">@</span>
+                    <input type="text" name="tag" value="<?php echo escape($user['tag'] ?? ''); ?>" pattern="[a-zA-Z0-9_]{3,30}" class="w-full bg-background border border-white/10 rounded-lg pl-9 pr-4 py-2 text-on-surface focus:border-primary-container focus:outline-none transition-colors shadow-sm">
+                </div>
+            </div>
+            
+            <div class="flex flex-col gap-1.5">
+                <label class="text-sm font-bold text-slate-300">E-posta</label>
+                <input type="email" name="email" value="<?php echo escape($user['email']); ?>" required class="bg-background border border-white/10 rounded-lg px-4 py-2 text-on-surface focus:border-primary-container focus:outline-none transition-colors shadow-sm">
+            </div>
+            
+            <div class="flex flex-col gap-1.5">
+                <label class="text-sm font-bold text-slate-300">Biyografi</label>
+                <textarea name="bio" rows="3" maxlength="280" class="bg-background border border-white/10 rounded-lg px-4 py-2 text-on-surface focus:border-primary-container focus:outline-none transition-colors shadow-sm resize-y"><?php echo escape($user['bio'] ?? ''); ?></textarea>
+                <div class="text-xs text-slate-500">Maks 280 karakter</div>
+            </div>
+            
+            <button type="submit" class="mt-2 bg-primary-container text-white px-6 py-2.5 rounded-lg font-bold shadow-[0_0_10px_rgba(255,107,53,0.2)] hover:bg-primary-container/90 transition-all active:scale-95 w-fit">Kaydet</button>
+        </form>
+    </div>
 
-        <!-- Profil Bilgileri -->
-        <div class="settings-card">
-            <h2><i class="bi bi-person-lines-fill"></i> Profil Bilgileri</h2>
-            <form method="POST">
-                <?php echo csrfField(); ?>
-                <input type="hidden" name="action" value="update_profile">
-                <div class="form-group">
-                    <label>Kullanıcı Adı</label>
-                    <input type="text" name="username" class="form-control-styled" value="<?php echo escape($user['username']); ?>" required>
-                </div>
-                <div class="form-group">
-                    <label>Etiket (@tag)</label>
-                    <div class="input-with-prefix">
-                        <span class="input-prefix">@</span>
-                        <input type="text" name="tag" class="form-control-styled" value="<?php echo escape($user['tag'] ?? ''); ?>" pattern="[a-zA-Z0-9_]{3,30}">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>E-posta</label>
-                    <input type="email" name="email" class="form-control-styled" value="<?php echo escape($user['email']); ?>" required>
-                </div>
-                <div class="form-group">
-                    <label>Biyografi</label>
-                    <textarea name="bio" class="form-control-styled" rows="3" maxlength="280"><?php echo escape($user['bio'] ?? ''); ?></textarea>
-                    <div class="form-hint">Maks 280 karakter</div>
-                </div>
-                <button type="submit" class="btn-primary-orange">Kaydet</button>
-            </form>
-        </div>
+    <!-- Şifre Değiştir -->
+    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-6 shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)]">
+        <h2 class="text-xl font-bold flex items-center gap-2 mb-4 text-on-surface"><span class="material-symbols-outlined text-primary-container">lock</span> Şifre Değiştir</h2>
+        <form method="POST" class="flex flex-col gap-4">
+            <?php echo csrfField(); ?>
+            <input type="hidden" name="action" value="change_password">
+            
+            <div class="flex flex-col gap-1.5">
+                <label class="text-sm font-bold text-slate-300">Mevcut Şifre</label>
+                <input type="password" name="current_password" required class="bg-background border border-white/10 rounded-lg px-4 py-2 text-on-surface focus:border-primary-container focus:outline-none transition-colors shadow-sm">
+            </div>
+            
+            <div class="flex flex-col gap-1.5">
+                <label class="text-sm font-bold text-slate-300">Yeni Şifre</label>
+                <input type="password" name="new_password" required minlength="6" class="bg-background border border-white/10 rounded-lg px-4 py-2 text-on-surface focus:border-primary-container focus:outline-none transition-colors shadow-sm">
+            </div>
+            
+            <button type="submit" class="mt-2 bg-white/10 hover:bg-white/20 text-white border border-white/10 px-6 py-2.5 rounded-lg font-bold transition-all active:scale-95 w-fit">Şifreyi Güncelle</button>
+        </form>
+    </div>
+</section>
 
-        <!-- Şifre -->
-        <div class="settings-card">
-            <h2><i class="bi bi-lock"></i> Şifre Değiştir</h2>
-            <form method="POST">
-                <?php echo csrfField(); ?>
-                <input type="hidden" name="action" value="change_password">
-                <div class="form-group">
-                    <label>Mevcut Şifre</label>
-                    <input type="password" name="current_password" class="form-control-styled" required>
-                </div>
-                <div class="form-group">
-                    <label>Yeni Şifre</label>
-                    <input type="password" name="new_password" class="form-control-styled" required minlength="6">
-                </div>
-                <button type="submit" class="btn-primary-orange">Şifreyi Değiştir</button>
-            </form>
-        </div>
-    </main>
-</div>
-
-<?php require_once __DIR__ . '/partials/footer.php'; ?>
+<?php require_once __DIR__ . '/partials/app_footer.php'; ?>
