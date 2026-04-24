@@ -6,6 +6,9 @@
 require_once __DIR__ . '/../../app/Config/env.php';
 loadEnv(dirname(__DIR__, 2) . '/.env');
 require_once __DIR__ . '/../../app/Config/app.php';
+require_once __DIR__ . '/../../app/Config/database.php';
+require_once __DIR__ . '/../../app/Core/Response.php';
+require_once __DIR__ . '/../../app/Models/Venue.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
