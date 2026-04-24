@@ -65,7 +65,7 @@ require_once __DIR__ . '/partials/app_header.php';
             <div class="flex gap-4">
                 <?php $avatarUrl = $currentUser['avatar'] ? BASE_URL . '/uploads/avatars/' . $currentUser['avatar'] : 'https://ui-avatars.com/api/?name=' . urlencode($currentUser['username']) . '&background=random'; ?>
                 <img alt="User avatar" class="w-10 h-10 rounded-full object-cover border border-white/10 flex-shrink-0" src="<?php echo $avatarUrl; ?>"/>
-                <div class="flex-grow">
+                <div class="flex-grow relative">
                     <div id="selectedVenueDisplay" class="flex items-center gap-2 mb-2 bg-white/5 w-fit px-3 py-1 rounded-full border border-white/10" style="display:none;">
                         <span class="material-symbols-outlined text-[16px] text-primary-container">location_on</span>
                         <span id="selectedVenueName" class="font-label-sm text-label-sm text-slate-300"></span>
@@ -73,6 +73,9 @@ require_once __DIR__ . '/partials/app_header.php';
                     </div>
                     <textarea class="w-full bg-transparent border-none text-on-surface placeholder:text-slate-500 font-body-md text-body-md focus:ring-0 resize-none outline-none" name="note" id="composeNote" placeholder="Neredesin? Ne yapıyorsun?" rows="2"></textarea>
                     <div id="composePreview" class="mt-2 rounded-xl overflow-hidden border border-white/10 relative" style="display:none;"></div>
+                    
+                    <!-- @ Mention Dropdown -->
+                    <div id="mentionDropdown" class="absolute left-0 w-64 bg-[#1E293B] border border-white/10 rounded-lg shadow-xl z-50 max-h-48 overflow-y-auto" style="display:none;"></div>
                 </div>
             </div>
             <div class="mt-4 flex items-center justify-between pt-4 border-t border-white/5 relative">
@@ -128,6 +131,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const composeNote = document.getElementById('composeNote');
     const composeBtn = document.getElementById('composeSubmitBtn');
     const venueIdInput = document.getElementById('selectedVenueId');
+    const mentionDropdown = document.getElementById('mentionDropdown');
 
     if (!composeForm || !composeNote) return;
 
@@ -136,6 +140,82 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     composeNote.addEventListener('input', checkCompose);
 
+    // ── @ Mention Autocomplete ───────────────────────────
+    let mentionTimer = null;
+    let mentionStart = -1;
+
+    composeNote.addEventListener('input', function() {
+        const val = this.value;
+        const pos = this.selectionStart;
+
+        // Find the last @ before cursor
+        let atPos = -1;
+        for (let i = pos - 1; i >= 0; i--) {
+            if (val[i] === '@') { atPos = i; break; }
+            if (val[i] === ' ' || val[i] === '\n') break;
+        }
+
+        if (atPos === -1) {
+            mentionDropdown.style.display = 'none';
+            mentionStart = -1;
+            return;
+        }
+
+        const query = val.substring(atPos + 1, pos);
+        mentionStart = atPos;
+
+        if (query.length < 2) {
+            mentionDropdown.style.display = 'none';
+            return;
+        }
+
+        clearTimeout(mentionTimer);
+        mentionTimer = setTimeout(async () => {
+            const users = await App.searchUsers(query);
+            if (users.length === 0) {
+                mentionDropdown.style.display = 'none';
+                return;
+            }
+
+            mentionDropdown.innerHTML = users.map(u => {
+                const avatar = u.avatar
+                    ? `<img src="${App.baseUrl}/uploads/avatars/${u.avatar}" class="w-8 h-8 rounded-full object-cover border border-white/10">`
+                    : `<div class="w-8 h-8 rounded-full bg-primary-container/20 text-primary-container flex items-center justify-center text-xs font-bold border border-white/10">${(u.username || 'U')[0].toUpperCase()}</div>`;
+                return `<div class="mention-item flex items-center gap-3 px-3 py-2 cursor-pointer hover:bg-white/5 rounded-md transition-colors" data-tag="${u.tag || u.username}" data-name="${u.username}">
+                    ${avatar}
+                    <div>
+                        <div class="text-sm font-semibold text-on-surface">${u.username}</div>
+                        ${u.tag ? `<div class="text-xs text-slate-400">@${u.tag}</div>` : ''}
+                    </div>
+                </div>`;
+            }).join('');
+
+            mentionDropdown.style.display = 'block';
+
+            mentionDropdown.querySelectorAll('.mention-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const tag = item.dataset.tag;
+                    const before = composeNote.value.substring(0, mentionStart);
+                    const after = composeNote.value.substring(composeNote.selectionStart);
+                    composeNote.value = before + '@' + tag + ' ' + after;
+                    mentionDropdown.style.display = 'none';
+                    composeNote.focus();
+                    const newPos = mentionStart + tag.length + 2;
+                    composeNote.setSelectionRange(newPos, newPos);
+                    checkCompose();
+                });
+            });
+        }, 300);
+    });
+
+    // Close mention dropdown on outside click
+    document.addEventListener('click', (e) => {
+        if (!composeNote.contains(e.target) && !mentionDropdown.contains(e.target)) {
+            mentionDropdown.style.display = 'none';
+        }
+    });
+
+    // ── Venue Search ─────────────────────────────────────
     const venueInput = document.getElementById('venueSearchInput');
     const venueDropdown = document.getElementById('venueDropdown');
 
