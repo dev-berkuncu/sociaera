@@ -90,35 +90,9 @@ if (!$result['ok']) {
 $_SESSION['oauth_characters'] = $characters;
 $_SESSION['oauth_user_id'] = $result['user']['id'];
 
-// 6. Karakter zaten seçilmişse direkt giriş yap
-if (!empty($result['user']['gta_character_id'])) {
-    // Mevcut kullanıcıların username'ini karakter adıyla senkronla
-    if (!empty($result['user']['gta_character_name']) && $result['user']['username'] !== $result['user']['gta_character_name']) {
-        $userModel->updateCharacter($result['user']['id'], $result['user']['gta_character_id'], $result['user']['gta_character_name']);
-        $result['user'] = $userModel->getById($result['user']['id']);
-    }
-    Auth::login($result['user']);
-    Csrf::regenerate();
-    Logger::info('OAuth login (existing character)', ['user_id' => $result['user']['id']]);
-    $displayName = $result['user']['gta_character_name'] ?: $result['user']['username'];
-    Auth::setFlash('success', 'Hoş geldin, ' . $displayName . '! 👋');
-    header('Location: ' . BASE_URL . '/dashboard');
-    exit;
-}
-
-// 7. Tek karakter varsa otomatik seç
-if (count($characters) === 1) {
-    $char = $characters[0];
-    $userModel->updateCharacter($result['user']['id'], $char['id'], $char['name']);
-    $user = $userModel->getById($result['user']['id']);
-    Auth::login($user);
-    Csrf::regenerate();
-    unset($_SESSION['oauth_characters'], $_SESSION['oauth_user_id']);
-    Logger::info('OAuth login (auto single char)', ['user_id' => $user['id'], 'char' => $char['name']]);
-    Auth::setFlash('success', $char['name'] . ' olarak giriş yaptın! 🎭');
-    header('Location: ' . BASE_URL . '/dashboard');
-    exit;
-}
+// 6. Karakter zaten seçilmiş olsa bile, kullanıcının her girişte karakter seçebilmesi için
+// otomatik giriş adımlarını (Step 6 ve Step 7) kaldırıyoruz.
+// Kullanıcı her login olduğunda character-select sayfasına yönlendirilecek.
 
 // 8. Birden fazla karakter → seçim sayfası
 header('Location: ' . BASE_URL . '/character-select');
