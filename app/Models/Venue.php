@@ -140,8 +140,8 @@ class VenueModel
         $like = '%' . $query . '%';
         $stmt = $this->db->prepare("
             SELECT id, name, category FROM venues
-            WHERE (name LIKE ? OR address LIKE ?) AND status = 'approved' AND is_active = 1
-            ORDER BY name LIMIT ?
+            WHERE (name LIKE ? OR address LIKE ?) AND status IN ('approved', 'pending') AND is_active = 1
+            ORDER BY FIELD(status, 'approved', 'pending'), name LIMIT ?
         ");
         $stmt->execute([$like, $like, $limit]);
         return $stmt->fetchAll();
