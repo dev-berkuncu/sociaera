@@ -6,7 +6,7 @@ require_once __DIR__ . '/../app/Config/app.php';
 if (Auth::check()) { header('Location: ' . BASE_URL . '/dashboard'); exit; }
 
 $pageTitle = 'Kayıt Ol';
-require_once __DIR__ . '/partials/header.php';
+require_once __DIR__ . '/partials/app_header.php';
 require_once __DIR__ . '/partials/flash.php';
 ?>
 
@@ -44,4 +44,4 @@ require_once __DIR__ . '/partials/flash.php';
     </div>
 </div>
 
-<?php require_once __DIR__ . '/partials/footer.php'; ?>
+<?php require_once __DIR__ . '/partials/app_footer.php'; ?>
