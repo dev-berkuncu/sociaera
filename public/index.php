@@ -12,7 +12,7 @@ if (Auth::check()) { header('Location: ' . BASE_URL . '/dashboard'); exit; }
 <html class="dark" lang="tr"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title><?php echo APP_NAME; ?> - Executive Social Discovery</title>
+<title><?php echo APP_NAME; ?> - Nexus | Dijital Ajans</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
@@ -222,7 +222,7 @@ if (Auth::check()) { header('Location: ' . BASE_URL . '/dashboard'); exit; }
 <a class="text-slate-500 hover:text-slate-300 hover:underline decoration-[#FF6B35] underline-offset-4 opacity-80 hover:opacity-100 transition-opacity" href="#">İletişim</a>
 </div>
 <div class="text-center md:text-right">
-                © <?php echo date('Y'); ?> <?php echo APP_NAME; ?>. Executive Social Discovery.
+                © <?php echo date('Y'); ?> <?php echo APP_NAME; ?>. Nexus | Dijital Ajans.
             </div>
 </div>
 </footer>
