@@ -13,7 +13,6 @@ require_once __DIR__ . '/../../app/Models/Notification.php';
 require_once __DIR__ . '/../../app/Models/Settings.php';
 
 Auth::requireAdmin();
-
 $checkinModel = new CheckinModel();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -36,40 +35,41 @@ $pendingVenues = (new VenueModel())->getPendingCount();
 
 $pageTitle = 'Gönderi Yönetimi';
 $adminPage = 'posts';
-require_once __DIR__ . '/../../public/partials/header.php';
-require_once __DIR__ . '/../../public/partials/navbar.php';
-require_once __DIR__ . '/../../public/partials/flash.php';
+require_once __DIR__ . '/_header.php';
 ?>
 
-<div class="admin-layout">
-    <?php include __DIR__ . '/_sidebar.php'; ?>
-    <div class="admin-content">
-        <h1 style="font-size:1.3rem; font-weight:800; margin-bottom:20px;"><i class="bi bi-file-text" style="color:var(--primary)"></i> Gönderiler (<?php echo $result['total']; ?>)</h1>
+<div class="flex items-center justify-between mb-6">
+    <h1 class="text-xl font-black text-on-surface flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary-container">article</span> Gönderiler (<?php echo $result['total']; ?>)
+    </h1>
+</div>
 
-        <div class="card-box" style="overflow-x:auto; padding:0;">
-            <table class="admin-table">
-                <thead><tr><th>#</th><th>Kullanıcı</th><th>Mekan</th><th>İçerik</th><th>Tarih</th><th>İşlem</th></tr></thead>
-                <tbody>
+<div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl shadow-[0_10px_20px_-10px_rgba(15,23,42,0.3)] overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full text-left">
+            <thead class="bg-white/[0.03] text-slate-400 text-label-sm uppercase">
+                <tr><th class="px-6 py-3">#</th><th class="px-6 py-3">Kullanıcı</th><th class="px-6 py-3">Mekan</th><th class="px-6 py-3">İçerik</th><th class="px-6 py-3">Tarih</th><th class="px-6 py-3">İşlem</th></tr>
+            </thead>
+            <tbody class="divide-y divide-white/5">
                 <?php foreach ($result['posts'] as $p): ?>
-                <tr>
-                    <td><?php echo $p['id']; ?></td>
-                    <td style="font-weight:600;"><?php echo escape($p['username']); ?></td>
-                    <td style="font-size:0.85rem;"><?php echo escape($p['venue_name']); ?></td>
-                    <td style="font-size:0.82rem; max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"><?php echo escape(truncate($p['note'] ?? '', 60)); ?></td>
-                    <td style="font-size:0.82rem;"><?php echo formatDate($p['created_at'], true); ?></td>
-                    <td>
-                        <div style="display:flex; gap:4px;">
-                            <form method="POST" style="display:inline;"><input type="hidden" name="csrf_token" value="<?php echo csrfToken(); ?>"><input type="hidden" name="post_id" value="<?php echo $p['id']; ?>"><input type="hidden" name="action" value="flag"><button class="btn-secondary-soft btn-sm" title="İşaretle"><i class="bi bi-flag"></i></button></form>
-                            <form method="POST" style="display:inline;"><input type="hidden" name="csrf_token" value="<?php echo csrfToken(); ?>"><input type="hidden" name="post_id" value="<?php echo $p['id']; ?>"><input type="hidden" name="action" value="exclude"><button class="btn-secondary-soft btn-sm" title="Sıralamadan Çıkar"><i class="bi bi-trophy"></i></button></form>
-                            <form method="POST" style="display:inline;" onsubmit="return confirm('Silmek istediğinize emin misiniz?')"><input type="hidden" name="csrf_token" value="<?php echo csrfToken(); ?>"><input type="hidden" name="post_id" value="<?php echo $p['id']; ?>"><input type="hidden" name="action" value="delete"><button class="btn-danger-soft btn-sm" title="Sil"><i class="bi bi-trash3"></i></button></form>
+                <tr class="hover:bg-white/[0.02] transition-colors">
+                    <td class="px-6 py-3 text-slate-500"><?php echo $p['id']; ?></td>
+                    <td class="px-6 py-3 font-semibold text-on-surface"><?php echo escape($p['username']); ?></td>
+                    <td class="px-6 py-3 text-slate-300 text-xs"><?php echo escape($p['venue_name']); ?></td>
+                    <td class="px-6 py-3 text-slate-400 text-xs max-w-[200px] truncate"><?php echo escape(truncate($p['note'] ?? '', 60)); ?></td>
+                    <td class="px-6 py-3 text-slate-500 text-xs"><?php echo formatDate($p['created_at'], true); ?></td>
+                    <td class="px-6 py-3">
+                        <div class="flex gap-1">
+                            <form method="POST" class="inline"><input type="hidden" name="csrf_token" value="<?php echo csrfToken(); ?>"><input type="hidden" name="post_id" value="<?php echo $p['id']; ?>"><input type="hidden" name="action" value="flag"><button class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 flex items-center justify-center transition-colors" title="İşaretle"><span class="material-symbols-outlined text-[18px]">flag</span></button></form>
+                            <form method="POST" class="inline"><input type="hidden" name="csrf_token" value="<?php echo csrfToken(); ?>"><input type="hidden" name="post_id" value="<?php echo $p['id']; ?>"><input type="hidden" name="action" value="exclude"><button class="w-8 h-8 rounded-lg bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 flex items-center justify-center transition-colors" title="Sıralamadan Çıkar"><span class="material-symbols-outlined text-[18px]">emoji_events</span></button></form>
+                            <form method="POST" class="inline" onsubmit="return confirm('Silmek istediğinize emin misiniz?')"><input type="hidden" name="csrf_token" value="<?php echo csrfToken(); ?>"><input type="hidden" name="post_id" value="<?php echo $p['id']; ?>"><input type="hidden" name="action" value="delete"><button class="w-8 h-8 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 flex items-center justify-center transition-colors" title="Sil"><span class="material-symbols-outlined text-[18px]">delete</span></button></form>
                         </div>
                     </td>
                 </tr>
                 <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
+            </tbody>
+        </table>
     </div>
 </div>
 
-<?php require_once __DIR__ . '/../../public/partials/footer.php'; ?>
+<?php require_once __DIR__ . '/_footer.php'; ?>

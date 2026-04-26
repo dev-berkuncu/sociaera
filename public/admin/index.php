@@ -28,60 +28,65 @@ $totalVenues = (int) $db->query("SELECT COUNT(*) FROM venues WHERE status = 'app
 $totalCheckins = (int) $db->query("SELECT COUNT(*) FROM checkins WHERE is_deleted = 0")->fetchColumn();
 $todayCheckins = (int) $db->query("SELECT COUNT(*) FROM checkins WHERE is_deleted = 0 AND DATE(created_at) = CURDATE()")->fetchColumn();
 
-// Son admin logları
 $logs = $db->query("
     SELECT al.*, u.username FROM admin_logs al
     JOIN users u ON al.admin_id = u.id
     ORDER BY al.created_at DESC LIMIT 10
 ")->fetchAll();
 
-$pageTitle = 'Admin Panel';
-$activeNav = '';
+$pageTitle = 'Dashboard';
 $adminPage = 'dashboard';
-require_once __DIR__ . '/../../public/partials/header.php';
-require_once __DIR__ . '/../../public/partials/navbar.php';
+require_once __DIR__ . '/_header.php';
 ?>
 
-<div class="admin-layout">
-    <?php include __DIR__ . '/_sidebar.php'; ?>
-
-    <div class="admin-content">
-        <h1 style="font-size:1.5rem; font-weight:800; margin-bottom:24px;">
-            <i class="bi bi-speedometer2" style="color:var(--primary)"></i> Admin Panel
-        </h1>
-
-        <div class="stats-grid">
-            <div class="stat-card"><div class="stat-card-icon">👥</div><div class="stat-card-value"><?php echo $totalUsers; ?></div><div class="stat-card-label">Toplam Üye</div></div>
-            <div class="stat-card"><div class="stat-card-icon">📍</div><div class="stat-card-value"><?php echo $totalVenues; ?></div><div class="stat-card-label">Onaylı Mekan</div></div>
-            <div class="stat-card"><div class="stat-card-icon">📝</div><div class="stat-card-value"><?php echo $totalCheckins; ?></div><div class="stat-card-label">Toplam Check-in</div></div>
-            <div class="stat-card"><div class="stat-card-icon">📆</div><div class="stat-card-value"><?php echo $todayCheckins; ?></div><div class="stat-card-label">Bugünkü Check-in</div></div>
-            <div class="stat-card" style="<?php echo $pendingVenues > 0 ? 'border-color:var(--warning);' : ''; ?>"><div class="stat-card-icon">⏳</div><div class="stat-card-value"><?php echo $pendingVenues; ?></div><div class="stat-card-label">Bekleyen Mekan</div></div>
-        </div>
-
-        <!-- Son Loglar -->
-        <div class="card-box" style="padding:0;">
-            <h2 style="padding:20px 20px 12px; font-size:1.1rem; font-weight:700;">Son İşlemler</h2>
-            <?php if (empty($logs)): ?>
-                <div class="empty-state"><p>Henüz log yok.</p></div>
-            <?php else: ?>
-                <div style="overflow-x:auto;">
-                    <table class="admin-table">
-                        <thead><tr><th>Admin</th><th>İşlem</th><th>Hedef</th><th>Tarih</th></tr></thead>
-                        <tbody>
-                        <?php foreach ($logs as $log): ?>
-                            <tr>
-                                <td><?php echo escape($log['username']); ?></td>
-                                <td><?php echo escape($log['action_type']); ?></td>
-                                <td><?php echo escape($log['target_type']); ?> #<?php echo $log['target_id']; ?></td>
-                                <td><?php echo formatDate($log['created_at'], true); ?></td>
-                            </tr>
-                        <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
-            <?php endif; ?>
-        </div>
+<!-- Stats Grid -->
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
+    <?php
+    $stats = [
+        ['icon' => 'people', 'value' => $totalUsers, 'label' => 'Toplam Üye', 'color' => 'text-blue-400'],
+        ['icon' => 'location_on', 'value' => $totalVenues, 'label' => 'Onaylı Mekan', 'color' => 'text-green-400'],
+        ['icon' => 'edit_note', 'value' => $totalCheckins, 'label' => 'Toplam Check-in', 'color' => 'text-purple-400'],
+        ['icon' => 'today', 'value' => $todayCheckins, 'label' => 'Bugünkü Check-in', 'color' => 'text-cyan-400'],
+        ['icon' => 'pending', 'value' => $pendingVenues, 'label' => 'Bekleyen Mekan', 'color' => $pendingVenues > 0 ? 'text-amber-400' : 'text-slate-400'],
+    ];
+    foreach ($stats as $s):
+    ?>
+    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-5 shadow-[0_10px_20px_-10px_rgba(15,23,42,0.3)]">
+        <span class="material-symbols-outlined <?php echo $s['color']; ?> text-[28px] mb-2"><?php echo $s['icon']; ?></span>
+        <div class="text-2xl font-black text-on-surface"><?php echo $s['value']; ?></div>
+        <div class="text-label-sm text-slate-400 mt-1"><?php echo $s['label']; ?></div>
     </div>
+    <?php endforeach; ?>
 </div>
 
-<?php require_once __DIR__ . '/../../public/partials/footer.php'; ?>
+<!-- Son Loglar -->
+<div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl shadow-[0_10px_20px_-10px_rgba(15,23,42,0.3)] overflow-hidden">
+    <div class="px-6 py-4 border-b border-white/5">
+        <h2 class="text-lg font-bold text-on-surface flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary-container text-[20px]">history</span> Son İşlemler
+        </h2>
+    </div>
+    <?php if (empty($logs)): ?>
+        <div class="p-8 text-center text-slate-400">Henüz log yok.</div>
+    <?php else: ?>
+    <div class="overflow-x-auto">
+        <table class="w-full text-left">
+            <thead class="bg-white/[0.03] text-slate-400 text-label-sm uppercase">
+                <tr><th class="px-6 py-3">Admin</th><th class="px-6 py-3">İşlem</th><th class="px-6 py-3">Hedef</th><th class="px-6 py-3">Tarih</th></tr>
+            </thead>
+            <tbody class="divide-y divide-white/5">
+                <?php foreach ($logs as $log): ?>
+                <tr class="hover:bg-white/[0.02] transition-colors">
+                    <td class="px-6 py-3 font-medium"><?php echo escape($log['username']); ?></td>
+                    <td class="px-6 py-3 text-slate-300"><?php echo escape($log['action_type']); ?></td>
+                    <td class="px-6 py-3 text-slate-400"><?php echo escape($log['target_type']); ?> #<?php echo $log['target_id']; ?></td>
+                    <td class="px-6 py-3 text-slate-500 text-xs"><?php echo formatDate($log['created_at'], true); ?></td>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+    <?php endif; ?>
+</div>
+
+<?php require_once __DIR__ . '/_footer.php'; ?>
