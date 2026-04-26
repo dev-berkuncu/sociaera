@@ -47,15 +47,15 @@ require_once __DIR__ . '/partials/app_header.php';
     <div class="grid grid-cols-2 sm:grid-cols-3 gap-5">
         <?php foreach ($sponsors as $sp): ?>
         <a href="<?php echo escape($sp['url'] ?? '#'); ?>" target="_blank" rel="noopener"
-           class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl p-6 flex flex-col items-center justify-center gap-4 hover:border-primary-container/40 hover:bg-white/[0.06] transition-all duration-300 group shadow-[0_10px_20px_-10px_rgba(15,23,42,0.3)] aspect-square">
-            <div class="flex-1 w-full flex items-center justify-center overflow-hidden">
-                <?php if (!empty($sp['logo'])): ?>
-                    <img src="<?php echo BASE_URL . '/' . escape($sp['logo']); ?>" alt="<?php echo escape($sp['name']); ?>" class="w-full h-full object-contain p-2">
-                <?php else: ?>
+           class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl overflow-hidden hover:border-primary-container/40 hover:bg-white/[0.06] transition-all duration-300 group shadow-[0_10px_20px_-10px_rgba(15,23,42,0.3)] aspect-square relative">
+            <?php if (!empty($sp['logo'])): ?>
+                <img src="<?php echo BASE_URL . '/' . escape($sp['logo']); ?>" alt="<?php echo escape($sp['name']); ?>" class="absolute inset-0 w-full h-full object-contain p-4">
+            <?php else: ?>
+                <div class="absolute inset-0 flex items-center justify-center">
                     <span class="material-symbols-outlined text-slate-500 text-[48px]">store</span>
-                <?php endif; ?>
-            </div>
-            <span class="font-label-md text-label-md text-on-surface text-center group-hover:text-primary-container transition-colors truncate w-full"><?php echo escape($sp['name']); ?></span>
+                </div>
+            <?php endif; ?>
+            <span class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent px-3 py-2 font-label-md text-label-md text-white text-center"><?php echo escape($sp['name']); ?></span>
         </a>
         <?php endforeach; ?>
     </div>
