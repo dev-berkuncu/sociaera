@@ -75,7 +75,7 @@ class VenueModel
         $sets   = [];
         $params = [];
 
-        foreach (['name', 'description', 'address', 'website', 'category', 'facebrowser_url', 'status', 'is_active', 'image'] as $field) {
+        foreach (['name', 'description', 'address', 'website', 'category', 'facebrowser_url', 'status', 'is_active', 'image', 'phone', 'hours', 'is_open', 'cover_image'] as $field) {
             if (array_key_exists($field, $data)) {
                 $sets[]   = "{$field} = ?";
                 $params[] = $data[$field];
@@ -92,6 +92,21 @@ class VenueModel
     public function delete(int $id): void
     {
         $this->db->prepare("DELETE FROM venues WHERE id = ?")->execute([$id]);
+    }
+
+    // ── İşletme Paneli — Sahibin mekanları ───────────────
+
+    public function getByOwner(int $userId): array
+    {
+        $stmt = $this->db->prepare("
+            SELECT v.*, 
+                (SELECT COUNT(*) FROM checkins WHERE venue_id = v.id AND is_deleted = 0) as checkin_count
+            FROM venues v 
+            WHERE v.created_by = ? AND v.status IN ('approved', 'pending')
+            ORDER BY v.name ASC
+        ");
+        $stmt->execute([$userId]);
+        return $stmt->fetchAll();
     }
 
     // ── Onay İşlemleri ────────────────────────────────────

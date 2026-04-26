@@ -230,7 +230,43 @@ if (!isset($currentUser) && Auth::check()) {
         </li>
         <?php endforeach; ?>
     </ul>
-    <div class="mt-8 pt-6 border-t border-white/5">
+
+    <?php
+    // İşletmelerim — Kullanıcının sahip olduğu mekanlar
+    $userVenues = [];
+    try {
+        $userVenues = (new VenueModel())->getByOwner(Auth::id());
+    } catch (Exception $e) {}
+    if (!empty($userVenues)):
+    ?>
+    <div class="mt-4 pt-4 border-t border-white/5">
+        <h3 class="text-label-sm text-slate-500 uppercase tracking-wider px-4 mb-2">İşletmelerim</h3>
+        <ul class="flex flex-col gap-1">
+            <?php foreach ($userVenues as $uv):
+                $isVenueActive = ($activeNav ?? '') === 'venue_manage_' . $uv['id'];
+                $venueLinkClass = $isVenueActive
+                    ? 'flex items-center gap-3 px-4 py-2.5 bg-[#FF6B35] text-white rounded-lg shadow-[0_0_5px_rgba(255,107,53,0.2)] text-label-md'
+                    : 'flex items-center gap-3 px-4 py-2.5 text-slate-400 hover:text-slate-100 hover:bg-white/5 transition-all duration-200 rounded-lg text-label-md';
+            ?>
+            <li>
+                <a class="<?php echo $venueLinkClass; ?>" href="<?php echo BASE_URL; ?>/venue-manage?id=<?php echo $uv['id']; ?>">
+                    <span class="material-symbols-outlined text-[18px]" <?php echo $isVenueActive ? 'data-weight="fill"' : ''; ?>>storefront</span>
+                    <span class="truncate flex-grow"><?php echo escape($uv['name']); ?></span>
+                    <?php if ($uv['status'] === 'pending'): ?>
+                        <span class="w-2 h-2 rounded-full bg-amber-400 shrink-0"></span>
+                    <?php elseif (!empty($uv['is_open'])): ?>
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
+                    <?php else: ?>
+                        <span class="w-2 h-2 rounded-full bg-red-400 shrink-0"></span>
+                    <?php endif; ?>
+                </a>
+            </li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+    <?php endif; ?>
+
+    <div class="mt-4 pt-4 border-t border-white/5">
         <a href="<?php echo BASE_URL; ?>/logout" class="flex items-center gap-4 px-4 py-3 text-error hover:bg-error/10 transition-all duration-200 rounded-lg active:scale-[0.98] font-label-md text-label-md">
             <span class="material-symbols-outlined">logout</span>
             Çıkış Yap
