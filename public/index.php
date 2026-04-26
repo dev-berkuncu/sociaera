@@ -10,7 +10,7 @@ if (Auth::check()) { header('Location: ' . BASE_URL . '/dashboard'); exit; }
 ?>
 <!DOCTYPE html>
 <html class="dark" lang="tr"><head>
-<meta charset="utf-8"/>
+<meta charset="utf-8"/> 
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title><?php echo APP_NAME; ?> - Nexus | Dijital Ajans</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
