@@ -99,7 +99,6 @@
                 <?php else: ?>
                 <p class="text-slate-500 text-sm text-center py-2">Henüz sponsor yok</p>
                 <?php endif; ?>
-                <a href="<?php echo BASE_URL; ?>/sponsors" class="block text-center w-full mt-4 py-2 text-primary-container font-label-md text-label-md hover:bg-white/5 rounded-lg transition-colors">Tümünü Gör</a>
             </div>
         </aside>
     </div> <!-- flex-grow flex p-gutter ... -->
