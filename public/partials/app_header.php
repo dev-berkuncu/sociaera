@@ -209,6 +209,7 @@ if (!isset($currentUser) && Auth::check()) {
             'dashboard' => ['icon' => 'home', 'label' => 'Ana Sayfa', 'url' => '/dashboard'],
             'venues' => ['icon' => 'location_on', 'label' => 'Mekanlar', 'url' => '/venues'],
             'leaderboard' => ['icon' => 'leaderboard', 'label' => 'Liderlik', 'url' => '/leaderboard'],
+            'missions' => ['icon' => 'emoji_events', 'label' => 'Görevler', 'url' => '/missions'],
             'members' => ['icon' => 'people', 'label' => 'Üyeler', 'url' => '/members'],
             'wallet' => ['icon' => 'account_balance_wallet', 'label' => 'Cüzdan', 'url' => '/wallet'],
             'premium' => ['icon' => 'diamond', 'label' => 'Premium', 'url' => '/premium'],

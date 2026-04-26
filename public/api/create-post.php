@@ -16,6 +16,8 @@ require_once __DIR__ . '/../../app/Models/Checkin.php';
 require_once __DIR__ . '/../../app/Models/Notification.php';
 require_once __DIR__ . '/../../app/Models/Settings.php';
 
+require_once __DIR__ . '/../../app/Models/Badge.php';
+
 Response::requirePost();
 Response::requireAuthApi();
 Csrf::requireValid();
@@ -51,7 +53,24 @@ $result = $checkinModel->create(Auth::id(), $venueId, $note ?: null, $imageName)
 
 if ($result['ok']) {
     Logger::info('Check-in created', ['user_id' => Auth::id(), 'venue_id' => $venueId, 'checkin_id' => $result['checkin_id']]);
-    Response::success(['checkin_id' => $result['checkin_id']], 'Check-in başarılı! 📍');
+    
+    // Rozet kontrolü
+    $newBadges = [];
+    try {
+        $badgeModel = new BadgeModel();
+        $awarded = $badgeModel->checkAndAward(Auth::id());
+        foreach ($awarded as $b) {
+            $newBadges[] = ['name' => $b['name'], 'icon' => $b['icon'], 'color' => $b['color']];
+        }
+    } catch (\Throwable $e) {}
+    
+    $msg = 'Check-in başarılı! 📍';
+    if (!empty($newBadges)) {
+        $names = array_column($newBadges, 'name');
+        $msg .= ' 🏆 Yeni rozet: ' . implode(', ', $names);
+    }
+    
+    Response::success(['checkin_id' => $result['checkin_id'], 'new_badges' => $newBadges], $msg);
 } else {
     Response::error($result['error']);
 }
