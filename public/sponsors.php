@@ -44,15 +44,15 @@ require_once __DIR__ . '/partials/app_header.php';
 
     <!-- Sponsors Grid -->
     <?php if (!empty($sponsors)): ?>
-    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+    <div class="grid grid-cols-2 sm:grid-cols-3 gap-5">
         <?php foreach ($sponsors as $sp): ?>
         <a href="<?php echo escape($sp['url'] ?? '#'); ?>" target="_blank" rel="noopener"
-           class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-5 flex flex-col items-center justify-center gap-3 hover:border-primary-container/40 hover:bg-white/[0.06] transition-all duration-300 group shadow-[0_10px_20px_-10px_rgba(15,23,42,0.3)]">
-            <div class="w-16 h-16 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden group-hover:border-primary-container/30 transition-colors">
+           class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl p-6 flex flex-col items-center justify-center gap-4 hover:border-primary-container/40 hover:bg-white/[0.06] transition-all duration-300 group shadow-[0_10px_20px_-10px_rgba(15,23,42,0.3)] aspect-square">
+            <div class="flex-1 w-full flex items-center justify-center overflow-hidden">
                 <?php if (!empty($sp['logo'])): ?>
-                    <img src="<?php echo BASE_URL . '/' . escape($sp['logo']); ?>" alt="<?php echo escape($sp['name']); ?>" class="w-12 h-12 object-contain">
+                    <img src="<?php echo BASE_URL . '/' . escape($sp['logo']); ?>" alt="<?php echo escape($sp['name']); ?>" class="w-full h-full object-contain p-2">
                 <?php else: ?>
-                    <span class="material-symbols-outlined text-slate-500 text-[28px]">store</span>
+                    <span class="material-symbols-outlined text-slate-500 text-[48px]">store</span>
                 <?php endif; ?>
             </div>
             <span class="font-label-md text-label-md text-on-surface text-center group-hover:text-primary-container transition-colors truncate w-full"><?php echo escape($sp['name']); ?></span>
