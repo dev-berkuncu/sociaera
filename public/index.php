@@ -138,7 +138,7 @@ if (Auth::check()) { header('Location: ' . BASE_URL . '/dashboard'); exit; }
 <div class="flex-1 flex flex-col gap-stack-md z-10">
 <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 w-fit">
 <span class="w-2 h-2 rounded-full bg-primary-container animate-pulse"></span>
-<span class="font-label-sm text-label-sm text-secondary">EXECUTIVE SOCIAL DISCOVERY</span>
+<span class="font-label-sm text-label-sm text-secondary">Nexus | Dijital Ajans</span>
 </div>
 <h1 class="font-display-lg text-display-lg text-gradient leading-tight">
                     Keşfet. Paylaş. Bağlan.
