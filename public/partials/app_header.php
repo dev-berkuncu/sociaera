@@ -200,6 +200,7 @@ if (!isset($currentUser) && Auth::check()) {
             'members' => ['icon' => 'people', 'label' => 'Üyeler', 'url' => '/members'],
             'wallet' => ['icon' => 'account_balance_wallet', 'label' => 'Cüzdan', 'url' => '/wallet'],
             'premium' => ['icon' => 'diamond', 'label' => 'Premium', 'url' => '/premium'],
+            'sponsors' => ['icon' => 'campaign', 'label' => 'Sponsorlarımız', 'url' => '/sponsors'],
             'notifications' => ['icon' => 'notifications', 'label' => 'Bildirimler', 'url' => '/notifications'],
             'settings' => ['icon' => 'settings', 'label' => 'Ayarlar', 'url' => '/settings']
         ];
