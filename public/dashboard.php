@@ -78,26 +78,26 @@ require_once __DIR__ . '/partials/app_header.php';
                     <div id="mentionDropdown" class="absolute left-0 w-64 bg-[#1E293B] border border-white/10 rounded-lg shadow-xl z-50 max-h-48 overflow-y-auto" style="display:none;"></div>
                 </div>
             </div>
-            <div class="mt-4 flex items-center justify-between pt-4 border-t border-white/5 relative">
+            <div class="mt-4 flex items-center justify-between pt-4 border-t border-white/5">
                 <div class="flex items-center gap-2">
                     <label class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-white/5 text-secondary transition-colors cursor-pointer" title="Fotoğraf ekle">
                         <span class="material-symbols-outlined">image</span>
                         <input type="file" name="image" id="composeImage" accept="image/*" class="hidden">
                     </label>
-                    <button type="button" class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-white/5 text-secondary transition-colors" title="Mekan seç" onclick="document.getElementById('venueSearchWrap').style.display='block'; document.getElementById('venueSearchInput').focus();">
+                    <button type="button" id="venueToggleBtn" class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-white/5 text-secondary transition-colors" title="Mekan seç">
                         <span class="material-symbols-outlined">location_on</span>
                     </button>
-                </div>
-                
-                <!-- Venue Search Dropdown -->
-                <div id="venueSearchWrap" style="display:none;" class="absolute top-12 left-10 w-64 bg-[#1E293B] border border-white/10 rounded-lg shadow-xl z-50 p-2">
-                    <input type="text" id="venueSearchInput" class="w-full bg-background border border-white/10 rounded p-2 text-on-surface text-sm focus:outline-none mb-2" placeholder="Mekan ara..." autocomplete="off">
-                    <div id="venueDropdown" class="max-h-48 overflow-y-auto"></div>
                 </div>
 
                 <button type="submit" id="composeSubmitBtn" disabled class="bg-primary-container text-white px-6 py-2 rounded-lg font-label-md text-label-md shadow-[0_0_10px_rgba(255,107,53,0.2)] hover:bg-primary-container/90 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">Post</button>
             </div>
         </form>
+    </div>
+
+    <!-- Venue Search Dropdown (outside compose card to avoid backdrop-blur clipping) -->
+    <div id="venueSearchWrap" style="display:none;" class="fixed w-72 bg-[#0F172A] border border-white/10 rounded-xl shadow-2xl p-3 z-[9999]">
+        <input type="text" id="venueSearchInput" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-on-surface text-sm focus:outline-none focus:border-primary-container/40 mb-2" placeholder="Mekan ara..." autocomplete="off">
+        <div id="venueDropdown" class="max-h-48 overflow-y-auto"></div>
     </div>
 
     <!-- Feed Cards -->
@@ -218,13 +218,25 @@ document.addEventListener('DOMContentLoaded', function() {
     // ── Venue Search ─────────────────────────────────────
     const venueInput = document.getElementById('venueSearchInput');
     const venueDropdown = document.getElementById('venueDropdown');
+    const venueWrap = document.getElementById('venueSearchWrap');
+    const venueToggleBtn = document.getElementById('venueToggleBtn');
+
+    if (venueToggleBtn && venueWrap) {
+        venueToggleBtn.addEventListener('click', () => {
+            const rect = venueToggleBtn.getBoundingClientRect();
+            venueWrap.style.top = (rect.bottom + 8) + 'px';
+            venueWrap.style.left = rect.left + 'px';
+            venueWrap.style.display = 'block';
+            venueInput.focus();
+        });
+    }
 
     if (venueInput && venueDropdown) {
         App.initVenueSearch(venueInput, venueDropdown, (id, name) => {
             venueIdInput.value = id;
             document.getElementById('selectedVenueName').textContent = name;
             document.getElementById('selectedVenueDisplay').style.display = 'inline-flex';
-            document.getElementById('venueSearchWrap').style.display = 'none';
+            venueWrap.style.display = 'none';
             checkCompose();
         });
     }
