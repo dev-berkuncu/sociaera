@@ -2,7 +2,9 @@
 /**
  * Sociaera — App Footer (Tailwind Design)
  */
+$hideSidebar = $hideSidebar ?? false;
 ?>
+        <?php if (!$hideSidebar): ?>
         <!-- Right Sidebar (Conditionally shown if variables exist) -->
         <aside class="hidden lg:flex flex-col w-80 gap-stack-md ml-auto">
             <?php if (!empty($trendVenues)): ?>
@@ -97,6 +99,7 @@
                 <?php endif; ?>
             </div>
         </aside>
+        <?php endif; /* !$hideSidebar */ ?>
     </div> <!-- flex-grow flex p-gutter ... -->
 </main>
 
