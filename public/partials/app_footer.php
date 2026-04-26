@@ -59,8 +59,8 @@
             <!-- Sponsorlarımız -->
             <?php
             $rightSidebarSponsors = [
-                ['name' => 'COLOSSEUM', 'logo' => 'uploads/sponsors/colosseum.png', 'url' => '#'],
-                ['name' => 'Örnek Marka 2', 'logo' => 'uploads/sponsors/marka2.png', 'url' => 'https://example.com'],
+                ['name' => 'COLOSSEUM', 'logo' => 'assets/img/sponsors/colosseum.png', 'url' => 'https://cfx.re/join/j7e8ba'],
+                ['name' => 'Örnek Marka 2', 'logo' => 'assets/img/sponsors/marka2.png', 'url' => 'https://example.com'],
             ];
             ?>
             <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-6 shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)] overflow-hidden">
