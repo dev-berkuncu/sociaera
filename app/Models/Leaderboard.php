@@ -37,7 +37,7 @@ class LeaderboardModel
         $week = self::getWeekRange();
 
         $stmt = $this->db->prepare("
-            SELECT u.id, u.username, u.tag, u.avatar, u.is_premium,
+            SELECT u.id, u.username, u.tag, u.avatar, u.is_premium, u.badge,
                    COUNT(c.id) as checkin_count,
                    MIN(c.created_at) as first_checkin
             FROM checkins c
@@ -46,7 +46,7 @@ class LeaderboardModel
               AND c.created_at BETWEEN ? AND ?
               AND u.is_active = 1
             GROUP BY u.id
-            ORDER BY checkin_count DESC, first_checkin ASC
+            ORDER BY checkin_count DESC, u.is_premium DESC, first_checkin ASC
             LIMIT ?
         ");
         $stmt->execute([$week['start'], $week['end'], $limit]);
