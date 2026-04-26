@@ -76,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($result['ok']) { $success = 'Şifre değiştirildi.'; }
         else { $error = $result['error']; }
     } elseif ($action === 'update_badge') {
-        if (empty($user['is_premium'])) {
+        if (!UserModel::isPremiumActive($user)) {
             $error = 'Rozet değiştirmek için Premium üye olmanız gerekir.';
         } else {
             $badge = $_POST['badge'] ?? null;
@@ -165,7 +165,7 @@ require_once __DIR__ . '/partials/app_header.php';
     </div>
 
     <!-- Rozet Seçimi (Premium) -->
-    <?php if (!empty($user['is_premium'])): ?>
+    <?php if (UserModel::isPremiumActive($user)): ?>
     <div class="bg-gradient-to-br from-[#1E293B]/80 to-surface-container border border-[#7bd0ff]/20 rounded-xl p-6 shadow-[0_15px_30px_-15px_rgba(123,208,255,0.1)]">
         <h2 class="text-xl font-bold flex items-center gap-2 mb-4 text-on-surface">
             <span class="material-symbols-outlined text-[#7bd0ff]">workspace_premium</span> Profil Rozeti
