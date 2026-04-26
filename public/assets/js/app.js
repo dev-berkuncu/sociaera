@@ -220,15 +220,18 @@ const App = {
             if (q.length < 2) { dropdownEl.style.display = 'none'; return; }
 
             this.venueSearchTimer = setTimeout(async () => {
+                console.log('[VenueSearch] Searching:', q);
                 const res = await this.get(`${this.baseUrl}/api/venue-search?q=${encodeURIComponent(q)}`);
+                console.log('[VenueSearch] Response:', res);
                 if (res.ok && res.data?.length) {
                     dropdownEl.innerHTML = res.data.map(v =>
-                        `<div class="venue-picker-item" data-id="${v.id}" data-name="${v.name}">
-                            <div class="venue-picker-name">${v.name}</div>
-                            <div class="venue-picker-cat">${v.category || ''}</div>
+                        `<div class="venue-picker-item" data-id="${v.id}" data-name="${v.name}" style="padding:8px 12px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.05);">
+                            <div style="font-weight:500;color:#fff;">${v.name}</div>
+                            <div style="font-size:0.8rem;color:#94a3b8;">${v.category || ''}</div>
                         </div>`
                     ).join('');
                     dropdownEl.style.display = 'block';
+                    console.log('[VenueSearch] Showing', res.data.length, 'results');
 
                     dropdownEl.querySelectorAll('.venue-picker-item').forEach(item => {
                         item.addEventListener('click', () => {
@@ -238,7 +241,9 @@ const App = {
                         });
                     });
                 } else {
-                    dropdownEl.style.display = 'none';
+                    dropdownEl.innerHTML = '<div style="padding:12px;text-align:center;color:#94a3b8;font-size:0.85rem;">Sonuç bulunamadı</div>';
+                    dropdownEl.style.display = 'block';
+                    console.log('[VenueSearch] No results');
                 }
             }, 300);
         });
