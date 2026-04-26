@@ -37,7 +37,7 @@ class LeaderboardModel
         $week = self::getWeekRange();
 
         $stmt = $this->db->prepare("
-            SELECT u.id, u.username, u.tag, u.avatar, u.is_premium, u.badge,
+            SELECT u.id, u.username, u.tag, u.avatar, u.is_premium,
                    COUNT(c.id) as checkin_count,
                    MIN(c.created_at) as first_checkin
             FROM checkins c

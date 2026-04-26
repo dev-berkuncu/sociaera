@@ -72,7 +72,7 @@ class CheckinModel
         try {
             $stmt = $this->db->prepare("
                 (SELECT c.id, c.user_id, c.venue_id, c.note, c.image, c.created_at,
-                       u.username, u.tag, u.avatar, u.is_premium, u.badge,
+                       u.username, u.tag, u.avatar, u.is_premium,
                        v.name as venue_name, v.category as venue_category,
                        (SELECT COUNT(*) FROM post_likes WHERE checkin_id = c.id) as like_count,
                        (SELECT COUNT(*) FROM post_comments WHERE checkin_id = c.id AND is_deleted = 0) as comment_count,
@@ -84,7 +84,7 @@ class CheckinModel
                 WHERE c.is_deleted = 0 AND u.is_active = 1)
                 UNION ALL
                 (SELECT c.id, c.user_id, c.venue_id, c.note, c.image, c.created_at,
-                       u.username, u.tag, u.avatar, u.is_premium, u.badge,
+                       u.username, u.tag, u.avatar, u.is_premium,
                        v.name as venue_name, v.category as venue_category,
                        (SELECT COUNT(*) FROM post_likes WHERE checkin_id = c.id) as like_count,
                        (SELECT COUNT(*) FROM post_comments WHERE checkin_id = c.id AND is_deleted = 0) as comment_count,
@@ -105,7 +105,7 @@ class CheckinModel
             // Fallback: UNION baÅŸarÄ±sÄ±z olursa basit sorguya dÃ¶n
             $stmt = $this->db->prepare("
                 SELECT c.id, c.user_id, c.venue_id, c.note, c.image, c.created_at,
-                       u.username, u.tag, u.avatar, u.is_premium, u.badge,
+                       u.username, u.tag, u.avatar, u.is_premium,
                        v.name as venue_name, v.category as venue_category,
                        (SELECT COUNT(*) FROM post_likes WHERE checkin_id = c.id) as like_count,
                        (SELECT COUNT(*) FROM post_comments WHERE checkin_id = c.id AND is_deleted = 0) as comment_count,
@@ -135,7 +135,7 @@ class CheckinModel
         $offset = ($page - 1) * $perPage;
 
         $stmt = $this->db->prepare("
-            SELECT c.*, u.username, u.tag, u.avatar, u.is_premium, u.badge,
+            SELECT c.*, u.username, u.tag, u.avatar, u.is_premium,
                    v.name as venue_name, v.category as venue_category,
                    (SELECT COUNT(*) FROM post_likes WHERE checkin_id = c.id) as like_count,
                    (SELECT COUNT(*) FROM post_comments WHERE checkin_id = c.id AND is_deleted = 0) as comment_count,
@@ -159,7 +159,7 @@ class CheckinModel
         $offset = ($page - 1) * $perPage;
 
         $stmt = $this->db->prepare("
-            SELECT c.*, u.username, u.tag, u.avatar, u.is_premium, u.badge,
+            SELECT c.*, u.username, u.tag, u.avatar, u.is_premium,
                    v.name as venue_name, v.category as venue_category,
                    (SELECT COUNT(*) FROM post_likes WHERE checkin_id = c.id) as like_count,
                    (SELECT COUNT(*) FROM post_comments WHERE checkin_id = c.id AND is_deleted = 0) as comment_count,
@@ -185,7 +185,7 @@ class CheckinModel
         $offset = ($page - 1) * $perPage;
 
         $stmt = $this->db->prepare("
-            SELECT c.*, u.username, u.tag, u.avatar, u.is_premium, u.badge,
+            SELECT c.*, u.username, u.tag, u.avatar, u.is_premium,
                    v.name as venue_name, v.category as venue_category,
                    (SELECT COUNT(*) FROM post_likes WHERE checkin_id = c.id) as like_count,
                    (SELECT COUNT(*) FROM post_comments WHERE checkin_id = c.id AND is_deleted = 0) as comment_count,
@@ -211,7 +211,7 @@ class CheckinModel
     public function getById(int $id, ?int $viewerId = null): ?array
     {
         $stmt = $this->db->prepare("
-            SELECT c.*, u.username, u.tag, u.avatar, u.is_premium, u.badge,
+            SELECT c.*, u.username, u.tag, u.avatar, u.is_premium,
                    v.name as venue_name, v.category as venue_category, v.id as venue_id_ref,
                    (SELECT COUNT(*) FROM post_likes WHERE checkin_id = c.id) as like_count,
                    (SELECT COUNT(*) FROM post_comments WHERE checkin_id = c.id AND is_deleted = 0) as comment_count,
@@ -324,7 +324,7 @@ class CheckinModel
     {
         $offset = ($page - 1) * $perPage;
         $stmt = $this->db->prepare("
-            SELECT c.*, u.username, u.tag, u.avatar, u.is_premium, u.badge,
+            SELECT c.*, u.username, u.tag, u.avatar, u.is_premium,
                    v.name as venue_name, v.category as venue_category,
                    (SELECT COUNT(*) FROM post_likes WHERE checkin_id = c.id) as like_count,
                    (SELECT COUNT(*) FROM post_comments WHERE checkin_id = c.id AND is_deleted = 0) as comment_count,
@@ -345,7 +345,7 @@ class CheckinModel
     {
         $offset = ($page - 1) * $perPage;
         $stmt = $this->db->prepare("
-            SELECT c.*, u.username, u.tag, u.avatar, u.is_premium, u.badge,
+            SELECT c.*, u.username, u.tag, u.avatar, u.is_premium,
                    v.name as venue_name, v.category as venue_category,
                    pr.quote as repost_quote,
                    (SELECT COUNT(*) FROM post_likes WHERE checkin_id = c.id) as like_count,
@@ -475,4 +475,5 @@ class CheckinModel
         }
     }
 }
+
 
