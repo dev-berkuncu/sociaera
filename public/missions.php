@@ -17,6 +17,10 @@ require_once __DIR__ . '/../app/Helpers/ads_logic.php';
 Auth::requireLogin();
 
 $badgeModel = new BadgeModel();
+
+// Sayfa ziyaretinde de rozetleri kontrol et (geçmişte tamamlananlar için)
+$badgeModel->checkAndAward(Auth::id());
+
 $progress = $badgeModel->getProgress(Auth::id());
 $earnedCount = count(array_filter($progress, fn($b) => $b['earned']));
 $totalCount = count($progress);
