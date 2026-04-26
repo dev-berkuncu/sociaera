@@ -43,6 +43,12 @@ try {
     $miniLeaderboard = (new LeaderboardModel())->getTopUsers(5);
 } catch (Exception $e) {}
 
+// Sponsorlu içerikleri çek
+$sponsoredAds = [];
+try {
+    $sponsoredAds = (new AdModel())->getActiveForFeed(5);
+} catch (Exception $e) {}
+
 $pageTitle = 'Ana Sayfa';
 $activeNav = 'dashboard';
 
@@ -108,8 +114,20 @@ require_once __DIR__ . '/partials/app_header.php';
                 <p><?php echo $feedFilter === 'following' ? 'Takip ettiğin kullanıcıların henüz bir gönderi yok.' : 'Henüz hiç gönderi yok. İlk check-in\'ini yap!'; ?></p>
             </div>
         <?php else: ?>
-            <?php foreach ($posts as $post): ?>
+            <?php 
+            $sponsorIndex = 0;
+            $sponsorInterval = 4; // Her 4 posttan sonra sponsorlu içerik göster
+            foreach ($posts as $index => $post): 
+            ?>
                 <?php include __DIR__ . '/partials/_tailwind_post_card.php'; ?>
+                <?php 
+                // Her $sponsorInterval posttan sonra sponsorlu içerik ekle
+                if (!empty($sponsoredAds) && ($index + 1) % $sponsorInterval === 0) {
+                    $sponsoredAd = $sponsoredAds[$sponsorIndex % count($sponsoredAds)];
+                    include __DIR__ . '/partials/_sponsored_card.php';
+                    $sponsorIndex++;
+                }
+                ?>
             <?php endforeach; ?>
 
             <?php if (count($posts) >= 20): ?>

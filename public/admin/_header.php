@@ -107,7 +107,7 @@ if (!isset($currentUser) && Auth::check()) {
             'users'     => ['icon' => 'people', 'label' => 'Kullanıcılar', 'url' => '/admin/users'],
             'venues'    => ['icon' => 'location_on', 'label' => 'Mekanlar', 'url' => '/admin/venues'],
             'posts'     => ['icon' => 'article', 'label' => 'Gönderiler', 'url' => '/admin/posts'],
-            'ads'       => ['icon' => 'campaign', 'label' => 'Reklamlar', 'url' => '/admin/ads'],
+            'ads'       => ['icon' => 'campaign', 'label' => 'Sponsorlu İçerik', 'url' => '/admin/ads'],
             'settings'  => ['icon' => 'settings', 'label' => 'Ayarlar', 'url' => '/admin/settings'],
         ];
         $adminPage = $adminPage ?? '';
