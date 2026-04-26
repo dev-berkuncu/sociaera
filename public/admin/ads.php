@@ -53,20 +53,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $ads = $adModel->getAll();
 $pendingVenues = (new VenueModel())->getPendingCount();
 
-$pageTitle = 'Reklam Yönetimi';
+$pageTitle = 'Sponsorlu İçerik Yönetimi';
 $adminPage = 'ads';
 require_once __DIR__ . '/_header.php';
 ?>
 
 <div class="flex items-center justify-between mb-6">
     <h1 class="text-xl font-black text-on-surface flex items-center gap-2">
-        <span class="material-symbols-outlined text-primary-container">campaign</span> Reklamlar
+        <span class="material-symbols-outlined text-primary-container">campaign</span> Sponsorlu İçerik
     </h1>
 </div>
 
 <!-- Yeni Reklam Formu -->
 <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-6 shadow-[0_10px_20px_-10px_rgba(15,23,42,0.3)] mb-6">
-    <h2 class="text-lg font-bold text-on-surface mb-4">Yeni Reklam Ekle</h2>
+    <h2 class="text-lg font-bold text-on-surface mb-4">Yeni Sponsorlu İçerik Ekle</h2>
     <form method="POST" enctype="multipart/form-data" class="space-y-4">
         <?php echo csrfField(); ?>
         <input type="hidden" name="action" value="create">
@@ -76,13 +76,12 @@ require_once __DIR__ . '/_header.php';
                 <input type="text" name="title" required class="w-full bg-white/5 border border-white/10 text-on-surface rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary-container/40 transition-colors">
             </div>
             <div>
-                <label class="block text-label-md text-slate-400 mb-1">Pozisyon</label>
-                <select name="position" class="w-full bg-white/5 border border-white/10 text-on-surface rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary-container/40 transition-colors">
-                    <option value="carousel" class="bg-background">Carousel (Sağ)</option>
-                    <option value="sidebar_left" class="bg-background">Sol Sidebar</option>
-                    <option value="sidebar_right" class="bg-background">Sağ Sidebar</option>
-                    <option value="footer_banner" class="bg-background">Footer Banner</option>
-                </select>
+                <label class="block text-label-md text-slate-400 mb-1">Gösterim Yeri</label>
+                <input type="hidden" name="position" value="feed">
+                <div class="w-full bg-white/5 border border-white/10 text-slate-300 rounded-lg px-4 py-2.5 text-sm flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[16px] text-primary-container">dynamic_feed</span>
+                    Feed — Postlar Arasında
+                </div>
             </div>
             <div>
                 <label class="block text-label-md text-slate-400 mb-1">Link URL</label>
@@ -97,7 +96,7 @@ require_once __DIR__ . '/_header.php';
             <label class="block text-label-md text-slate-400 mb-1">Resim</label>
             <input type="file" name="image" accept="image/*" required class="w-full bg-white/5 border border-white/10 text-on-surface rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary-container/40 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-sm file:bg-primary-container file:text-white transition-colors">
         </div>
-        <button type="submit" class="bg-primary-container text-white px-6 py-2.5 rounded-lg text-label-md font-semibold hover:bg-primary-container/90 transition-colors shadow-[0_0_10px_rgba(255,107,53,0.2)]">Reklam Ekle</button>
+        <button type="submit" class="bg-primary-container text-white px-6 py-2.5 rounded-lg text-label-md font-semibold hover:bg-primary-container/90 transition-colors shadow-[0_0_10px_rgba(255,107,53,0.2)]">Sponsorlu İçerik Ekle</button>
     </form>
 </div>
 

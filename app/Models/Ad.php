@@ -51,4 +51,17 @@ class AdModel
     {
         $this->db->prepare("UPDATE ads SET is_active = NOT is_active WHERE id = ?")->execute([$id]);
     }
+
+    /**
+     * Feed'de gösterilecek aktif sponsorlu içerikleri getir
+     */
+    public function getActiveForFeed(int $limit = 5): array
+    {
+        $stmt = $this->db->prepare("
+            SELECT * FROM ads WHERE is_active = 1
+            ORDER BY sort_order ASC, id DESC LIMIT ?
+        ");
+        $stmt->execute([$limit]);
+        return $stmt->fetchAll();
+    }
 }
