@@ -43,11 +43,13 @@ try {
     $miniLeaderboard = (new LeaderboardModel())->getTopUsers(5);
 } catch (Exception $e) {}
 
-// Sponsorlu içerikleri çek
+// Sponsorlu içerikleri çek (Premium kullanıcılar reklamsız)
 $sponsoredAds = [];
-try {
-    $sponsoredAds = (new AdModel())->getActiveForFeed(5);
-} catch (Exception $e) {}
+if (empty($currentUser['is_premium'])) {
+    try {
+        $sponsoredAds = (new AdModel())->getActiveForFeed(5);
+    } catch (Exception $e) {}
+}
 
 $pageTitle = 'Ana Sayfa';
 $activeNav = 'dashboard';

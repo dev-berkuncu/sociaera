@@ -404,4 +404,32 @@ class UserModel
             'pages'   => ceil($totalCount / $perPage),
         ];
     }
+
+    // ── Premium ───────────────────────────────────────────
+
+    public function setPremium(int $userId, bool $status = true): void
+    {
+        $this->db->prepare("UPDATE users SET is_premium = ? WHERE id = ?")->execute([$status ? 1 : 0, $userId]);
+    }
+
+    public function updateBadge(int $userId, ?string $badge): void
+    {
+        $this->db->prepare("UPDATE users SET badge = ? WHERE id = ?")->execute([$badge, $userId]);
+    }
+
+    public static function availableBadges(): array
+    {
+        return [
+            'diamond'      => ['icon' => 'diamond',        'label' => 'Diamond',       'color' => '#7bd0ff'],
+            'crown'        => ['icon' => 'crown',          'label' => 'Crown',         'color' => '#ffd700'],
+            'star'         => ['icon' => 'star',           'label' => 'Star',          'color' => '#ff6b35'],
+            'verified'     => ['icon' => 'verified',       'label' => 'Verified',      'color' => '#10b981'],
+            'bolt'         => ['icon' => 'bolt',           'label' => 'Bolt',          'color' => '#f59e0b'],
+            'favorite'     => ['icon' => 'favorite',       'label' => 'Heart',         'color' => '#ef4444'],
+            'rocket'       => ['icon' => 'rocket_launch',  'label' => 'Rocket',        'color' => '#8b5cf6'],
+            'fire'         => ['icon' => 'local_fire_department', 'label' => 'Fire',   'color' => '#f97316'],
+            'shield'       => ['icon' => 'shield',         'label' => 'Shield',        'color' => '#06b6d4'],
+            'eco'          => ['icon' => 'eco',            'label' => 'Eco',           'color' => '#22c55e'],
+        ];
+    }
 }

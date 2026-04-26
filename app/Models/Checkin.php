@@ -1,6 +1,6 @@
-<?php
+﻿<?php
 /**
- * Checkin Model — Check-in (post) oluşturma, feed, etkileşimler
+ * Checkin Model â€” Check-in (post) oluÅŸturma, feed, etkileÅŸimler
  */
 
 class CheckinModel
@@ -12,11 +12,11 @@ class CheckinModel
         $this->db = Database::getConnection();
     }
 
-    // ── Check-in Oluştur ──────────────────────────────────
+    // â”€â”€ Check-in OluÅŸtur â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     public function create(int $userId, int $venueId, ?string $note = null, ?string $image = null): array
     {
-        // Cooldown kontrolü
+        // Cooldown kontrolÃ¼
         $settings = new SettingsModel();
         $cooldown = (int) $settings->get('checkin_cooldown', 300);
 
@@ -29,10 +29,10 @@ class CheckinModel
         $stmt->execute([$userId, $venueId, $cooldown]);
         if ($stmt->fetch()) {
             $mins = ceil($cooldown / 60);
-            return ['ok' => false, 'error' => "Aynı mekana {$mins} dakika içinde tekrar check-in yapamazsınız."];
+            return ['ok' => false, 'error' => "AynÄ± mekana {$mins} dakika iÃ§inde tekrar check-in yapamazsÄ±nÄ±z."];
         }
 
-        // Rate limit kontrolü
+        // Rate limit kontrolÃ¼
         $rateLimit = (int) $settings->get('checkin_rate_limit', 10);
         $rateWindow = (int) $settings->get('checkin_rate_window', 3600);
 
@@ -43,7 +43,7 @@ class CheckinModel
         ");
         $stmt->execute([$userId, $rateWindow]);
         if ((int) $stmt->fetchColumn() >= $rateLimit) {
-            return ['ok' => false, 'error' => 'Check-in limitine ulaştınız. Lütfen daha sonra tekrar deneyin.'];
+            return ['ok' => false, 'error' => 'Check-in limitine ulaÅŸtÄ±nÄ±z. LÃ¼tfen daha sonra tekrar deneyin.'];
         }
 
         // Insert
@@ -55,7 +55,7 @@ class CheckinModel
 
         $checkinId = (int) $this->db->lastInsertId();
 
-        // Mention bildirimlerini oluştur
+        // Mention bildirimlerini oluÅŸtur
         if ($note) {
             $this->processMentions($userId, $checkinId, $note);
         }
@@ -63,7 +63,7 @@ class CheckinModel
         return ['ok' => true, 'checkin_id' => $checkinId];
     }
 
-    // ── Feed ──────────────────────────────────────────────
+    // â”€â”€ Feed â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     public function getGlobalFeed(int $page = 1, int $perPage = 20, ?int $viewerId = null): array
     {
@@ -72,7 +72,7 @@ class CheckinModel
         try {
             $stmt = $this->db->prepare("
                 (SELECT c.id, c.user_id, c.venue_id, c.note, c.image, c.created_at,
-                       u.username, u.tag, u.avatar, u.is_premium,
+                       u.username, u.tag, u.avatar, u.is_premium, u.badge,
                        v.name as venue_name, v.category as venue_category,
                        (SELECT COUNT(*) FROM post_likes WHERE checkin_id = c.id) as like_count,
                        (SELECT COUNT(*) FROM post_comments WHERE checkin_id = c.id AND is_deleted = 0) as comment_count,
@@ -84,7 +84,7 @@ class CheckinModel
                 WHERE c.is_deleted = 0 AND u.is_active = 1)
                 UNION ALL
                 (SELECT c.id, c.user_id, c.venue_id, c.note, c.image, c.created_at,
-                       u.username, u.tag, u.avatar, u.is_premium,
+                       u.username, u.tag, u.avatar, u.is_premium, u.badge,
                        v.name as venue_name, v.category as venue_category,
                        (SELECT COUNT(*) FROM post_likes WHERE checkin_id = c.id) as like_count,
                        (SELECT COUNT(*) FROM post_comments WHERE checkin_id = c.id AND is_deleted = 0) as comment_count,
@@ -102,10 +102,10 @@ class CheckinModel
             $stmt->execute([$perPage, $offset]);
             $posts = $stmt->fetchAll();
         } catch (\Throwable $e) {
-            // Fallback: UNION başarısız olursa basit sorguya dön
+            // Fallback: UNION baÅŸarÄ±sÄ±z olursa basit sorguya dÃ¶n
             $stmt = $this->db->prepare("
                 SELECT c.id, c.user_id, c.venue_id, c.note, c.image, c.created_at,
-                       u.username, u.tag, u.avatar, u.is_premium,
+                       u.username, u.tag, u.avatar, u.is_premium, u.badge,
                        v.name as venue_name, v.category as venue_category,
                        (SELECT COUNT(*) FROM post_likes WHERE checkin_id = c.id) as like_count,
                        (SELECT COUNT(*) FROM post_comments WHERE checkin_id = c.id AND is_deleted = 0) as comment_count,
@@ -122,7 +122,7 @@ class CheckinModel
             $posts = $stmt->fetchAll();
         }
 
-        // Viewer etkileşimleri
+        // Viewer etkileÅŸimleri
         if ($viewerId) {
             $posts = $this->attachViewerInteractions($posts, $viewerId);
         }
@@ -135,7 +135,7 @@ class CheckinModel
         $offset = ($page - 1) * $perPage;
 
         $stmt = $this->db->prepare("
-            SELECT c.*, u.username, u.tag, u.avatar, u.is_premium,
+            SELECT c.*, u.username, u.tag, u.avatar, u.is_premium, u.badge,
                    v.name as venue_name, v.category as venue_category,
                    (SELECT COUNT(*) FROM post_likes WHERE checkin_id = c.id) as like_count,
                    (SELECT COUNT(*) FROM post_comments WHERE checkin_id = c.id AND is_deleted = 0) as comment_count,
@@ -159,7 +159,7 @@ class CheckinModel
         $offset = ($page - 1) * $perPage;
 
         $stmt = $this->db->prepare("
-            SELECT c.*, u.username, u.tag, u.avatar, u.is_premium,
+            SELECT c.*, u.username, u.tag, u.avatar, u.is_premium, u.badge,
                    v.name as venue_name, v.category as venue_category,
                    (SELECT COUNT(*) FROM post_likes WHERE checkin_id = c.id) as like_count,
                    (SELECT COUNT(*) FROM post_comments WHERE checkin_id = c.id AND is_deleted = 0) as comment_count,
@@ -185,7 +185,7 @@ class CheckinModel
         $offset = ($page - 1) * $perPage;
 
         $stmt = $this->db->prepare("
-            SELECT c.*, u.username, u.tag, u.avatar, u.is_premium,
+            SELECT c.*, u.username, u.tag, u.avatar, u.is_premium, u.badge,
                    v.name as venue_name, v.category as venue_category,
                    (SELECT COUNT(*) FROM post_likes WHERE checkin_id = c.id) as like_count,
                    (SELECT COUNT(*) FROM post_comments WHERE checkin_id = c.id AND is_deleted = 0) as comment_count,
@@ -206,12 +206,12 @@ class CheckinModel
         return $posts;
     }
 
-    // ── Tekil Post ────────────────────────────────────────
+    // â”€â”€ Tekil Post â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     public function getById(int $id, ?int $viewerId = null): ?array
     {
         $stmt = $this->db->prepare("
-            SELECT c.*, u.username, u.tag, u.avatar, u.is_premium,
+            SELECT c.*, u.username, u.tag, u.avatar, u.is_premium, u.badge,
                    v.name as venue_name, v.category as venue_category, v.id as venue_id_ref,
                    (SELECT COUNT(*) FROM post_likes WHERE checkin_id = c.id) as like_count,
                    (SELECT COUNT(*) FROM post_comments WHERE checkin_id = c.id AND is_deleted = 0) as comment_count,
@@ -234,7 +234,7 @@ class CheckinModel
         return $post;
     }
 
-    // ── Etkileşimler ──────────────────────────────────────
+    // â”€â”€ EtkileÅŸimler â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     public function like(int $userId, int $checkinId): bool
     {
@@ -293,7 +293,7 @@ class CheckinModel
 
         $this->createNotification($checkinId, $userId, 'comment');
 
-        // Yorum içindeki mention'ları işle
+        // Yorum iÃ§indeki mention'larÄ± iÅŸle
         $this->processMentions($userId, $checkinId, $comment);
 
         return (int) $this->db->lastInsertId();
@@ -318,13 +318,13 @@ class CheckinModel
         return $stmt->execute([$checkinId, $userId]);
     }
 
-    // ── Beğenilen / Repost Edilen Postlar ─────────────────
+    // â”€â”€ BeÄŸenilen / Repost Edilen Postlar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     public function getLikedByUser(int $userId, int $page = 1, int $perPage = 20): array
     {
         $offset = ($page - 1) * $perPage;
         $stmt = $this->db->prepare("
-            SELECT c.*, u.username, u.tag, u.avatar, u.is_premium,
+            SELECT c.*, u.username, u.tag, u.avatar, u.is_premium, u.badge,
                    v.name as venue_name, v.category as venue_category,
                    (SELECT COUNT(*) FROM post_likes WHERE checkin_id = c.id) as like_count,
                    (SELECT COUNT(*) FROM post_comments WHERE checkin_id = c.id AND is_deleted = 0) as comment_count,
@@ -345,7 +345,7 @@ class CheckinModel
     {
         $offset = ($page - 1) * $perPage;
         $stmt = $this->db->prepare("
-            SELECT c.*, u.username, u.tag, u.avatar, u.is_premium,
+            SELECT c.*, u.username, u.tag, u.avatar, u.is_premium, u.badge,
                    v.name as venue_name, v.category as venue_category,
                    pr.quote as repost_quote,
                    (SELECT COUNT(*) FROM post_likes WHERE checkin_id = c.id) as like_count,
@@ -363,7 +363,7 @@ class CheckinModel
         return $this->attachViewerInteractions($stmt->fetchAll(), $userId);
     }
 
-    // ── Haftalık İstatistikler ────────────────────────────
+    // â”€â”€ HaftalÄ±k Ä°statistikler â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     public function getWeeklyCheckinCount(int $userId): int
     {
@@ -377,7 +377,7 @@ class CheckinModel
         return (int) $stmt->fetchColumn();
     }
 
-    // ── Admin ─────────────────────────────────────────────
+    // â”€â”€ Admin â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     public function adminGetAll(int $page = 1, int $perPage = 30): array
     {
@@ -418,7 +418,7 @@ class CheckinModel
         $this->db->prepare("UPDATE checkins SET is_excluded_from_leaderboard = NOT is_excluded_from_leaderboard WHERE id = ?")->execute([$id]);
     }
 
-    // ── Private ───────────────────────────────────────────
+    // â”€â”€ Private â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     private function attachViewerInteractions(array $posts, int $viewerId): array
     {
@@ -443,9 +443,9 @@ class CheckinModel
         $from = $fromUser->fetch();
 
         $messages = [
-            'like'    => ($from['username'] ?? 'Birisi') . ' gönderini beğendi.',
-            'comment' => ($from['username'] ?? 'Birisi') . ' gönderine yorum yaptı.',
-            'repost'  => ($from['username'] ?? 'Birisi') . ' gönderini paylaştı.',
+            'like'    => ($from['username'] ?? 'Birisi') . ' gÃ¶nderini beÄŸendi.',
+            'comment' => ($from['username'] ?? 'Birisi') . ' gÃ¶nderine yorum yaptÄ±.',
+            'repost'  => ($from['username'] ?? 'Birisi') . ' gÃ¶nderini paylaÅŸtÄ±.',
         ];
 
         $notif = new NotificationModel();
@@ -475,3 +475,4 @@ class CheckinModel
         }
     }
 }
+

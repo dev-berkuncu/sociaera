@@ -10,6 +10,7 @@ require_once __DIR__ . '/../app/Models/User.php';
 require_once __DIR__ . '/../app/Models/Notification.php';
 require_once __DIR__ . '/../app/Models/Leaderboard.php';
 require_once __DIR__ . '/../app/Models/Venue.php';
+require_once __DIR__ . '/../app/Models/Wallet.php';
 
 Auth::requireLogin();
 
@@ -74,6 +75,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $result = $userModel->changePassword(Auth::id(), $_POST['current_password'] ?? '', $_POST['new_password'] ?? '');
         if ($result['ok']) { $success = 'Şifre değiştirildi.'; }
         else { $error = $result['error']; }
+    } elseif ($action === 'update_badge') {
+        if (empty($user['is_premium'])) {
+            $error = 'Rozet değiştirmek için Premium üye olmanız gerekir.';
+        } else {
+            $badge = $_POST['badge'] ?? null;
+            $badges = UserModel::availableBadges();
+            if ($badge && !isset($badges[$badge])) {
+                $error = 'Geçersiz rozet seçimi.';
+            } else {
+                $userModel->updateBadge(Auth::id(), $badge ?: null);
+                $success = 'Rozet güncellendi.';
+                $user = $userModel->getById(Auth::id());
+            }
+        }
     }
 }
 
@@ -148,6 +163,51 @@ require_once __DIR__ . '/partials/app_header.php';
             </div>
         </form>
     </div>
+
+    <!-- Rozet Seçimi (Premium) -->
+    <?php if (!empty($user['is_premium'])): ?>
+    <div class="bg-gradient-to-br from-[#1E293B]/80 to-surface-container border border-[#7bd0ff]/20 rounded-xl p-6 shadow-[0_15px_30px_-15px_rgba(123,208,255,0.1)]">
+        <h2 class="text-xl font-bold flex items-center gap-2 mb-4 text-on-surface">
+            <span class="material-symbols-outlined text-[#7bd0ff]">workspace_premium</span> Profil Rozeti
+            <span class="bg-[#7bd0ff]/20 text-[#7bd0ff] text-[10px] font-bold px-2 py-0.5 rounded border border-[#7bd0ff]/30 uppercase tracking-wider ml-1">Premium</span>
+        </h2>
+        <p class="text-slate-400 text-sm mb-4">Profilinde görünecek rozeti seç. Rozet kullanıcı adının yanında gösterilir.</p>
+        <form method="POST">
+            <?php echo csrfField(); ?>
+            <input type="hidden" name="action" value="update_badge">
+            <div class="grid grid-cols-5 gap-3 mb-4">
+                <!-- Rozet yok seçeneği -->
+                <label class="cursor-pointer">
+                    <input type="radio" name="badge" value="" <?php echo empty($user['badge']) ? 'checked' : ''; ?> class="sr-only peer">
+                    <div class="flex flex-col items-center gap-1.5 p-3 rounded-xl border border-white/10 peer-checked:border-[#7bd0ff]/50 peer-checked:bg-[#7bd0ff]/10 hover:bg-white/5 transition-all">
+                        <span class="material-symbols-outlined text-[28px] text-slate-500">block</span>
+                        <span class="text-[10px] text-slate-500 font-semibold">Yok</span>
+                    </div>
+                </label>
+                <?php foreach (UserModel::availableBadges() as $key => $badge): ?>
+                <label class="cursor-pointer">
+                    <input type="radio" name="badge" value="<?php echo $key; ?>" <?php echo ($user['badge'] ?? '') === $key ? 'checked' : ''; ?> class="sr-only peer">
+                    <div class="flex flex-col items-center gap-1.5 p-3 rounded-xl border border-white/10 peer-checked:border-[#7bd0ff]/50 peer-checked:bg-[#7bd0ff]/10 hover:bg-white/5 transition-all">
+                        <span class="material-symbols-outlined text-[28px]" style="color: <?php echo $badge['color']; ?>"><?php echo $badge['icon']; ?></span>
+                        <span class="text-[10px] text-slate-400 font-semibold"><?php echo $badge['label']; ?></span>
+                    </div>
+                </label>
+                <?php endforeach; ?>
+            </div>
+            <button type="submit" class="bg-[#7bd0ff]/20 text-[#7bd0ff] px-6 py-2.5 rounded-lg font-bold border border-[#7bd0ff]/30 hover:bg-[#7bd0ff]/30 transition-colors active:scale-95 w-fit">Rozeti Kaydet</button>
+        </form>
+    </div>
+    <?php else: ?>
+    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-6 shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)]">
+        <h2 class="text-xl font-bold flex items-center gap-2 mb-4 text-on-surface">
+            <span class="material-symbols-outlined text-slate-500">workspace_premium</span> Profil Rozeti
+        </h2>
+        <p class="text-slate-400 text-sm mb-4">Profil rozeti seçmek için Premium üye olmanız gerekir.</p>
+        <a href="<?php echo BASE_URL; ?>/premium" class="inline-flex items-center gap-2 bg-primary-container/20 text-primary-container px-4 py-2 rounded-lg font-bold text-sm border border-primary-container/30 hover:bg-primary-container/30 transition-colors">
+            <span class="material-symbols-outlined text-[18px]">diamond</span> Premium'a Geç
+        </a>
+    </div>
+    <?php endif; ?>
 
     <!-- Profil Bilgileri -->
     <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-6 shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)]">
