@@ -133,7 +133,33 @@ require_once __DIR__ . '/partials/app_header.php';
                 </div>
             </div>
             
-            <div class="flex flex-wrap gap-6 mt-8 pt-6 border-t border-white/10">
+            <!-- Rozetler (info ile stats arası) -->
+            <?php
+            $badgeModel = new BadgeModel();
+            $profileBadges = $badgeModel->getUserBadges($profileUser['id']);
+            $badgeDefs = BadgeModel::definitions();
+            ?>
+            <?php if (!empty($profileBadges)): ?>
+            <div class="flex flex-wrap gap-2 mt-5 pt-5 border-t border-white/10">
+                <?php foreach ($profileBadges as $pb):
+                    $def = $badgeDefs[$pb['badge_key']] ?? null;
+                    if (!$def) continue;
+                    $count = (int)($pb['total_count'] ?? 1);
+                ?>
+                <div class="relative flex items-center justify-center w-9 h-9 rounded-lg transition-transform hover:scale-110 cursor-default" style="background: <?php echo $def['color']; ?>15; border: 1.5px solid <?php echo $def['color']; ?>40;" title="<?php echo escape($def['name'] . ' — ' . $def['desc'] . ($count > 1 ? ' (x' . $count . ')' : '')); ?>">
+                    <span class="material-symbols-outlined text-[20px]" style="color: <?php echo $def['color']; ?>"><?php echo $def['icon']; ?></span>
+                    <?php if ($count > 1): ?>
+                    <span class="absolute -top-1.5 -right-1.5 min-w-[16px] h-4 flex items-center justify-center bg-primary-container text-white text-[9px] font-black rounded-full px-1 shadow-[0_2px_6px_rgba(255,107,53,0.4)]"><?php echo $count; ?></span>
+                    <?php endif; ?>
+                </div>
+                <?php endforeach; ?>
+                <a href="<?php echo BASE_URL; ?>/missions" class="flex items-center justify-center w-9 h-9 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-colors text-slate-500 hover:text-slate-300" title="Tüm görevleri gör">
+                    <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                </a>
+            </div>
+            <?php endif; ?>
+
+            <div class="flex flex-wrap gap-6 mt-6 pt-6 border-t border-white/10">
                 <div class="flex flex-col">
                     <span class="text-xl font-bold text-on-surface"><?php echo shortNumber($stats['following']); ?></span>
                     <span class="text-xs text-slate-500 uppercase tracking-widest font-semibold">Takip</span>
@@ -154,28 +180,6 @@ require_once __DIR__ . '/partials/app_header.php';
         </div>
     </div>
 
-    <!-- Kazanılan Rozetler -->
-    <?php
-    $badgeModel = new BadgeModel();
-    $profileBadges = $badgeModel->getUserBadges($profileUser['id']);
-    $badgeDefs = BadgeModel::definitions();
-    ?>
-    <?php if (!empty($profileBadges)): ?>
-    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-5 shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)]">
-        <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2"><span class="material-symbols-outlined text-[16px] text-primary-container">emoji_events</span> Rozetler (<?php echo count($profileBadges); ?>)</h3>
-        <div class="flex flex-wrap gap-2">
-            <?php foreach ($profileBadges as $pb):
-                $def = $badgeDefs[$pb['badge_key']] ?? null;
-                if (!$def) continue;
-            ?>
-            <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border transition-colors hover:bg-white/5" style="background: <?php echo $def['color']; ?>10; border-color: <?php echo $def['color']; ?>30;" title="<?php echo escape($def['name'] . ' — ' . $def['desc']); ?>">
-                <span class="material-symbols-outlined text-[16px]" style="color: <?php echo $def['color']; ?>"><?php echo $def['icon']; ?></span>
-                <span class="text-xs font-bold text-slate-300"><?php echo escape($def['name']); ?></span>
-            </div>
-            <?php endforeach; ?>
-        </div>
-    </div>
-    <?php endif; ?>
 
     <!-- Tabs -->
     <div class="flex items-center border-b border-white/10 mb-2 mt-4 px-2">

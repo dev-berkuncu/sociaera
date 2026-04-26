@@ -133,12 +133,28 @@ class BadgeModel
     }
 
     /**
-     * Kullanıcının kazandığı rozetleri getir
+     * Mevcut haftanın başlangıç tarihini al
+     */
+    private static function currentWeekStart(): string
+    {
+        $tz = new DateTimeZone(APP_TIMEZONE);
+        $now = new DateTime('now', $tz);
+        $now->modify('monday this week');
+        $now->setTime(0, 0, 0);
+        return $now->format('Y-m-d');
+    }
+
+    /**
+     * Kullanıcının kazandığı rozetleri toplam sayılarıyla getir
      */
     public function getUserBadges(int $userId): array
     {
         try {
-            $stmt = $this->db->prepare("SELECT badge_key, earned_at FROM user_badges WHERE user_id = ? ORDER BY earned_at DESC");
+            $stmt = $this->db->prepare("
+                SELECT badge_key, COUNT(*) as total_count, MAX(earned_at) as last_earned
+                FROM user_badges WHERE user_id = ?
+                GROUP BY badge_key ORDER BY last_earned DESC
+            ");
             $stmt->execute([$userId]);
             return $stmt->fetchAll();
         } catch (\Throwable $e) {
@@ -147,31 +163,43 @@ class BadgeModel
     }
 
     /**
-     * Kullanıcının kazandığı rozet key'lerini array olarak döndür
+     * Bu hafta kazanılan rozet key'lerini döndür
      */
-    public function getUserBadgeKeys(int $userId): array
+    public function getCurrentWeekBadgeKeys(int $userId): array
     {
-        $badges = $this->getUserBadges($userId);
-        return array_column($badges, 'badge_key');
+        try {
+            $weekStart = self::currentWeekStart();
+            $stmt = $this->db->prepare("SELECT badge_key FROM user_badges WHERE user_id = ? AND week_start = ?");
+            $stmt->execute([$userId, $weekStart]);
+            return $stmt->fetchAll(PDO::FETCH_COLUMN);
+        } catch (\Throwable $e) {
+            return [];
+        }
     }
 
     /**
-     * Rozet ver
+     * Rozet ver (haftalık)
      */
     public function award(int $userId, string $badgeKey): bool
     {
         try {
-            $stmt = $this->db->prepare("INSERT IGNORE INTO user_badges (user_id, badge_key, earned_at) VALUES (?, ?, NOW())");
-            $stmt->execute([$userId, $badgeKey]);
+            $weekStart = self::currentWeekStart();
+            $stmt = $this->db->prepare("INSERT IGNORE INTO user_badges (user_id, badge_key, week_start, earned_at) VALUES (?, ?, ?, NOW())");
+            $stmt->execute([$userId, $badgeKey, $weekStart]);
             
             if ($stmt->rowCount() > 0) {
-                // Bildirim gönder
+                // Kaç kez kazanıldığını bul
+                $cntStmt = $this->db->prepare("SELECT COUNT(*) FROM user_badges WHERE user_id = ? AND badge_key = ?");
+                $cntStmt->execute([$userId, $badgeKey]);
+                $totalCount = (int)$cntStmt->fetchColumn();
+                
                 try {
                     $defs = self::definitions();
                     $badge = $defs[$badgeKey] ?? null;
                     if ($badge) {
                         $notif = new NotificationModel();
-                        $notif->create($userId, null, 'badge', '🏆 "' . $badge['name'] . '" rozetini kazandın! ' . $badge['desc']);
+                        $countText = $totalCount > 1 ? ' (x' . $totalCount . ')' : '';
+                        $notif->create($userId, null, 'badge', '🏆 "' . $badge['name'] . '" rozetini kazandın' . $countText . '! ' . $badge['desc']);
                     }
                 } catch (\Throwable $e) {}
                 return true;
@@ -188,21 +216,27 @@ class BadgeModel
     public function getProgress(int $userId): array
     {
         $defs = self::definitions();
-        $earned = $this->getUserBadgeKeys($userId);
+        $thisWeekKeys = $this->getCurrentWeekBadgeKeys($userId);
+        $allBadges = $this->getUserBadges($userId);
+        $badgeCounts = [];
+        foreach ($allBadges as $b) {
+            $badgeCounts[$b['badge_key']] = (int)$b['total_count'];
+        }
         $progress = [];
 
         foreach ($defs as $key => $def) {
             $current = $this->calculateProgress($userId, $key);
             $progress[$key] = [
-                'key'      => $key,
-                'name'     => $def['name'],
-                'desc'     => $def['desc'],
-                'icon'     => $def['icon'],
-                'color'    => $def['color'],
-                'goal'     => $def['goal'],
-                'current'  => min($current, $def['goal']),
-                'earned'   => in_array($key, $earned),
-                'percent'  => min(100, round(($current / max(1, $def['goal'])) * 100)),
+                'key'         => $key,
+                'name'        => $def['name'],
+                'desc'        => $def['desc'],
+                'icon'        => $def['icon'],
+                'color'       => $def['color'],
+                'goal'        => $def['goal'],
+                'current'     => min($current, $def['goal']),
+                'earned'      => in_array($key, $thisWeekKeys),
+                'total_count' => $badgeCounts[$key] ?? 0,
+                'percent'     => min(100, round(($current / max(1, $def['goal'])) * 100)),
             ];
         }
 
@@ -373,11 +407,11 @@ class BadgeModel
     public function checkAndAward(int $userId): array
     {
         $defs = self::definitions();
-        $earned = $this->getUserBadgeKeys($userId);
+        $thisWeekKeys = $this->getCurrentWeekBadgeKeys($userId);
         $newBadges = [];
 
         foreach ($defs as $key => $def) {
-            if (in_array($key, $earned)) continue;
+            if (in_array($key, $thisWeekKeys)) continue; // Bu hafta zaten kazanılmış
 
             $current = $this->calculateProgress($userId, $key);
             if ($current >= $def['goal']) {
