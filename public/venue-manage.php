@@ -78,12 +78,9 @@ $venue = $venueModel->getById($venueId);
 $checkinCount = $venueModel->getCheckinCount($venueId);
 $categories = VenueModel::categories();
 
+// Bu sayfada right sidebar gösterme
 $trendVenues = [];
 $miniLeaderboard = [];
-try {
-    $trendVenues = (new VenueModel())->getTrending(5);
-    $miniLeaderboard = (new LeaderboardModel())->getTopUsers(5);
-} catch (Exception $e) {}
 
 $pageTitle = $venue['name'] . ' — İşletme Paneli';
 $activeNav = 'venue_manage_' . $venueId;
@@ -91,7 +88,7 @@ $activeNav = 'venue_manage_' . $venueId;
 require_once __DIR__ . '/partials/app_header.php';
 ?>
 
-<section class="flex-1 flex flex-col gap-6 max-w-3xl w-full mx-auto">
+<section class="flex-1 flex flex-col gap-6 max-w-3xl w-full">
 
     <!-- Header -->
     <div class="flex items-center gap-4">
