@@ -72,26 +72,26 @@
                     <div class="flex gap-5 animate-marquee" style="width: max-content;">
                         <?php foreach ($rightSidebarSponsors as $sp): ?>
                         <a href="<?php echo escape($sp['url'] ?? '#'); ?>" target="_blank" rel="noopener" class="flex flex-col items-center gap-2 flex-shrink-0 group" title="<?php echo escape($sp['name']); ?>">
-                            <div class="w-14 h-14 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden group-hover:border-primary-container/40 transition-colors">
+                            <div class="w-20 h-20 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden group-hover:border-primary-container/40 transition-colors">
                                 <?php if (!empty($sp['logo'])): ?>
-                                    <img src="<?php echo BASE_URL . '/' . escape($sp['logo']); ?>" alt="<?php echo escape($sp['name']); ?>" class="w-10 h-10 object-contain">
+                                    <img src="<?php echo BASE_URL . '/' . escape($sp['logo']); ?>" alt="<?php echo escape($sp['name']); ?>" class="w-full h-full object-contain p-1">
                                 <?php else: ?>
-                                    <span class="material-symbols-outlined text-slate-500 text-[24px]">store</span>
+                                    <span class="material-symbols-outlined text-slate-500 text-[32px]">store</span>
                                 <?php endif; ?>
                             </div>
-                            <span class="text-[11px] text-slate-400 group-hover:text-primary-container transition-colors font-medium truncate max-w-[60px] text-center"><?php echo escape($sp['name']); ?></span>
+                            <span class="text-[11px] text-slate-400 group-hover:text-primary-container transition-colors font-medium truncate max-w-[80px] text-center"><?php echo escape($sp['name']); ?></span>
                         </a>
                         <?php endforeach; ?>
                         <?php foreach ($rightSidebarSponsors as $sp): ?>
                         <a href="<?php echo escape($sp['url'] ?? '#'); ?>" target="_blank" rel="noopener" class="flex flex-col items-center gap-2 flex-shrink-0 group" title="<?php echo escape($sp['name']); ?>" aria-hidden="true">
-                            <div class="w-14 h-14 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden group-hover:border-primary-container/40 transition-colors">
+                            <div class="w-20 h-20 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden group-hover:border-primary-container/40 transition-colors">
                                 <?php if (!empty($sp['logo'])): ?>
-                                    <img src="<?php echo BASE_URL . '/' . escape($sp['logo']); ?>" alt="" class="w-10 h-10 object-contain">
+                                    <img src="<?php echo BASE_URL . '/' . escape($sp['logo']); ?>" alt="" class="w-full h-full object-contain p-1">
                                 <?php else: ?>
-                                    <span class="material-symbols-outlined text-slate-500 text-[24px]">store</span>
+                                    <span class="material-symbols-outlined text-slate-500 text-[32px]">store</span>
                                 <?php endif; ?>
                             </div>
-                            <span class="text-[11px] text-slate-400 font-medium truncate max-w-[60px] text-center"><?php echo escape($sp['name']); ?></span>
+                            <span class="text-[11px] text-slate-400 font-medium truncate max-w-[80px] text-center"><?php echo escape($sp['name']); ?></span>
                         </a>
                         <?php endforeach; ?>
                     </div>
