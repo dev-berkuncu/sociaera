@@ -53,13 +53,29 @@ require_once __DIR__ . '/partials/app_header.php';
             <?php foreach ($result['members'] as $m):
                 $mIsFollowing = (Auth::id() !== (int)$m['id']) ? $userModel->isFollowing(Auth::id(), $m['id']) : false;
             ?>
-            <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-6 shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)] flex flex-col items-center text-center hover:border-primary-container/30 transition-colors group">
+            <?php
+                $mIsPremium = UserModel::isPremiumActive($m);
+            ?>
+            <div class="<?php echo $mIsPremium
+                ? 'bg-gradient-to-br from-[#1E293B] to-[#0f1f3d] border border-[#7bd0ff]/30 rounded-xl p-6 shadow-[0_15px_30px_-15px_rgba(123,208,255,0.15)] flex flex-col items-center text-center hover:border-[#7bd0ff]/60 hover:shadow-[0_20px_40px_-15px_rgba(123,208,255,0.25)] transition-all group relative overflow-hidden'
+                : 'bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-6 shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)] flex flex-col items-center text-center hover:border-primary-container/30 transition-colors group'; ?>">
+                
+                <?php if ($mIsPremium): ?>
+                <div class="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-[#7bd0ff] to-transparent"></div>
+                <div class="absolute top-2 right-2">
+                    <span class="material-symbols-outlined text-[16px] text-[#7bd0ff] animate-pulse" title="Premium">diamond</span>
+                </div>
+                <?php endif; ?>
+
                 <a href="<?php echo BASE_URL; ?>/profile?u=<?php echo escape($m['tag'] ?: $m['username']); ?>" class="relative mb-3 block">
                     <?php $mAvatar = $m['avatar'] ? BASE_URL . '/uploads/avatars/' . $m['avatar'] : 'https://ui-avatars.com/api/?name=' . urlencode($m['username']) . '&background=random'; ?>
-                    <img alt="User avatar" class="w-20 h-20 rounded-full object-cover border-2 border-white/10 group-hover:border-primary-container/50 transition-colors" src="<?php echo $mAvatar; ?>"/>
+                    <img alt="User avatar" class="w-20 h-20 rounded-full object-cover border-2 <?php echo $mIsPremium ? 'border-[#7bd0ff]/40 group-hover:border-[#7bd0ff]/70 shadow-[0_0_15px_rgba(123,208,255,0.2)]' : 'border-white/10 group-hover:border-primary-container/50'; ?> transition-all" src="<?php echo $mAvatar; ?>"/>
+                    <?php if ($mIsPremium): ?>
+                    <div class="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-[#7bd0ff]/20 text-[#7bd0ff] text-[8px] font-black px-2 py-0.5 rounded-full border border-[#7bd0ff]/30 uppercase tracking-widest whitespace-nowrap">Premium</div>
+                    <?php endif; ?>
                 </a>
                 
-                <a href="<?php echo BASE_URL; ?>/profile?u=<?php echo escape($m['tag'] ?: $m['username']); ?>" class="font-bold text-lg text-on-surface hover:text-primary-container transition-colors truncate w-full"><?php echo escape($m['username']); ?></a>
+                <a href="<?php echo BASE_URL; ?>/profile?u=<?php echo escape($m['tag'] ?: $m['username']); ?>" class="font-bold text-lg <?php echo $mIsPremium ? 'text-[#7bd0ff] hover:text-white' : 'text-on-surface hover:text-primary-container'; ?> transition-colors truncate w-full"><?php echo escape($m['username']); ?></a>
                 
                 <div class="h-5">
                     <?php if ($m['tag']): ?><div class="text-sm text-slate-400 truncate">@<?php echo escape($m['tag']); ?></div><?php endif; ?>

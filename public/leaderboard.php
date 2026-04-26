@@ -79,20 +79,37 @@ require_once __DIR__ . '/partials/app_header.php';
                         $rowBg = 'hover:bg-white/5 border-b border-white/5 last:border-0';
                     }
                 ?>
-                <a href="<?php echo BASE_URL; ?>/profile?u=<?php echo escape($u['tag'] ?: $u['username']); ?>" class="flex items-center gap-4 p-4 transition-colors <?php echo $rowBg; ?> group">
-                    <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg border flex-shrink-0 <?php echo $rankColor; ?> transition-transform group-hover:scale-110"><?php echo $i + 1; ?></div>
+                <?php
+                    $uIsPremium = !empty($u['is_premium']);
+                ?>
+                <a href="<?php echo BASE_URL; ?>/profile?u=<?php echo escape($u['tag'] ?: $u['username']); ?>" class="flex items-center gap-4 p-4 transition-colors <?php echo $rowBg; ?> group relative <?php echo $uIsPremium ? 'ring-1 ring-inset ring-[#7bd0ff]/20' : ''; ?>">
+                    <?php if ($uIsPremium): ?>
+                    <div class="absolute inset-0 bg-gradient-to-r from-[#7bd0ff]/5 via-transparent to-[#7bd0ff]/5 pointer-events-none"></div>
+                    <?php endif; ?>
+
+                    <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg border flex-shrink-0 <?php echo $rankColor; ?> transition-transform group-hover:scale-110 relative z-10"><?php echo $i + 1; ?></div>
                     
-                    <div class="relative flex-shrink-0">
+                    <div class="relative flex-shrink-0 z-10">
                         <?php $uAvatar = $u['avatar'] ? BASE_URL . '/uploads/avatars/' . $u['avatar'] : 'https://ui-avatars.com/api/?name=' . urlencode($u['username']) . '&background=random'; ?>
-                        <img alt="User avatar" class="w-12 h-12 rounded-full object-cover border-2 border-white/10 group-hover:border-primary-container/50 transition-colors" src="<?php echo $uAvatar; ?>"/>
+                        <img alt="User avatar" class="w-12 h-12 rounded-full object-cover border-2 <?php echo $uIsPremium ? 'border-[#7bd0ff]/50 shadow-[0_0_12px_rgba(123,208,255,0.3)]' : 'border-white/10'; ?> group-hover:border-primary-container/50 transition-all" src="<?php echo $uAvatar; ?>"/>
+                        <?php if ($uIsPremium): ?>
+                        <div class="absolute -bottom-0.5 -right-0.5 w-5 h-5 bg-[#0f172a] rounded-full flex items-center justify-center border border-[#7bd0ff]/40">
+                            <span class="material-symbols-outlined text-[12px] text-[#7bd0ff]">diamond</span>
+                        </div>
+                        <?php endif; ?>
                     </div>
                     
-                    <div class="flex-grow min-w-0">
-                        <div class="font-bold text-on-surface group-hover:text-primary-container transition-colors truncate text-lg"><?php echo escape($u['username']); ?></div>
+                    <div class="flex-grow min-w-0 relative z-10">
+                        <div class="font-bold text-on-surface group-hover:text-primary-container transition-colors truncate text-lg flex items-center gap-2">
+                            <?php echo escape($u['username']); ?>
+                            <?php if ($uIsPremium): ?>
+                            <span class="bg-[#7bd0ff]/15 text-[#7bd0ff] text-[9px] font-black px-1.5 py-0.5 rounded border border-[#7bd0ff]/25 uppercase tracking-wider">PRO</span>
+                            <?php endif; ?>
+                        </div>
                         <?php if ($u['tag']): ?><div class="text-sm text-slate-400 truncate">@<?php echo escape($u['tag']); ?></div><?php endif; ?>
                     </div>
                     
-                    <div class="text-right flex-shrink-0">
+                    <div class="text-right flex-shrink-0 relative z-10">
                         <div class="font-black text-xl text-primary-container"><?php echo $u['checkin_count']; ?></div>
                         <div class="text-xs text-slate-500 uppercase tracking-wider font-semibold">check-in</div>
                     </div>
