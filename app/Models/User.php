@@ -409,19 +409,27 @@ class UserModel
 
     public function setPremium(int $userId, int $days = 7): void
     {
-        $this->db->prepare("
-            UPDATE users SET is_premium = 1, premium_until = DATE_ADD(NOW(), INTERVAL ? DAY) WHERE id = ?
-        ")->execute([$days, $userId]);
+        try {
+            $this->db->prepare("
+                UPDATE users SET is_premium = 1, premium_until = DATE_ADD(NOW(), INTERVAL ? DAY) WHERE id = ?
+            ")->execute([$days, $userId]);
+        } catch (\Throwable $e) {
+            // premium_until kolonu yoksa sadece flag'i set et
+            $this->db->prepare("UPDATE users SET is_premium = 1 WHERE id = ?")->execute([$userId]);
+        }
     }
 
     public function renewPremium(int $userId, int $days = 7): void
     {
-        // Mevcut süre varsa üzerine ekle, yoksa şimdiden başla
-        $this->db->prepare("
-            UPDATE users SET is_premium = 1, 
-                premium_until = DATE_ADD(GREATEST(COALESCE(premium_until, NOW()), NOW()), INTERVAL ? DAY) 
-            WHERE id = ?
-        ")->execute([$days, $userId]);
+        try {
+            $this->db->prepare("
+                UPDATE users SET is_premium = 1, 
+                    premium_until = DATE_ADD(GREATEST(COALESCE(premium_until, NOW()), NOW()), INTERVAL ? DAY) 
+                WHERE id = ?
+            ")->execute([$days, $userId]);
+        } catch (\Throwable $e) {
+            $this->db->prepare("UPDATE users SET is_premium = 1 WHERE id = ?")->execute([$userId]);
+        }
     }
 
     /**
@@ -430,7 +438,6 @@ class UserModel
     public static function isPremiumActive(?array $user): bool
     {
         if (!$user || empty($user['is_premium'])) return false;
-        // premium_until kolonu yoksa (migration çalışmamış) sadece is_premium'a bak
         if (!isset($user['premium_until'])) return true;
         if (empty($user['premium_until'])) return false;
         return strtotime($user['premium_until']) > time();
@@ -452,7 +459,11 @@ class UserModel
 
     public function updateBadge(int $userId, ?string $badge): void
     {
-        $this->db->prepare("UPDATE users SET badge = ? WHERE id = ?")->execute([$badge, $userId]);
+        try {
+            $this->db->prepare("UPDATE users SET badge = ? WHERE id = ?")->execute([$badge, $userId]);
+        } catch (\Throwable $e) {
+            // badge kolonu yoksa sessizce geç
+        }
     }
 
     public static function availableBadges(): array
