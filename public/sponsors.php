@@ -21,7 +21,7 @@ try {
 // Sponsor verileri — ileride DB'den çekilebilir
 $sponsors = [
     ['name' => 'COLOSSEUM', 'logo' => 'assets/img/sponsors/colosseum.png', 'url' => 'https://cfx.re/join/j7e8ba'],
-    ['name' => 'Örnek Marka 2', 'logo' => 'assets/img/sponsors/marka2.png', 'url' => 'https://example.com'],
+    ['name' => 'Paradise Group', 'logo' => 'assets/img/sponsors/paradise-group.png', 'url' => '#'],
 ];
 
 $pageTitle = 'Sponsorlarımız';
