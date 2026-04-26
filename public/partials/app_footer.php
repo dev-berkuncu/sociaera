@@ -4,7 +4,6 @@
  */
 ?>
         <!-- Right Sidebar (Conditionally shown if variables exist) -->
-        <?php if (!empty($trendVenues) || !empty($miniLeaderboard)): ?>
         <aside class="hidden lg:flex flex-col w-80 gap-stack-md ml-auto">
             <?php if (!empty($trendVenues)): ?>
             <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-6 shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)]">
@@ -56,8 +55,53 @@
                 <a href="<?php echo BASE_URL; ?>/leaderboard" class="block text-center w-full mt-6 py-2 text-primary-container font-label-md text-label-md hover:bg-white/5 rounded-lg transition-colors">Tümünü Gör</a>
             </div>
             <?php endif; ?>
+
+            <!-- Sponsorlarımız -->
+            <?php
+            $rightSidebarSponsors = [
+                ['name' => 'Örnek Marka 1', 'logo' => 'uploads/sponsors/marka1.png', 'url' => 'https://example.com'],
+                ['name' => 'Örnek Marka 2', 'logo' => 'uploads/sponsors/marka2.png', 'url' => 'https://example.com'],
+            ];
+            ?>
+            <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-6 shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)] overflow-hidden">
+                <h2 class="font-headline-md text-headline-md text-on-surface mb-4 flex items-center gap-2">
+                    Sponsorlarımız <span class="material-symbols-outlined text-primary-container text-[20px]">campaign</span>
+                </h2>
+                <?php if (!empty($rightSidebarSponsors)): ?>
+                <div class="relative overflow-hidden" style="mask-image: linear-gradient(90deg, transparent, black 10%, black 90%, transparent); -webkit-mask-image: linear-gradient(90deg, transparent, black 10%, black 90%, transparent);">
+                    <div class="flex gap-5 animate-marquee" style="width: max-content;">
+                        <?php foreach ($rightSidebarSponsors as $sp): ?>
+                        <a href="<?php echo escape($sp['url'] ?? '#'); ?>" target="_blank" rel="noopener" class="flex flex-col items-center gap-2 flex-shrink-0 group" title="<?php echo escape($sp['name']); ?>">
+                            <div class="w-14 h-14 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden group-hover:border-primary-container/40 transition-colors">
+                                <?php if (!empty($sp['logo'])): ?>
+                                    <img src="<?php echo BASE_URL . '/' . escape($sp['logo']); ?>" alt="<?php echo escape($sp['name']); ?>" class="w-10 h-10 object-contain">
+                                <?php else: ?>
+                                    <span class="material-symbols-outlined text-slate-500 text-[24px]">store</span>
+                                <?php endif; ?>
+                            </div>
+                            <span class="text-[11px] text-slate-400 group-hover:text-primary-container transition-colors font-medium truncate max-w-[60px] text-center"><?php echo escape($sp['name']); ?></span>
+                        </a>
+                        <?php endforeach; ?>
+                        <?php foreach ($rightSidebarSponsors as $sp): ?>
+                        <a href="<?php echo escape($sp['url'] ?? '#'); ?>" target="_blank" rel="noopener" class="flex flex-col items-center gap-2 flex-shrink-0 group" title="<?php echo escape($sp['name']); ?>" aria-hidden="true">
+                            <div class="w-14 h-14 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden group-hover:border-primary-container/40 transition-colors">
+                                <?php if (!empty($sp['logo'])): ?>
+                                    <img src="<?php echo BASE_URL . '/' . escape($sp['logo']); ?>" alt="" class="w-10 h-10 object-contain">
+                                <?php else: ?>
+                                    <span class="material-symbols-outlined text-slate-500 text-[24px]">store</span>
+                                <?php endif; ?>
+                            </div>
+                            <span class="text-[11px] text-slate-400 font-medium truncate max-w-[60px] text-center"><?php echo escape($sp['name']); ?></span>
+                        </a>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                <?php else: ?>
+                <p class="text-slate-500 text-sm text-center py-2">Henüz sponsor yok</p>
+                <?php endif; ?>
+                <a href="<?php echo BASE_URL; ?>/sponsors" class="block text-center w-full mt-4 py-2 text-primary-container font-label-md text-label-md hover:bg-white/5 rounded-lg transition-colors">Tümünü Gör</a>
+            </div>
         </aside>
-        <?php endif; ?>
     </div> <!-- flex-grow flex p-gutter ... -->
 </main>
 

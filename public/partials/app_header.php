@@ -176,6 +176,18 @@ if (!isset($currentUser) && Auth::check()) {
     ::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); }
     ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+    /* Sponsor Marquee */
+    @keyframes marquee {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
+    }
+    .animate-marquee {
+        animation: marquee 12s linear infinite;
+    }
+    .animate-marquee:hover {
+        animation-play-state: paused;
+    }
 </style>
 </head>
 <body class="bg-background text-on-background font-body-md text-body-md min-h-screen antialiased flex selection:bg-primary-container/30 selection:text-primary-container">
@@ -200,7 +212,6 @@ if (!isset($currentUser) && Auth::check()) {
             'members' => ['icon' => 'people', 'label' => 'Üyeler', 'url' => '/members'],
             'wallet' => ['icon' => 'account_balance_wallet', 'label' => 'Cüzdan', 'url' => '/wallet'],
             'premium' => ['icon' => 'diamond', 'label' => 'Premium', 'url' => '/premium'],
-            'sponsors' => ['icon' => 'campaign', 'label' => 'Sponsorlarımız', 'url' => '/sponsors'],
             'notifications' => ['icon' => 'notifications', 'label' => 'Bildirimler', 'url' => '/notifications'],
             'settings' => ['icon' => 'settings', 'label' => 'Ayarlar', 'url' => '/settings']
         ];
