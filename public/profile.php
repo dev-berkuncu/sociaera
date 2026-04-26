@@ -18,6 +18,7 @@ require_once __DIR__ . '/../app/Models/Leaderboard.php';
 require_once __DIR__ . '/../app/Models/Ad.php';
 require_once __DIR__ . '/../app/Models/Settings.php';
 require_once __DIR__ . '/../app/Helpers/ads_logic.php';
+require_once __DIR__ . '/../app/Models/Badge.php';
 
 Auth::requireLogin();
 
@@ -152,6 +153,29 @@ require_once __DIR__ . '/partials/app_header.php';
             </div>
         </div>
     </div>
+
+    <!-- Kazanılan Rozetler -->
+    <?php
+    $badgeModel = new BadgeModel();
+    $profileBadges = $badgeModel->getUserBadges($profileUser['id']);
+    $badgeDefs = BadgeModel::definitions();
+    ?>
+    <?php if (!empty($profileBadges)): ?>
+    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-5 shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)]">
+        <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2"><span class="material-symbols-outlined text-[16px] text-primary-container">emoji_events</span> Rozetler (<?php echo count($profileBadges); ?>)</h3>
+        <div class="flex flex-wrap gap-2">
+            <?php foreach ($profileBadges as $pb):
+                $def = $badgeDefs[$pb['badge_key']] ?? null;
+                if (!$def) continue;
+            ?>
+            <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border transition-colors hover:bg-white/5" style="background: <?php echo $def['color']; ?>10; border-color: <?php echo $def['color']; ?>30;" title="<?php echo escape($def['name'] . ' — ' . $def['desc']); ?>">
+                <span class="material-symbols-outlined text-[16px]" style="color: <?php echo $def['color']; ?>"><?php echo $def['icon']; ?></span>
+                <span class="text-xs font-bold text-slate-300"><?php echo escape($def['name']); ?></span>
+            </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+    <?php endif; ?>
 
     <!-- Tabs -->
     <div class="flex items-center border-b border-white/10 mb-2 mt-4 px-2">
