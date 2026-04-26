@@ -58,7 +58,7 @@ require_once __DIR__ . '/partials/app_header.php';
     </div>
 
     <!-- Compose Box -->
-    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-6 shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)]">
+    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-6 shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)] overflow-visible" style="overflow:visible;">
         <form id="composeForm" enctype="multipart/form-data">
             <input type="hidden" name="csrf_token" value="<?php echo csrfToken(); ?>">
             <input type="hidden" name="venue_id" id="selectedVenueId" value="">
