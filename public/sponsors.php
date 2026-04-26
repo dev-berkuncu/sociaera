@@ -18,6 +18,11 @@ try {
     $miniLeaderboard = (new LeaderboardModel())->getTopUsers(5);
 } catch (Exception $e) {}
 
+// Sponsor verileri — ileride DB'den çekilebilir
+$sponsors = [
+    // ['name' => 'Marka Adı', 'logo' => 'uploads/sponsors/logo.png', 'url' => 'https://example.com'],
+];
+
 $pageTitle = 'Sponsorlarımız';
 $activeNav = 'sponsors';
 require_once __DIR__ . '/partials/app_header.php';
@@ -36,76 +41,45 @@ require_once __DIR__ . '/partials/app_header.php';
         </div>
     </div>
 
-    <!-- Sponsor Tiers -->
-
-    <!-- Gold Sponsors -->
-    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-[#FFD700]/20 rounded-2xl overflow-hidden shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)]">
-        <div class="bg-gradient-to-r from-[#FFD700]/10 to-transparent px-6 py-4 border-b border-[#FFD700]/10 flex items-center gap-3">
-            <span class="material-symbols-outlined text-[#FFD700] text-[24px]">workspace_premium</span>
-            <h2 class="font-headline-md text-headline-md text-[#FFD700] tracking-tight">Altın Sponsorlar</h2>
-        </div>
-        <div class="p-6">
-            <div class="flex items-center justify-center py-8 text-center">
-                <div class="flex flex-col items-center gap-3">
-                    <div class="w-16 h-16 rounded-full bg-[#FFD700]/10 border-2 border-dashed border-[#FFD700]/30 flex items-center justify-center">
-                        <span class="material-symbols-outlined text-[#FFD700]/50 text-[32px]">add_circle</span>
-                    </div>
-                    <p class="text-slate-400 text-sm max-w-xs">Bu alan sizin markanız için hazır. Altın sponsor olarak binlerce oyuncuya ulaşın.</p>
-                </div>
+    <!-- Sponsors Grid -->
+    <?php if (!empty($sponsors)): ?>
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+        <?php foreach ($sponsors as $sp): ?>
+        <a href="<?php echo escape($sp['url'] ?? '#'); ?>" target="_blank" rel="noopener"
+           class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-5 flex flex-col items-center justify-center gap-3 hover:border-primary-container/40 hover:bg-white/[0.06] transition-all duration-300 group shadow-[0_10px_20px_-10px_rgba(15,23,42,0.3)]">
+            <div class="w-16 h-16 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden group-hover:border-primary-container/30 transition-colors">
+                <?php if (!empty($sp['logo'])): ?>
+                    <img src="<?php echo BASE_URL . '/' . escape($sp['logo']); ?>" alt="<?php echo escape($sp['name']); ?>" class="w-12 h-12 object-contain">
+                <?php else: ?>
+                    <span class="material-symbols-outlined text-slate-500 text-[28px]">store</span>
+                <?php endif; ?>
             </div>
-        </div>
+            <span class="font-label-md text-label-md text-on-surface text-center group-hover:text-primary-container transition-colors truncate w-full"><?php echo escape($sp['name']); ?></span>
+        </a>
+        <?php endforeach; ?>
     </div>
-
-    <!-- Silver Sponsors -->
-    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-[#C0C0C0]/15 rounded-2xl overflow-hidden shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)]">
-        <div class="bg-gradient-to-r from-[#C0C0C0]/10 to-transparent px-6 py-4 border-b border-[#C0C0C0]/10 flex items-center gap-3">
-            <span class="material-symbols-outlined text-[#C0C0C0] text-[24px]">military_tech</span>
-            <h2 class="font-headline-md text-headline-md text-[#C0C0C0] tracking-tight">Gümüş Sponsorlar</h2>
+    <?php else: ?>
+    <!-- Empty State -->
+    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl p-10 text-center shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)]">
+        <div class="w-20 h-20 mx-auto rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-5">
+            <span class="material-symbols-outlined text-slate-500 text-[40px]">storefront</span>
         </div>
-        <div class="p-6">
-            <div class="flex items-center justify-center py-8 text-center">
-                <div class="flex flex-col items-center gap-3">
-                    <div class="w-16 h-16 rounded-full bg-[#C0C0C0]/10 border-2 border-dashed border-[#C0C0C0]/20 flex items-center justify-center">
-                        <span class="material-symbols-outlined text-[#C0C0C0]/50 text-[32px]">add_circle</span>
-                    </div>
-                    <p class="text-slate-400 text-sm max-w-xs">Gümüş sponsor olarak platformumuzda markanızı öne çıkarın.</p>
-                </div>
-            </div>
-        </div>
+        <h3 class="text-xl font-bold text-on-surface mb-2">Henüz Sponsor Bulunmuyor</h3>
+        <p class="text-slate-400 max-w-sm mx-auto">İlk sponsor sen ol! Markanı binlerce oyuncuya tanıtmak için bizimle iletişime geç.</p>
     </div>
-
-    <!-- Bronze Sponsors -->
-    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-[#cd7f32]/15 rounded-2xl overflow-hidden shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)]">
-        <div class="bg-gradient-to-r from-[#cd7f32]/10 to-transparent px-6 py-4 border-b border-[#cd7f32]/10 flex items-center gap-3">
-            <span class="material-symbols-outlined text-[#cd7f32] text-[24px]">shield</span>
-            <h2 class="font-headline-md text-headline-md text-[#cd7f32] tracking-tight">Bronz Sponsorlar</h2>
-        </div>
-        <div class="p-6">
-            <div class="flex items-center justify-center py-8 text-center">
-                <div class="flex flex-col items-center gap-3">
-                    <div class="w-16 h-16 rounded-full bg-[#cd7f32]/10 border-2 border-dashed border-[#cd7f32]/20 flex items-center justify-center">
-                        <span class="material-symbols-outlined text-[#cd7f32]/50 text-[32px]">add_circle</span>
-                    </div>
-                    <p class="text-slate-400 text-sm max-w-xs">Bronz sponsorluk ile topluluğumuza katkı sağlayın.</p>
-                </div>
-            </div>
-        </div>
-    </div>
+    <?php endif; ?>
 
     <!-- CTA: Sponsor Ol -->
     <div class="bg-gradient-to-br from-[#1E293B]/80 to-surface-container border border-primary-container/20 rounded-2xl p-8 md:p-10 text-center shadow-[0_20px_40px_-15px_rgba(255,107,53,0.15)] relative overflow-hidden">
         <div class="absolute -right-8 -top-8 text-[120px] opacity-5 text-primary-container leading-none select-none">
             <span class="material-symbols-outlined" style="font-size:inherit;">handshake</span>
         </div>
-
         <div class="relative z-10">
             <div class="w-16 h-16 mx-auto bg-gradient-to-br from-primary-container to-[#ff9e7d] rounded-2xl flex items-center justify-center text-white mb-5 shadow-[0_10px_25px_-5px_rgba(255,107,53,0.5)] transform rotate-3">
                 <span class="material-symbols-outlined text-[32px]">rocket_launch</span>
             </div>
-
             <h2 class="text-2xl md:text-3xl font-black text-on-surface mb-2">Sponsor Olmak İster Misin?</h2>
-            <p class="text-slate-400 mb-8 max-w-md mx-auto">Markanı binlerce oyuncuya tanıt. Platformumuzdaki reklam alanlarımız hakkında bilgi almak için bizimle iletişime geç.</p>
-
+            <p class="text-slate-400 mb-8 max-w-md mx-auto">Markanı binlerce oyuncuya tanıt. Reklam alanlarımız hakkında bilgi almak için bizimle iletişime geç.</p>
             <div class="flex flex-col sm:flex-row gap-3 justify-center items-center max-w-md mx-auto">
                 <a href="mailto:info@sociaera.online" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-primary-container hover:bg-primary-container/90 text-white px-8 py-3.5 rounded-xl font-bold shadow-[0_0_20px_rgba(255,107,53,0.3)] hover:shadow-[0_0_30px_rgba(255,107,53,0.4)] transition-all active:scale-[0.98]">
                     <span class="material-symbols-outlined text-[20px]">mail</span>
@@ -116,38 +90,6 @@ require_once __DIR__ . '/partials/app_header.php';
                     Discord
                 </a>
             </div>
-
-            <p class="text-xs text-slate-500 mt-6 uppercase tracking-wider font-semibold">Sponsorluk paketleri hakkında detaylı bilgi alın</p>
-        </div>
-    </div>
-
-    <!-- Sponsor Benefits Info -->
-    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl p-6 md:p-8 shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)]">
-        <h3 class="font-headline-md text-headline-md text-on-surface mb-6 flex items-center gap-2">
-            Sponsor Avantajları <span class="material-symbols-outlined text-primary-container text-[22px]">stars</span>
-        </h3>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <?php
-            $benefits = [
-                ['icon' => 'visibility', 'title' => 'Marka Görünürlüğü', 'desc' => 'Platformdaki tüm kullanıcılara ulaşın'],
-                ['icon' => 'ads_click', 'title' => 'Reklam Alanları', 'desc' => 'Sidebar ve feed\'de özel banner alanları'],
-                ['icon' => 'groups', 'title' => 'Topluluk Desteği', 'desc' => 'Aktif oyuncu topluluğuna doğrudan erişim'],
-                ['icon' => 'trending_up', 'title' => 'Analiz & Raporlama', 'desc' => 'Reklam performansınızı takip edin'],
-                ['icon' => 'verified', 'title' => 'Onaylı Marka Profili', 'desc' => 'Platformda doğrulanmış marka sayfası'],
-                ['icon' => 'event', 'title' => 'Etkinlik Desteği', 'desc' => 'Özel etkinlik ve kampanyalar düzenleyin'],
-            ];
-            foreach ($benefits as $b):
-            ?>
-            <div class="flex items-start gap-4 p-4 rounded-xl bg-white/[0.03] border border-white/5 hover:border-primary-container/20 hover:bg-white/[0.05] transition-all duration-300 group">
-                <div class="w-10 h-10 rounded-lg bg-primary-container/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary-container/20 transition-colors">
-                    <span class="material-symbols-outlined text-primary-container text-[20px]"><?php echo $b['icon']; ?></span>
-                </div>
-                <div>
-                    <h4 class="font-label-md text-label-md text-on-surface mb-1"><?php echo $b['title']; ?></h4>
-                    <p class="text-slate-400 text-sm leading-relaxed"><?php echo $b['desc']; ?></p>
-                </div>
-            </div>
-            <?php endforeach; ?>
         </div>
     </div>
 
