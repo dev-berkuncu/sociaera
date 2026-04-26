@@ -20,8 +20,8 @@ try {
 
 // Sponsor verileri — ileride DB'den çekilebilir
 $sponsors = [
-    ['name' => 'COLOSSEUM', 'logo' => 'assets/img/sponsors/colosseum.png', 'url' => 'https://cfx.re/join/j7e8ba'],
-    ['name' => 'Paradise Group', 'logo' => 'assets/img/sponsors/paradise-group.png', 'url' => '#'],
+    ['name' => 'COLOSSEUM', 'logo' => 'assets/img/sponsors/colosseum.png', 'url' => 'https://face-tr.gta.world/page/colosseum'],
+    ['name' => 'Paradise Group', 'logo' => 'assets/img/sponsors/paradise-group.png', 'url' => 'https://face-tr.gta.world/page/paradise'],
 ];
 
 $pageTitle = 'Sponsorlarımız';
