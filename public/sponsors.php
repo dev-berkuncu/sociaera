@@ -20,7 +20,8 @@ try {
 
 // Sponsor verileri — ileride DB'den çekilebilir
 $sponsors = [
-    // ['name' => 'Marka Adı', 'logo' => 'uploads/sponsors/logo.png', 'url' => 'https://example.com'],
+    ['name' => 'Örnek Marka 1', 'logo' => 'uploads/sponsors/marka1.png', 'url' => 'https://example.com'],
+    ['name' => 'Örnek Marka 2', 'logo' => 'uploads/sponsors/marka2.png', 'url' => 'https://example.com'],
 ];
 
 $pageTitle = 'Sponsorlarımız';
