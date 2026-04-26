@@ -1,6 +1,6 @@
-﻿<?php
+<?php
 /**
- * Checkin Model â€” Check-in (post) oluÅŸturma, feed, etkileÅŸimler
+ * Checkin Model — Check-in (post) oluşturma, feed, etkileşimler
  */
 
 class CheckinModel
@@ -12,11 +12,11 @@ class CheckinModel
         $this->db = Database::getConnection();
     }
 
-    // â”€â”€ Check-in OluÅŸtur â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Check-in Oluştur ──────────────────────────────────
 
     public function create(int $userId, int $venueId, ?string $note = null, ?string $image = null): array
     {
-        // Cooldown kontrolÃ¼
+        // Cooldown kontrolü
         $settings = new SettingsModel();
         $cooldown = (int) $settings->get('checkin_cooldown', 300);
 
@@ -29,10 +29,10 @@ class CheckinModel
         $stmt->execute([$userId, $venueId, $cooldown]);
         if ($stmt->fetch()) {
             $mins = ceil($cooldown / 60);
-            return ['ok' => false, 'error' => "AynÄ± mekana {$mins} dakika iÃ§inde tekrar check-in yapamazsÄ±nÄ±z."];
+            return ['ok' => false, 'error' => "Aynı mekana {$mins} dakika içinde tekrar check-in yapamazsınız."];
         }
 
-        // Rate limit kontrolÃ¼
+        // Rate limit kontrolü
         $rateLimit = (int) $settings->get('checkin_rate_limit', 10);
         $rateWindow = (int) $settings->get('checkin_rate_window', 3600);
 
@@ -43,7 +43,7 @@ class CheckinModel
         ");
         $stmt->execute([$userId, $rateWindow]);
         if ((int) $stmt->fetchColumn() >= $rateLimit) {
-            return ['ok' => false, 'error' => 'Check-in limitine ulaÅŸtÄ±nÄ±z. LÃ¼tfen daha sonra tekrar deneyin.'];
+            return ['ok' => false, 'error' => 'Check-in limitine ulaştınız. Lütfen daha sonra tekrar deneyin.'];
         }
 
         // Insert
@@ -55,7 +55,7 @@ class CheckinModel
 
         $checkinId = (int) $this->db->lastInsertId();
 
-        // Mention bildirimlerini oluÅŸtur
+        // Mention bildirimlerini oluştur
         if ($note) {
             $this->processMentions($userId, $checkinId, $note);
         }
@@ -63,7 +63,7 @@ class CheckinModel
         return ['ok' => true, 'checkin_id' => $checkinId];
     }
 
-    // â”€â”€ Feed â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Feed ──────────────────────────────────────────────
 
     public function getGlobalFeed(int $page = 1, int $perPage = 20, ?int $viewerId = null): array
     {
@@ -102,7 +102,7 @@ class CheckinModel
             $stmt->execute([$perPage, $offset]);
             $posts = $stmt->fetchAll();
         } catch (\Throwable $e) {
-            // Fallback: UNION baÅŸarÄ±sÄ±z olursa basit sorguya dÃ¶n
+            // Fallback: UNION başarısız olursa basit sorguya dön
             $stmt = $this->db->prepare("
                 SELECT c.id, c.user_id, c.venue_id, c.note, c.image, c.created_at,
                        u.username, u.tag, u.avatar, u.is_premium,
@@ -122,7 +122,7 @@ class CheckinModel
             $posts = $stmt->fetchAll();
         }
 
-        // Viewer etkileÅŸimleri
+        // Viewer etkileşimleri
         if ($viewerId) {
             $posts = $this->attachViewerInteractions($posts, $viewerId);
         }
@@ -206,7 +206,7 @@ class CheckinModel
         return $posts;
     }
 
-    // â”€â”€ Tekil Post â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Tekil Post ────────────────────────────────────────
 
     public function getById(int $id, ?int $viewerId = null): ?array
     {
@@ -234,7 +234,7 @@ class CheckinModel
         return $post;
     }
 
-    // â”€â”€ EtkileÅŸimler â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Etkileşimler ──────────────────────────────────────
 
     public function like(int $userId, int $checkinId): bool
     {
@@ -293,7 +293,7 @@ class CheckinModel
 
         $this->createNotification($checkinId, $userId, 'comment');
 
-        // Yorum iÃ§indeki mention'larÄ± iÅŸle
+        // Yorum içindeki mention'ları işle
         $this->processMentions($userId, $checkinId, $comment);
 
         return (int) $this->db->lastInsertId();
@@ -318,7 +318,7 @@ class CheckinModel
         return $stmt->execute([$checkinId, $userId]);
     }
 
-    // â”€â”€ BeÄŸenilen / Repost Edilen Postlar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Beğenilen / Repost Edilen Postlar ─────────────────
 
     public function getLikedByUser(int $userId, int $page = 1, int $perPage = 20): array
     {
@@ -363,7 +363,7 @@ class CheckinModel
         return $this->attachViewerInteractions($stmt->fetchAll(), $userId);
     }
 
-    // â”€â”€ HaftalÄ±k Ä°statistikler â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Haftalık İstatistikler ────────────────────────────
 
     public function getWeeklyCheckinCount(int $userId): int
     {
@@ -377,7 +377,7 @@ class CheckinModel
         return (int) $stmt->fetchColumn();
     }
 
-    // â”€â”€ Admin â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Admin ─────────────────────────────────────────────
 
     public function adminGetAll(int $page = 1, int $perPage = 30): array
     {
@@ -418,7 +418,7 @@ class CheckinModel
         $this->db->prepare("UPDATE checkins SET is_excluded_from_leaderboard = NOT is_excluded_from_leaderboard WHERE id = ?")->execute([$id]);
     }
 
-    // â”€â”€ Private â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Private ───────────────────────────────────────────
 
     private function attachViewerInteractions(array $posts, int $viewerId): array
     {
@@ -443,9 +443,9 @@ class CheckinModel
         $from = $fromUser->fetch();
 
         $messages = [
-            'like'    => ($from['username'] ?? 'Birisi') . ' gÃ¶nderini beÄŸendi.',
-            'comment' => ($from['username'] ?? 'Birisi') . ' gÃ¶nderine yorum yaptÄ±.',
-            'repost'  => ($from['username'] ?? 'Birisi') . ' gÃ¶nderini paylaÅŸtÄ±.',
+            'like'    => ($from['username'] ?? 'Birisi') . ' gönderini beğendi.',
+            'comment' => ($from['username'] ?? 'Birisi') . ' gönderine yorum yaptı.',
+            'repost'  => ($from['username'] ?? 'Birisi') . ' gönderini paylaştı.',
         ];
 
         $notif = new NotificationModel();
@@ -475,5 +475,3 @@ class CheckinModel
         }
     }
 }
-
-
