@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Location: ' . BASE_URL . '/venue-manage?id=' . $venueId); exit;
 
     } elseif ($action === 'toggle_open') {
-        $newStatus = $venue['is_open'] ? 0 : 1;
+        $newStatus = ($venue['is_open'] ?? 1) ? 0 : 1;
         $venueModel->update($venueId, ['is_open' => $newStatus]);
         Auth::setFlash('success', $newStatus ? 'İşletme açık olarak işaretlendi.' : 'İşletme kapalı olarak işaretlendi.');
         header('Location: ' . BASE_URL . '/venue-manage?id=' . $venueId); exit;
@@ -81,6 +81,7 @@ $categories = VenueModel::categories();
 // Bu sayfada right sidebar gösterme
 $trendVenues = [];
 $miniLeaderboard = [];
+$hideSidebar = true;
 
 $pageTitle = $venue['name'] . ' — İşletme Paneli';
 $activeNav = 'venue_manage_' . $venueId;
@@ -103,9 +104,10 @@ require_once __DIR__ . '/partials/app_header.php';
         <form method="POST">
             <?php echo csrfField(); ?>
             <input type="hidden" name="action" value="toggle_open">
-            <button type="submit" class="flex items-center gap-2 px-4 py-2 rounded-lg text-label-md font-semibold transition-all border <?php echo $venue['is_open'] ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20' : 'bg-red-500/10 text-red-400 border-red-500/20 hover:bg-red-500/20'; ?>">
-                <span class="w-2.5 h-2.5 rounded-full <?php echo $venue['is_open'] ? 'bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.5)]' : 'bg-red-400'; ?>"></span>
-                <?php echo $venue['is_open'] ? 'Açık' : 'Kapalı'; ?>
+            <?php $isOpen = $venue['is_open'] ?? 1; ?>
+            <button type="submit" class="flex items-center gap-2 px-4 py-2 rounded-lg text-label-md font-semibold transition-all border <?php echo $isOpen ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20' : 'bg-red-500/10 text-red-400 border-red-500/20 hover:bg-red-500/20'; ?>">
+                <span class="w-2.5 h-2.5 rounded-full <?php echo $isOpen ? 'bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.5)]' : 'bg-red-400'; ?>"></span>
+                <?php echo $isOpen ? 'Açık' : 'Kapalı'; ?>
             </button>
         </form>
     </div>
@@ -225,7 +227,7 @@ require_once __DIR__ . '/partials/app_header.php';
 
             <div class="flex items-center gap-3">
                 <label class="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" name="is_open" value="1" <?php echo $venue['is_open'] ? 'checked' : ''; ?> class="sr-only peer">
+                    <input type="checkbox" name="is_open" value="1" <?php echo ($venue['is_open'] ?? 1) ? 'checked' : ''; ?> class="sr-only peer">
                     <div class="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-white/10 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
                 </label>
                 <span class="text-sm text-on-surface">İşletme şu an açık</span>
