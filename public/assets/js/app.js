@@ -217,7 +217,7 @@ const App = {
         inputEl.addEventListener('input', () => {
             clearTimeout(this.venueSearchTimer);
             const q = inputEl.value.trim();
-            if (q.length < 2) { dropdownEl.classList.remove('show'); return; }
+            if (q.length < 2) { dropdownEl.style.display = 'none'; return; }
 
             this.venueSearchTimer = setTimeout(async () => {
                 const res = await this.get(`${this.baseUrl}/api/venue-search?q=${encodeURIComponent(q)}`);
@@ -228,24 +228,24 @@ const App = {
                             <div class="venue-picker-cat">${v.category || ''}</div>
                         </div>`
                     ).join('');
-                    dropdownEl.classList.add('show');
+                    dropdownEl.style.display = 'block';
 
                     dropdownEl.querySelectorAll('.venue-picker-item').forEach(item => {
                         item.addEventListener('click', () => {
                             onSelect(item.dataset.id, item.dataset.name);
-                            dropdownEl.classList.remove('show');
+                            dropdownEl.style.display = 'none';
                             inputEl.value = '';
                         });
                     });
                 } else {
-                    dropdownEl.classList.remove('show');
+                    dropdownEl.style.display = 'none';
                 }
             }, 300);
         });
 
         document.addEventListener('click', (e) => {
             if (!inputEl.contains(e.target) && !dropdownEl.contains(e.target)) {
-                dropdownEl.classList.remove('show');
+                dropdownEl.style.display = 'none';
             }
         });
     },
