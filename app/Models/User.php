@@ -407,9 +407,47 @@ class UserModel
 
     // ── Premium ───────────────────────────────────────────
 
-    public function setPremium(int $userId, bool $status = true): void
+    public function setPremium(int $userId, int $days = 7): void
     {
-        $this->db->prepare("UPDATE users SET is_premium = ? WHERE id = ?")->execute([$status ? 1 : 0, $userId]);
+        $this->db->prepare("
+            UPDATE users SET is_premium = 1, premium_until = DATE_ADD(NOW(), INTERVAL ? DAY) WHERE id = ?
+        ")->execute([$days, $userId]);
+    }
+
+    public function renewPremium(int $userId, int $days = 7): void
+    {
+        // Mevcut süre varsa üzerine ekle, yoksa şimdiden başla
+        $this->db->prepare("
+            UPDATE users SET is_premium = 1, 
+                premium_until = DATE_ADD(GREATEST(COALESCE(premium_until, NOW()), NOW()), INTERVAL ? DAY) 
+            WHERE id = ?
+        ")->execute([$days, $userId]);
+    }
+
+    /**
+     * Kullanıcının premium'u aktif mi kontrol et
+     */
+    public static function isPremiumActive(?array $user): bool
+    {
+        if (!$user || empty($user['is_premium'])) return false;
+        // premium_until kolonu yoksa (migration çalışmamış) sadece is_premium'a bak
+        if (!isset($user['premium_until'])) return true;
+        if (empty($user['premium_until'])) return false;
+        return strtotime($user['premium_until']) > time();
+    }
+
+    /**
+     * Premium kalan süreyi insan-okunur döndür
+     */
+    public static function premiumRemainingText(?array $user): string
+    {
+        if (!self::isPremiumActive($user)) return 'Süresi dolmuş';
+        $remaining = strtotime($user['premium_until']) - time();
+        $days = floor($remaining / 86400);
+        $hours = floor(($remaining % 86400) / 3600);
+        if ($days > 0) return $days . ' gün ' . $hours . ' saat';
+        if ($hours > 0) return $hours . ' saat';
+        return 'Son dakikalar';
     }
 
     public function updateBadge(int $userId, ?string $badge): void

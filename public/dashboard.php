@@ -45,7 +45,7 @@ try {
 
 // Sponsorlu içerikleri çek (Premium kullanıcılar reklamsız)
 $sponsoredAds = [];
-if (empty($currentUser['is_premium'])) {
+if (!UserModel::isPremiumActive($currentUser)) {
     try {
         $sponsoredAds = (new AdModel())->getActiveForFeed(5);
     } catch (Exception $e) {}
