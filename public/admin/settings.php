@@ -12,7 +12,6 @@ require_once __DIR__ . '/../../app/Models/Settings.php';
 require_once __DIR__ . '/../../app/Models/Notification.php';
 
 Auth::requireAdmin();
-
 $settingsModel = new SettingsModel();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -31,57 +30,96 @@ $pendingVenues = (new VenueModel())->getPendingCount();
 
 $pageTitle = 'Site Ayarları';
 $adminPage = 'settings';
-require_once __DIR__ . '/../../public/partials/header.php';
-require_once __DIR__ . '/../../public/partials/navbar.php';
-require_once __DIR__ . '/../../public/partials/flash.php';
+require_once __DIR__ . '/_header.php';
 ?>
 
-<div class="admin-layout">
-    <?php include __DIR__ . '/_sidebar.php'; ?>
-    <div class="admin-content">
-        <h1 style="font-size:1.3rem; font-weight:800; margin-bottom:20px;"><i class="bi bi-gear" style="color:var(--primary)"></i> Site Ayarları</h1>
-
-        <form method="POST">
-            <?php echo csrfField(); ?>
-
-            <div class="settings-card">
-                <h2>Genel</h2>
-                <div class="form-group"><label>Site Adı</label><input type="text" name="site_name" class="form-control-styled" value="<?php echo escape($settings['site_name'] ?? 'Sociaera'); ?>"></div>
-                <div class="form-group"><label>Site Açıklaması</label><input type="text" name="site_description" class="form-control-styled" value="<?php echo escape($settings['site_description'] ?? ''); ?>"></div>
-                <div class="form-group"><label>İletişim E-posta</label><input type="email" name="site_email" class="form-control-styled" value="<?php echo escape($settings['site_email'] ?? ''); ?>"></div>
-            </div>
-
-            <div class="settings-card">
-                <h2>Check-in Limitleri</h2>
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
-                    <div class="form-group"><label>Cooldown (saniye)</label><input type="number" name="checkin_cooldown" class="form-control-styled" value="<?php echo escape($settings['checkin_cooldown'] ?? '300'); ?>"><div class="form-hint">Aynı mekana tekrar check-in süresi</div></div>
-                    <div class="form-group"><label>Rate Limit (adet)</label><input type="number" name="checkin_rate_limit" class="form-control-styled" value="<?php echo escape($settings['checkin_rate_limit'] ?? '10'); ?>"><div class="form-hint">Pencere süresindeki max check-in</div></div>
-                    <div class="form-group"><label>Rate Penceresi (saniye)</label><input type="number" name="checkin_rate_window" class="form-control-styled" value="<?php echo escape($settings['checkin_rate_window'] ?? '3600'); ?>"></div>
-                </div>
-            </div>
-
-            <div class="settings-card">
-                <h2>Güvenlik</h2>
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
-                    <div class="form-group"><label>Login Max Deneme</label><input type="number" name="login_max_attempts" class="form-control-styled" value="<?php echo escape($settings['login_max_attempts'] ?? '8'); ?>"></div>
-                    <div class="form-group"><label>Login Penceresi (saniye)</label><input type="number" name="login_window_seconds" class="form-control-styled" value="<?php echo escape($settings['login_window_seconds'] ?? '600'); ?>"></div>
-                </div>
-            </div>
-
-            <div class="settings-card">
-                <h2>Bakım Modu</h2>
-                <div class="form-group">
-                    <label>Bakım Modu</label>
-                    <select name="maintenance_mode" class="form-control-styled">
-                        <option value="0" <?php echo ($settings['maintenance_mode'] ?? '0') === '0' ? 'selected' : ''; ?>>Kapalı</option>
-                        <option value="1" <?php echo ($settings['maintenance_mode'] ?? '0') === '1' ? 'selected' : ''; ?>>Açık</option>
-                    </select>
-                </div>
-            </div>
-
-            <button type="submit" class="btn-primary-orange btn-lg"><i class="bi bi-check-lg"></i> Ayarları Kaydet</button>
-        </form>
-    </div>
+<div class="flex items-center justify-between mb-6">
+    <h1 class="text-xl font-black text-on-surface flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary-container">settings</span> Site Ayarları
+    </h1>
 </div>
 
-<?php require_once __DIR__ . '/../../public/partials/footer.php'; ?>
+<form method="POST" class="space-y-6">
+    <?php echo csrfField(); ?>
+
+    <!-- Genel -->
+    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-6 shadow-[0_10px_20px_-10px_rgba(15,23,42,0.3)]">
+        <h2 class="text-lg font-bold text-on-surface mb-4 flex items-center gap-2">
+            <span class="material-symbols-outlined text-slate-400 text-[20px]">tune</span> Genel
+        </h2>
+        <div class="space-y-4">
+            <div>
+                <label class="block text-label-md text-slate-400 mb-1">Site Adı</label>
+                <input type="text" name="site_name" value="<?php echo escape($settings['site_name'] ?? 'Sociaera'); ?>" class="w-full bg-white/5 border border-white/10 text-on-surface rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary-container/40 transition-colors">
+            </div>
+            <div>
+                <label class="block text-label-md text-slate-400 mb-1">Site Açıklaması</label>
+                <input type="text" name="site_description" value="<?php echo escape($settings['site_description'] ?? ''); ?>" class="w-full bg-white/5 border border-white/10 text-on-surface rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary-container/40 transition-colors">
+            </div>
+            <div>
+                <label class="block text-label-md text-slate-400 mb-1">İletişim E-posta</label>
+                <input type="email" name="site_email" value="<?php echo escape($settings['site_email'] ?? ''); ?>" class="w-full bg-white/5 border border-white/10 text-on-surface rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary-container/40 transition-colors">
+            </div>
+        </div>
+    </div>
+
+    <!-- Check-in Limitleri -->
+    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-6 shadow-[0_10px_20px_-10px_rgba(15,23,42,0.3)]">
+        <h2 class="text-lg font-bold text-on-surface mb-4 flex items-center gap-2">
+            <span class="material-symbols-outlined text-slate-400 text-[20px]">timer</span> Check-in Limitleri
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+                <label class="block text-label-md text-slate-400 mb-1">Cooldown (saniye)</label>
+                <input type="number" name="checkin_cooldown" value="<?php echo escape($settings['checkin_cooldown'] ?? '300'); ?>" class="w-full bg-white/5 border border-white/10 text-on-surface rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary-container/40 transition-colors">
+                <p class="text-xs text-slate-500 mt-1">Aynı mekana tekrar check-in süresi</p>
+            </div>
+            <div>
+                <label class="block text-label-md text-slate-400 mb-1">Rate Limit (adet)</label>
+                <input type="number" name="checkin_rate_limit" value="<?php echo escape($settings['checkin_rate_limit'] ?? '10'); ?>" class="w-full bg-white/5 border border-white/10 text-on-surface rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary-container/40 transition-colors">
+                <p class="text-xs text-slate-500 mt-1">Pencere süresindeki max check-in</p>
+            </div>
+            <div>
+                <label class="block text-label-md text-slate-400 mb-1">Rate Penceresi (saniye)</label>
+                <input type="number" name="checkin_rate_window" value="<?php echo escape($settings['checkin_rate_window'] ?? '3600'); ?>" class="w-full bg-white/5 border border-white/10 text-on-surface rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary-container/40 transition-colors">
+            </div>
+        </div>
+    </div>
+
+    <!-- Güvenlik -->
+    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-6 shadow-[0_10px_20px_-10px_rgba(15,23,42,0.3)]">
+        <h2 class="text-lg font-bold text-on-surface mb-4 flex items-center gap-2">
+            <span class="material-symbols-outlined text-slate-400 text-[20px]">security</span> Güvenlik
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-label-md text-slate-400 mb-1">Login Max Deneme</label>
+                <input type="number" name="login_max_attempts" value="<?php echo escape($settings['login_max_attempts'] ?? '8'); ?>" class="w-full bg-white/5 border border-white/10 text-on-surface rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary-container/40 transition-colors">
+            </div>
+            <div>
+                <label class="block text-label-md text-slate-400 mb-1">Login Penceresi (saniye)</label>
+                <input type="number" name="login_window_seconds" value="<?php echo escape($settings['login_window_seconds'] ?? '600'); ?>" class="w-full bg-white/5 border border-white/10 text-on-surface rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary-container/40 transition-colors">
+            </div>
+        </div>
+    </div>
+
+    <!-- Bakım Modu -->
+    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-6 shadow-[0_10px_20px_-10px_rgba(15,23,42,0.3)]">
+        <h2 class="text-lg font-bold text-on-surface mb-4 flex items-center gap-2">
+            <span class="material-symbols-outlined text-slate-400 text-[20px]">construction</span> Bakım Modu
+        </h2>
+        <div>
+            <label class="block text-label-md text-slate-400 mb-1">Bakım Modu</label>
+            <select name="maintenance_mode" class="w-full md:w-64 bg-white/5 border border-white/10 text-on-surface rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary-container/40 transition-colors">
+                <option value="0" class="bg-background" <?php echo ($settings['maintenance_mode'] ?? '0') === '0' ? 'selected' : ''; ?>>Kapalı</option>
+                <option value="1" class="bg-background" <?php echo ($settings['maintenance_mode'] ?? '0') === '1' ? 'selected' : ''; ?>>Açık</option>
+            </select>
+        </div>
+    </div>
+
+    <button type="submit" class="bg-primary-container text-white px-8 py-3 rounded-xl text-label-md font-semibold hover:bg-primary-container/90 transition-colors shadow-[0_0_15px_rgba(255,107,53,0.3)] flex items-center gap-2">
+        <span class="material-symbols-outlined text-[20px]">save</span> Ayarları Kaydet
+    </button>
+</form>
+
+<?php require_once __DIR__ . '/_footer.php'; ?>

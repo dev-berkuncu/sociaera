@@ -13,7 +13,6 @@ require_once __DIR__ . '/../../app/Models/Ad.php';
 require_once __DIR__ . '/../../app/Models/Notification.php';
 
 Auth::requireAdmin();
-
 $adModel = new AdModel();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -56,63 +55,83 @@ $pendingVenues = (new VenueModel())->getPendingCount();
 
 $pageTitle = 'Reklam Yönetimi';
 $adminPage = 'ads';
-require_once __DIR__ . '/../../public/partials/header.php';
-require_once __DIR__ . '/../../public/partials/navbar.php';
-require_once __DIR__ . '/../../public/partials/flash.php';
+require_once __DIR__ . '/_header.php';
 ?>
 
-<div class="admin-layout">
-    <?php include __DIR__ . '/_sidebar.php'; ?>
-    <div class="admin-content">
-        <h1 style="font-size:1.3rem; font-weight:800; margin-bottom:20px;"><i class="bi bi-megaphone" style="color:var(--primary)"></i> Reklamlar</h1>
+<div class="flex items-center justify-between mb-6">
+    <h1 class="text-xl font-black text-on-surface flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary-container">campaign</span> Reklamlar
+    </h1>
+</div>
 
-        <!-- Yeni Reklam -->
-        <div class="settings-card" style="margin-bottom:24px;">
-            <h2>Yeni Reklam Ekle</h2>
-            <form method="POST" enctype="multipart/form-data">
-                <?php echo csrfField(); ?>
-                <input type="hidden" name="action" value="create">
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
-                    <div class="form-group"><label>Başlık</label><input type="text" name="title" class="form-control-styled" required></div>
-                    <div class="form-group"><label>Pozisyon</label>
-                        <select name="position" class="form-control-styled">
-                            <option value="carousel">Carousel (Sağ)</option>
-                            <option value="sidebar_left">Sol Sidebar</option>
-                            <option value="sidebar_right">Sağ Sidebar</option>
-                            <option value="footer_banner">Footer Banner</option>
-                        </select>
-                    </div>
-                    <div class="form-group"><label>Link URL</label><input type="url" name="link_url" class="form-control-styled" placeholder="https://..."></div>
-                    <div class="form-group"><label>Sıra</label><input type="number" name="sort_order" class="form-control-styled" value="0"></div>
-                </div>
-                <div class="form-group"><label>Resim</label><input type="file" name="image" accept="image/*" class="form-control-styled" required></div>
-                <button type="submit" class="btn-primary-orange">Reklam Ekle</button>
-            </form>
+<!-- Yeni Reklam Formu -->
+<div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-6 shadow-[0_10px_20px_-10px_rgba(15,23,42,0.3)] mb-6">
+    <h2 class="text-lg font-bold text-on-surface mb-4">Yeni Reklam Ekle</h2>
+    <form method="POST" enctype="multipart/form-data" class="space-y-4">
+        <?php echo csrfField(); ?>
+        <input type="hidden" name="action" value="create">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-label-md text-slate-400 mb-1">Başlık</label>
+                <input type="text" name="title" required class="w-full bg-white/5 border border-white/10 text-on-surface rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary-container/40 transition-colors">
+            </div>
+            <div>
+                <label class="block text-label-md text-slate-400 mb-1">Pozisyon</label>
+                <select name="position" class="w-full bg-white/5 border border-white/10 text-on-surface rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary-container/40 transition-colors">
+                    <option value="carousel" class="bg-background">Carousel (Sağ)</option>
+                    <option value="sidebar_left" class="bg-background">Sol Sidebar</option>
+                    <option value="sidebar_right" class="bg-background">Sağ Sidebar</option>
+                    <option value="footer_banner" class="bg-background">Footer Banner</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-label-md text-slate-400 mb-1">Link URL</label>
+                <input type="url" name="link_url" placeholder="https://..." class="w-full bg-white/5 border border-white/10 text-on-surface rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary-container/40 transition-colors">
+            </div>
+            <div>
+                <label class="block text-label-md text-slate-400 mb-1">Sıra</label>
+                <input type="number" name="sort_order" value="0" class="w-full bg-white/5 border border-white/10 text-on-surface rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary-container/40 transition-colors">
+            </div>
         </div>
+        <div>
+            <label class="block text-label-md text-slate-400 mb-1">Resim</label>
+            <input type="file" name="image" accept="image/*" required class="w-full bg-white/5 border border-white/10 text-on-surface rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary-container/40 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-sm file:bg-primary-container file:text-white transition-colors">
+        </div>
+        <button type="submit" class="bg-primary-container text-white px-6 py-2.5 rounded-lg text-label-md font-semibold hover:bg-primary-container/90 transition-colors shadow-[0_0_10px_rgba(255,107,53,0.2)]">Reklam Ekle</button>
+    </form>
+</div>
 
-        <!-- Mevcut Reklamlar -->
-        <div class="card-box" style="overflow-x:auto; padding:0;">
-            <table class="admin-table">
-                <thead><tr><th>#</th><th>Başlık</th><th>Pozisyon</th><th>Durum</th><th>İşlem</th></tr></thead>
-                <tbody>
+<!-- Mevcut Reklamlar -->
+<div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl shadow-[0_10px_20px_-10px_rgba(15,23,42,0.3)] overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full text-left">
+            <thead class="bg-white/[0.03] text-slate-400 text-label-sm uppercase">
+                <tr><th class="px-6 py-3">#</th><th class="px-6 py-3">Başlık</th><th class="px-6 py-3">Pozisyon</th><th class="px-6 py-3">Durum</th><th class="px-6 py-3">İşlem</th></tr>
+            </thead>
+            <tbody class="divide-y divide-white/5">
                 <?php foreach ($ads as $ad): ?>
-                <tr>
-                    <td><?php echo $ad['id']; ?></td>
-                    <td style="font-weight:600;"><?php echo escape($ad['title']); ?></td>
-                    <td><span class="venue-card-cat" style="margin:0;"><?php echo escape($ad['position']); ?></span></td>
-                    <td><span class="status-badge <?php echo $ad['is_active'] ? 'active' : 'rejected'; ?>"><?php echo $ad['is_active'] ? 'Aktif' : 'Pasif'; ?></span></td>
-                    <td>
-                        <div style="display:flex; gap:4px;">
-                            <form method="POST" style="display:inline;"><input type="hidden" name="csrf_token" value="<?php echo csrfToken(); ?>"><input type="hidden" name="ad_id" value="<?php echo $ad['id']; ?>"><input type="hidden" name="action" value="toggle"><button class="btn-secondary-soft btn-sm"><i class="bi bi-toggle-on"></i></button></form>
-                            <form method="POST" style="display:inline;" onsubmit="return confirm('Silmek?')"><input type="hidden" name="csrf_token" value="<?php echo csrfToken(); ?>"><input type="hidden" name="ad_id" value="<?php echo $ad['id']; ?>"><input type="hidden" name="action" value="delete"><button class="btn-danger-soft btn-sm"><i class="bi bi-trash3"></i></button></form>
+                <tr class="hover:bg-white/[0.02] transition-colors">
+                    <td class="px-6 py-3 text-slate-500"><?php echo $ad['id']; ?></td>
+                    <td class="px-6 py-3 font-semibold text-on-surface"><?php echo escape($ad['title']); ?></td>
+                    <td class="px-6 py-3"><span class="bg-white/5 text-slate-300 text-xs px-2 py-1 rounded"><?php echo escape($ad['position']); ?></span></td>
+                    <td class="px-6 py-3">
+                        <?php if ($ad['is_active']): ?>
+                            <span class="text-xs font-semibold px-2 py-1 rounded border bg-emerald-500/10 text-emerald-400 border-emerald-500/20">Aktif</span>
+                        <?php else: ?>
+                            <span class="text-xs font-semibold px-2 py-1 rounded border bg-red-500/10 text-red-400 border-red-500/20">Pasif</span>
+                        <?php endif; ?>
+                    </td>
+                    <td class="px-6 py-3">
+                        <div class="flex gap-1">
+                            <form method="POST" class="inline"><input type="hidden" name="csrf_token" value="<?php echo csrfToken(); ?>"><input type="hidden" name="ad_id" value="<?php echo $ad['id']; ?>"><input type="hidden" name="action" value="toggle"><button class="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 flex items-center justify-center transition-colors" title="Aktif/Pasif"><span class="material-symbols-outlined text-[18px]">toggle_on</span></button></form>
+                            <form method="POST" class="inline" onsubmit="return confirm('Silmek?')"><input type="hidden" name="csrf_token" value="<?php echo csrfToken(); ?>"><input type="hidden" name="ad_id" value="<?php echo $ad['id']; ?>"><input type="hidden" name="action" value="delete"><button class="w-8 h-8 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 flex items-center justify-center transition-colors" title="Sil"><span class="material-symbols-outlined text-[18px]">delete</span></button></form>
                         </div>
                     </td>
                 </tr>
                 <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
+            </tbody>
+        </table>
     </div>
 </div>
 
-<?php require_once __DIR__ . '/../../public/partials/footer.php'; ?>
+<?php require_once __DIR__ . '/_footer.php'; ?>
