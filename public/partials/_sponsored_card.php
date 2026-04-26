@@ -19,7 +19,7 @@ if (empty($sponsoredAd)) return;
         <?php if (!empty($sponsoredAd['image_url'])): ?>
         <div class="px-5 pb-3">
             <div class="rounded-xl overflow-hidden border border-white/5">
-                <img src="<?php echo BASE_URL . '/uploads/' . escape($sponsoredAd['image_url']); ?>" 
+                <img src="<?php echo BASE_URL . '/' . escape($sponsoredAd['image_url']); ?>" 
                      alt="<?php echo escape($sponsoredAd['title']); ?>" 
                      class="w-full h-auto object-cover group-hover:scale-[1.02] transition-transform duration-300"
                      loading="lazy">
