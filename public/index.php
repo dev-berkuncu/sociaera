@@ -157,20 +157,39 @@ if (Auth::check()) { header('Location: ' . BASE_URL . '/dashboard'); exit; }
 </a>
 </div>
 </div>
-<div class="flex-1 w-full relative">
-<div class="glass-card rounded-2xl p-6 relative z-10 shadow-[0_30px_60px_rgba(15,23,42,0.5)] transform hover:-translate-y-2 transition-transform duration-500">
-<img alt="Executive professionals networking in a modern, dark-themed upscale lounge with subtle lighting" class="w-full h-[400px] object-cover rounded-xl shadow-inner opacity-90" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIHDdeaL-f179X9J1xX9CUft-4taVOejv4YIlNm4M6YafiZKKb3GpU3syuyBsau3z0ULitGpbLSlORUK94KUOvVpckxwcTrqQI33T9EHjHLm-NEmg5QT0PPt5Hk6F5DDf4PgQ0_kDwhUML_5dSQKHeJmxk129wYiJ-b255p8vttxQW5K_Pm4bA88EaCkeIEPgizBwiexxResszdSWIAEeC6_HDoX5OEN7u9_XdLMs_dxKo3YkSqLDEyISSnrTYIY6pqRFHmbryrWGo"/>
-<!-- Floating Widget -->
-<div class="absolute -bottom-8 -left-8 glass-card p-4 rounded-xl flex items-center gap-4 animate-[bounce_4s_infinite]">
-<div class="w-12 h-12 rounded-full bg-primary-container/20 flex items-center justify-center text-primary-container">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">location_on</span>
-</div>
-<div>
-<p class="font-label-md text-label-md text-on-surface">The Grand Lounge</p>
-<p class="font-label-sm text-label-sm text-secondary">Just checked in</p>
-</div>
-</div>
-</div>
+<div class="flex-1 w-full relative h-[300px] md:h-[500px] hidden md:block">
+    <!-- Floating Widget 1: Check-in -->
+    <div class="absolute top-[15%] left-[5%] glass-card p-4 rounded-2xl flex items-center gap-4 animate-[bounce_4s_infinite] shadow-[0_20px_40px_rgba(0,0,0,0.3)] border border-white/20 backdrop-blur-md">
+        <div class="w-12 h-12 rounded-xl bg-primary-container/20 flex items-center justify-center text-primary-container shadow-inner border border-primary-container/30">
+            <span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">location_on</span>
+        </div>
+        <div>
+            <p class="font-bold text-sm text-on-surface">The Grand Lounge</p>
+            <p class="text-xs text-slate-300">Az önce check-in yapıldı</p>
+        </div>
+    </div>
+
+    <!-- Floating Widget 2: Badge -->
+    <div class="absolute top-[65%] left-[20%] glass-card p-4 rounded-2xl flex items-center gap-4 animate-[bounce_5s_infinite] shadow-[0_20px_40px_rgba(0,0,0,0.3)] border border-white/20 backdrop-blur-md" style="animation-delay: 1.5s;">
+        <div class="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 shadow-inner border border-emerald-500/30">
+            <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">military_tech</span>
+        </div>
+        <div>
+            <p class="font-bold text-sm text-on-surface">Gece Kuşu</p>
+            <p class="text-xs text-slate-300">Yeni rozet kazanıldı!</p>
+        </div>
+    </div>
+
+    <!-- Floating Widget 3: Trending Venue -->
+    <div class="absolute top-[35%] right-[5%] lg:right-[15%] glass-card p-4 rounded-2xl flex items-center gap-4 animate-[bounce_6s_infinite] shadow-[0_20px_40px_rgba(0,0,0,0.3)] border border-white/20 backdrop-blur-md" style="animation-delay: 0.8s;">
+        <div class="w-12 h-12 rounded-xl bg-[#7bd0ff]/20 flex items-center justify-center text-[#7bd0ff] shadow-inner border border-[#7bd0ff]/30">
+            <span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+        </div>
+        <div>
+            <p class="font-bold text-sm text-on-surface">SPARK</p>
+            <p class="text-xs text-slate-300">Şu an çok popüler</p>
+        </div>
+    </div>
 </div>
 </section>
 <!-- Features Bento Grid -->
