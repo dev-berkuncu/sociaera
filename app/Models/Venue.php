@@ -148,7 +148,7 @@ class VenueModel
     public function getTrending(int $limit = 5): array
     {
         $stmt = $this->db->prepare("
-            SELECT v.id, v.name, v.category, COUNT(c.id) as weekly_checkins
+            SELECT v.id, v.name, v.category, v.image, v.cover_image, v.is_open, COUNT(c.id) as weekly_checkins
             FROM venues v
             JOIN checkins c ON c.venue_id = v.id AND c.is_deleted = 0
             WHERE c.created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
