@@ -101,6 +101,17 @@ if (Auth::check()) { header('Location: ' . BASE_URL . '/dashboard'); exit; }
                         "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
                         "label-md": ["14px", { "lineHeight": "1.2", "letterSpacing": "0.01em", "fontWeight": "500" }],
                         "headline-lg": ["32px", { "lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600" }]
+                    },
+                    "animation": {
+                        "float-fast": "float 4s ease-in-out infinite",
+                        "float": "float 5s ease-in-out infinite",
+                        "float-slow": "float 6s ease-in-out infinite"
+                    },
+                    "keyframes": {
+                        "float": {
+                            "0%, 100%": { transform: "translateY(0)" },
+                            "50%": { transform: "translateY(-15px)" }
+                        }
                     }
                 }
             }
@@ -159,7 +170,7 @@ if (Auth::check()) { header('Location: ' . BASE_URL . '/dashboard'); exit; }
 </div>
 <div class="flex-1 w-full relative h-[300px] md:h-[500px] hidden md:block">
     <!-- Floating Widget 1: Check-in -->
-    <div class="absolute top-[15%] left-[5%] glass-card p-4 rounded-2xl flex items-center gap-4 animate-[bounce_4s_infinite] shadow-[0_20px_40px_rgba(0,0,0,0.3)] border border-white/20 backdrop-blur-md">
+    <div class="absolute top-[15%] left-[5%] glass-card p-4 rounded-2xl flex items-center gap-4 animate-float shadow-[0_20px_40px_rgba(0,0,0,0.3)] border border-white/20 backdrop-blur-md">
         <div class="w-12 h-12 rounded-xl bg-primary-container/20 flex items-center justify-center text-primary-container shadow-inner border border-primary-container/30">
             <span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">location_on</span>
         </div>
@@ -170,7 +181,7 @@ if (Auth::check()) { header('Location: ' . BASE_URL . '/dashboard'); exit; }
     </div>
 
     <!-- Floating Widget 2: Badge -->
-    <div class="absolute top-[65%] left-[20%] glass-card p-4 rounded-2xl flex items-center gap-4 animate-[bounce_5s_infinite] shadow-[0_20px_40px_rgba(0,0,0,0.3)] border border-white/20 backdrop-blur-md" style="animation-delay: 1.5s;">
+    <div class="absolute top-[65%] left-[20%] glass-card p-4 rounded-2xl flex items-center gap-4 animate-float-slow shadow-[0_20px_40px_rgba(0,0,0,0.3)] border border-white/20 backdrop-blur-md">
         <div class="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 shadow-inner border border-emerald-500/30">
             <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">military_tech</span>
         </div>
@@ -181,7 +192,7 @@ if (Auth::check()) { header('Location: ' . BASE_URL . '/dashboard'); exit; }
     </div>
 
     <!-- Floating Widget 3: Trending Venue -->
-    <div class="absolute top-[35%] right-[5%] lg:right-[15%] glass-card p-4 rounded-2xl flex items-center gap-4 animate-[bounce_6s_infinite] shadow-[0_20px_40px_rgba(0,0,0,0.3)] border border-white/20 backdrop-blur-md" style="animation-delay: 0.8s;">
+    <div class="absolute top-[35%] right-[5%] lg:right-[15%] glass-card p-4 rounded-2xl flex items-center gap-4 animate-float-fast shadow-[0_20px_40px_rgba(0,0,0,0.3)] border border-white/20 backdrop-blur-md">
         <div class="w-12 h-12 rounded-xl bg-[#7bd0ff]/20 flex items-center justify-center text-[#7bd0ff] shadow-inner border border-[#7bd0ff]/30">
             <span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
         </div>
