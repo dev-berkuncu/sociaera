@@ -49,6 +49,9 @@ switch ($tab) {
     case 'reposts':
         $posts = $checkinModel->getRepostedByUser($profileUser['id'], $page);
         break;
+    case 'badges':
+        $posts = [];
+        break;
     default:
         $posts = $checkinModel->getUserCheckins($profileUser['id'], $page, 20, Auth::id());
         break;
@@ -182,30 +185,61 @@ require_once __DIR__ . '/partials/app_header.php';
 
 
     <!-- Tabs -->
-    <div class="flex items-center border-b border-white/10 mb-2 mt-4 px-2">
-        <a href="?u=<?php echo escape($profileUser['tag'] ?: $profileUser['username']); ?>&tab=posts" class="px-6 py-4 font-bold text-sm transition-all border-b-2 <?php echo $tab === 'posts' ? 'text-primary-container border-primary-container' : 'text-slate-400 border-transparent hover:text-white hover:border-white/20'; ?>">Gönderiler</a>
-        <a href="?u=<?php echo escape($profileUser['tag'] ?: $profileUser['username']); ?>&tab=likes" class="px-6 py-4 font-bold text-sm transition-all border-b-2 <?php echo $tab === 'likes' ? 'text-primary-container border-primary-container' : 'text-slate-400 border-transparent hover:text-white hover:border-white/20'; ?>">Beğeniler</a>
-        <a href="?u=<?php echo escape($profileUser['tag'] ?: $profileUser['username']); ?>&tab=reposts" class="px-6 py-4 font-bold text-sm transition-all border-b-2 <?php echo $tab === 'reposts' ? 'text-primary-container border-primary-container' : 'text-slate-400 border-transparent hover:text-white hover:border-white/20'; ?>">Paylaşımlar</a>
+    <div class="flex items-center border-b border-white/10 mb-2 mt-4 px-2 overflow-x-auto custom-scrollbar">
+        <a href="?u=<?php echo escape($profileUser['tag'] ?: $profileUser['username']); ?>&tab=posts" class="px-6 py-4 font-bold text-sm transition-all border-b-2 whitespace-nowrap <?php echo $tab === 'posts' ? 'text-primary-container border-primary-container' : 'text-slate-400 border-transparent hover:text-white hover:border-white/20'; ?>">Gönderiler</a>
+        <a href="?u=<?php echo escape($profileUser['tag'] ?: $profileUser['username']); ?>&tab=likes" class="px-6 py-4 font-bold text-sm transition-all border-b-2 whitespace-nowrap <?php echo $tab === 'likes' ? 'text-primary-container border-primary-container' : 'text-slate-400 border-transparent hover:text-white hover:border-white/20'; ?>">Beğeniler</a>
+        <a href="?u=<?php echo escape($profileUser['tag'] ?: $profileUser['username']); ?>&tab=reposts" class="px-6 py-4 font-bold text-sm transition-all border-b-2 whitespace-nowrap <?php echo $tab === 'reposts' ? 'text-primary-container border-primary-container' : 'text-slate-400 border-transparent hover:text-white hover:border-white/20'; ?>">Paylaşımlar</a>
+        <a href="?u=<?php echo escape($profileUser['tag'] ?: $profileUser['username']); ?>&tab=badges" class="px-6 py-4 font-bold text-sm transition-all border-b-2 whitespace-nowrap <?php echo $tab === 'badges' ? 'text-primary-container border-primary-container' : 'text-slate-400 border-transparent hover:text-white hover:border-white/20'; ?>">Rozetler</a>
     </div>
 
-    <!-- Posts -->
+    <!-- Content -->
     <div class="flex flex-col gap-stack-md pb-container-padding">
-        <?php if (empty($posts)): ?>
-            <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-10 text-center text-slate-400 mt-4 shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)]">
-                <span class="material-symbols-outlined text-[48px] mb-3 opacity-50">post_add</span>
-                <p class="text-lg">Henüz gönderi yok.</p>
-            </div>
-        <?php else: ?>
-            <?php foreach ($posts as $post): ?>
-                <?php include __DIR__ . '/partials/_tailwind_post_card.php'; ?>
-            <?php endforeach; ?>
-            
-            <?php if (count($posts) >= 20): ?>
-                <div class="text-center mt-4">
-                    <a href="?u=<?php echo escape($profileUser['tag'] ?: $profileUser['username']); ?>&tab=<?php echo $tab; ?>&page=<?php echo $page + 1; ?>" class="inline-flex items-center gap-2 bg-white/5 hover:bg-white/10 text-on-surface px-6 py-3 rounded-full transition-colors border border-white/10 font-bold">
-                        <span class="material-symbols-outlined">arrow_downward</span> Daha Fazla Yükle
-                    </a>
+        <?php if ($tab === 'badges'): ?>
+            <?php if (empty($profileBadges)): ?>
+                <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-10 text-center text-slate-400 mt-4 shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)]">
+                    <span class="material-symbols-outlined text-[48px] mb-3 opacity-50">military_tech</span>
+                    <p class="text-lg">Henüz kazanılan bir rozet yok.</p>
                 </div>
+            <?php else: ?>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                    <?php foreach ($profileBadges as $pb):
+                        $def = $badgeDefs[$pb['badge_key']] ?? null;
+                        if (!$def) continue;
+                        $count = (int)($pb['total_count'] ?? 1);
+                    ?>
+                    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-5 flex items-center gap-4 hover:border-primary-container/30 transition-colors shadow-sm">
+                        <div class="relative flex items-center justify-center w-14 h-14 rounded-xl flex-shrink-0" style="background: <?php echo $def['color']; ?>15; border: 1.5px solid <?php echo $def['color']; ?>40;">
+                            <span class="material-symbols-outlined text-[32px]" style="color: <?php echo $def['color']; ?>"><?php echo $def['icon']; ?></span>
+                            <?php if ($count > 1): ?>
+                            <span class="absolute -top-2 -right-2 min-w-[20px] h-5 flex items-center justify-center bg-primary-container text-white text-[10px] font-black rounded-full px-1.5 shadow-[0_2px_8px_rgba(255,107,53,0.5)]">x<?php echo $count; ?></span>
+                            <?php endif; ?>
+                        </div>
+                        <div class="flex-grow min-w-0">
+                            <div class="font-bold text-on-surface text-lg truncate"><?php echo escape($def['name']); ?></div>
+                            <div class="text-sm text-slate-400 mt-1 line-clamp-2"><?php echo escape($def['desc']); ?></div>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+        <?php else: ?>
+            <?php if (empty($posts)): ?>
+                <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-10 text-center text-slate-400 mt-4 shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)]">
+                    <span class="material-symbols-outlined text-[48px] mb-3 opacity-50">post_add</span>
+                    <p class="text-lg">Henüz gönderi yok.</p>
+                </div>
+            <?php else: ?>
+                <?php foreach ($posts as $post): ?>
+                    <?php include __DIR__ . '/partials/_tailwind_post_card.php'; ?>
+                <?php endforeach; ?>
+                
+                <?php if (count($posts) >= 20): ?>
+                    <div class="text-center mt-4">
+                        <a href="?u=<?php echo escape($profileUser['tag'] ?: $profileUser['username']); ?>&tab=<?php echo $tab; ?>&page=<?php echo $page + 1; ?>" class="inline-flex items-center gap-2 bg-white/5 hover:bg-white/10 text-on-surface px-6 py-3 rounded-full transition-colors border border-white/10 font-bold">
+                            <span class="material-symbols-outlined">arrow_downward</span> Daha Fazla Yükle
+                        </a>
+                    </div>
+                <?php endif; ?>
             <?php endif; ?>
         <?php endif; ?>
     </div>
