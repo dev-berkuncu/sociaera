@@ -8,53 +8,74 @@ $hideSidebar = $hideSidebar ?? false;
         <!-- Right Sidebar (Conditionally shown if variables exist) -->
         <aside class="hidden lg:flex flex-col w-80 gap-stack-md ml-auto">
             <?php if (!empty($trendVenues)): ?>
-            <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-6 shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)]">
-                <h2 class="font-headline-md text-headline-md text-on-surface mb-6">Popüler Mekanlar</h2>
+            <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl p-6 shadow-[0_15px_30px_-15px_rgba(15,23,42,0.5)]">
+                <h2 class="font-headline-md text-headline-md text-on-surface mb-6 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary-container text-[20px]">local_fire_department</span> Popüler Mekanlar
+                </h2>
                 <ul class="flex flex-col gap-4">
                     <?php foreach ($trendVenues as $tv): ?>
-                    <li class="flex items-center gap-4 group cursor-pointer" onclick="window.location.href='<?php echo BASE_URL; ?>/venue-detail?id=<?php echo $tv['id']; ?>'">
-                        <div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center text-primary-container border border-white/5 group-hover:border-primary-container/50 transition-colors flex-shrink-0">
-                            <span class="material-symbols-outlined">restaurant</span>
+                    <li class="flex items-center gap-4 group cursor-pointer p-2 -mx-2 rounded-xl hover:bg-white/5 transition-all" onclick="window.location.href='<?php echo BASE_URL; ?>/venue-detail?id=<?php echo $tv['id']; ?>'">
+                        <div class="w-14 h-14 rounded-xl overflow-hidden bg-surface-container flex items-center justify-center text-primary-container border border-white/10 group-hover:border-primary-container/50 transition-colors flex-shrink-0 relative shadow-sm">
+                            <?php if (!empty($tv['image'])): ?>
+                                <img src="<?php echo uploadUrl('posts', $tv['image']); ?>" class="w-full h-full object-cover">
+                            <?php else: ?>
+                                <span class="material-symbols-outlined text-[24px]">store</span>
+                            <?php endif; ?>
+                            <?php if (isset($tv['is_open']) && $tv['is_open']): ?>
+                                <div class="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full border-2 border-[#1E293B] shadow-[0_0_5px_rgba(16,185,129,0.5)]"></div>
+                            <?php endif; ?>
                         </div>
                         <div class="flex-grow min-w-0">
-                            <div class="font-label-md text-label-md text-on-surface group-hover:text-primary-container transition-colors truncate"><?php echo escape($tv['name']); ?></div>
-                            <div class="font-label-sm text-label-sm text-slate-400 truncate"><?php echo escape($tv['category'] ?? 'Mekan'); ?> • <?php echo $tv['weekly_checkins']; ?> Check-in</div>
+                            <div class="font-bold text-base text-on-surface group-hover:text-primary-container transition-colors truncate drop-shadow-sm"><?php echo escape($tv['name']); ?></div>
+                            <div class="text-xs font-medium text-slate-400 mt-0.5 truncate flex items-center gap-1.5">
+                                <?php if (!empty($tv['category'])): ?>
+                                    <span class="bg-primary-container/10 text-primary-container px-1.5 py-0.5 rounded text-[9px] uppercase tracking-wider border border-primary-container/20"><?php echo escape(VenueModel::categories()[$tv['category']] ?? $tv['category']); ?></span>
+                                <?php endif; ?>
+                                <span><?php echo $tv['weekly_checkins']; ?> Check-in</span>
+                            </div>
                         </div>
-                        <span class="material-symbols-outlined text-slate-500 group-hover:text-on-surface transition-colors text-[20px]">chevron_right</span>
+                        <div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0">
+                            <span class="material-symbols-outlined text-primary-container text-[18px]">chevron_right</span>
+                        </div>
                     </li>
                     <?php endforeach; ?>
                 </ul>
-                <a href="<?php echo BASE_URL; ?>/venues" class="block text-center w-full mt-6 py-2 text-primary-container font-label-md text-label-md hover:bg-white/5 rounded-lg transition-colors">Tümünü Gör</a>
+                <a href="<?php echo BASE_URL; ?>/venues" class="block text-center w-full mt-4 py-2.5 text-primary-container font-bold text-sm bg-white/5 hover:bg-white/10 rounded-xl transition-colors border border-white/5">Tümünü Gör</a>
             </div>
             <?php endif; ?>
 
             <?php if (!empty($miniLeaderboard)): ?>
-            <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-6 shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)]">
+            <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl p-6 shadow-[0_15px_30px_-15px_rgba(15,23,42,0.5)]">
                 <h2 class="font-headline-md text-headline-md text-on-surface mb-6 flex items-center gap-2">
-                    Liderlik <span class="material-symbols-outlined text-primary-container text-[20px]">military_tech</span>
+                    <span class="material-symbols-outlined text-primary-container text-[20px]">military_tech</span> Liderlik
                 </h2>
                 <ul class="flex flex-col gap-4">
                     <?php foreach ($miniLeaderboard as $i => $lb): ?>
-                    <li class="flex items-center gap-3 cursor-pointer" onclick="window.location.href='<?php echo BASE_URL; ?>/profile?u=<?php echo escape($lb['tag'] ?: $lb['username']); ?>'">
+                    <li class="flex items-center gap-4 group cursor-pointer p-2 -mx-2 rounded-xl hover:bg-white/5 transition-all" onclick="window.location.href='<?php echo BASE_URL; ?>/profile?u=<?php echo escape($lb['tag'] ?: $lb['username']); ?>'">
                         <div class="relative flex-shrink-0">
                             <?php $lbAvatar = $lb['avatar'] ? BASE_URL . '/uploads/avatars/' . $lb['avatar'] : 'https://ui-avatars.com/api/?name=' . urlencode($lb['username']) . '&background=random'; ?>
-                            <img alt="Leader avatar" class="w-10 h-10 rounded-full object-cover border border-white/10" src="<?php echo $lbAvatar; ?>"/>
+                            <img alt="Leader avatar" class="w-12 h-12 rounded-full object-cover border-2 border-[#1E293B] shadow-sm group-hover:border-primary-container/30 transition-colors" src="<?php echo $lbAvatar; ?>"/>
                             <?php 
-                            $badgeClass = 'bg-slate-700 text-white';
-                            if ($i === 0) $badgeClass = 'bg-primary-container text-white';
-                            elseif ($i === 1) $badgeClass = 'bg-slate-300 text-slate-800';
-                            elseif ($i === 2) $badgeClass = 'bg-[#cd7f32] text-white'; 
+                            $badgeClass = 'bg-slate-700 text-white border-slate-600';
+                            if ($i === 0) $badgeClass = 'bg-primary-container text-white border-[#1E293B] shadow-[0_0_8px_rgba(255,107,53,0.5)]';
+                            elseif ($i === 1) $badgeClass = 'bg-slate-300 text-slate-800 border-[#1E293B]';
+                            elseif ($i === 2) $badgeClass = 'bg-[#cd7f32] text-white border-[#1E293B]'; 
                             ?>
-                            <div class="absolute -top-1 -right-1 <?php echo $badgeClass; ?> text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full border border-background"><?php echo $i + 1; ?></div>
+                            <div class="absolute -top-1 -right-1 <?php echo $badgeClass; ?> text-[10px] font-black w-5 h-5 flex items-center justify-center rounded-full border-2"><?php echo $i + 1; ?></div>
                         </div>
                         <div class="flex-grow min-w-0">
-                            <div class="font-label-md text-label-md text-on-surface truncate"><?php echo escape($lb['username']); ?></div>
-                            <div class="font-label-sm text-label-sm text-slate-400 truncate"><?php echo $lb['checkin_count']; ?> Puan</div>
+                            <div class="font-bold text-base text-on-surface group-hover:text-primary-container transition-colors truncate drop-shadow-sm"><?php echo escape($lb['username']); ?></div>
+                            <div class="text-xs font-medium text-slate-400 mt-0.5 truncate flex items-center gap-1.5">
+                                <span class="bg-surface-container-high text-slate-300 px-1.5 py-0.5 rounded text-[10px] font-bold"><?php echo $lb['checkin_count']; ?> Puan</span>
+                            </div>
+                        </div>
+                        <div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0">
+                            <span class="material-symbols-outlined text-primary-container text-[18px]">chevron_right</span>
                         </div>
                     </li>
                     <?php endforeach; ?>
                 </ul>
-                <a href="<?php echo BASE_URL; ?>/leaderboard" class="block text-center w-full mt-6 py-2 text-primary-container font-label-md text-label-md hover:bg-white/5 rounded-lg transition-colors">Tümünü Gör</a>
+                <a href="<?php echo BASE_URL; ?>/leaderboard" class="block text-center w-full mt-4 py-2.5 text-primary-container font-bold text-sm bg-white/5 hover:bg-white/10 rounded-xl transition-colors border border-white/5">Tümünü Gör</a>
             </div>
             <?php endif; ?>
 
