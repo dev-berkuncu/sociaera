@@ -75,11 +75,13 @@ require_once __DIR__ . '/partials/app_header.php';
             <a href="<?php echo BASE_URL; ?>/venue-detail?id=<?php echo $v['id']; ?>" class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl overflow-hidden hover:border-primary-container/50 hover:shadow-[0_10px_30px_-10px_rgba(255,107,53,0.15)] transition-all group">
                 <div class="h-48 bg-surface-container relative overflow-hidden">
                     <?php if (!empty($v['cover_image'])): ?>
-                        <img src="<?php echo BASE_URL . '/uploads/venues/' . escape($v['cover_image']); ?>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-cover bg-center blur-2xl opacity-40 scale-110" style="background-image: url('<?php echo BASE_URL . '/uploads/venues/' . escape($v['cover_image']); ?>')"></div>
+                        <img src="<?php echo BASE_URL . '/uploads/venues/' . escape($v['cover_image']); ?>" class="w-full h-full object-contain p-2 relative z-10 group-hover:scale-105 transition-transform duration-500">
                     <?php elseif (!empty($v['image'])): ?>
-                        <img src="<?php echo uploadUrl('posts', $v['image']); ?>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-cover bg-center blur-2xl opacity-40 scale-110" style="background-image: url('<?php echo uploadUrl('posts', $v['image']); ?>')"></div>
+                        <img src="<?php echo uploadUrl('posts', $v['image']); ?>" class="w-full h-full object-contain p-2 relative z-10 group-hover:scale-105 transition-transform duration-500">
                     <?php else: ?>
-                        <div class="w-full h-full flex items-center justify-center text-slate-600 bg-surface-container-high group-hover:scale-105 transition-transform duration-500"><span class="material-symbols-outlined text-[48px]">store</span></div>
+                        <div class="w-full h-full flex items-center justify-center text-slate-600 bg-surface-container-high group-hover:scale-105 transition-transform duration-500 relative z-10"><span class="material-symbols-outlined text-[48px]">store</span></div>
                     <?php endif; ?>
                     <?php if ($v['category']): ?>
                         <span class="absolute top-3 right-3 bg-black/60 backdrop-blur text-white text-[11px] font-bold px-2 py-1 rounded-md border border-white/10"><?php echo escape($categories[$v['category']] ?? $v['category']); ?></span>
