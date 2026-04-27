@@ -9,6 +9,7 @@ require_once __DIR__ . '/../app/Config/app.php';
 if (Auth::check()) { header('Location: ' . BASE_URL . '/dashboard'); exit; }
 
 $pageTitle = 'Giriş Yap';
+$hideSidebar = true;
 require_once __DIR__ . '/partials/app_header.php';
 require_once __DIR__ . '/partials/flash.php';
 ?>

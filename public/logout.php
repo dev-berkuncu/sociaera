@@ -5,5 +5,5 @@ require_once __DIR__ . '/../app/Config/app.php';
 Auth::logout();
 session_start();
 Auth::setFlash('success', 'Başarıyla çıkış yaptınız.');
-header('Location: ' . BASE_URL . '/login');
+header('Location: ' . BASE_URL . '/');
 exit;
