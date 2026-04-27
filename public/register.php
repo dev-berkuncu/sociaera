@@ -6,11 +6,12 @@ require_once __DIR__ . '/../app/Config/app.php';
 if (Auth::check()) { header('Location: ' . BASE_URL . '/dashboard'); exit; }
 
 $pageTitle = 'Kayıt Ol';
+$hideSidebar = true;
 require_once __DIR__ . '/partials/app_header.php';
 require_once __DIR__ . '/partials/flash.php';
 ?>
 
-<div class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-background">
+<div class="flex-grow flex items-center justify-center w-full relative overflow-hidden">
     <!-- Background Design -->
     <div class="absolute inset-0 z-0">
         <div class="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-primary-container/20 rounded-full blur-[100px] opacity-50 mix-blend-screen"></div>
