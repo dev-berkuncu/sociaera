@@ -122,7 +122,10 @@ if (Auth::check()) { header('Location: ' . BASE_URL . '/dashboard'); exit; }
         }
     </style>
 </head>
-<body class="bg-background text-on-background antialiased selection:bg-primary-container selection:text-white">
+<body class="text-on-background antialiased selection:bg-primary-container selection:text-white relative bg-transparent min-h-screen">
+<!-- Full Page Background -->
+<div class="fixed inset-0 z-[-2] bg-cover bg-center bg-no-repeat" style="background-image: url('<?php echo BASE_URL; ?>/assets/images/hero-bg.jpg');"></div>
+<div class="fixed inset-0 z-[-1] bg-background/85 backdrop-blur-sm"></div>
 <!-- TopNavBar -->
 <nav class="bg-[#0F172A]/80 backdrop-blur-xl font-['Manrope'] text-sm tracking-wide font-medium docked full-width top-0 sticky border-b border-white/10 shadow-[0_30px_30px_rgba(15,23,42,0.15)] z-50">
 <div class="flex justify-center items-center w-full px-8 py-4 max-w-7xl mx-auto">
