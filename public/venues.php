@@ -19,7 +19,15 @@ Auth::requireLogin();
 $venueModel = new VenueModel();
 $search = trim($_GET['q'] ?? '');
 $category = trim($_GET['cat'] ?? '');
-$venues = $venueModel->getApproved($search, $category);
+
+$page = max(1, (int)($_GET['page'] ?? 1));
+$limit = 12;
+$offset = ($page - 1) * $limit;
+
+$venues = $venueModel->getApproved($search, $category, $limit, $offset);
+$totalVenues = $venueModel->getApprovedCount($search, $category);
+$totalPages = ceil($totalVenues / $limit);
+
 $categories = VenueModel::categories();
 
 $trendVenues = [];
@@ -112,6 +120,30 @@ require_once __DIR__ . '/partials/app_header.php';
             </a>
             <?php endforeach; ?>
         </div>
+        
+        <?php if ($totalPages > 1): ?>
+        <!-- Pagination -->
+        <div class="mt-8 flex justify-center items-center gap-2">
+            <?php if ($page > 1): ?>
+                <a href="?page=<?php echo $page - 1; ?>&cat=<?php echo urlencode($category); ?>&q=<?php echo urlencode($search); ?>" class="w-10 h-10 flex items-center justify-center rounded-lg bg-[#1E293B]/80 text-slate-400 hover:bg-white/10 hover:text-white border border-white/10 transition-all">
+                    <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+                </a>
+            <?php endif; ?>
+            
+            <?php for ($i = max(1, $page - 2); $i <= min($totalPages, $page + 2); $i++): ?>
+                <a href="?page=<?php echo $i; ?>&cat=<?php echo urlencode($category); ?>&q=<?php echo urlencode($search); ?>" 
+                   class="w-10 h-10 flex items-center justify-center rounded-lg font-bold text-sm transition-all <?php echo $i === $page ? 'bg-primary-container text-white shadow-[0_0_15px_rgba(255,107,53,0.3)]' : 'bg-[#1E293B]/80 text-slate-400 hover:bg-white/10 hover:text-white border border-white/10'; ?>">
+                    <?php echo $i; ?>
+                </a>
+            <?php endfor; ?>
+            
+            <?php if ($page < $totalPages): ?>
+                <a href="?page=<?php echo $page + 1; ?>&cat=<?php echo urlencode($category); ?>&q=<?php echo urlencode($search); ?>" class="w-10 h-10 flex items-center justify-center rounded-lg bg-[#1E293B]/80 text-slate-400 hover:bg-white/10 hover:text-white border border-white/10 transition-all">
+                    <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+                </a>
+            <?php endif; ?>
+        </div>
+        <?php endif; ?>
     <?php endif; ?>
 </section>
 
