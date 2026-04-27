@@ -46,23 +46,6 @@ require_once __DIR__ . '/partials/app_header.php';
         </div>
     </div>
 
-    <!-- Haftalık Bilgi -->
-    <div class="bg-[#7bd0ff]/5 border border-[#7bd0ff]/20 rounded-xl p-4 flex items-center gap-3">
-        <span class="material-symbols-outlined text-[#7bd0ff]">info</span>
-        <p class="text-sm text-slate-300">Rozetler <span class="text-[#7bd0ff] font-bold">her hafta sıfırlanır</span>. Aynı rozeti birden fazla hafta kazandığında profilinde sayı olarak görünür.</p>
-    </div>
-
-    <!-- İlerleme Barı -->
-    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-5 shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)]">
-        <div class="flex items-center justify-between mb-2">
-            <span class="text-slate-400 text-sm font-semibold">Genel İlerleme</span>
-            <span class="text-on-surface font-black text-lg"><?php echo round(($earnedCount / max(1, $totalCount)) * 100); ?>%</span>
-        </div>
-        <div class="w-full bg-white/5 rounded-full h-3 overflow-hidden">
-            <div class="h-full bg-gradient-to-r from-primary-container to-[#ff9e7d] rounded-full transition-all duration-700" style="width: <?php echo round(($earnedCount / max(1, $totalCount)) * 100); ?>%"></div>
-        </div>
-    </div>
-
     <!-- Kazanılan Rozetler -->
     <?php $earnedBadges = array_filter($progress, fn($b) => $b['earned']); ?>
     <?php if (!empty($earnedBadges)): ?>
@@ -83,6 +66,23 @@ require_once __DIR__ . '/partials/app_header.php';
         </div>
     </div>
     <?php endif; ?>
+
+    <!-- Haftalık Bilgi -->
+    <div class="bg-[#7bd0ff]/5 border border-[#7bd0ff]/20 rounded-xl p-4 flex items-center gap-3">
+        <span class="material-symbols-outlined text-[#7bd0ff]">info</span>
+        <p class="text-sm text-slate-300">Rozetler <span class="text-[#7bd0ff] font-bold">her hafta sıfırlanır</span>. Aynı rozeti birden fazla hafta kazandığında profilinde sayı olarak görünür.</p>
+    </div>
+
+    <!-- İlerleme Barı -->
+    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-5 shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)]">
+        <div class="flex items-center justify-between mb-2">
+            <span class="text-slate-400 text-sm font-semibold">Genel İlerleme</span>
+            <span class="text-on-surface font-black text-lg"><?php echo round(($earnedCount / max(1, $totalCount)) * 100); ?>%</span>
+        </div>
+        <div class="w-full bg-white/5 rounded-full h-3 overflow-hidden">
+            <div class="h-full bg-gradient-to-r from-primary-container to-[#ff9e7d] rounded-full transition-all duration-700" style="width: <?php echo round(($earnedCount / max(1, $totalCount)) * 100); ?>%"></div>
+        </div>
+    </div>
 
     <!-- Tüm Görevler -->
     <div>
