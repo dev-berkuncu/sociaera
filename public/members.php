@@ -57,53 +57,77 @@ require_once __DIR__ . '/partials/app_header.php';
                 $mIsPremium = UserModel::isPremiumActive($m);
             ?>
             <div class="<?php echo $mIsPremium
-                ? 'bg-gradient-to-br from-[#1E293B] to-[#0f1f3d] border border-[#7bd0ff]/30 rounded-xl p-6 shadow-[0_15px_30px_-15px_rgba(123,208,255,0.15)] flex flex-col items-center text-center hover:border-[#7bd0ff]/60 hover:shadow-[0_20px_40px_-15px_rgba(123,208,255,0.25)] transition-all group relative overflow-hidden'
-                : 'bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-6 shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)] flex flex-col items-center text-center hover:border-primary-container/30 transition-colors group'; ?>">
+                ? 'bg-[#1E293B]/90 backdrop-blur-[20px] border border-[#7bd0ff]/40 rounded-2xl shadow-[0_0_20px_-5px_rgba(123,208,255,0.3)] flex flex-col items-center text-center hover:border-[#7bd0ff]/80 hover:shadow-[0_0_30px_rgba(123,208,255,0.4)] transition-all duration-300 group relative overflow-hidden transform hover:-translate-y-1'
+                : 'bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl shadow-[0_15px_30px_-15px_rgba(15,23,42,0.5)] flex flex-col items-center text-center hover:border-primary-container/40 hover:shadow-[0_15px_40px_-10px_rgba(255,107,53,0.2)] transition-all duration-300 group relative overflow-hidden transform hover:-translate-y-1'; ?>">
                 
+                <!-- Mini Banner -->
+                <div class="w-full h-20 absolute top-0 left-0 z-0 <?php echo $mIsPremium ? 'bg-gradient-to-r from-[#0f1f3d] via-[#1a365d] to-[#0f1f3d]' : 'bg-surface-container-high/50'; ?>">
+                    <?php if ($mIsPremium): ?>
+                        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-30 mix-blend-overlay"></div>
+                    <?php endif; ?>
+                </div>
+
                 <?php if ($mIsPremium): ?>
-                <div class="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-[#7bd0ff] to-transparent"></div>
-                <div class="absolute top-2 right-2">
-                    <span class="material-symbols-outlined text-[16px] text-[#7bd0ff] animate-pulse" title="Premium">diamond</span>
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#7bd0ff] to-transparent z-20"></div>
+                <div class="absolute top-3 right-3 z-20 bg-black/40 backdrop-blur p-1.5 rounded-full border border-white/10 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-[14px] text-[#7bd0ff] animate-pulse" title="Premium">diamond</span>
                 </div>
                 <?php endif; ?>
 
-                <a href="<?php echo BASE_URL; ?>/profile?u=<?php echo escape($m['tag'] ?: $m['username']); ?>" class="relative mb-3 block">
+                <!-- Avatar -->
+                <a href="<?php echo BASE_URL; ?>/profile?u=<?php echo escape($m['tag'] ?: $m['username']); ?>" class="relative mt-8 mb-3 block z-10">
                     <?php $mAvatar = $m['avatar'] ? BASE_URL . '/uploads/avatars/' . $m['avatar'] : 'https://ui-avatars.com/api/?name=' . urlencode($m['username']) . '&background=random'; ?>
-                    <img alt="User avatar" class="w-20 h-20 rounded-full object-cover border-2 <?php echo $mIsPremium ? 'border-[#7bd0ff]/40 group-hover:border-[#7bd0ff]/70 shadow-[0_0_15px_rgba(123,208,255,0.2)]' : 'border-white/10 group-hover:border-primary-container/50'; ?> transition-all" src="<?php echo $mAvatar; ?>"/>
-                    <?php if ($mIsPremium): ?>
-                    <div class="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-[#7bd0ff]/20 text-[#7bd0ff] text-[8px] font-black px-2 py-0.5 rounded-full border border-[#7bd0ff]/30 uppercase tracking-widest whitespace-nowrap">Premium</div>
-                    <?php endif; ?>
+                    <div class="relative inline-block">
+                        <img alt="User avatar" class="w-24 h-24 rounded-full object-cover border-4 <?php echo $mIsPremium ? 'border-[#1E293B] group-hover:border-[#7bd0ff]/30' : 'border-[#1E293B] group-hover:border-primary-container/30'; ?> transition-all shadow-xl bg-[#1E293B]" src="<?php echo $mAvatar; ?>"/>
+                        <?php if ($mIsPremium): ?>
+                            <!-- Glowing ring behind avatar for premium -->
+                            <div class="absolute inset-0 rounded-full bg-[#7bd0ff] blur-md -z-10 opacity-20 group-hover:opacity-40 transition-opacity"></div>
+                        <?php endif; ?>
+                    </div>
                 </a>
                 
-                <a href="<?php echo BASE_URL; ?>/profile?u=<?php echo escape($m['tag'] ?: $m['username']); ?>" class="font-bold text-lg <?php echo $mIsPremium ? 'text-[#7bd0ff] hover:text-white' : 'text-on-surface hover:text-primary-container'; ?> transition-colors truncate w-full"><?php echo escape($m['username']); ?></a>
-                
-                <div class="h-5">
-                    <?php if ($m['tag']): ?><div class="text-sm text-slate-400 truncate">@<?php echo escape($m['tag']); ?></div><?php endif; ?>
+                <!-- Info -->
+                <div class="z-10 w-full px-4">
+                    <a href="<?php echo BASE_URL; ?>/profile?u=<?php echo escape($m['tag'] ?: $m['username']); ?>" class="font-black text-xl <?php echo $mIsPremium ? 'text-white' : 'text-on-surface hover:text-primary-container'; ?> transition-colors truncate w-full block drop-shadow-md">
+                        <?php echo escape($m['username']); ?>
+                    </a>
+                    
+                    <div class="h-5 mt-0.5 mb-4">
+                        <?php if ($m['tag']): ?>
+                            <span class="text-sm text-slate-400 font-medium">@<?php echo escape($m['tag']); ?></span>
+                        <?php endif; ?>
+                    </div>
+                    
+                    <div class="flex justify-between items-center bg-surface-container/50 rounded-xl p-3 mb-5 border border-white/5 w-full">
+                        <div class="flex flex-col items-center flex-1">
+                            <span class="font-black text-on-surface text-lg"><?php echo (int)($m['follower_count'] ?? 0); ?></span>
+                            <span class="text-[10px] text-slate-400 uppercase tracking-widest font-semibold mt-0.5">Takipçi</span>
+                        </div>
+                        <div class="w-px h-8 bg-white/10"></div>
+                        <div class="flex flex-col items-center flex-1">
+                            <span class="font-black text-on-surface text-lg"><?php echo (int)($m['checkin_count'] ?? 0); ?></span>
+                            <span class="text-[10px] text-slate-400 uppercase tracking-widest font-semibold mt-0.5">Check-in</span>
+                        </div>
+                    </div>
                 </div>
                 
-                <div class="flex gap-4 items-center justify-center my-4 w-full text-sm text-slate-400">
-                    <div class="flex flex-col items-center bg-surface-container w-full py-1.5 rounded-lg border border-white/5">
-                        <span class="font-bold text-on-surface"><?php echo (int)($m['follower_count'] ?? 0); ?></span>
-                        <span class="text-[10px] uppercase tracking-wider">Takipçi</span>
-                    </div>
-                    <div class="flex flex-col items-center bg-surface-container w-full py-1.5 rounded-lg border border-white/5">
-                        <span class="font-bold text-on-surface"><?php echo (int)($m['checkin_count'] ?? 0); ?></span>
-                        <span class="text-[10px] uppercase tracking-wider">Check-in</span>
-                    </div>
-                </div>
-                
-                <?php if (Auth::id() !== (int)$m['id']): ?>
-                <button class="w-full py-2 rounded-lg font-label-md text-label-md transition-all flex items-center justify-center gap-2 <?php echo $mIsFollowing ? 'bg-primary-container/20 text-primary-container border border-primary-container/30 hover:bg-primary-container/30' : 'bg-primary-container text-white hover:bg-primary-container/90 shadow-[0_0_10px_rgba(255,107,53,0.2)] active:scale-95'; ?>"
-                        onclick="App.toggleFollow(this, <?php echo $m['id']; ?>)">
-                    <?php if ($mIsFollowing): ?>
-                        <span class="material-symbols-outlined text-[18px]">person_check</span> Takipte
+                <!-- Action Button -->
+                <div class="mt-auto w-full px-5 pb-5 z-10">
+                    <?php if (Auth::id() !== (int)$m['id']): ?>
+                    <button class="w-full py-2.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 <?php echo $mIsFollowing ? 'bg-white/5 text-primary-container border border-primary-container/30 hover:bg-white/10' : 'bg-primary-container text-white hover:bg-primary-container/90 shadow-[0_0_15px_rgba(255,107,53,0.3)] active:scale-95'; ?>"
+                            onclick="App.toggleFollow(this, <?php echo $m['id']; ?>)">
+                        <?php if ($mIsFollowing): ?>
+                            <span class="material-symbols-outlined text-[18px]">person_check</span> Takipte
+                        <?php else: ?>
+                            <span class="material-symbols-outlined text-[18px]">person_add</span> Takip Et
+                        <?php endif; ?>
+                    </button>
                     <?php else: ?>
-                        <span class="material-symbols-outlined text-[18px]">person_add</span> Takip Et
+                    <div class="w-full py-2.5 rounded-xl font-bold text-sm text-slate-500 border border-white/5 bg-white/5 cursor-default flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined text-[18px]">account_circle</span> Bu Sensin
+                    </div>
                     <?php endif; ?>
-                </button>
-                <?php else: ?>
-                <div class="w-full py-2 mt-auto"></div>
-                <?php endif; ?>
+                </div>
             </div>
             <?php endforeach; ?>
         </div>
