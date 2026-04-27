@@ -21,7 +21,7 @@ class VenueModel
         return $stmt->fetch() ?: null;
     }
 
-    public function getApproved(string $search = '', string $category = '', int $limit = 50): array
+    public function getApproved(string $search = '', string $category = '', int $limit = 50, int $offset = 0): array
     {
         $where  = "WHERE status = 'approved' AND is_active = 1";
         $params = [];
@@ -38,16 +38,38 @@ class VenueModel
         }
 
         $params[] = $limit;
+        $params[] = $offset;
 
         $stmt = $this->db->prepare("
             SELECT v.*,
                 (SELECT COUNT(*) FROM checkins WHERE venue_id = v.id AND is_deleted = 0) as checkin_count
             FROM venues v {$where}
             ORDER BY checkin_count DESC, v.name ASC
-            LIMIT ?
+            LIMIT ? OFFSET ?
         ");
         $stmt->execute($params);
         return $stmt->fetchAll();
+    }
+
+    public function getApprovedCount(string $search = '', string $category = ''): int
+    {
+        $where  = "WHERE status = 'approved' AND is_active = 1";
+        $params = [];
+
+        if ($search) {
+            $where .= " AND (name LIKE ? OR description LIKE ? OR address LIKE ?)";
+            $like = '%' . $search . '%';
+            $params = [$like, $like, $like];
+        }
+
+        if ($category) {
+            $where .= " AND category = ?";
+            $params[] = $category;
+        }
+
+        $stmt = $this->db->prepare("SELECT COUNT(*) FROM venues v {$where}");
+        $stmt->execute($params);
+        return (int) $stmt->fetchColumn();
     }
 
     public function create(array $data): int
