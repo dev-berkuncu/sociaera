@@ -129,7 +129,8 @@ if (Auth::check()) { header('Location: ' . BASE_URL . '/dashboard'); exit; }
 <!-- TopNavBar -->
 <nav class="bg-[#0F172A]/80 backdrop-blur-xl font-['Manrope'] text-sm tracking-wide font-medium docked full-width top-0 sticky border-b border-white/10 shadow-[0_30px_30px_rgba(15,23,42,0.15)] z-50">
 <div class="flex justify-center items-center w-full px-8 py-4 max-w-7xl mx-auto">
-<div class="text-2xl font-bold tracking-tighter text-[#FF6B35]">
+<div class="flex items-center gap-2 text-2xl font-bold tracking-tighter text-[#FF6B35]">
+                <img src="<?php echo BASE_URL; ?>/assets/images/logo.png" alt="Logo" class="h-8 w-auto opacity-90">
                 <?php echo APP_NAME; ?>
             </div>
 </div>
@@ -215,7 +216,8 @@ if (Auth::check()) { header('Location: ' . BASE_URL . '/dashboard'); exit; }
 <!-- Footer -->
 <footer class="bg-[#0F172A] full-width py-12 border-t border-slate-800 flat no-shadows mt-24">
 <div class="flex flex-col md:flex-row justify-between items-center w-full px-8 max-w-7xl mx-auto gap-6 font-['Manrope'] text-xs uppercase tracking-widest text-slate-500">
-<div class="text-lg font-bold text-slate-200">
+<div class="flex items-center gap-2 text-lg font-bold text-slate-200">
+                <img src="<?php echo BASE_URL; ?>/assets/images/logo.png" alt="Logo" class="h-6 w-auto opacity-70">
                 <?php echo APP_NAME; ?>
             </div>
 <div class="flex flex-wrap items-center justify-center gap-6">
