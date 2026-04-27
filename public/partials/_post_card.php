@@ -19,6 +19,9 @@ if (!isset($post)) return;
         <div class="post-user-info">
             <div>
                 <a href="<?php echo BASE_URL; ?>/profile?u=<?php echo escape($post['tag'] ?: $post['username']); ?>" class="post-username"><?php echo escape($post['username']); ?></a>
+                <?php if (!empty($post['is_premium'])): ?>
+                    <span class="post-badge"><i class="bi bi-gem"></i></span>
+                <?php endif; ?>
                 <?php if (!empty($post['tag'])): ?>
                     <span class="post-tag">@<?php echo escape($post['tag']); ?></span>
                 <?php endif; ?>
@@ -28,9 +31,6 @@ if (!isset($post)) return;
                 <a href="<?php echo BASE_URL; ?>/venue-detail?id=<?php echo $post['venue_id']; ?>" class="post-venue-link">
                     <i class="bi bi-geo-alt-fill"></i> <?php echo escape($post['venue_name']); ?>
                 </a>
-                <?php if (!empty($post['is_premium'])): ?>
-                    <span class="post-badge"><i class="bi bi-gem"></i> Premium</span>
-                <?php endif; ?>
             </div>
         </div>
         <?php if (!empty($post['is_own'])): ?>
