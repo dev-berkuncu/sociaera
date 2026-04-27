@@ -17,9 +17,9 @@ $hideSidebar = $hideSidebar ?? false;
                     <li class="flex items-center gap-4 group cursor-pointer p-2 -mx-2 rounded-xl hover:bg-white/5 transition-all" onclick="window.location.href='<?php echo BASE_URL; ?>/venue-detail?id=<?php echo $tv['id']; ?>'">
                         <div class="w-14 h-14 rounded-xl overflow-hidden bg-surface-container flex items-center justify-center text-primary-container border border-white/10 group-hover:border-primary-container/50 transition-colors flex-shrink-0 relative shadow-sm">
                             <?php if (!empty($tv['cover_image'])): ?>
-                                <img src="<?php echo BASE_URL . '/uploads/venues/' . escape($tv['cover_image']); ?>" class="w-full h-full object-cover">
+                                <img src="<?php echo BASE_URL . '/uploads/venues/' . escape($tv['cover_image']); ?>" class="w-full h-full object-contain p-1">
                             <?php elseif (!empty($tv['image'])): ?>
-                                <img src="<?php echo uploadUrl('posts', $tv['image']); ?>" class="w-full h-full object-cover">
+                                <img src="<?php echo uploadUrl('posts', $tv['image']); ?>" class="w-full h-full object-contain p-1">
                             <?php else: ?>
                                 <span class="material-symbols-outlined text-[24px]">store</span>
                             <?php endif; ?>
