@@ -197,7 +197,7 @@ if (Auth::check()) { header('Location: ' . BASE_URL . '/dashboard'); exit; }
             <span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
         </div>
         <div>
-            <p class="font-bold text-sm text-on-surface">SPARK</p>
+            <p class="font-bold text-sm text-on-surface">Urban Performance Hall & Bar</p>
             <p class="text-xs text-slate-300">Şu an çok popüler</p>
         </div>
     </div>
