@@ -44,48 +44,95 @@ require_once __DIR__ . '/partials/app_header.php';
         <span class="material-symbols-outlined text-[20px]">arrow_back</span> Mekanlar
     </a>
 
-    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl overflow-hidden shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)] mb-4">
-        <div class="h-48 md:h-64 bg-surface-container relative">
-            <?php if (!empty($venue['image'])): ?>
+    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl overflow-hidden shadow-[0_20px_40px_-15px_rgba(15,23,42,0.5)] mb-6 relative">
+        <!-- Banner Image -->
+        <div class="h-64 md:h-80 w-full bg-surface-container relative">
+            <div class="absolute inset-0 bg-gradient-to-t from-[#1E293B]/90 via-[#1E293B]/40 to-transparent z-10"></div>
+            <?php if (!empty($venue['cover_image'])): ?>
+                <img src="<?php echo BASE_URL . '/uploads/venues/' . escape($venue['cover_image']); ?>" class="w-full h-full object-cover">
+            <?php elseif (!empty($venue['image'])): ?>
                 <img src="<?php echo uploadUrl('posts', $venue['image']); ?>" class="w-full h-full object-cover">
             <?php else: ?>
                 <div class="w-full h-full flex items-center justify-center text-slate-600 bg-surface-container-high"><span class="material-symbols-outlined text-[64px]">store</span></div>
             <?php endif; ?>
-        </div>
-        <div class="p-6 md:p-8">
+            
+            <!-- Category Badge overlaying banner -->
             <?php if ($venue['category']): ?>
-                <span class="inline-block bg-primary-container/20 text-primary-container border border-primary-container/30 text-xs font-bold px-3 py-1 rounded-full mb-3 uppercase tracking-wider"><?php echo escape(VenueModel::categories()[$venue['category']] ?? $venue['category']); ?></span>
-            <?php endif; ?>
-            <h1 class="text-3xl font-bold text-on-surface mb-4"><?php echo escape($venue['name']); ?></h1>
-            <?php if ($venue['description']): ?>
-                <p class="text-slate-300 mb-6 leading-relaxed"><?php echo nl2brSafe($venue['description']); ?></p>
+            <div class="absolute top-4 left-4 z-20">
+                <span class="bg-black/60 backdrop-blur text-white text-xs font-bold px-3 py-1.5 rounded-full border border-white/20 uppercase tracking-wider shadow-lg">
+                    <?php echo escape(VenueModel::categories()[$venue['category']] ?? $venue['category']); ?>
+                </span>
+            </div>
             <?php endif; ?>
             
-            <div class="flex flex-col gap-3 text-sm text-slate-400 mb-6">
-                <?php if ($venue['address']): ?>
-                    <div class="flex items-start gap-2">
-                        <span class="material-symbols-outlined text-[20px] text-primary-container shrink-0">pin_drop</span> 
-                        <span><?php echo escape($venue['address']); ?></span>
-                    </div>
-                <?php endif; ?>
-                <?php if ($venue['website']): ?>
-                    <div class="flex items-center gap-2">
-                        <span class="material-symbols-outlined text-[20px] text-primary-container">language</span> 
-                        <a href="<?php echo escape($venue['website']); ?>" target="_blank" class="hover:text-primary-container transition-colors truncate"><?php echo escape($venue['website']); ?></a>
-                    </div>
-                <?php endif; ?>
-                <?php if ($venue['facebrowser_url']): ?>
-                    <div class="flex items-center gap-2">
-                        <span class="material-symbols-outlined text-[20px] text-[#3b5998]">link</span> 
-                        <a href="<?php echo escape($venue['facebrowser_url']); ?>" target="_blank" class="hover:text-[#3b5998] transition-colors truncate">Facebrowser</a>
-                    </div>
-                <?php endif; ?>
+            <!-- Open/Close Badge -->
+            <?php if (isset($venue['is_open'])): ?>
+            <div class="absolute top-4 right-4 z-20 flex items-center gap-2 bg-black/60 backdrop-blur text-[12px] font-bold px-3 py-1.5 rounded-full border border-white/20 shadow-lg <?php echo $venue['is_open'] ? 'text-emerald-400' : 'text-red-400'; ?>">
+                <span class="w-2 h-2 rounded-full animate-pulse <?php echo $venue['is_open'] ? 'bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.8)]' : 'bg-red-400 shadow-[0_0_8px_rgba(239,68,68,0.8)]'; ?>"></span>
+                <?php echo $venue['is_open'] ? 'Şu An Açık' : 'Şu An Kapalı'; ?>
+            </div>
+            <?php endif; ?>
+        </div>
+
+        <!-- Venue Content -->
+        <div class="p-6 md:p-8 relative z-20 -mt-20">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
+                <div>
+                    <h1 class="text-4xl md:text-5xl font-black text-white drop-shadow-md tracking-tight"><?php echo escape($venue['name']); ?></h1>
+                </div>
+                <!-- Call to action button -->
+                <a href="<?php echo BASE_URL; ?>/?venue_id=<?php echo $venue['id']; ?>" class="flex items-center justify-center gap-2 bg-primary-container text-white px-6 py-3 rounded-xl font-bold hover:bg-primary-container/90 transition-all shadow-[0_0_20px_rgba(255,107,53,0.3)] active:scale-95 group shrink-0">
+                    <span class="material-symbols-outlined text-[20px] group-hover:scale-110 transition-transform">pin_drop</span>
+                    Burada Check-in Yap
+                </a>
             </div>
 
-            <div class="pt-6 border-t border-white/10 flex gap-8">
-                <div class="flex flex-col">
-                    <span class="text-2xl font-black text-primary-container"><?php echo $checkinCount; ?></span>
-                    <span class="text-xs text-slate-400 uppercase tracking-widest font-semibold">Check-in</span>
+            <?php if ($venue['description']): ?>
+                <p class="text-slate-300 mb-8 leading-relaxed font-body-md text-lg max-w-2xl"><?php echo nl2brSafe($venue['description']); ?></p>
+            <?php endif; ?>
+            
+            <!-- Information Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                <div class="flex flex-col gap-4 bg-white/5 border border-white/10 rounded-xl p-5">
+                    <?php if ($venue['address']): ?>
+                        <div class="flex items-start gap-3">
+                            <span class="material-symbols-outlined text-[24px] text-primary-container shrink-0 mt-0.5">map</span> 
+                            <span class="text-slate-300"><?php echo escape($venue['address']); ?></span>
+                        </div>
+                    <?php endif; ?>
+                    <?php if (!empty($venue['hours'])): ?>
+                        <div class="flex items-start gap-3">
+                            <span class="material-symbols-outlined text-[24px] text-primary-container shrink-0">schedule</span> 
+                            <span class="text-slate-300"><?php echo escape($venue['hours']); ?></span>
+                        </div>
+                    <?php endif; ?>
+                    <?php if (!empty($venue['phone'])): ?>
+                        <div class="flex items-center gap-3">
+                            <span class="material-symbols-outlined text-[24px] text-primary-container shrink-0">call</span> 
+                            <span class="text-slate-300"><?php echo escape($venue['phone']); ?></span>
+                        </div>
+                    <?php endif; ?>
+                </div>
+
+                <div class="flex flex-col gap-4 bg-white/5 border border-white/10 rounded-xl p-5">
+                    <?php if ($venue['website']): ?>
+                        <div class="flex items-center gap-3">
+                            <span class="material-symbols-outlined text-[24px] text-[#3b82f6]">language</span> 
+                            <a href="<?php echo escape($venue['website']); ?>" target="_blank" class="text-slate-300 hover:text-[#3b82f6] transition-colors truncate">Resmi Web Sitesi</a>
+                        </div>
+                    <?php endif; ?>
+                    <?php if ($venue['facebrowser_url']): ?>
+                        <div class="flex items-center gap-3">
+                            <span class="material-symbols-outlined text-[24px] text-[#3b5998]">link</span> 
+                            <a href="<?php echo escape($venue['facebrowser_url']); ?>" target="_blank" class="text-slate-300 hover:text-[#3b5998] transition-colors truncate">Facebrowser Sayfası</a>
+                        </div>
+                    <?php endif; ?>
+                    
+                    <!-- Stats in the grid -->
+                    <div class="flex items-center gap-3 mt-auto pt-2">
+                        <span class="material-symbols-outlined text-[24px] text-emerald-400">verified_user</span> 
+                        <span class="text-slate-300"><strong class="text-white text-lg"><?php echo $checkinCount; ?></strong> Toplam Check-in</span>
+                    </div>
                 </div>
             </div>
         </div>
