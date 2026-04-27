@@ -175,7 +175,7 @@ if (Auth::check()) { header('Location: ' . BASE_URL . '/dashboard'); exit; }
             <span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">location_on</span>
         </div>
         <div>
-            <p class="font-bold text-sm text-on-surface">The Grand Lounge</p>
+            <p class="font-bold text-sm text-on-surface">Solid Comics</p>
             <p class="text-xs text-slate-300">Az önce check-in yapıldı</p>
         </div>
     </div>
