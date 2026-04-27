@@ -21,10 +21,7 @@ if (!isset($post)) return;
             </a>
             <div>
                 <div class="font-label-md text-label-md text-on-surface flex items-center gap-2">
-                    <a href="<?php echo BASE_URL; ?>/profile?u=<?php echo escape($post['tag'] ?: $post['username']); ?>" class="hover:text-primary-container transition-colors"><?php echo escape($post['username']); ?></a>
-                    <?php if (!empty($post['tag'])): ?>
-                        <span class="text-slate-500 font-normal">@<?php echo escape($post['tag']); ?></span>
-                    <?php endif; ?>
+                    <a href="<?php echo BASE_URL; ?>/profile?u=<?php echo escape($post['tag'] ?: $post['username']); ?>" class="hover:text-primary-container transition-colors font-bold"><?php echo escape($post['username']); ?></a>
                     <?php if (!empty($post['is_premium'])): ?>
                         <?php
                         $userBadge = $post['badge'] ?? null;
@@ -36,6 +33,9 @@ if (!isset($post)) return;
                         <?php else: ?>
                         <span class="material-symbols-outlined text-[14px] text-[#7bd0ff]" title="Premium" data-weight="fill">diamond</span>
                         <?php endif; ?>
+                    <?php endif; ?>
+                    <?php if (!empty($post['tag'])): ?>
+                        <span class="text-slate-500 font-normal">@<?php echo escape($post['tag']); ?></span>
                     <?php endif; ?>
                 </div>
                 <div class="font-label-sm text-label-sm text-slate-400"><?php echo timeAgo($post['created_at']); ?></div>
