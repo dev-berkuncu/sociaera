@@ -9,6 +9,33 @@ class BadgeModel
     public function __construct()
     {
         $this->db = Database::getConnection();
+        $this->ensureSchema();
+    }
+
+    private function ensureSchema(): void
+    {
+        try {
+            // Tablo yoksa catch bloğuna düşer
+            $stmt = $this->db->query("SHOW COLUMNS FROM user_badges LIKE 'week_start'");
+            if ($stmt && $stmt->rowCount() === 0) {
+                // week_start kolonu yoksa ekle ve indeksleri güncelle
+                $this->db->exec("ALTER TABLE user_badges ADD COLUMN week_start DATE NOT NULL AFTER badge_key");
+                $weekStart = self::currentWeekStart();
+                $this->db->exec("UPDATE user_badges SET week_start = '{$weekStart}' WHERE week_start = '0000-00-00' OR week_start IS NULL");
+                
+                try { $this->db->exec("ALTER TABLE user_badges DROP INDEX uk_user_badge"); } catch (\Throwable $e) {}
+                try { $this->db->exec("ALTER TABLE user_badges ADD UNIQUE KEY uk_user_badge_week (user_id, badge_key, week_start)"); } catch (\Throwable $e) {}
+                try { $this->db->exec("ALTER TABLE user_badges ADD KEY idx_week_start (week_start)"); } catch (\Throwable $e) {}
+            }
+        } catch (\Throwable $e) {
+            // Tablo hiç yoksa oluştur
+            if (strpos($e->getMessage(), 'Table') !== false && strpos($e->getMessage(), 'doesn\'t exist') !== false) {
+                $sql = file_get_contents(dirname(__DIR__, 2) . '/migrations/create_user_badges.sql');
+                if ($sql) {
+                    $this->db->exec($sql);
+                }
+            }
+        }
     }
 
     /**
