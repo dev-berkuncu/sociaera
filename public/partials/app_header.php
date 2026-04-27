@@ -281,7 +281,10 @@ if (!isset($currentUser) && Auth::check()) {
     <?php if (Auth::check()): ?>
     <!-- TopAppBar (Mobile) -->
     <header class="flex items-center justify-between px-8 py-4 bg-[#0F172A]/50 backdrop-blur-md font-manrope font-medium w-full sticky top-0 z-40 border-b border-white/10 md:hidden">
-        <div class="text-xl font-bold text-[#FF6B35]">Sociaera</div>
+        <div class="flex items-center gap-2 text-xl font-bold text-[#FF6B35]">
+            <img src="<?php echo BASE_URL; ?>/assets/images/logo.png" alt="Logo" class="h-6 w-auto opacity-90">
+            Sociaera
+        </div>
         <div class="flex items-center gap-4 text-slate-400">
             <a href="<?php echo BASE_URL; ?>/profile" class="text-slate-400 hover:text-[#FF6B35] transition-colors"><span class="material-symbols-outlined">account_circle</span></a>
             <a href="<?php echo BASE_URL; ?>/settings" class="text-slate-400 hover:text-[#FF6B35] transition-colors"><span class="material-symbols-outlined">tune</span></a>
