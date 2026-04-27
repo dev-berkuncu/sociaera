@@ -211,33 +211,36 @@ if (Auth::check()) { header('Location: ' . BASE_URL . '/dashboard'); exit; }
 </div>
 <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
 <!-- Feature 1 -->
-<div class="glass-card rounded-2xl p-8 flex flex-col gap-6 group hover:bg-white/5 transition-colors duration-300">
-<div class="w-14 h-14 rounded-xl bg-surface-container flex items-center justify-center text-primary-container border border-white/5 group-hover:border-primary-container/30 transition-colors">
+<div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 flex flex-col gap-6 group hover:bg-white/10 hover:border-white/20 hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)] transition-all duration-500 shadow-[0_8px_32px_rgba(0,0,0,0.3)] relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+<div class="w-14 h-14 rounded-2xl bg-primary-container/10 flex items-center justify-center text-primary-container border border-primary-container/20 group-hover:bg-primary-container/20 group-hover:border-primary-container/40 transition-all duration-300 shadow-inner relative z-10">
 <span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 0;">map</span>
 </div>
-<div>
-<h3 class="font-headline-md text-headline-md text-on-surface mb-2">Mekanlar</h3>
-<p class="font-body-md text-body-md text-secondary">Keşfet &amp; paylaş. Şehrin en seçkin noktalarını bulun ve ağınızla deneyimlerinizi paylaşın.</p>
+<div class="relative z-10">
+<h3 class="font-headline-md text-headline-md text-white mb-2">Mekanlar</h3>
+<p class="font-body-md text-body-md text-slate-300">Keşfet &amp; paylaş. Şehrin en seçkin noktalarını bulun ve ağınızla deneyimlerinizi paylaşın.</p>
 </div>
 </div>
 <!-- Feature 2 -->
-<div class="glass-card rounded-2xl p-8 flex flex-col gap-6 group hover:bg-white/5 transition-colors duration-300">
-<div class="w-14 h-14 rounded-xl bg-surface-container flex items-center justify-center text-primary-container border border-white/5 group-hover:border-primary-container/30 transition-colors">
+<div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 flex flex-col gap-6 group hover:bg-white/10 hover:border-white/20 hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)] transition-all duration-500 shadow-[0_8px_32px_rgba(0,0,0,0.3)] relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+<div class="w-14 h-14 rounded-2xl bg-[#7bd0ff]/10 flex items-center justify-center text-[#7bd0ff] border border-[#7bd0ff]/20 group-hover:bg-[#7bd0ff]/20 group-hover:border-[#7bd0ff]/40 transition-all duration-300 shadow-inner relative z-10">
 <span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 0;">how_to_reg</span>
 </div>
-<div>
-<h3 class="font-headline-md text-headline-md text-on-surface mb-2">Check-in</h3>
-<p class="font-body-md text-body-md text-secondary">Anını kaydet. Bulunduğunuz konumu doğrulayın ve profesyonel çevrenizle etkileşime geçin.</p>
+<div class="relative z-10">
+<h3 class="font-headline-md text-headline-md text-white mb-2">Check-in</h3>
+<p class="font-body-md text-body-md text-slate-300">Anını kaydet. Bulunduğunuz konumu doğrulayın ve profesyonel çevrenizle etkileşime geçin.</p>
 </div>
 </div>
 <!-- Feature 3 -->
-<div class="glass-card rounded-2xl p-8 flex flex-col gap-6 group hover:bg-white/5 transition-colors duration-300">
-<div class="w-14 h-14 rounded-xl bg-surface-container flex items-center justify-center text-primary-container border border-white/5 group-hover:border-primary-container/30 transition-colors">
+<div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 flex flex-col gap-6 group hover:bg-white/10 hover:border-white/20 hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)] transition-all duration-500 shadow-[0_8px_32px_rgba(0,0,0,0.3)] relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+<div class="w-14 h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 border border-emerald-500/20 group-hover:bg-emerald-500/20 group-hover:border-emerald-500/40 transition-all duration-300 shadow-inner relative z-10">
 <span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 0;">emoji_events</span>
 </div>
-<div>
-<h3 class="font-headline-md text-headline-md text-on-surface mb-2">Sıralama</h3>
-<p class="font-body-md text-body-md text-secondary">Haftalık yarış. Aktif olarak ödüller kazanın ve liderlik tablosunda yerinizi alın.</p>
+<div class="relative z-10">
+<h3 class="font-headline-md text-headline-md text-white mb-2">Sıralama</h3>
+<p class="font-body-md text-body-md text-slate-300">Haftalık yarış. Aktif olarak ödüller kazanın ve liderlik tablosunda yerinizi alın.</p>
 </div>
 </div>
 </div>
