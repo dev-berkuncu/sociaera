@@ -70,7 +70,7 @@ $hideSidebar = $hideSidebar ?? false;
                     Sponsorlarımız <span class="material-symbols-outlined text-primary-container text-[20px]">campaign</span>
                 </h2>
                 <?php if (!empty($rightSidebarSponsors)): ?>
-                <ul class="flex flex-col gap-3">
+                <ul class="flex flex-col gap-3 max-h-[260px] overflow-y-auto pr-2 custom-scrollbar">
                     <?php foreach ($rightSidebarSponsors as $sp): ?>
                     <li>
                         <a href="<?php echo escape($sp['url'] ?? '#'); ?>" target="_blank" rel="noopener" class="flex items-center gap-4 p-3 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 hover:border-primary-container/30 transition-all group shadow-sm">
