@@ -5,8 +5,52 @@
 require_once __DIR__ . '/../app/Config/env.php';
 loadEnv(dirname(__DIR__) . '/.env');
 require_once __DIR__ . '/../app/Config/app.php';
+require_once __DIR__ . '/../app/Config/database.php';
+require_once __DIR__ . '/../app/Models/Venue.php';
+require_once __DIR__ . '/../app/Models/Checkin.php';
+require_once __DIR__ . '/../app/Models/Badge.php';
 
 if (Auth::check()) { header('Location: ' . BASE_URL . '/dashboard'); exit; }
+
+// --- Dinamik Verileri Çek ---
+$venueModel = new VenueModel();
+$checkinModel = new CheckinModel();
+
+// 1. En Popüler Mekan
+$trendVenues = $venueModel->getTrending(1);
+$trendingVenueName = !empty($trendVenues) ? escape($trendVenues[0]['name']) : 'Sociaera Hub';
+
+// 2. En Son Check-in
+$latestFeed = $checkinModel->getGlobalFeed(1, 1);
+$latestCheckinVenue = !empty($latestFeed) ? escape($latestFeed[0]['venue_name']) : 'Keşif Alanı';
+$latestCheckinUser = !empty($latestFeed) ? escape($latestFeed[0]['username']) : 'Bir kullanıcı';
+
+// 3. En Son Kazanılan Rozet
+try {
+    $db = Database::getConnection();
+    $stmt = $db->query("SELECT ub.badge_key, u.username FROM user_badges ub JOIN users u ON ub.user_id = u.id ORDER BY ub.earned_at DESC LIMIT 1");
+    $latestBadgeData = $stmt->fetch();
+    $badgeModel = new BadgeModel();
+    $badgeDefs = $badgeModel->getAllDefinitions();
+    
+    if ($latestBadgeData && isset($badgeDefs[$latestBadgeData['badge_key']])) {
+        $badgeName = escape($badgeDefs[$latestBadgeData['badge_key']]['name']);
+        $badgeIcon = $badgeDefs[$latestBadgeData['badge_key']]['icon'];
+        $badgeColor = $badgeDefs[$latestBadgeData['badge_key']]['color'];
+        $badgeUser = escape($latestBadgeData['username']);
+    } else {
+        $badgeName = 'Öncü';
+        $badgeIcon = 'military_tech';
+        $badgeColor = '#34d399';
+        $badgeUser = 'Sociaera';
+    }
+} catch (Exception $e) {
+    $badgeName = 'Öncü';
+    $badgeIcon = 'military_tech';
+    $badgeColor = '#34d399';
+    $badgeUser = 'Sociaera';
+}
+
 ?>
 <!DOCTYPE html>
 <html class="dark" lang="tr"><head>
@@ -175,19 +219,19 @@ if (Auth::check()) { header('Location: ' . BASE_URL . '/dashboard'); exit; }
             <span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">location_on</span>
         </div>
         <div>
-            <p class="font-bold text-sm text-on-surface">Solid Comics</p>
-            <p class="text-xs text-slate-300">Az önce check-in yapıldı</p>
+            <p class="font-bold text-sm text-on-surface"><?php echo $latestCheckinVenue; ?></p>
+            <p class="text-xs text-slate-300"><?php echo $latestCheckinUser; ?> check-in yaptı</p>
         </div>
     </div>
 
     <!-- Floating Widget 2: Badge -->
     <div class="absolute top-[65%] left-[20%] glass-card p-4 rounded-2xl flex items-center gap-4 animate-float-slow shadow-[0_20px_40px_rgba(0,0,0,0.3)] border border-white/20 backdrop-blur-md">
-        <div class="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 shadow-inner border border-emerald-500/30">
-            <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">military_tech</span>
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center shadow-inner" style="background: <?php echo $badgeColor; ?>33; border: 1px solid <?php echo $badgeColor; ?>4D; color: <?php echo $badgeColor; ?>;">
+            <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;"><?php echo escape($badgeIcon); ?></span>
         </div>
         <div>
-            <p class="font-bold text-sm text-on-surface">Gece Kuşu</p>
-            <p class="text-xs text-slate-300">Yeni rozet kazanıldı!</p>
+            <p class="font-bold text-sm text-on-surface"><?php echo $badgeName; ?></p>
+            <p class="text-xs text-slate-300"><?php echo $badgeUser; ?> rozet kazandı!</p>
         </div>
     </div>
 
@@ -197,7 +241,7 @@ if (Auth::check()) { header('Location: ' . BASE_URL . '/dashboard'); exit; }
             <span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
         </div>
         <div>
-            <p class="font-bold text-sm text-on-surface">SPARK</p>
+            <p class="font-bold text-sm text-on-surface"><?php echo $trendingVenueName; ?></p>
             <p class="text-xs text-slate-300">Şu an çok popüler</p>
         </div>
     </div>
