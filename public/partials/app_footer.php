@@ -70,26 +70,47 @@ $hideSidebar = $hideSidebar ?? false;
                     Sponsorlarımız <span class="material-symbols-outlined text-primary-container text-[20px]">campaign</span>
                 </h2>
                 <?php if (!empty($rightSidebarSponsors)): ?>
-                <ul class="flex flex-col gap-3 max-h-[260px] overflow-y-auto pr-2 custom-scrollbar">
-                    <?php foreach ($rightSidebarSponsors as $sp): ?>
-                    <li>
-                        <a href="<?php echo escape($sp['url'] ?? '#'); ?>" target="_blank" rel="noopener" class="flex items-center gap-4 p-3 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 hover:border-primary-container/30 transition-all group shadow-sm">
-                            <div class="w-12 h-12 rounded-lg bg-surface flex-shrink-0 flex items-center justify-center p-2 border border-white/10 group-hover:border-primary-container/50 transition-colors overflow-hidden">
-                                <?php if (!empty($sp['logo'])): ?>
-                                    <img src="<?php echo BASE_URL . '/' . escape($sp['logo']); ?>" alt="<?php echo escape($sp['name']); ?>" class="w-full h-full object-contain">
-                                <?php else: ?>
-                                    <span class="material-symbols-outlined text-slate-500">store</span>
-                                <?php endif; ?>
+                <div class="relative w-full h-32 rounded-xl overflow-hidden group bg-surface border border-white/5 shadow-inner">
+                    <?php foreach ($rightSidebarSponsors as $index => $sp): ?>
+                    <a href="<?php echo escape($sp['url'] ?? '#'); ?>" target="_blank" rel="noopener" 
+                       class="sponsor-slide absolute inset-0 flex flex-col items-center justify-center p-4 transition-opacity duration-1000 ease-in-out <?php echo $index === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'; ?>"
+                       data-index="<?php echo $index; ?>">
+                        
+                        <?php if (!empty($sp['logo'])): ?>
+                            <img src="<?php echo BASE_URL . '/' . escape($sp['logo']); ?>" alt="<?php echo escape($sp['name']); ?>" class="w-full h-full object-contain filter drop-shadow-md transition-transform duration-500 group-hover:scale-105">
+                        <?php else: ?>
+                            <span class="material-symbols-outlined text-slate-500 text-[48px] transition-transform duration-500 group-hover:scale-110">store</span>
+                        <?php endif; ?>
+                        
+                        <!-- Hover Overlay -->
+                        <div class="absolute inset-0 bg-background/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center backdrop-blur-sm z-20">
+                            <span class="font-headline-md text-headline-md text-primary-container text-center mb-1"><?php echo escape($sp['name']); ?></span>
+                            <span class="text-xs text-slate-300 mb-3 tracking-widest uppercase opacity-80">Resmi Sponsor</span>
+                            <div class="w-10 h-10 rounded-full bg-primary-container text-white flex items-center justify-center shadow-lg transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                                <span class="material-symbols-outlined text-[20px]">arrow_outward</span>
                             </div>
-                            <div class="flex-grow min-w-0 flex flex-col justify-center">
-                                <div class="font-label-md text-label-md text-on-surface group-hover:text-primary-container transition-colors truncate"><?php echo escape($sp['name']); ?></div>
-                                <div class="text-[11px] text-slate-400 truncate">Resmi Sponsor</div>
-                            </div>
-                            <span class="material-symbols-outlined text-slate-600 group-hover:text-primary-container transition-colors text-[18px]">open_in_new</span>
-                        </a>
-                    </li>
+                        </div>
+                    </a>
                     <?php endforeach; ?>
-                </ul>
+                </div>
+
+                <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                    const slides = document.querySelectorAll('.sponsor-slide');
+                    if (slides.length <= 1) return;
+                    
+                    let currentIndex = 0;
+                    setInterval(() => {
+                        slides[currentIndex].classList.remove('opacity-100', 'z-10');
+                        slides[currentIndex].classList.add('opacity-0', 'z-0', 'pointer-events-none');
+                        
+                        currentIndex = (currentIndex + 1) % slides.length;
+                        
+                        slides[currentIndex].classList.remove('opacity-0', 'z-0', 'pointer-events-none');
+                        slides[currentIndex].classList.add('opacity-100', 'z-10');
+                    }, 5000);
+                });
+                </script>
                 <?php else: ?>
                 <p class="text-slate-500 text-sm text-center py-2">Henüz sponsor yok</p>
                 <?php endif; ?>
