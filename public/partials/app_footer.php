@@ -138,6 +138,25 @@ $hideSidebar = $hideSidebar ?? false;
                 <p class="text-slate-500 text-sm text-center py-2">Henüz sponsor yok</p>
                 <?php endif; ?>
             </div>
+
+            <!-- Showcase Area -->
+            <div class="bg-[#1E293B]/40 backdrop-blur-[20px] border border-dashed border-white/20 rounded-xl overflow-hidden shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)] flex flex-col relative w-full h-[600px] group hover:border-primary-container/50 transition-colors">
+                <a href="mailto:info@sociaera.online" class="absolute inset-0 flex flex-col items-center justify-center p-6 transition-colors text-center cursor-pointer z-10">
+                    <span class="material-symbols-outlined text-slate-600 text-[48px] mb-4 group-hover:scale-110 group-hover:text-primary-container transition-all duration-300">view_carousel</span>
+                    <span class="font-black text-xl text-slate-500 group-hover:text-white transition-colors tracking-wide">REKLAM ALANI</span>
+                    <span class="text-xs text-slate-400 mt-3 font-mono bg-black/40 px-4 py-1.5 rounded-full border border-white/5 shadow-inner">300 x 600</span>
+                    
+                    <div class="absolute bottom-8 w-12 h-12 rounded-full bg-primary-container text-white flex items-center justify-center opacity-0 group-hover:opacity-100 group-hover:-translate-y-2 transition-all duration-300 shadow-[0_0_15px_rgba(255,107,53,0.4)]">
+                        <span class="material-symbols-outlined text-[24px]">ads_click</span>
+                    </div>
+                </a>
+                
+                <!-- Background decoration -->
+                <div class="absolute inset-0 overflow-hidden pointer-events-none">
+                    <div class="absolute -top-10 -right-10 w-40 h-40 bg-primary-container/5 rounded-full blur-3xl group-hover:bg-primary-container/10 transition-colors"></div>
+                    <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-blue-500/5 rounded-full blur-3xl group-hover:bg-blue-500/10 transition-colors"></div>
+                </div>
+            </div>
         </aside>
         <?php endif; /* !$hideSidebar */ ?>
     </div> <!-- flex-grow flex p-gutter ... -->
