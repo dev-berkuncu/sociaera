@@ -274,7 +274,7 @@ const App = {
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     preview.innerHTML = `
-                        <img src="${e.target.result}" alt="Preview">
+                        <img src="${e.target.result}" alt="Preview" style="display:block; width:100%; max-width:100%; height:auto; max-height:300px; object-fit:contain; border-radius:8px;">
                         <button class="remove-preview" onclick="App.clearImagePreview('${inputId}', '${previewId}')" type="button">
                             <i class="bi bi-x"></i>
                         </button>
