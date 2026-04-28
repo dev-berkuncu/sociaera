@@ -27,6 +27,12 @@ $checkinModel = new CheckinModel();
 $checkinCount = $venueModel->getCheckinCount($venueId);
 $posts = $checkinModel->getVenueCheckins($venueId, 1, 30, Auth::id());
 
+// Rating verileri
+$ratingData = $venueModel->getVenueRating($venueId);
+$averageRating = round((float) $ratingData['average_rating'], 1);
+$ratingCount = (int) $ratingData['rating_count'];
+$userRating = Auth::check() ? $venueModel->getUserRating($venueId, Auth::id()) : 0;
+
 $trendVenues = [];
 $miniLeaderboard = [];
 try {
@@ -140,6 +146,76 @@ require_once __DIR__ . '/partials/app_header.php';
         </div>
     </div>
 
+    <!-- Rating Section -->
+    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl p-6 md:p-8 shadow-[0_20px_40px_-15px_rgba(15,23,42,0.5)] mb-6" id="venueRatingSection">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <!-- Left: Average Rating Display -->
+            <div class="flex items-center gap-5">
+                <div class="flex flex-col items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-amber-500/20 to-orange-500/10 border border-amber-500/20">
+                    <span class="text-3xl font-black text-amber-400 leading-none" id="ratingAvgDisplay"><?php echo $averageRating > 0 ? number_format($averageRating, 1) : '—'; ?></span>
+                    <span class="text-[10px] text-amber-400/70 font-semibold uppercase tracking-wider mt-0.5">/ 5</span>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <h3 class="text-lg font-bold text-on-surface flex items-center gap-2">
+                        <span class="material-symbols-outlined text-amber-400" style="font-variation-settings: 'FILL' 1;">star</span>
+                        Mekan Puanı
+                    </h3>
+                    <p class="text-sm text-slate-400">
+                        <span id="ratingCountDisplay"><?php echo $ratingCount; ?></span> kişi puan verdi
+                    </p>
+                    <!-- Average Stars (read-only) -->
+                    <div class="flex items-center gap-0.5 mt-1" id="averageStarsDisplay">
+                        <?php for ($i = 1; $i <= 5; $i++): ?>
+                            <?php
+                                $fillClass = '';
+                                if ($averageRating >= $i) {
+                                    $fillClass = 'text-amber-400';
+                                } elseif ($averageRating >= $i - 0.5) {
+                                    $fillClass = 'text-amber-400/50';
+                                } else {
+                                    $fillClass = 'text-slate-600';
+                                }
+                            ?>
+                            <span class="material-symbols-outlined text-[20px] <?php echo $fillClass; ?>" style="font-variation-settings: 'FILL' 1;">star</span>
+                        <?php endfor; ?>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: User Rating Interactive Stars -->
+            <div class="flex flex-col items-center md:items-end gap-2">
+                <?php if (Auth::check()): ?>
+                    <span class="text-xs text-slate-500 font-medium uppercase tracking-wider">
+                        <?php echo $userRating > 0 ? 'Puanını güncelle' : 'Puan ver'; ?>
+                    </span>
+                    <div class="flex items-center gap-1" id="userStarRating" data-venue-id="<?php echo $venueId; ?>" data-current="<?php echo $userRating; ?>">
+                        <?php for ($i = 1; $i <= 5; $i++): ?>
+                            <button type="button"
+                                class="star-btn group relative p-1 rounded-lg hover:bg-amber-400/10 transition-all duration-200"
+                                data-star="<?php echo $i; ?>"
+                                aria-label="<?php echo $i; ?> yıldız">
+                                <span class="material-symbols-outlined text-[32px] transition-all duration-200 <?php echo $i <= $userRating ? 'text-amber-400 scale-110' : 'text-slate-600 group-hover:text-amber-300'; ?>"
+                                    style="font-variation-settings: 'FILL' 1;">
+                                    star
+                                </span>
+                            </button>
+                        <?php endfor; ?>
+                    </div>
+                    <?php if ($userRating > 0): ?>
+                        <span class="text-xs text-amber-400/70" id="userRatingLabel">Senin puanın: <strong><?php echo $userRating; ?>/5</strong></span>
+                    <?php else: ?>
+                        <span class="text-xs text-slate-500" id="userRatingLabel">Henüz puan vermedin</span>
+                    <?php endif; ?>
+                <?php else: ?>
+                    <div class="flex flex-col items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-6 py-4">
+                        <span class="material-symbols-outlined text-[24px] text-slate-500">lock</span>
+                        <p class="text-sm text-slate-400 text-center">Puan vermek için <a href="<?php echo BASE_URL; ?>/login" class="text-primary-container hover:underline font-semibold">giriş yapın</a></p>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+
     <h2 class="text-xl font-bold text-on-surface mb-2 mt-4 flex items-center gap-2"><span class="material-symbols-outlined text-primary-container">history</span> Son Check-in'ler</h2>
 
     <div class="flex flex-col gap-stack-md pb-container-padding">
@@ -157,3 +233,107 @@ require_once __DIR__ . '/partials/app_header.php';
 </section>
 
 <?php require_once __DIR__ . '/partials/app_footer.php'; ?>
+
+<!-- Venue Rating Script -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const starContainer = document.getElementById('userStarRating');
+    if (!starContainer) return;
+
+    const venueId = starContainer.dataset.venueId;
+    let currentRating = parseInt(starContainer.dataset.current) || 0;
+    const starBtns = starContainer.querySelectorAll('.star-btn');
+
+    // Hover preview
+    starBtns.forEach(btn => {
+        const starVal = parseInt(btn.dataset.star);
+
+        btn.addEventListener('mouseenter', () => {
+            starBtns.forEach(b => {
+                const v = parseInt(b.dataset.star);
+                const icon = b.querySelector('.material-symbols-outlined');
+                if (v <= starVal) {
+                    icon.className = 'material-symbols-outlined text-[32px] transition-all duration-200 text-amber-400 scale-110';
+                } else {
+                    icon.className = 'material-symbols-outlined text-[32px] transition-all duration-200 text-slate-600';
+                }
+            });
+        });
+
+        btn.addEventListener('click', async () => {
+            // Disable all buttons during request
+            starBtns.forEach(b => b.disabled = true);
+
+            const formData = new FormData();
+            formData.append('csrf_token', App.csrfToken);
+            formData.append('venue_id', venueId);
+            formData.append('rating', starVal);
+
+            const res = await App.post(App.baseUrl + '/api/venue-rating', formData);
+
+            if (res.ok) {
+                currentRating = starVal;
+                starContainer.dataset.current = starVal;
+
+                // Update star visuals
+                updateStarDisplay(starVal);
+
+                // Update average display
+                const avgEl = document.getElementById('ratingAvgDisplay');
+                const countEl = document.getElementById('ratingCountDisplay');
+                const labelEl = document.getElementById('userRatingLabel');
+
+                if (avgEl) avgEl.textContent = res.data.average_rating.toFixed(1);
+                if (countEl) countEl.textContent = res.data.rating_count;
+                if (labelEl) {
+                    labelEl.innerHTML = 'Senin puanın: <strong>' + starVal + '/5</strong>';
+                    labelEl.className = 'text-xs text-amber-400/70';
+                }
+
+                // Update average stars
+                updateAverageStars(res.data.average_rating);
+
+                App.flash('Puanınız kaydedildi! ⭐', 'success');
+            } else {
+                App.flash(res.error || 'Puan verilemedi.', 'error');
+            }
+
+            starBtns.forEach(b => b.disabled = false);
+        });
+    });
+
+    // Reset stars on mouse leave to current rating
+    starContainer.addEventListener('mouseleave', () => {
+        updateStarDisplay(currentRating);
+    });
+
+    function updateStarDisplay(rating) {
+        starBtns.forEach(b => {
+            const v = parseInt(b.dataset.star);
+            const icon = b.querySelector('.material-symbols-outlined');
+            if (v <= rating) {
+                icon.className = 'material-symbols-outlined text-[32px] transition-all duration-200 text-amber-400 scale-110';
+            } else {
+                icon.className = 'material-symbols-outlined text-[32px] transition-all duration-200 text-slate-600 group-hover:text-amber-300';
+            }
+        });
+    }
+
+    function updateAverageStars(avg) {
+        const avgStars = document.getElementById('averageStarsDisplay');
+        if (!avgStars) return;
+        const icons = avgStars.querySelectorAll('.material-symbols-outlined');
+        icons.forEach((icon, idx) => {
+            const starNum = idx + 1;
+            if (avg >= starNum) {
+                icon.className = 'material-symbols-outlined text-[20px] text-amber-400';
+            } else if (avg >= starNum - 0.5) {
+                icon.className = 'material-symbols-outlined text-[20px] text-amber-400/50';
+            } else {
+                icon.className = 'material-symbols-outlined text-[20px] text-slate-600';
+            }
+            icon.style.fontVariationSettings = "'FILL' 1";
+        });
+    }
+});
+</script>
