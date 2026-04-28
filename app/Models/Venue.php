@@ -222,6 +222,47 @@ class VenueModel
         return (int) $this->db->query("SELECT COUNT(*) FROM venues WHERE status = 'pending'")->fetchColumn();
     }
 
+    // ── Rating (Puanlama) ──────────────────────────────────
+
+    /**
+     * Mekanın ortalama puanı ve toplam oy sayısını döndür
+     */
+    public function getVenueRating(int $venueId): array
+    {
+        $stmt = $this->db->prepare("
+            SELECT COALESCE(AVG(rating), 0) as average_rating,
+                   COUNT(*) as rating_count
+            FROM venue_ratings
+            WHERE venue_id = ?
+        ");
+        $stmt->execute([$venueId]);
+        return $stmt->fetch();
+    }
+
+    /**
+     * Kullanıcının bu mekana verdiği puanı döndür (0 = henüz vermemiş)
+     */
+    public function getUserRating(int $venueId, int $userId): int
+    {
+        $stmt = $this->db->prepare("SELECT rating FROM venue_ratings WHERE venue_id = ? AND user_id = ?");
+        $stmt->execute([$venueId, $userId]);
+        $result = $stmt->fetchColumn();
+        return $result !== false ? (int) $result : 0;
+    }
+
+    /**
+     * Kullanıcının puanını kaydet/güncelle (UPSERT)
+     */
+    public function upsertRating(int $venueId, int $userId, int $rating): void
+    {
+        $stmt = $this->db->prepare("
+            INSERT INTO venue_ratings (venue_id, user_id, rating)
+            VALUES (?, ?, ?)
+            ON DUPLICATE KEY UPDATE rating = VALUES(rating), updated_at = NOW()
+        ");
+        $stmt->execute([$venueId, $userId, $rating]);
+    }
+
     // ── Kategoriler ───────────────────────────────────────
 
     public static function categories(): array
