@@ -50,7 +50,9 @@ if (!isset($post)) return;
     <?php endif; ?>
 
     <?php if (!empty($post['image'])): ?>
+    <div class="post-image-container">
         <img src="<?php echo uploadUrl('posts', $post['image']); ?>" alt="Post" class="post-image" loading="lazy">
+    </div>
     <?php endif; ?>
 
     <div class="post-actions">

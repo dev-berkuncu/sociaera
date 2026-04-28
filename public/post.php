@@ -91,8 +91,8 @@ require_once __DIR__ . '/partials/app_header.php';
                         <p class="text-slate-300 leading-relaxed text-[15px]"><?php echo linkify(parseMentions($c['comment'])); ?></p>
                         
                         <?php if (!empty($c['image'])): ?>
-                            <div class="mt-3 rounded-lg overflow-hidden border border-white/10 max-w-sm">
-                                <img src="<?php echo uploadUrl('posts', $c['image']); ?>" loading="lazy" class="w-full h-auto object-cover">
+                            <div class="mt-3 rounded-lg overflow-hidden border border-white/10 max-w-sm bg-black/10">
+                                <img src="<?php echo uploadUrl('posts', $c['image']); ?>" loading="lazy" class="block w-full max-w-full h-auto max-h-[300px] object-contain">
                             </div>
                         <?php endif; ?>
                     </div>

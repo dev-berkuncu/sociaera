@@ -56,8 +56,8 @@ if (!isset($post)) return;
     <?php endif; ?>
 
     <?php if (!empty($post['image'])): ?>
-    <div class="rounded-xl overflow-hidden border border-white/10 shadow-lg mt-2">
-        <img alt="Venue photo" class="w-full h-auto object-cover max-h-[400px]" src="<?php echo uploadUrl('posts', $post['image']); ?>" loading="lazy"/>
+    <div class="rounded-xl overflow-hidden border border-white/10 shadow-lg mt-2 max-h-[500px] bg-black/10">
+        <img alt="Venue photo" class="block w-full max-w-full h-auto max-h-[500px] object-contain" src="<?php echo uploadUrl('posts', $post['image']); ?>" loading="lazy"/>
     </div>
     <?php endif; ?>
 
