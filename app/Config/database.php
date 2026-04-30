@@ -22,11 +22,21 @@ class Database
 
             $dsn = "mysql:host={$host};dbname={$dbname};charset={$charset}";
 
+            // APP_TIMEZONE sabitini MySQL offset'e çevir
+            $phpTz    = new DateTimeZone(defined('APP_TIMEZONE') ? APP_TIMEZONE : 'Europe/Istanbul');
+            $utcTz    = new DateTimeZone('UTC');
+            $now      = new DateTime('now', $phpTz);
+            $offset   = $phpTz->getOffset($now);
+            $sign     = $offset >= 0 ? '+' : '-';
+            $hours    = str_pad((int) abs($offset / 3600), 2, '0', STR_PAD_LEFT);
+            $minutes  = str_pad((int) (abs($offset) % 3600 / 60), 2, '0', STR_PAD_LEFT);
+            $mysqlTz  = "{$sign}{$hours}:{$minutes}";
+
             $options = [
                 PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
                 PDO::ATTR_EMULATE_PREPARES   => false,
-                PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES {$charset} COLLATE {$charset}_unicode_ci",
+                PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES {$charset} COLLATE {$charset}_unicode_ci, time_zone = '{$mysqlTz}'",
             ];
 
             try {
