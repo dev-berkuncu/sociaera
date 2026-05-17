@@ -27,7 +27,7 @@ header('Pragma: no-cache');
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
     <!-- Sociaera Theme -->
-    <link rel="stylesheet" href="<?php echo asset('css/style.css'); ?>?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="<?php echo asset('css/style.css'); ?>">
 
     <!-- CSRF Meta -->
     <?php echo csrfMeta(); ?>

@@ -205,6 +205,6 @@ $hideSidebar = $hideSidebar ?? false;
 </style>
 <?php endif; ?>
 
-<script src="<?php echo asset('js/app.js'); ?>?v=<?php echo time(); ?>"></script>
+<script src="<?php echo asset('js/app.js'); ?>"></script>
 </body>
 </html>

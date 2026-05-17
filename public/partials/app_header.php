@@ -2,8 +2,9 @@
 /**
  * Sociaera — App Header (Tailwind Design)
  */
-header('Cache-Control: no-cache, must-revalidate');
+header('Cache-Control: no-cache, no-store, must-revalidate');
 header('Pragma: no-cache');
+header('Expires: 0');
 
 if (!isset($currentUser) && Auth::check()) {
     $currentUser = (new UserModel())->getById(Auth::id());
