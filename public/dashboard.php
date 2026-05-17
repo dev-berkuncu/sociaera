@@ -72,7 +72,7 @@ require_once __DIR__ . '/partials/app_header.php';
             <input type="hidden" name="venue_id" id="selectedVenueId" value="">
             <div class="flex gap-4">
                 <?php $avatarUrl = $currentUser['avatar'] ? BASE_URL . '/uploads/avatars/' . $currentUser['avatar'] : 'https://ui-avatars.com/api/?name=' . urlencode($currentUser['username']) . '&background=random'; ?>
-                <img alt="User avatar" class="w-10 h-10 rounded-full object-cover border border-white/10 flex-shrink-0" src="<?php echo $avatarUrl; ?>"/>
+                <img alt="User avatar" class="w-10 h-10 rounded-full object-cover border border-white/10 flex-shrink-0" src="<?php echo $avatarUrl; ?>" width="40" height="40"/>
                 <div class="flex-grow relative">
                     <div id="selectedVenueDisplay" class="flex items-center gap-2 mb-2 bg-white/5 w-fit px-3 py-1 rounded-full border border-white/10" style="display:none;">
                         <span class="material-symbols-outlined text-[16px] text-primary-container">location_on</span>

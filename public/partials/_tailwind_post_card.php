@@ -17,7 +17,7 @@ if (!isset($post)) return;
         <div class="flex items-center gap-3">
             <?php $pAvatar = $post['avatar'] ? BASE_URL . '/uploads/avatars/' . $post['avatar'] : 'https://ui-avatars.com/api/?name=' . urlencode($post['username']) . '&background=random'; ?>
             <a href="<?php echo BASE_URL; ?>/profile?u=<?php echo escape($post['tag'] ?: $post['username']); ?>">
-                <img alt="User avatar" class="w-10 h-10 rounded-full object-cover border border-white/10" src="<?php echo $pAvatar; ?>"/>
+                <img alt="User avatar" class="w-10 h-10 rounded-full object-cover border border-white/10" src="<?php echo $pAvatar; ?>" width="40" height="40" loading="lazy"/>
             </a>
             <div>
                 <div class="font-label-md text-label-md text-on-surface flex items-center gap-2">
@@ -57,7 +57,7 @@ if (!isset($post)) return;
 
     <?php if (!empty($post['image'])): ?>
     <div class="rounded-xl overflow-hidden border border-white/10 shadow-lg mt-2 max-h-[500px] bg-black/10">
-        <img alt="Venue photo" class="block w-full max-w-full h-auto max-h-[500px] object-contain" src="<?php echo uploadUrl('posts', $post['image']); ?>" loading="lazy"/>
+        <img alt="Venue photo" class="block w-full max-w-full h-auto max-h-[500px] object-contain" src="<?php echo uploadUrl('posts', $post['image']); ?>" width="640" height="400" loading="lazy"/>
     </div>
     <?php endif; ?>
 
