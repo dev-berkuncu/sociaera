@@ -121,7 +121,9 @@ function nl2brSafe(?string $text): string
  */
 function asset(string $path): string
 {
-    return BASE_URL . '/assets/' . ltrim($path, '/');
+    $filePath = rtrim($_SERVER['DOCUMENT_ROOT'] ?? __DIR__ . '/../../public', '/') . '/assets/' . ltrim($path, '/');
+    $version = file_exists($filePath) ? filemtime($filePath) : time();
+    return BASE_URL . '/assets/' . ltrim($path, '/') . '?v=' . $version;
 }
 
 /**
@@ -130,7 +132,10 @@ function asset(string $path): string
 function uploadUrl(string $folder, ?string $filename): ?string
 {
     if (!$filename) return null;
-    return BASE_URL . '/uploads/' . $folder . '/' . $filename;
+    $base = BASE_URL . '/uploads/' . $folder . '/' . $filename;
+    $filePath = rtrim($_SERVER['DOCUMENT_ROOT'] ?? __DIR__ . '/../../public', '/') . '/uploads/' . $folder . '/' . $filename;
+    $version = file_exists($filePath) ? filemtime($filePath) : '';
+    return $version ? $base . '?v=' . $version : $base;
 }
 
 /**
