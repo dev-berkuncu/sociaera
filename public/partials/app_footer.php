@@ -17,9 +17,9 @@ $hideSidebar = $hideSidebar ?? false;
                     <li class="flex items-center gap-4 group cursor-pointer p-2 -mx-2 rounded-xl hover:bg-white/5 transition-all" onclick="window.location.href='<?php echo BASE_URL; ?>/venue-detail?id=<?php echo $tv['id']; ?>'">
                         <div class="w-14 h-14 rounded-xl overflow-hidden bg-surface-container flex items-center justify-center text-primary-container border border-white/10 group-hover:border-primary-container/50 transition-colors flex-shrink-0 relative shadow-sm">
                             <?php if (!empty($tv['cover_image'])): ?>
-                                <img src="<?php echo BASE_URL . '/uploads/venues/' . escape($tv['cover_image']); ?>" class="w-full h-full object-contain p-1">
+                                <img src="<?php echo BASE_URL . '/uploads/venues/' . escape($tv['cover_image']); ?>" class="w-full h-full object-contain p-1" width="56" height="56">
                             <?php elseif (!empty($tv['image'])): ?>
-                                <img src="<?php echo uploadUrl('posts', $tv['image']); ?>" class="w-full h-full object-contain p-1">
+                                <img src="<?php echo uploadUrl('posts', $tv['image']); ?>" class="w-full h-full object-contain p-1" width="56" height="56">
                             <?php else: ?>
                                 <span class="material-symbols-outlined text-[24px]">store</span>
                             <?php endif; ?>
@@ -56,7 +56,7 @@ $hideSidebar = $hideSidebar ?? false;
                     <li class="flex items-center gap-4 group cursor-pointer p-2 -mx-2 rounded-xl hover:bg-white/5 transition-all" onclick="window.location.href='<?php echo BASE_URL; ?>/profile?u=<?php echo escape($lb['tag'] ?: $lb['username']); ?>'">
                         <div class="relative flex-shrink-0">
                             <?php $lbAvatar = $lb['avatar'] ? BASE_URL . '/uploads/avatars/' . $lb['avatar'] : 'https://ui-avatars.com/api/?name=' . urlencode($lb['username']) . '&background=random'; ?>
-                            <img alt="Leader avatar" class="w-12 h-12 rounded-full object-cover border-2 border-[#1E293B] shadow-sm group-hover:border-primary-container/30 transition-colors" src="<?php echo $lbAvatar; ?>"/>
+                            <img alt="Leader avatar" class="w-12 h-12 rounded-full object-cover border-2 border-[#1E293B] shadow-sm group-hover:border-primary-container/30 transition-colors" src="<?php echo $lbAvatar; ?>" width="48" height="48"/>
                             <?php 
                             $badgeClass = 'bg-slate-700 text-white border-slate-600';
                             if ($i === 0) $badgeClass = 'bg-primary-container text-white border-[#1E293B] shadow-[0_0_8px_rgba(255,107,53,0.5)]';
@@ -100,7 +100,7 @@ $hideSidebar = $hideSidebar ?? false;
                        data-index="<?php echo $index; ?>">
                         
                         <?php if (!empty($sp['logo'])): ?>
-                            <img src="<?php echo BASE_URL . '/' . escape($sp['logo']); ?>" alt="<?php echo escape($sp['name']); ?>" class="w-full h-full object-contain filter drop-shadow-md transition-transform duration-500 group-hover:scale-105">
+                            <img src="<?php echo BASE_URL . '/' . escape($sp['logo']); ?>" alt="<?php echo escape($sp['name']); ?>" class="w-full h-full object-contain filter drop-shadow-md transition-transform duration-500 group-hover:scale-105" width="280" height="128">
                         <?php else: ?>
                             <span class="material-symbols-outlined text-slate-500 text-[48px] transition-transform duration-500 group-hover:scale-110">store</span>
                         <?php endif; ?>
@@ -161,6 +161,49 @@ $hideSidebar = $hideSidebar ?? false;
         <?php endif; /* !$hideSidebar */ ?>
     </div> <!-- flex-grow flex p-gutter ... -->
 </main>
+
+<!-- Mobile Bottom Navigation -->
+<?php if (Auth::check() && isset($currentUser)): ?>
+<nav class="fixed bottom-0 left-0 right-0 z-50 bg-[#0F172A]/95 backdrop-blur-xl border-t border-white/10 md:hidden safe-area-bottom">
+    <div class="flex items-center justify-around h-16">
+        <?php
+        $mobileNavItems = [
+            'dashboard'     => ['icon' => 'home',           'label' => 'Ana Sayfa'],
+            'venues'        => ['icon' => 'location_on',    'label' => 'Mekanlar'],
+            'leaderboard'   => ['icon' => 'leaderboard',    'label' => 'Liderlik'],
+            'notifications' => ['icon' => 'notifications',  'label' => 'Bildirim'],
+            'profile'       => ['icon' => 'person',         'label' => 'Profil'],
+        ];
+        $mobileUrls = [
+            'dashboard'     => '/dashboard',
+            'venues'        => '/venues',
+            'leaderboard'   => '/leaderboard',
+            'notifications' => '/notifications',
+            'profile'       => '/profile',
+        ];
+        foreach ($mobileNavItems as $mKey => $mItem):
+            $mActive = ($activeNav ?? '') === $mKey;
+            $mClass  = $mActive
+                ? 'flex flex-col items-center justify-center gap-0.5 text-primary-container transition-colors relative'
+                : 'flex flex-col items-center justify-center gap-0.5 text-slate-500 hover:text-slate-300 transition-colors relative';
+        ?>
+        <a href="<?php echo BASE_URL . ($mobileUrls[$mKey] ?? ''); ?>" class="<?php echo $mClass; ?>">
+            <?php if ($mActive): ?>
+            <div class="absolute -top-px left-1/2 -translate-x-1/2 w-8 h-0.5 bg-primary-container rounded-full"></div>
+            <?php endif; ?>
+            <span class="material-symbols-outlined text-[22px]" <?php echo $mActive ? 'data-weight="fill"' : ''; ?>><?php echo $mItem['icon']; ?></span>
+            <span class="text-[10px] font-semibold tracking-wide"><?php echo $mItem['label']; ?></span>
+        </a>
+        <?php endforeach; ?>
+    </div>
+</nav>
+<style>
+    @media (max-width: 767px) {
+        body { padding-bottom: 64px !important; }
+    }
+    .safe-area-bottom { padding-bottom: env(safe-area-inset-bottom, 0px); }
+</style>
+<?php endif; ?>
 
 <script src="<?php echo asset('js/app.js'); ?>?v=<?php echo time(); ?>"></script>
 </body>

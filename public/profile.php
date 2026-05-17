@@ -87,7 +87,7 @@ require_once __DIR__ . '/partials/app_header.php';
             <?php endif; ?>
             
             <?php if (bannerUrl($profileUser['banner'] ?? null)): ?>
-                <img src="<?php echo bannerUrl($profileUser['banner']); ?>" class="w-full h-full object-cover">
+                <img src="<?php echo bannerUrl($profileUser['banner']); ?>" class="w-full h-full object-cover" width="800" height="288">
             <?php else: ?>
                 <div class="w-full h-full bg-gradient-to-r from-primary-container/40 to-surface-container-high"></div>
             <?php endif; ?>
@@ -99,7 +99,7 @@ require_once __DIR__ . '/partials/app_header.php';
                 <!-- Avatar -->
                 <div class="relative inline-block">
                     <?php $pAvatar = $profileUser['avatar'] ? BASE_URL . '/uploads/avatars/' . $profileUser['avatar'] : 'https://ui-avatars.com/api/?name=' . urlencode($profileUser['username']) . '&background=random'; ?>
-                    <img src="<?php echo $pAvatar; ?>" class="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover border-4 <?php echo $isPremium ? 'border-[#1E293B] shadow-[0_0_20px_rgba(123,208,255,0.3)]' : 'border-[#1E293B] shadow-xl'; ?> bg-[#1E293B] relative z-10">
+                    <img src="<?php echo $pAvatar; ?>" class="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover border-4 <?php echo $isPremium ? 'border-[#1E293B] shadow-[0_0_20px_rgba(123,208,255,0.3)]' : 'border-[#1E293B] shadow-xl'; ?> bg-[#1E293B] relative z-10" width="160" height="160">
                     
                     <?php if ($isPremium): ?>
                         <div class="absolute inset-0 rounded-full bg-[#7bd0ff] blur-md -z-10 opacity-40"></div>
