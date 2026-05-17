@@ -90,7 +90,7 @@ require_once __DIR__ . '/partials/app_header.php';
                     <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg border flex-shrink-0 <?php echo $rankColor; ?> transition-transform group-hover:scale-110 relative z-10"><?php echo $i + 1; ?></div>
                     
                     <div class="relative flex-shrink-0 z-10">
-                        <?php $uAvatar = $u['avatar'] ? BASE_URL . '/uploads/avatars/' . $u['avatar'] : 'https://ui-avatars.com/api/?name=' . urlencode($u['username']) . '&background=random'; ?>
+                        <?php $uAvatar = safeAvatarUrl($u['avatar'] ?? null, $u['username']); ?>
                         <img alt="User avatar" class="w-12 h-12 rounded-full object-cover border-2 <?php echo $uIsPremium ? 'border-[#7bd0ff]/50 shadow-[0_0_12px_rgba(123,208,255,0.3)]' : 'border-white/10'; ?> group-hover:border-primary-container/50 transition-all" src="<?php echo $uAvatar; ?>"/>
                         <?php if ($uIsPremium): ?>
                         <div class="absolute -bottom-0.5 -right-0.5 w-5 h-5 bg-[#0f172a] rounded-full flex items-center justify-center border border-[#7bd0ff]/40">

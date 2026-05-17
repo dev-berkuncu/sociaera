@@ -98,7 +98,7 @@ require_once __DIR__ . '/partials/app_header.php';
             <div class="flex flex-col md:flex-row md:justify-between md:items-end gap-4 -mt-20 md:-mt-24 mb-6">
                 <!-- Avatar -->
                 <div class="relative inline-block">
-                    <?php $pAvatar = $profileUser['avatar'] ? BASE_URL . '/uploads/avatars/' . $profileUser['avatar'] : 'https://ui-avatars.com/api/?name=' . urlencode($profileUser['username']) . '&background=random'; ?>
+                    <?php $pAvatar = safeAvatarUrl($profileUser['avatar'] ?? null, $profileUser['username']); ?>
                     <img src="<?php echo $pAvatar; ?>" class="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover border-4 <?php echo $isPremium ? 'border-[#1E293B] shadow-[0_0_20px_rgba(123,208,255,0.3)]' : 'border-[#1E293B] shadow-xl'; ?> bg-[#1E293B] relative z-10" width="160" height="160">
                     
                     <?php if ($isPremium): ?>

@@ -126,7 +126,7 @@ require_once __DIR__ . '/partials/app_header.php';
     <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl p-6 md:p-8 shadow-[0_15px_30px_-15px_rgba(15,23,42,0.5)]">
         <h2 class="text-xl font-bold flex items-center gap-2 mb-6 text-on-surface"><span class="material-symbols-outlined text-primary-container text-[24px]">account_circle</span> Avatar</h2>
         <div class="flex flex-col sm:flex-row items-center gap-6">
-            <?php $pAvatar = $user['avatar'] ? BASE_URL . '/uploads/avatars/' . $user['avatar'] : 'https://ui-avatars.com/api/?name=' . urlencode($user['username']) . '&background=random'; ?>
+            <?php $pAvatar = safeAvatarUrl($user['avatar'] ?? null, $user['username']); ?>
             <div class="relative group">
                 <img src="<?php echo $pAvatar; ?>" class="w-32 h-32 rounded-full object-cover border-4 border-[#1E293B] shadow-xl flex-shrink-0 relative z-10 bg-[#1E293B]">
                 <div class="absolute inset-0 rounded-full bg-primary-container blur-md -z-10 opacity-20 group-hover:opacity-40 transition-opacity"></div>
