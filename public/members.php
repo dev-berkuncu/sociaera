@@ -76,7 +76,7 @@ require_once __DIR__ . '/partials/app_header.php';
 
                 <!-- Avatar -->
                 <a href="<?php echo BASE_URL; ?>/profile?u=<?php echo escape($m['tag'] ?: $m['username']); ?>" class="relative mt-8 mb-3 block z-10">
-                    <?php $mAvatar = $m['avatar'] ? BASE_URL . '/uploads/avatars/' . $m['avatar'] : 'https://ui-avatars.com/api/?name=' . urlencode($m['username']) . '&background=random'; ?>
+                    <?php $mAvatar = safeAvatarUrl($m['avatar'] ?? null, $m['username']); ?>
                     <div class="relative inline-block">
                         <img alt="User avatar" class="w-24 h-24 rounded-full object-cover border-4 <?php echo $mIsPremium ? 'border-[#1E293B] group-hover:border-[#7bd0ff]/30' : 'border-[#1E293B] group-hover:border-primary-container/30'; ?> transition-all shadow-xl bg-[#1E293B]" src="<?php echo $mAvatar; ?>"/>
                         <?php if ($mIsPremium): ?>

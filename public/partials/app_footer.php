@@ -55,7 +55,7 @@ $hideSidebar = $hideSidebar ?? false;
                     <?php foreach ($miniLeaderboard as $i => $lb): ?>
                     <li class="flex items-center gap-4 group cursor-pointer p-2 -mx-2 rounded-xl hover:bg-white/5 transition-all" onclick="window.location.href='<?php echo BASE_URL; ?>/profile?u=<?php echo escape($lb['tag'] ?: $lb['username']); ?>'">
                         <div class="relative flex-shrink-0">
-                            <?php $lbAvatar = $lb['avatar'] ? BASE_URL . '/uploads/avatars/' . $lb['avatar'] : 'https://ui-avatars.com/api/?name=' . urlencode($lb['username']) . '&background=random'; ?>
+                            <?php $lbAvatar = safeAvatarUrl($lb['avatar'] ?? null, $lb['username']); ?>
                             <img alt="Leader avatar" class="w-12 h-12 rounded-full object-cover border-2 border-[#1E293B] shadow-sm group-hover:border-primary-container/30 transition-colors" src="<?php echo $lbAvatar; ?>" width="48" height="48"/>
                             <?php 
                             $badgeClass = 'bg-slate-700 text-white border-slate-600';

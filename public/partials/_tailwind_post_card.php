@@ -15,7 +15,7 @@ if (!isset($post)) return;
 
     <div class="flex items-center justify-between">
         <div class="flex items-center gap-3">
-            <?php $pAvatar = $post['avatar'] ? BASE_URL . '/uploads/avatars/' . $post['avatar'] : 'https://ui-avatars.com/api/?name=' . urlencode($post['username']) . '&background=random'; ?>
+            <?php $pAvatar = safeAvatarUrl($post['avatar'] ?? null, $post['username']); ?>
             <a href="<?php echo BASE_URL; ?>/profile?u=<?php echo escape($post['tag'] ?: $post['username']); ?>">
                 <img alt="User avatar" class="w-10 h-10 rounded-full object-cover border border-white/10" src="<?php echo $pAvatar; ?>" width="40" height="40" loading="lazy"/>
             </a>

@@ -197,7 +197,7 @@ if (!isset($currentUser) && Auth::check()) {
 <!-- SideNavBar -->
 <nav class="hidden md:flex flex-col fixed left-0 top-0 h-full p-8 bg-[#1E293B]/80 backdrop-blur-lg font-manrope antialiased w-72 border-r border-white/10 shadow-[30px_0_30px_-15px_rgba(15,23,42,0.15)] z-50 overflow-y-auto">
     <div class="mb-stack-lg flex items-center gap-4">
-        <?php $avatarUrl = $currentUser['avatar'] ? BASE_URL . '/uploads/avatars/' . $currentUser['avatar'] : 'https://ui-avatars.com/api/?name=' . urlencode($currentUser['username']) . '&background=random'; ?>
+        <?php $avatarUrl = safeAvatarUrl($currentUser['avatar'] ?? null, $currentUser['username']); ?>
         <a href="<?php echo BASE_URL; ?>/profile"><img alt="User Avatar" class="w-12 h-12 rounded-full border-2 border-white/10 object-cover shadow-lg" src="<?php echo $avatarUrl; ?>" width="48" height="48"/></a>
         <div>
             <h1 class="text-2xl font-black tracking-tight text-[#FF6B35]"><?php echo escape($currentUser['gta_character_name'] ?: $currentUser['username']); ?></h1>

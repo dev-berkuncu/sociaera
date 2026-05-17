@@ -52,7 +52,7 @@ require_once __DIR__ . '/partials/app_header.php';
     <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-6 shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)] mb-4">
         <h3 class="font-bold text-lg mb-4 text-on-surface">Yorum Yap</h3>
         <form onsubmit="App.submitComment(this, <?php echo $post['id']; ?>); return false;" class="flex items-start gap-4">
-            <?php $myAvatar = $_SESSION['avatar'] ?? null; $myAvatarUrl = $myAvatar ? BASE_URL . '/uploads/avatars/' . $myAvatar : 'https://ui-avatars.com/api/?name=' . urlencode(Auth::username()) . '&background=random'; ?>
+            <?php $myAvatarUrl = safeAvatarUrl($_SESSION['avatar'] ?? null, Auth::username()); ?>
             <img src="<?php echo $myAvatarUrl; ?>" class="w-10 h-10 rounded-full object-cover border border-white/10 flex-shrink-0">
             <div class="flex-grow">
                 <textarea class="w-full bg-background border border-white/10 rounded-xl px-4 py-3 text-on-surface focus:border-primary-container focus:outline-none transition-colors resize-y min-h-[80px]" placeholder="Yorumunu yaz..." maxlength="500"></textarea>
@@ -78,7 +78,7 @@ require_once __DIR__ . '/partials/app_header.php';
                 <?php foreach ($comments as $c): ?>
                 <div class="flex gap-4 p-5 border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors">
                     <a href="<?php echo BASE_URL; ?>/profile?u=<?php echo escape($c['tag'] ?: $c['username']); ?>" class="flex-shrink-0 mt-1">
-                        <?php $cAvatar = $c['avatar'] ? BASE_URL . '/uploads/avatars/' . $c['avatar'] : 'https://ui-avatars.com/api/?name=' . urlencode($c['username']) . '&background=random'; ?>
+                        <?php $cAvatar = safeAvatarUrl($c['avatar'] ?? null, $c['username']); ?>
                         <img src="<?php echo $cAvatar; ?>" class="w-10 h-10 rounded-full object-cover border border-white/10">
                     </a>
                     

@@ -121,7 +121,7 @@ function nl2brSafe(?string $text): string
  */
 function asset(string $path): string
 {
-    $filePath = rtrim($_SERVER['DOCUMENT_ROOT'] ?? __DIR__ . '/../../public', '/') . '/assets/' . ltrim($path, '/');
+    $filePath = PUBLIC_PATH . '/assets/' . ltrim($path, '/');
     $version = file_exists($filePath) ? filemtime($filePath) : time();
     return BASE_URL . '/assets/' . ltrim($path, '/') . '?v=' . $version;
 }
@@ -133,7 +133,7 @@ function uploadUrl(string $folder, ?string $filename): ?string
 {
     if (!$filename) return null;
     $base = BASE_URL . '/uploads/' . $folder . '/' . $filename;
-    $filePath = rtrim($_SERVER['DOCUMENT_ROOT'] ?? __DIR__ . '/../../public', '/') . '/uploads/' . $folder . '/' . $filename;
+    $filePath = UPLOAD_PATH . '/' . $folder . '/' . $filename;
     $version = file_exists($filePath) ? filemtime($filePath) : '';
     return $version ? $base . '?v=' . $version : $base;
 }
@@ -155,12 +155,24 @@ function bannerUrl(?string $banner): ?string
 }
 
 /**
+ * Avatar URL güvenli üretici — yoksa ui-avatars fallback
+ */
+function safeAvatarUrl(?string $avatar, string $username): string
+{
+    if ($avatar) {
+        $url = avatarUrl($avatar);
+        if ($url) return $url;
+    }
+    return 'https://ui-avatars.com/api/?name=' . urlencode($username) . '&background=random';
+}
+
+/**
  * Varsayılan avatar HTML (kullanıcı adının ilk harfi)
  */
 function defaultAvatar(string $username, string $size = '40'): string
 {
     $initial = mb_strtoupper(mb_substr($username, 0, 1));
-    return '<div class="avatar-default" style="width:'.$size.'px;height:'.$size.'px;">'
+    return '<div class="avatar-default" style="width:'.$size.'px;height:'.$size.'px;">' 
          . escape($initial) . '</div>';
 }
 
