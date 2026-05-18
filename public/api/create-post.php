@@ -17,6 +17,7 @@ require_once __DIR__ . '/../../app/Models/Notification.php';
 require_once __DIR__ . '/../../app/Models/Settings.php';
 
 require_once __DIR__ . '/../../app/Models/Badge.php';
+require_once __DIR__ . '/../../app/Models/Campaign.php';
 
 Response::requirePost();
 Response::requireAuthApi();
@@ -69,8 +70,22 @@ if ($result['ok']) {
         $names = array_column($newBadges, 'name');
         $msg .= ' 🏆 Yeni rozet: ' . implode(', ', $names);
     }
-    
-    Response::success(['checkin_id' => $result['checkin_id'], 'new_badges' => $newBadges], $msg);
+
+    // Kampanya kontrolü
+    $earnedCampaigns = [];
+    try {
+        $campaignModel   = new CampaignModel();
+        $earnedCampaigns = $campaignModel->checkAndAwardCampaigns(Auth::id(), $venueId);
+        foreach ($earnedCampaigns as $ec) {
+            $msg .= ' 🎁 Kampanya kazandın: ' . $ec['title'] . ' (Kod: ' . $ec['code'] . ')';
+        }
+    } catch (\Throwable $e) {}
+
+    Response::success([
+        'checkin_id'       => $result['checkin_id'],
+        'new_badges'       => $newBadges,
+        'earned_campaigns' => $earnedCampaigns,
+    ], $msg);
 } else {
     Response::error($result['error']);
 }

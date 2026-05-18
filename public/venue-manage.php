@@ -100,16 +100,23 @@ require_once __DIR__ . '/partials/app_header.php';
             <h1 class="text-2xl font-black text-on-surface tracking-tight"><?php echo escape($venue['name']); ?></h1>
             <p class="text-slate-400 text-sm">İşletme Paneli</p>
         </div>
-        <!-- Açık/Kapalı Toggle -->
-        <form method="POST">
-            <?php echo csrfField(); ?>
-            <input type="hidden" name="action" value="toggle_open">
-            <?php $isOpen = $venue['is_open'] ?? 1; ?>
-            <button type="submit" class="flex items-center gap-2 px-4 py-2 rounded-lg text-label-md font-semibold transition-all border <?php echo $isOpen ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20' : 'bg-red-500/10 text-red-400 border-red-500/20 hover:bg-red-500/20'; ?>">
-                <span class="w-2.5 h-2.5 rounded-full <?php echo $isOpen ? 'bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.5)]' : 'bg-red-400'; ?>"></span>
-                <?php echo $isOpen ? 'Açık' : 'Kapalı'; ?>
-            </button>
-        </form>
+        <!-- Açık/Kapalı Toggle + Kampanyalar -->
+        <div class="flex gap-2">
+            <a href="<?php echo BASE_URL; ?>/campaigns?venue_id=<?php echo $venueId; ?>"
+               class="flex items-center gap-2 px-4 py-2 rounded-lg text-label-md font-semibold transition-all border bg-purple-500/10 text-purple-400 border-purple-500/20 hover:bg-purple-500/20">
+                <span class="material-symbols-outlined text-[18px]">campaign</span>
+                <span class="hidden sm:inline">Kampanyalar</span>
+            </a>
+            <form method="POST">
+                <?php echo csrfField(); ?>
+                <input type="hidden" name="action" value="toggle_open">
+                <?php $isOpen = $venue['is_open'] ?? 1; ?>
+                <button type="submit" class="flex items-center gap-2 px-4 py-2 rounded-lg text-label-md font-semibold transition-all border <?php echo $isOpen ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20' : 'bg-red-500/10 text-red-400 border-red-500/20 hover:bg-red-500/20'; ?>">
+                    <span class="w-2.5 h-2.5 rounded-full <?php echo $isOpen ? 'bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.5)]' : 'bg-red-400'; ?>"></span>
+                    <?php echo $isOpen ? 'Açık' : 'Kapalı'; ?>
+                </button>
+            </form>
+        </div>
     </div>
 
     <!-- Stats -->

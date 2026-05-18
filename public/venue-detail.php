@@ -13,6 +13,7 @@ require_once __DIR__ . '/../app/Models/Leaderboard.php';
 require_once __DIR__ . '/../app/Models/Ad.php';
 require_once __DIR__ . '/../app/Models/Settings.php';
 require_once __DIR__ . '/../app/Helpers/ads_logic.php';
+require_once __DIR__ . '/../app/Models/Campaign.php';
 
 Auth::requireLogin();
 
@@ -32,6 +33,11 @@ $ratingData = $venueModel->getVenueRating($venueId);
 $averageRating = round((float) $ratingData['average_rating'], 1);
 $ratingCount = (int) $ratingData['rating_count'];
 $userRating = Auth::check() ? $venueModel->getUserRating($venueId, Auth::id()) : 0;
+
+// Kampanya verileri
+$campaignModel   = new CampaignModel();
+$activeCampaigns = $campaignModel->getActiveCampaigns($venueId);
+$userCheckinHere = Auth::check() ? $campaignModel->getUserCheckinCount(Auth::id(), $venueId) : 0;
 
 $trendVenues = [];
 $miniLeaderboard = [];
@@ -217,6 +223,74 @@ require_once __DIR__ . '/partials/app_header.php';
     </div>
 
     <h2 class="text-xl font-bold text-on-surface mb-2 mt-4 flex items-center gap-2"><span class="material-symbols-outlined text-primary-container">history</span> Son Check-in'ler</h2>
+
+    <!-- ── Aktif Kampanyalar ── -->
+    <?php if (!empty($activeCampaigns)): ?>
+    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-purple-500/20 rounded-xl overflow-hidden mb-2">
+        <div class="px-6 py-4 border-b border-white/5 flex items-center gap-2">
+            <span class="material-symbols-outlined text-purple-400 text-[20px]">campaign</span>
+            <h2 class="text-base font-bold text-on-surface">Aktif Kampanyalar</h2>
+        </div>
+        <div class="divide-y divide-white/5">
+            <?php foreach ($activeCampaigns as $c):
+                $hasEarned = Auth::check() && $campaignModel->hasEarned($c['id'], Auth::id());
+                $myCode    = null;
+                if ($hasEarned) {
+                    $db = Database::getConnection();
+                    $stmt = $db->prepare("SELECT code FROM campaign_redemptions WHERE campaign_id = ? AND user_id = ?");
+                    $stmt->execute([$c['id'], Auth::id()]);
+                    $myCode = $stmt->fetchColumn() ?: null;
+                }
+                $target   = (int)$c['trigger_value'];
+                $progress = 0;
+                if ($c['trigger_type'] === 'first_checkin') {
+                    $progress = $userCheckinHere >= 1 ? 100 : 0;
+                } elseif ($target > 0) {
+                    $progress = min(100, round(($userCheckinHere / $target) * 100));
+                }
+            ?>
+            <div class="px-6 py-4 flex items-start gap-4">
+                <div class="w-10 h-10 rounded-xl <?php echo $hasEarned ? 'bg-emerald-500/15' : 'bg-purple-500/15'; ?> flex items-center justify-center flex-shrink-0">
+                    <span class="material-symbols-outlined <?php echo $hasEarned ? 'text-emerald-400' : 'text-purple-400'; ?> text-[20px]">
+                        <?php echo $hasEarned ? 'check_circle' : ($c['reward_type'] === 'free_item' ? 'redeem' : 'percent'); ?>
+                    </span>
+                </div>
+                <div class="flex-grow min-w-0">
+                    <div class="font-semibold text-on-surface"><?php echo escape($c['title']); ?></div>
+                    <div class="text-sm text-slate-400 mt-0.5">
+                        <?php echo escape(CampaignModel::formatTrigger($c)); ?> →
+                        <span class="text-purple-400 font-semibold"><?php echo escape(CampaignModel::formatReward($c)); ?></span>
+                    </div>
+                    <?php if ($c['description']): ?>
+                        <p class="text-xs text-slate-500 mt-1"><?php echo escape($c['description']); ?></p>
+                    <?php endif; ?>
+
+                    <?php if (!$hasEarned && $c['trigger_type'] !== 'first_checkin'): ?>
+                    <div class="mt-2">
+                        <div class="flex justify-between text-xs text-slate-500 mb-1">
+                            <span><?php echo $userCheckinHere; ?> / <?php echo $target; ?> check-in</span>
+                            <span><?php echo $progress; ?>%</span>
+                        </div>
+                        <div class="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                            <div class="h-full bg-purple-500/70 rounded-full transition-all duration-700" style="width:<?php echo $progress; ?>%"></div>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+
+                    <?php if ($hasEarned): ?>
+                    <div class="mt-2 flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 rounded-lg px-3 py-2 flex-wrap">
+                        <span class="material-symbols-outlined text-emerald-400 text-[16px]">confirmation_number</span>
+                        <span class="text-xs text-slate-400">Kodun:</span>
+                        <code class="font-mono font-bold text-emerald-400 tracking-widest"><?php echo escape($myCode ?? '——'); ?></code>
+                        <span class="text-xs text-slate-500">— kasaya göster</span>
+                    </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+    <?php endif; ?>
 
     <div class="flex flex-col gap-stack-md pb-container-padding">
         <?php if (empty($posts)): ?>
