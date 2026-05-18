@@ -1,6 +1,7 @@
 <?php
 /**
- * Admin Panel — Tailwind Header
+ * Admin Panel — Tailwind Header (V1)
+ * Rol bazlı sidebar menü, genişletilmiş navigasyon
  */
 header('Cache-Control: no-cache, must-revalidate');
 header('Pragma: no-cache');
@@ -8,6 +9,11 @@ header('Pragma: no-cache');
 if (!isset($currentUser) && Auth::check()) {
     $currentUser = (new UserModel())->getById(Auth::id());
 }
+
+// Rapor badge sayısı
+$_pendingReports = 0;
+try { $_pendingReports = (new ReportModel())->getPendingCount(); } catch (\Throwable $e) {}
+$_pendingVenues = $pendingVenues ?? 0;
 ?>
 <!DOCTYPE html>
 <html class="dark" lang="tr">
@@ -85,6 +91,12 @@ if (!isset($currentUser) && Auth::check()) {
     ::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); }
     ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+    /* Mobile menu */
+    .mobile-menu-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 45; }
+    .mobile-menu-overlay.active { display: block; }
+    .mobile-sidebar { transform: translateX(-100%); transition: transform 0.3s ease; }
+    .mobile-sidebar.active { transform: translateX(0); }
 </style>
 </head>
 <body class="bg-background text-on-background font-body text-sm min-h-screen antialiased flex selection:bg-primary-container/30 selection:text-primary-container">
@@ -98,48 +110,36 @@ if (!isset($currentUser) && Auth::check()) {
         <div>
             <h1 class="text-lg font-black tracking-tight text-[#FF6B35]">Admin Panel</h1>
             <span class="text-label-sm text-slate-400"><?php echo escape($currentUser['username'] ?? 'Admin'); ?></span>
+            <?php if (Auth::adminRole()): ?>
+                <span class="block text-[10px] text-primary-container/60"><?php echo escape(ucfirst(str_replace('_', ' ', Auth::adminRole()))); ?></span>
+            <?php endif; ?>
         </div>
     </div>
-    <ul class="flex flex-col gap-1 flex-grow">
-        <?php
-        $adminNavItems = [
-            'dashboard' => ['icon' => 'dashboard', 'label' => 'Dashboard', 'url' => '/admin/'],
-            'users'     => ['icon' => 'people', 'label' => 'Kullanıcılar', 'url' => '/admin/users'],
-            'venues'    => ['icon' => 'location_on', 'label' => 'Mekanlar', 'url' => '/admin/venues'],
-            'posts'     => ['icon' => 'article', 'label' => 'Gönderiler', 'url' => '/admin/posts'],
-            'ads'       => ['icon' => 'campaign', 'label' => 'Sponsorlu İçerik', 'url' => '/admin/ads'],
-            'settings'  => ['icon' => 'settings', 'label' => 'Ayarlar', 'url' => '/admin/settings'],
-        ];
-        $adminPage = $adminPage ?? '';
-        foreach ($adminNavItems as $key => $item):
-            $isActive = $adminPage === $key;
-            $linkClass = $isActive
-                ? 'flex items-center gap-3 px-4 py-2.5 bg-[#FF6B35] text-white rounded-lg shadow-[0_0_5px_rgba(255,107,53,0.2)] active:scale-[0.98] transition-transform text-label-md'
-                : 'flex items-center gap-3 px-4 py-2.5 text-slate-400 hover:text-slate-100 hover:bg-white/5 transition-all duration-200 rounded-lg active:scale-[0.98] text-label-md';
-        ?>
-        <li>
-            <a class="<?php echo $linkClass; ?>" href="<?php echo BASE_URL . $item['url']; ?>">
-                <span class="material-symbols-outlined text-[20px]" <?php echo $isActive ? 'data-weight="fill"' : ''; ?>><?php echo $item['icon']; ?></span>
-                <?php echo $item['label']; ?>
-                <?php if ($key === 'venues' && !empty($pendingVenues) && $pendingVenues > 0): ?>
-                    <span class="ml-auto bg-red-500/20 text-red-400 text-[10px] font-bold px-1.5 py-0.5 rounded-full"><?php echo $pendingVenues; ?></span>
-                <?php endif; ?>
-            </a>
-        </li>
-        <?php endforeach; ?>
-    </ul>
-    <div class="mt-6 pt-4 border-t border-white/5">
-        <a href="<?php echo BASE_URL; ?>/dashboard" class="flex items-center gap-3 px-4 py-2.5 text-slate-400 hover:text-slate-100 hover:bg-white/5 transition-all duration-200 rounded-lg text-label-md">
-            <span class="material-symbols-outlined text-[20px]">arrow_back</span>
-            Siteye Dön
-        </a>
+    <?php echo adminNavHtml($adminPage ?? '', $_pendingVenues, $_pendingReports); ?>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu-overlay" id="mobileOverlay" onclick="closeMobileMenu()"></div>
+<nav class="mobile-sidebar md:hidden fixed left-0 top-0 h-full p-6 bg-[#1E293B] font-display antialiased w-72 border-r border-white/10 z-50 overflow-y-auto">
+    <div class="mb-8 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-primary-container rounded-xl flex items-center justify-center text-white shadow-lg">
+                <span class="material-symbols-outlined text-[22px]">shield</span>
+            </div>
+            <h1 class="text-lg font-black tracking-tight text-[#FF6B35]">Admin</h1>
+        </div>
+        <button onclick="closeMobileMenu()" class="text-slate-400 hover:text-white"><span class="material-symbols-outlined">close</span></button>
     </div>
+    <?php echo adminNavHtml($adminPage ?? '', $_pendingVenues, $_pendingReports); ?>
 </nav>
 
 <!-- Main Content -->
 <main class="ml-0 md:ml-64 flex-grow flex flex-col min-h-screen">
     <!-- Mobile Header -->
     <header class="flex items-center justify-between px-6 py-4 bg-[#0F172A]/50 backdrop-blur-md font-display font-medium w-full sticky top-0 z-40 border-b border-white/10 md:hidden">
+        <button onclick="openMobileMenu()" class="text-slate-400 hover:text-[#FF6B35] transition-colors">
+            <span class="material-symbols-outlined">menu</span>
+        </button>
         <div class="text-lg font-bold text-[#FF6B35]">Admin</div>
         <a href="<?php echo BASE_URL; ?>/dashboard" class="text-slate-400 hover:text-[#FF6B35] transition-colors">
             <span class="material-symbols-outlined">arrow_back</span>
@@ -159,3 +159,76 @@ if (!isset($currentUser) && Auth::check()) {
     <?php endif; ?>
 
     <div class="flex-grow p-6 md:p-8 max-w-7xl w-full mx-auto">
+
+<?php
+/**
+ * Admin nav HTML — hem desktop hem mobile sidebar için
+ */
+function adminNavHtml(string $activePage, int $pendingVenues, int $pendingReports): string
+{
+    $sections = [
+        'Genel' => [
+            'dashboard'  => ['icon' => 'dashboard',    'label' => 'Dashboard',     'url' => '/admin/',         'section' => 'dashboard'],
+        ],
+        'İçerik' => [
+            'users'      => ['icon' => 'people',       'label' => 'Kullanıcılar',  'url' => '/admin/users',    'section' => 'users'],
+            'venues'     => ['icon' => 'location_on',  'label' => 'Mekanlar',      'url' => '/admin/venues',   'section' => 'venues',   'badge' => $pendingVenues],
+            'posts'      => ['icon' => 'article',      'label' => 'Check-in\'ler', 'url' => '/admin/posts',    'section' => 'checkins'],
+            'comments'   => ['icon' => 'chat_bubble',  'label' => 'Yorumlar',      'url' => '/admin/comments', 'section' => 'comments'],
+        ],
+        'Moderasyon' => [
+            'moderation' => ['icon' => 'flag',         'label' => 'Raporlar',      'url' => '/admin/reports',  'section' => 'moderation', 'badge' => $pendingReports],
+        ],
+        'Finans' => [
+            'wallet'     => ['icon' => 'account_balance_wallet', 'label' => 'Cüzdan',  'url' => '/admin/wallet',  'section' => 'wallet'],
+        ],
+        'Sistem' => [
+            'ads'        => ['icon' => 'campaign',     'label' => 'Sponsorlu',     'url' => '/admin/ads',      'section' => 'dashboard'],
+            'settings'   => ['icon' => 'settings',     'label' => 'Ayarlar',       'url' => '/admin/settings', 'section' => 'settings'],
+            'audit'      => ['icon' => 'history',      'label' => 'Audit Log',     'url' => '/admin/audit',    'section' => 'audit'],
+        ],
+    ];
+
+    $html = '<ul class="flex flex-col gap-1 flex-grow">';
+
+    foreach ($sections as $groupLabel => $items) {
+        $html .= '<li class="mt-4 first:mt-0 mb-1"><span class="text-[10px] uppercase tracking-widest text-slate-500 font-bold px-4">' . $groupLabel . '</span></li>';
+        foreach ($items as $key => $item) {
+            if (!Auth::canAccess($item['section'])) continue;
+
+            $isActive = $activePage === $key;
+            $linkClass = $isActive
+                ? 'flex items-center gap-3 px-4 py-2.5 bg-[#FF6B35] text-white rounded-lg shadow-[0_0_5px_rgba(255,107,53,0.2)] active:scale-[0.98] transition-transform text-label-md'
+                : 'flex items-center gap-3 px-4 py-2.5 text-slate-400 hover:text-slate-100 hover:bg-white/5 transition-all duration-200 rounded-lg active:scale-[0.98] text-label-md';
+
+            $html .= '<li><a class="' . $linkClass . '" href="' . BASE_URL . $item['url'] . '">';
+            $html .= '<span class="material-symbols-outlined text-[20px]" ' . ($isActive ? 'data-weight="fill"' : '') . '>' . $item['icon'] . '</span>';
+            $html .= $item['label'];
+
+            if (!empty($item['badge']) && $item['badge'] > 0) {
+                $html .= '<span class="ml-auto bg-red-500/20 text-red-400 text-[10px] font-bold px-1.5 py-0.5 rounded-full">' . $item['badge'] . '</span>';
+            }
+
+            $html .= '</a></li>';
+        }
+    }
+
+    $html .= '</ul>';
+    $html .= '<div class="mt-6 pt-4 border-t border-white/5">';
+    $html .= '<a href="' . BASE_URL . '/dashboard" class="flex items-center gap-3 px-4 py-2.5 text-slate-400 hover:text-slate-100 hover:bg-white/5 transition-all duration-200 rounded-lg text-label-md">';
+    $html .= '<span class="material-symbols-outlined text-[20px]">arrow_back</span> Siteye Dön</a></div>';
+
+    return $html;
+}
+?>
+
+<script>
+function openMobileMenu() {
+    document.getElementById('mobileOverlay').classList.add('active');
+    document.querySelector('.mobile-sidebar').classList.add('active');
+}
+function closeMobileMenu() {
+    document.getElementById('mobileOverlay').classList.remove('active');
+    document.querySelector('.mobile-sidebar').classList.remove('active');
+}
+</script>

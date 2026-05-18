@@ -31,11 +31,56 @@ class Auth
     }
 
     /**
-     * Admin mi?
+     * Admin mi? (backward-compatible)
      */
     public static function isAdmin(): bool
     {
-        return !empty($_SESSION['is_admin']);
+        return !empty($_SESSION['is_admin']) || !empty($_SESSION['admin_role']);
+    }
+
+    /**
+     * Belirli bir admin rolüne sahip mi?
+     */
+    public static function hasRole(string $role): bool
+    {
+        return ($_SESSION['admin_role'] ?? '') === $role;
+    }
+
+    /**
+     * Admin rolü
+     */
+    public static function adminRole(): ?string
+    {
+        return $_SESSION['admin_role'] ?? null;
+    }
+
+    /**
+     * Belirli admin bölümüne erişim var mı?
+     */
+    public static function canAccess(string $section): bool
+    {
+        if (!self::isAdmin()) return false;
+        $role = $_SESSION['admin_role'] ?? 'super_admin';
+
+        $permissions = [
+            'super_admin'    => ['*'],
+            'moderator'      => ['dashboard', 'users', 'venues', 'checkins', 'comments', 'moderation'],
+            'finance_admin'  => ['dashboard', 'wallet', 'users'],
+            'business_admin' => ['dashboard', 'venues', 'business', 'campaigns'],
+            'readonly_admin' => ['dashboard', 'users', 'venues', 'checkins', 'comments', 'wallet', 'moderation', 'audit'],
+        ];
+
+        $allowed = $permissions[$role] ?? [];
+        return in_array('*', $allowed) || in_array($section, $allowed);
+    }
+
+    /**
+     * Yazma (değişiklik yapma) yetkisi var mı?
+     */
+    public static function canWrite(): bool
+    {
+        $role = $_SESSION['admin_role'] ?? 'super_admin';
+        return $role !== 'readonly_admin';
     }
 
     /**
@@ -48,6 +93,7 @@ class Auth
         $_SESSION['username']   = !empty($user['gta_character_name']) ? $user['gta_character_name'] : $user['username'];
         $_SESSION['email']      = $user['email'] ?? '';
         $_SESSION['is_admin']   = (bool) ($user['is_admin'] ?? false);
+        $_SESSION['admin_role'] = $user['admin_role'] ?? null;
         $_SESSION['avatar']     = $user['avatar'] ?? null;
         $_SESSION['tag']        = $user['tag'] ?? '';
         $_SESSION['logged_in_at'] = time();
