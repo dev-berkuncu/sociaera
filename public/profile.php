@@ -54,6 +54,10 @@ switch ($tab) {
         break;
 }
 
+// Gezi günlüğü verileri
+$journey = $userModel->getCheckinJourney($profileUser['id']);
+$categoryLabels = VenueModel::categories();
+
 $trendVenues = [];
 $miniLeaderboard = [];
 try {
@@ -209,15 +213,179 @@ require_once __DIR__ . '/partials/app_header.php';
     </div>
 
 
-    <!-- Tabs -->
     <div class="flex items-center border-b border-white/10 mb-2 mt-4 px-2 overflow-x-auto custom-scrollbar">
         <a href="?u=<?php echo escape($profileUser['tag'] ?: $profileUser['username']); ?>&tab=posts" class="px-6 py-4 font-bold text-sm transition-all border-b-2 whitespace-nowrap <?php echo $tab === 'posts' ? 'text-primary-container border-primary-container' : 'text-slate-400 border-transparent hover:text-white hover:border-white/20'; ?>">Gönderiler</a>
+        <a href="?u=<?php echo escape($profileUser['tag'] ?: $profileUser['username']); ?>&tab=journey" class="px-6 py-4 font-bold text-sm transition-all border-b-2 whitespace-nowrap <?php echo $tab === 'journey' ? 'text-primary-container border-primary-container' : 'text-slate-400 border-transparent hover:text-white hover:border-white/20'; ?>">Günlüğüm</a>
         <a href="?u=<?php echo escape($profileUser['tag'] ?: $profileUser['username']); ?>&tab=likes" class="px-6 py-4 font-bold text-sm transition-all border-b-2 whitespace-nowrap <?php echo $tab === 'likes' ? 'text-primary-container border-primary-container' : 'text-slate-400 border-transparent hover:text-white hover:border-white/20'; ?>">Beğeniler</a>
         <a href="?u=<?php echo escape($profileUser['tag'] ?: $profileUser['username']); ?>&tab=reposts" class="px-6 py-4 font-bold text-sm transition-all border-b-2 whitespace-nowrap <?php echo $tab === 'reposts' ? 'text-primary-container border-primary-container' : 'text-slate-400 border-transparent hover:text-white hover:border-white/20'; ?>">Paylaşımlar</a>
     </div>
 
     <!-- Content -->
     <div class="flex flex-col gap-stack-md pb-container-padding">
+
+        <?php if ($tab === 'journey'): ?>
+        <!-- ── Gezi Günlüğü ────────────────────────────── -->
+
+        <?php if ($stats['checkins'] === 0): ?>
+            <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-10 text-center text-slate-400 mt-4">
+                <span class="material-symbols-outlined text-[48px] mb-3 opacity-50 block">explore</span>
+                <p class="text-lg font-semibold mb-1">Henüz hiç check-in yok</p>
+                <p class="text-sm">Check-in yaparak kişisel gezi günlüğünü oluştur!</p>
+            </div>
+        <?php else: ?>
+
+        <!-- İstatistik Kartları -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-5 flex flex-col items-center justify-center gap-1 hover:border-white/20 transition-colors">
+                <span class="material-symbols-outlined text-primary-container text-[28px]">edit_note</span>
+                <span class="text-2xl font-black text-on-surface"><?php echo shortNumber($stats['checkins']); ?></span>
+                <span class="text-[10px] text-slate-400 uppercase tracking-widest font-semibold">Toplam Check-in</span>
+            </div>
+            <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-5 flex flex-col items-center justify-center gap-1 hover:border-white/20 transition-colors">
+                <span class="material-symbols-outlined text-emerald-400 text-[28px]">location_on</span>
+                <span class="text-2xl font-black text-on-surface"><?php echo shortNumber($journey['unique_venues']); ?></span>
+                <span class="text-[10px] text-slate-400 uppercase tracking-widest font-semibold">Keşfedilen Mekan</span>
+            </div>
+            <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-5 flex flex-col items-center justify-center gap-1 hover:border-white/20 transition-colors">
+                <span class="material-symbols-outlined text-blue-400 text-[28px]">calendar_month</span>
+                <span class="text-2xl font-black text-on-surface"><?php echo $journey['this_month']; ?></span>
+                <span class="text-[10px] text-slate-400 uppercase tracking-widest font-semibold">Bu Ay</span>
+            </div>
+            <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-5 flex flex-col items-center justify-center gap-1 hover:border-white/20 transition-colors">
+                <span class="material-symbols-outlined text-amber-400 text-[28px]">local_fire_department</span>
+                <span class="text-2xl font-black text-on-surface"><?php echo $journey['last_7_days']; ?></span>
+                <span class="text-[10px] text-slate-400 uppercase tracking-widest font-semibold">Son 7 Gün</span>
+            </div>
+        </div>
+
+        <!-- En Çok Gidilen Mekan + Kategori -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+            <?php if ($favVenue): ?>
+            <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-primary-container/20 rounded-xl p-5 flex items-center gap-4 hover:border-primary-container/40 transition-colors">
+                <div class="w-12 h-12 rounded-xl bg-primary-container/15 flex items-center justify-center flex-shrink-0">
+                    <span class="material-symbols-outlined text-primary-container text-[24px]">star</span>
+                </div>
+                <div class="min-w-0">
+                    <div class="text-[10px] text-slate-500 uppercase tracking-widest font-semibold mb-1">En Çok Gidilen Mekan</div>
+                    <a href="<?php echo BASE_URL; ?>/venue-detail?id=<?php echo $favVenue['id']; ?>" class="font-black text-on-surface hover:text-primary-container transition-colors truncate block"><?php echo escape($favVenue['name']); ?></a>
+                    <span class="text-xs text-primary-container font-semibold"><?php echo (int)$favVenue['cnt']; ?> ziyaret</span>
+                </div>
+            </div>
+            <?php endif; ?>
+
+            <?php if ($journey['top_category']): ?>
+            <?php
+                $catKey = $journey['top_category']['category'];
+                $catLabel = $categoryLabels[$catKey] ?? ucfirst($catKey);
+                $catIcons = [
+                    'restoran'  => 'restaurant',
+                    'kafe'      => 'local_cafe',
+                    'bar'       => 'local_bar',
+                    'otel'      => 'hotel',
+                    'alisveris' => 'shopping_bag',
+                    'eglence'   => 'celebration',
+                    'spor'      => 'fitness_center',
+                    'saglik'    => 'spa',
+                    'kultur'    => 'museum',
+                    'diger'     => 'place',
+                ];
+                $catIcon = $catIcons[$catKey] ?? 'category';
+            ?>
+            <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-purple-500/20 rounded-xl p-5 flex items-center gap-4 hover:border-purple-500/40 transition-colors">
+                <div class="w-12 h-12 rounded-xl bg-purple-500/15 flex items-center justify-center flex-shrink-0">
+                    <span class="material-symbols-outlined text-purple-400 text-[24px]"><?php echo $catIcon; ?></span>
+                </div>
+                <div>
+                    <div class="text-[10px] text-slate-500 uppercase tracking-widest font-semibold mb-1">En Sevdiğin Tür</div>
+                    <div class="font-black text-on-surface"><?php echo escape($catLabel); ?></div>
+                    <span class="text-xs text-purple-400 font-semibold"><?php echo (int)$journey['top_category']['cnt']; ?> check-in</span>
+                </div>
+            </div>
+            <?php endif; ?>
+        </div>
+
+        <!-- Kategori Dağılımı -->
+        <?php if (!empty($journey['category_breakdown'])): ?>
+        <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-6">
+            <h3 class="text-base font-bold text-on-surface mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-[18px] text-slate-400">donut_large</span>
+                Mekan Türü Dağılımı
+            </h3>
+            <?php
+                $totalCats = array_sum(array_column($journey['category_breakdown'], 'cnt'));
+            ?>
+            <div class="space-y-3">
+                <?php foreach ($journey['category_breakdown'] as $cat):
+                    $pct = $totalCats > 0 ? round(($cat['cnt'] / $totalCats) * 100) : 0;
+                    $label = $categoryLabels[$cat['category']] ?? ucfirst($cat['category']);
+                    $barColors = ['bg-primary-container','bg-purple-500','bg-blue-500','bg-emerald-500','bg-amber-500'];
+                    $colorIdx = array_search($cat, $journey['category_breakdown']);
+                    $barColor = $barColors[$colorIdx % count($barColors)];
+                ?>
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-sm font-semibold text-on-surface"><?php echo escape($label); ?></span>
+                        <span class="text-xs text-slate-400"><?php echo $cat['cnt']; ?> ziyaret · %<?php echo $pct; ?></span>
+                    </div>
+                    <div class="h-2 bg-white/5 rounded-full overflow-hidden">
+                        <div class="h-full <?php echo $barColor; ?>/70 rounded-full transition-all duration-700" style="width: <?php echo $pct; ?>%"></div>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <!-- Son Ziyaretler -->
+        <?php if (!empty($journey['recent_venues'])): ?>
+        <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl overflow-hidden">
+            <div class="px-6 py-4 border-b border-white/5">
+                <h3 class="text-base font-bold text-on-surface flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[18px] text-slate-400">history</span>
+                    Son Ziyaretler
+                </h3>
+            </div>
+            <div class="divide-y divide-white/5">
+                <?php foreach ($journey['recent_venues'] as $rv):
+                    $rvCat = $categoryLabels[$rv['category']] ?? ucfirst($rv['category'] ?: 'Mekan');
+                ?>
+                <a href="<?php echo BASE_URL; ?>/venue-detail?id=<?php echo $rv['id']; ?>" class="flex items-center gap-4 px-6 py-4 hover:bg-white/[0.03] transition-colors group">
+                    <!-- Thumbnail -->
+                    <div class="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 bg-white/5">
+                        <?php if ($rv['image']): ?>
+                            <img src="<?php echo escapeUrl(uploadUrl('venues', $rv['image'])); ?>" alt="" class="w-full h-full object-cover" loading="lazy">
+                        <?php else: ?>
+                            <div class="w-full h-full flex items-center justify-center">
+                                <span class="material-symbols-outlined text-slate-600 text-[20px]">location_on</span>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                    <!-- Info -->
+                    <div class="flex-grow min-w-0">
+                        <div class="font-semibold text-on-surface group-hover:text-primary-container transition-colors truncate"><?php echo escape($rv['name']); ?></div>
+                        <div class="text-xs text-slate-500 flex items-center gap-2 mt-0.5">
+                            <span><?php echo escape($rvCat); ?></span>
+                            <span class="text-slate-700">·</span>
+                            <span><?php echo (int)$rv['visit_count']; ?>× ziyaret</span>
+                        </div>
+                    </div>
+                    <!-- Son Ziyaret -->
+                    <div class="text-xs text-slate-500 flex-shrink-0 text-right">
+                        <span class="material-symbols-outlined text-[14px] align-middle mr-0.5">schedule</span>
+                        <?php echo timeAgo($rv['last_visit']); ?>
+                    </div>
+                </a>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <?php endif; // stats['checkins'] === 0 ?>
+        <!-- ── /Gezi Günlüğü ────────────────────────────── -->
+
+        <?php else: /* posts, likes, reposts tabs */ ?>
+
             <?php if (empty($posts)): ?>
                 <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-10 text-center text-slate-400 mt-4 shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)]">
                     <span class="material-symbols-outlined text-[48px] mb-3 opacity-50">post_add</span>
@@ -227,7 +395,7 @@ require_once __DIR__ . '/partials/app_header.php';
                 <?php foreach ($posts as $post): ?>
                     <?php include __DIR__ . '/partials/_tailwind_post_card.php'; ?>
                 <?php endforeach; ?>
-                
+
                 <?php if (count($posts) >= 20): ?>
                     <div class="text-center mt-4">
                         <a href="?u=<?php echo escape($profileUser['tag'] ?: $profileUser['username']); ?>&tab=<?php echo $tab; ?>&page=<?php echo $page + 1; ?>" class="inline-flex items-center gap-2 bg-white/5 hover:bg-white/10 text-on-surface px-6 py-3 rounded-full transition-colors border border-white/10 font-bold">
@@ -236,6 +404,8 @@ require_once __DIR__ . '/partials/app_header.php';
                     </div>
                 <?php endif; ?>
             <?php endif; ?>
+
+        <?php endif; ?>
     </div>
 </section>
 

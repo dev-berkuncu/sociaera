@@ -299,6 +299,87 @@ class UserModel
         return $stmt->fetch() ?: null;
     }
 
+    /**
+     * Kullanıcının gezi günlüğü istatistikleri
+     */
+    public function getCheckinJourney(int $userId): array
+    {
+        // En çok gidilen kategori
+        $stmt = $this->db->prepare("
+            SELECT v.category, COUNT(*) as cnt
+            FROM checkins c
+            JOIN venues v ON c.venue_id = v.id
+            WHERE c.user_id = ? AND c.is_deleted = 0 AND v.category IS NOT NULL AND v.category != ''
+            GROUP BY v.category
+            ORDER BY cnt DESC
+            LIMIT 1
+        ");
+        $stmt->execute([$userId]);
+        $topCategory = $stmt->fetch();
+
+        // Kategori dağılımı (top 5)
+        $stmt = $this->db->prepare("
+            SELECT v.category, COUNT(*) as cnt
+            FROM checkins c
+            JOIN venues v ON c.venue_id = v.id
+            WHERE c.user_id = ? AND c.is_deleted = 0 AND v.category IS NOT NULL AND v.category != ''
+            GROUP BY v.category
+            ORDER BY cnt DESC
+            LIMIT 5
+        ");
+        $stmt->execute([$userId]);
+        $categoryBreakdown = $stmt->fetchAll();
+
+        // Son ziyaretler (farklı mekanlar, son check-in tarihleriyle)
+        $stmt = $this->db->prepare("
+            SELECT v.id, v.name, v.category, v.image,
+                   COUNT(c.id) as visit_count,
+                   MAX(c.created_at) as last_visit
+            FROM checkins c
+            JOIN venues v ON c.venue_id = v.id
+            WHERE c.user_id = ? AND c.is_deleted = 0
+            GROUP BY v.id
+            ORDER BY last_visit DESC
+            LIMIT 10
+        ");
+        $stmt->execute([$userId]);
+        $recentVenues = $stmt->fetchAll();
+
+        // Toplam keşfedilen mekan sayısı
+        $stmt = $this->db->prepare("
+            SELECT COUNT(DISTINCT venue_id) FROM checkins WHERE user_id = ? AND is_deleted = 0
+        ");
+        $stmt->execute([$userId]);
+        $uniqueVenues = (int)$stmt->fetchColumn();
+
+        // Bu ay check-in sayısı
+        $stmt = $this->db->prepare("
+            SELECT COUNT(*) FROM checkins
+            WHERE user_id = ? AND is_deleted = 0
+              AND created_at >= DATE_FORMAT(NOW(), '%Y-%m-01')
+        ");
+        $stmt->execute([$userId]);
+        $thisMonth = (int)$stmt->fetchColumn();
+
+        // En uzun seri (her gün check-in streak) — basit versiyon
+        $stmt = $this->db->prepare("
+            SELECT COUNT(*) FROM checkins
+            WHERE user_id = ? AND is_deleted = 0
+              AND created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+        ");
+        $stmt->execute([$userId]);
+        $last7Days = (int)$stmt->fetchColumn();
+
+        return [
+            'top_category'       => $topCategory ?: null,
+            'category_breakdown' => $categoryBreakdown,
+            'recent_venues'      => $recentVenues,
+            'unique_venues'      => $uniqueVenues,
+            'this_month'         => $thisMonth,
+            'last_7_days'        => $last7Days,
+        ];
+    }
+
     // ── Arama ─────────────────────────────────────────────
 
     public function search(string $query, int $limit = 8): array
