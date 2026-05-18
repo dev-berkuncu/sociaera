@@ -198,14 +198,17 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             mentionDropdown.innerHTML = users.map(u => {
+                const safeUsername = escapeHtml(u.username || 'U');
+                const safeTag = escapeHtml(u.tag || '');
+                const safeAvatar = escapeHtml(u.avatar || '');
                 const avatar = u.avatar
-                    ? `<img src="${App.baseUrl}/uploads/avatars/${u.avatar}" class="w-8 h-8 rounded-full object-cover border border-white/10">`
-                    : `<div class="w-8 h-8 rounded-full bg-primary-container/20 text-primary-container flex items-center justify-center text-xs font-bold border border-white/10">${(u.username || 'U')[0].toUpperCase()}</div>`;
-                return `<div class="mention-item flex items-center gap-3 px-3 py-2 cursor-pointer hover:bg-white/5 rounded-md transition-colors" data-tag="${u.tag || u.username}" data-name="${u.username}">
+                    ? `<img src="${App.baseUrl}/uploads/avatars/${safeAvatar}" class="w-8 h-8 rounded-full object-cover border border-white/10">`
+                    : `<div class="w-8 h-8 rounded-full bg-primary-container/20 text-primary-container flex items-center justify-center text-xs font-bold border border-white/10">${safeUsername[0].toUpperCase()}</div>`;
+                return `<div class="mention-item flex items-center gap-3 px-3 py-2 cursor-pointer hover:bg-white/5 rounded-md transition-colors" data-tag="${safeTag || safeUsername}" data-name="${safeUsername}">
                     ${avatar}
                     <div>
-                        <div class="text-sm font-semibold text-on-surface">${u.username}</div>
-                        ${u.tag ? `<div class="text-xs text-slate-400">@${u.tag}</div>` : ''}
+                        <div class="text-sm font-semibold text-on-surface">${safeUsername}</div>
+                        ${safeTag ? `<div class="text-xs text-slate-400">@${safeTag}</div>` : ''}
                     </div>
                 </div>`;
             }).join('');

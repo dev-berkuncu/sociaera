@@ -286,7 +286,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (avgEl) avgEl.textContent = res.data.average_rating.toFixed(1);
                 if (countEl) countEl.textContent = res.data.rating_count;
                 if (labelEl) {
-                    labelEl.innerHTML = 'Senin puanın: <strong>' + starVal + '/5</strong>';
+                    labelEl.textContent = 'Senin puanın: ' + starVal + '/5';
                     labelEl.className = 'text-xs text-amber-400/70';
                 }
 

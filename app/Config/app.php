@@ -4,10 +4,16 @@
  * Tüm sabitler, session ayarları ve bootstrap burada.
  */
 
-// Hata raporlama — geçici olarak açık (debug)
+// Hata raporlama — ortam bazlı
 error_reporting(E_ALL);
-ini_set('display_errors', '1');
-ini_set('display_startup_errors', '1');
+if (env('APP_ENV', 'production') === 'production') {
+    ini_set('display_errors', '0');
+    ini_set('display_startup_errors', '0');
+    ini_set('log_errors', '1');
+} else {
+    ini_set('display_errors', '1');
+    ini_set('display_startup_errors', '1');
+}
 
 // ── Sabitler ──────────────────────────────────────────────
 define('APP_NAME',    'Sociaera');

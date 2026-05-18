@@ -73,6 +73,8 @@ $ch = curl_init($verifyUrl);
 curl_setopt_array($ch, [
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_TIMEOUT        => 15,
+    CURLOPT_SSL_VERIFYPEER => true,
+    CURLOPT_SSL_VERIFYHOST => 2,
     CURLOPT_HTTPHEADER     => [
         'Accept: application/json',
     ],
@@ -146,13 +148,16 @@ if ($amount <= 0) {
     exit;
 }
 
-// 5. Beklenen tutarla karşılaştır (varsa)
+// 5. Beklenen tutarla karşılaştır — uyuşmazlıkta işlemi durdur
 if ($expectedAmount && abs($amount - $expectedAmount) > 0.01) {
-    Logger::warning('Fleeca verify: amount mismatch', [
+    Logger::error('Fleeca verify: amount mismatch — transaction HALTED', [
         'expected' => $expectedAmount,
         'got'      => $amount,
+        'token'    => $token,
     ]);
-    // Yine de devam et — Fleeca'dan gelen tutarı kullan
+    unset($_SESSION['fleeca_pending']);
+    header('Location: ' . BASE_URL . '/wallet?payment=failed&reason=amount_mismatch');
+    exit;
 }
 
 // ── İdempotency kontrolü ─────────────────────────────────

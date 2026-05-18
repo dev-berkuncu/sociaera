@@ -154,6 +154,7 @@ CREATE TABLE IF NOT EXISTS `transactions` (
     `reference_id` VARCHAR(100) DEFAULT NULL,
     `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     KEY `idx_user_created` (`user_id`, `created_at`),
+    UNIQUE KEY `uk_reference_id` (`reference_id`),
     FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 

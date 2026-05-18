@@ -3,6 +3,14 @@
  * AJAX helpers, modals, compose box, interactions
  */
 
+// ── XSS Prevention Helper ─────────────────────────────────
+function escapeHtml(str) {
+    if (str == null) return '';
+    const div = document.createElement('div');
+    div.appendChild(document.createTextNode(String(str)));
+    return div.innerHTML;
+}
+
 const App = {
     baseUrl: window.BASE_URL || '',
     csrfToken: document.querySelector('meta[name="csrf-token"]')?.content || '',
@@ -53,8 +61,8 @@ const App = {
         div.id = 'flashMessage';
         div.innerHTML = `
             <div class="flash-content">
-                <i class="bi bi-${iconMap[type] || 'info-circle-fill'}"></i>
-                <span>${message}</span>
+                <i class="bi bi-${escapeHtml(iconMap[type] || 'info-circle-fill')}"></i>
+                <span>${escapeHtml(message)}</span>
             </div>
             <button class="flash-close" onclick="this.closest('.flash-message').remove()">
                 <i class="bi bi-x-lg"></i>
@@ -225,9 +233,9 @@ const App = {
                 console.log('[VenueSearch] Response:', res);
                 if (res.ok && res.data?.length) {
                     dropdownEl.innerHTML = res.data.map(v =>
-                        `<div class="venue-picker-item" data-id="${v.id}" data-name="${v.name}" style="padding:8px 12px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.05);">
-                            <div style="font-weight:500;color:#fff;">${v.name}</div>
-                            <div style="font-size:0.8rem;color:#94a3b8;">${v.category || ''}</div>
+                        `<div class="venue-picker-item" data-id="${escapeHtml(v.id)}" data-name="${escapeHtml(v.name)}" style="padding:8px 12px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.05);">
+                            <div style="font-weight:500;color:#fff;">${escapeHtml(v.name)}</div>
+                            <div style="font-size:0.8rem;color:#94a3b8;">${escapeHtml(v.category || '')}</div>
                         </div>`
                     ).join('');
                     dropdownEl.style.display = 'block';
@@ -357,16 +365,21 @@ const App = {
     },
 
     renderComment(c) {
+        const safeAvatar = escapeHtml(c.avatar);
+        const safeUsername = escapeHtml(c.username || 'U');
+        const safeTag = escapeHtml(c.tag || c.username);
+        const safeComment = escapeHtml(c.comment);
+        const safeTimeAgo = escapeHtml(c.time_ago || '');
         const avatar = c.avatar
-            ? `<img src="${this.baseUrl}/uploads/avatars/${c.avatar}" class="avatar-img" width="28" height="28" style="border-radius:50%; object-fit:cover;">`
-            : `<div class="avatar-default" style="width:28px; height:28px; font-size:0.7rem;">${(c.username || 'U')[0].toUpperCase()}</div>`;
+            ? `<img src="${this.baseUrl}/uploads/avatars/${safeAvatar}" class="avatar-img" width="28" height="28" style="border-radius:50%; object-fit:cover;">`
+            : `<div class="avatar-default" style="width:28px; height:28px; font-size:0.7rem;">${safeUsername[0].toUpperCase()}</div>`;
         return `
             <div class="comment-item">
-                <a href="${this.baseUrl}/profile?u=${c.tag || c.username}">${avatar}</a>
+                <a href="${this.baseUrl}/profile?u=${encodeURIComponent(safeTag)}">${avatar}</a>
                 <div class="comment-body">
-                    <a href="${this.baseUrl}/profile?u=${c.tag || c.username}" class="comment-author">${c.username}</a>
-                    <span class="comment-text">${c.comment}</span>
-                    <span class="comment-time">${c.time_ago || ''}</span>
+                    <a href="${this.baseUrl}/profile?u=${encodeURIComponent(safeTag)}" class="comment-author">${safeUsername}</a>
+                    <span class="comment-text">${safeComment}</span>
+                    <span class="comment-time">${safeTimeAgo}</span>
                 </div>
             </div>
         `;

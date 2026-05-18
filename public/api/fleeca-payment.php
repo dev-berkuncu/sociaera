@@ -48,7 +48,8 @@ $ch = curl_init($generateUrl);
 curl_setopt_array($ch, [
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_TIMEOUT        => 15,
-    CURLOPT_SSL_VERIFYPEER => false,
+    CURLOPT_SSL_VERIFYPEER => true,
+    CURLOPT_SSL_VERIFYHOST => 2,
     CURLOPT_HTTPHEADER     => [
         'Authorization: Bearer ' . FLEECA_AUTH_KEY,
         'Accept: application/json',
