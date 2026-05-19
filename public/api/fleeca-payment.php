@@ -37,9 +37,10 @@ if ($amount > 10000) {
 $userId = Auth::id();
 
 // ── Fleeca API'den encrypted token üret ──────────────────
-$generateUrl = 'https://banking-tr.gta.world/gateway_token/' . FLEECA_GATEWAY_ID . '/generateToken?' . http_build_query([
-    'price' => (int) $amount,
-    'type'  => 0,
+$generateUrl = 'https://banking-tr.gta.world/gateway/generate?' . http_build_query([
+    'auth_key' => FLEECA_AUTH_KEY,
+    'price'    => (int) $amount,
+    'type'     => 0,
 ]);
 
 Logger::info('Fleeca generateToken request', ['url' => $generateUrl, 'amount' => $amount]);
