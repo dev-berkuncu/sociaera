@@ -71,7 +71,12 @@ if ($curlError) {
 }
 
 if ($httpCode < 200 || $httpCode >= 300) {
-    Response::error('Fleeca Banking token üretilemedi. (HTTP ' . $httpCode . ')');
+    Logger::error('Fleeca 404/error', [
+        'url'       => $generateUrl,
+        'http_code' => $httpCode,
+        'response'  => $response,
+    ]);
+    Response::error('Fleeca Banking token üretilemedi. (HTTP ' . $httpCode . ') — Yanıt: ' . substr($response, 0, 200));
 }
 
 // Token'ı parse et
