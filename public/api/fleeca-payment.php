@@ -37,7 +37,9 @@ if ($amount > 10000) {
 $userId = Auth::id();
 
 // ── Fleeca API'den encrypted token üret ──────────────────
-$generateUrl = 'https://banking-tr.gta.world/gateway/generate?' . http_build_query([
+$generateUrl = 'https://banking-tr.gta.world/gateway_token/generateToken';
+
+$postData = http_build_query([
     'auth_key' => FLEECA_AUTH_KEY,
     'price'    => (int) $amount,
     'type'     => 0,
@@ -48,12 +50,15 @@ Logger::info('Fleeca generateToken request', ['url' => $generateUrl, 'amount' =>
 $ch = curl_init($generateUrl);
 curl_setopt_array($ch, [
     CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_POST           => true,
+    CURLOPT_POSTFIELDS     => $postData,
     CURLOPT_TIMEOUT        => 15,
     CURLOPT_SSL_VERIFYPEER => true,
     CURLOPT_SSL_VERIFYHOST => 2,
+    CURLOPT_FOLLOWLOCATION => false,
     CURLOPT_HTTPHEADER     => [
-        'Authorization: Bearer ' . FLEECA_AUTH_KEY,
         'Accept: application/json',
+        'Content-Type: application/x-www-form-urlencoded',
     ],
 ]);
 $response = curl_exec($ch);
@@ -63,7 +68,7 @@ curl_close($ch);
 
 Logger::info('Fleeca generateToken response', [
     'http_code' => $httpCode,
-    'response'  => substr($response, 0, 200),
+    'response'  => substr($response, 0, 300),
     'curl_err'  => $curlError,
 ]);
 
