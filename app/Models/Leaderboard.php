@@ -44,7 +44,7 @@ class LeaderboardModel
             JOIN users u ON c.user_id = u.id
             WHERE c.is_deleted = 0 AND c.is_excluded_from_leaderboard = 0
               AND c.created_at BETWEEN ? AND ?
-              AND u.is_active = 1
+              AND u.is_active = 1 AND (u.is_admin = 0 OR u.is_admin IS NULL)
             GROUP BY u.id
             ORDER BY checkin_count DESC, u.is_premium DESC, first_checkin ASC
             LIMIT ?

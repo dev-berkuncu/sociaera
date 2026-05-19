@@ -400,7 +400,7 @@ class UserModel
     {
         $offset = ($page - 1) * $perPage;
 
-        $where = "WHERE username != 'SYSTEM'";
+        $where = "WHERE username != 'SYSTEM' AND (is_admin = 0 OR is_admin IS NULL)";
         $params = [];
 
         if ($search) {
@@ -452,7 +452,7 @@ class UserModel
     {
         $offset = ($page - 1) * $perPage;
 
-        $where = "WHERE u.is_active = 1";
+        $where = "WHERE u.is_active = 1 AND (u.is_admin = 0 OR u.is_admin IS NULL)";
         $params = [];
 
         if ($search) {
