@@ -19,6 +19,8 @@ RewriteCond %{REQUEST_URI} ^/admin/?$
 RewriteCond %{REQUEST_FILENAME}/index.php -f
 RewriteRule ^admin/?$ admin/index.php [L]
 
+RewriteRule ^admin/login/?$ admin/login.php [L]
+
 
 # ── Clean URLs (.php uzantısız) ────────────────────────────
 # Dosya veya klasör değilse .php ekle

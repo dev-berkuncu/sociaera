@@ -138,9 +138,12 @@ class Auth
      */
     public static function requireAdmin(): void
     {
-        self::requireLogin();
+        if (!self::check()) {
+            header('Location: ' . BASE_URL . '/admin/login');
+            exit;
+        }
         if (!self::isAdmin()) {
-            header('Location: ' . BASE_URL . '/dashboard');
+            header('Location: ' . BASE_URL . '/admin/login');
             exit;
         }
     }
