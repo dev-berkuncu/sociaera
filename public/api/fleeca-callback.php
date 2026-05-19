@@ -1,176 +1,114 @@
 <?php
 /**
- * Fleeca Banking Gateway Callback
- * 
- * Ödeme sonrası Fleeca bu endpoint'e token ile yönlendirir.
- * Token strict mode ile doğrulanır, başarılıysa bakiye eklenir.
- * 
- * Doğrulama yanıtı:
+ * Fleeca Banking V2 — Webhook Callback
+ *
+ * Fleeca bu endpoint'e imzalı JSON POST gönderir.
+ * X-Fleeca-Signature: sha256=<hmac_hex> ile doğrulanır.
+ *
+ * Payload:
  * {
- *   "token": "...",
- *   "auth_key": "...",
- *   "message": "successful_payment",
- *   "payment": 100.00,
- *   "routing_from": "...",
- *   "routing_to": "...",
- *   "sandbox": false,
- *   "token_expired": false,
- *   "token_created_at": "..."
+ *   "payment_id": "uuid",
+ *   "status": "payment_successful" | "payment_failed" | "pending",
+ *   "amount": 100,
+ *   "payer_routing": "...",
+ *   "payer_name": "...",
+ *   "mode": "sandbox" | "live",
+ *   ...
  * }
  */
 require_once __DIR__ . '/../../app/Config/env.php';
 loadEnv(dirname(__DIR__, 2) . '/.env');
 require_once __DIR__ . '/../../app/Config/app.php';
 require_once __DIR__ . '/../../app/Config/database.php';
-require_once __DIR__ . '/../../app/Core/Response.php';
 require_once __DIR__ . '/../../app/Services/Logger.php';
 require_once __DIR__ . '/../../app/Models/User.php';
 require_once __DIR__ . '/../../app/Models/Wallet.php';
 require_once __DIR__ . '/../../app/Models/Notification.php';
+require_once __DIR__ . '/../../app/Core/Response.php';
 
-// ── Token'ı al ──────────────────────────────────────────
-$token = $_GET['token'] ?? null;
+// ── Ham body oku (imza doğrulaması için) ─────────────────
+$rawBody   = file_get_contents('php://input');
+$signature = $_SERVER['HTTP_X_FLEECA_SIGNATURE'] ?? '';
 
-// Path'ten token alma desteği: /oauth-callback/TOKEN veya /fleeca-callback/TOKEN
-if (!$token) {
-    $uri = $_SERVER['REQUEST_URI'] ?? '';
-    // URL'nin son segmentini token olarak al
-    $parts = explode('/', rtrim(parse_url($uri, PHP_URL_PATH), '/'));
-    $lastSegment = end($parts);
-    if ($lastSegment && $lastSegment !== 'oauth-callback' && $lastSegment !== 'fleeca-callback' && strlen($lastSegment) > 10) {
-        $token = $lastSegment;
+Logger::info('Fleeca V2 webhook received', [
+    'signature' => substr($signature, 0, 30) . '...',
+    'body'      => substr($rawBody, 0, 200),
+]);
+
+// ── HMAC imzasını doğrula ─────────────────────────────────
+if (!empty($signature) && !empty(FLEECA_AUTH_KEY)) {
+    $expected = 'sha256=' . hash_hmac('sha256', $rawBody, FLEECA_AUTH_KEY);
+    if (!hash_equals($expected, $signature)) {
+        Logger::error('Fleeca V2 webhook: signature mismatch', [
+            'expected' => substr($expected, 0, 30) . '...',
+            'got'      => substr($signature, 0, 30) . '...',
+        ]);
+        http_response_code(403);
+        echo json_encode(['error' => 'Invalid signature']);
+        exit;
     }
 }
 
-if (!$token) {
-    Logger::warning('Fleeca callback: missing token', ['uri' => $_SERVER['REQUEST_URI'] ?? '']);
-    header('Location: ' . BASE_URL . '/wallet?payment=failed&reason=no_token');
+// ── Payload parse et ─────────────────────────────────────
+$data = json_decode($rawBody, true);
+if (!$data) {
+    Logger::error('Fleeca V2 webhook: invalid JSON', ['raw' => substr($rawBody, 0, 200)]);
+    http_response_code(400);
+    echo json_encode(['error' => 'Invalid JSON']);
     exit;
 }
 
-Logger::info('Fleeca callback received', ['token' => substr($token, 0, 30) . '...']);
+$paymentId = $data['payment_id'] ?? null;
+$status    = $data['status']     ?? '';
+$amount    = (float) ($data['amount'] ?? 0);
 
-// ── Session'dan pending bilgi al ─────────────────────────
-$pending = $_SESSION['fleeca_pending'] ?? null;
-$userId = $pending['user_id'] ?? null;
-$expectedAmount = $pending['amount'] ?? null;
+Logger::info('Fleeca V2 webhook parsed', [
+    'payment_id' => $paymentId,
+    'status'     => $status,
+    'amount'     => $amount,
+    'mode'       => $data['mode'] ?? 'unknown',
+]);
 
-// Kullanıcı giriş yapmışsa onu kullan
-if (!$userId && Auth::check()) {
-    $userId = Auth::id();
+// Sadece başarılı ödeme işle
+if ($status !== 'payment_successful') {
+    Logger::info('Fleeca V2 webhook: not successful, skip', ['status' => $status]);
+    http_response_code(200);
+    echo json_encode(['ok' => true, 'note' => 'not_successful']);
+    exit;
 }
+
+if (!$paymentId || $amount <= 0) {
+    Logger::error('Fleeca V2 webhook: missing payment_id or amount');
+    http_response_code(422);
+    echo json_encode(['error' => 'Missing data']);
+    exit;
+}
+
+// ── İdempotency — aynı payment_id'yi tekrar işleme ──────
+$db = Database::getConnection();
+$stmt = $db->prepare("SELECT id FROM transactions WHERE reference_id = ? LIMIT 1");
+$stmt->execute([$paymentId]);
+if ($stmt->fetch()) {
+    Logger::warning('Fleeca V2 webhook: duplicate payment_id', ['payment_id' => $paymentId]);
+    http_response_code(200);
+    echo json_encode(['ok' => true, 'note' => 'already_processed']);
+    exit;
+}
+
+// ── Kullanıcıyı session'dan veya DB'den bul ──────────────
+// Webhook server-to-server gelir, session yok — payment_id ile eşleştir
+$stmt = $db->prepare("SELECT user_id, amount FROM fleeca_payments WHERE payment_id = ? LIMIT 1");
+$stmt->execute([$paymentId]);
+$pending = $stmt->fetch();
+
+$userId = $pending['user_id'] ?? null;
 
 if (!$userId) {
-    Logger::error('Fleeca callback: no user context', ['token' => $token]);
-    header('Location: ' . BASE_URL . '/wallet?payment=failed&reason=no_user');
-    exit;
-}
-
-// ── Token doğrulama (strict mode) ────────────────────────
-$verifyUrl = FLEECA_VERIFY_BASE . '/' . rawurlencode($token) . '/strict';
-
-$ch = curl_init($verifyUrl);
-curl_setopt_array($ch, [
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_TIMEOUT        => 15,
-    CURLOPT_SSL_VERIFYPEER => true,
-    CURLOPT_SSL_VERIFYHOST => 2,
-    CURLOPT_HTTPHEADER     => [
-        'Accept: application/json',
-    ],
-]);
-$response = curl_exec($ch);
-$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-$curlError = curl_error($ch);
-curl_close($ch);
-
-if ($curlError) {
-    Logger::error('Fleeca verify curl error', ['error' => $curlError, 'token' => $token]);
-    header('Location: ' . BASE_URL . '/wallet?payment=failed&reason=connection');
-    exit;
-}
-
-if ($httpCode === 404) {
-    Logger::error('Fleeca verify 404 - token expired/sandbox/invalid', ['token' => $token]);
-    header('Location: ' . BASE_URL . '/wallet?payment=failed&reason=expired');
-    exit;
-}
-
-if ($httpCode < 200 || $httpCode >= 300) {
-    Logger::error('Fleeca verify failed', ['http_code' => $httpCode, 'response' => $response]);
-    header('Location: ' . BASE_URL . '/wallet?payment=failed&reason=verify');
-    exit;
-}
-
-$data = json_decode($response, true);
-
-if (!$data) {
-    Logger::error('Fleeca verify invalid JSON', ['response' => $response]);
-    header('Location: ' . BASE_URL . '/wallet?payment=failed&reason=json');
-    exit;
-}
-
-Logger::info('Fleeca verify response', ['data' => $data]);
-
-// ── Güvenlik kontrolleri ─────────────────────────────────
-
-// 1. Auth key kontrolü — token bizim gateway'imize mi ait?
-if (isset($data['auth_key']) && $data['auth_key'] !== FLEECA_AUTH_KEY) {
-    Logger::error('Fleeca verify: auth_key mismatch', [
-        'expected' => substr(FLEECA_AUTH_KEY, 0, 10) . '...',
-        'got'      => substr($data['auth_key'] ?? '', 0, 10) . '...',
-    ]);
-    header('Location: ' . BASE_URL . '/wallet?payment=failed&reason=auth');
-    exit;
-}
-
-// 2. Mesaj kontrolü
-if (($data['message'] ?? '') !== 'successful_payment') {
-    Logger::error('Fleeca verify: not successful', ['message' => $data['message'] ?? '']);
-    header('Location: ' . BASE_URL . '/wallet?payment=failed&reason=status');
-    exit;
-}
-
-// 3. Sandbox kontrolü (production'da sandbox kabul etme)
-if (!empty($data['sandbox']) && $data['sandbox'] === true) {
-    Logger::warning('Fleeca verify: sandbox payment', ['data' => $data]);
-    // Sandbox modda iken yine de kabul et (test)
-    // Production'da bu satırı kaldırın:
-    // header('Location: ' . BASE_URL . '/wallet?payment=failed&reason=sandbox');
-    // exit;
-}
-
-// 4. Tutar
-$amount = (float) ($data['payment'] ?? 0);
-if ($amount <= 0) {
-    Logger::error('Fleeca verify: invalid amount', ['payment' => $data['payment'] ?? null]);
-    header('Location: ' . BASE_URL . '/wallet?payment=failed&reason=amount');
-    exit;
-}
-
-// 5. Beklenen tutarla karşılaştır — uyuşmazlıkta işlemi durdur
-if ($expectedAmount && abs($amount - $expectedAmount) > 0.01) {
-    Logger::error('Fleeca verify: amount mismatch — transaction HALTED', [
-        'expected' => $expectedAmount,
-        'got'      => $amount,
-        'token'    => $token,
-    ]);
-    unset($_SESSION['fleeca_pending']);
-    header('Location: ' . BASE_URL . '/wallet?payment=failed&reason=amount_mismatch');
-    exit;
-}
-
-// ── İdempotency kontrolü ─────────────────────────────────
-$db = Database::getConnection();
-$paymentToken = $data['token'] ?? $token;
-
-$stmt = $db->prepare("SELECT id FROM transactions WHERE reference_id = ? LIMIT 1");
-$stmt->execute([$paymentToken]);
-if ($stmt->fetch()) {
-    Logger::warning('Fleeca callback: duplicate token', ['token' => $paymentToken]);
-    // Session temizle
-    unset($_SESSION['fleeca_pending']);
-    header('Location: ' . BASE_URL . '/wallet?payment=already');
+    // Fallback: payment_id'yi transactions tablosunda ara
+    Logger::warning('Fleeca V2 webhook: no pending record for payment_id', ['payment_id' => $paymentId]);
+    // Webhook'u işleme al ama kullanıcı bulunamadı — logla
+    http_response_code(200);
+    echo json_encode(['ok' => false, 'note' => 'user_not_found']);
     exit;
 }
 
@@ -192,31 +130,40 @@ try {
         $userId,
         $amount,
         'Fleeca Banking ile bakiye yükleme ($' . number_format($amount, 2) . ')',
-        $paymentToken,
+        $paymentId,
     ]);
+
+    // fleeca_payments tablosunu güncelle
+    $db->prepare("UPDATE fleeca_payments SET status = 'paid', paid_at = NOW() WHERE payment_id = ?")
+       ->execute([$paymentId]);
 
     $db->commit();
 
-    // Session temizle
-    unset($_SESSION['fleeca_pending']);
+    // Bildirim gönder
+    try {
+        $notifModel = new NotificationModel();
+        $notifModel->create($userId, 'wallet_deposit',
+            '$' . number_format($amount, 2) . ' Fleeca Banking ile cüzdanına yüklendi.',
+            BASE_URL . '/wallet'
+        );
+    } catch (\Throwable $e) {}
 
-    Logger::info('Fleeca payment success', [
-        'userId'  => $userId,
-        'amount'  => $amount,
-        'token'   => $paymentToken,
-        'sandbox' => $data['sandbox'] ?? false,
+    Logger::info('Fleeca V2 webhook: deposit success', [
+        'userId'     => $userId,
+        'amount'     => $amount,
+        'payment_id' => $paymentId,
     ]);
 
-    header('Location: ' . BASE_URL . '/wallet?payment=success');
-    exit;
+    http_response_code(200);
+    echo json_encode(['ok' => true]);
 
 } catch (\Throwable $e) {
     if ($db->inTransaction()) $db->rollBack();
-    Logger::error('Fleeca deposit error', [
-        'userId' => $userId,
-        'amount' => $amount,
-        'error'  => $e->getMessage(),
+    Logger::error('Fleeca V2 webhook: DB error', [
+        'userId'  => $userId,
+        'amount'  => $amount,
+        'error'   => $e->getMessage(),
     ]);
-    header('Location: ' . BASE_URL . '/wallet?payment=failed&reason=db');
-    exit;
+    http_response_code(500);
+    echo json_encode(['error' => 'DB error']);
 }

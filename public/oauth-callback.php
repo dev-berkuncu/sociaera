@@ -16,11 +16,31 @@ require_once __DIR__ . '/../app/Config/env.php';
 loadEnv(dirname(__DIR__) . '/.env');
 require_once __DIR__ . '/../app/Config/app.php';
 
-// ── Fleeca Banking Token Kontrolü ────────────────────────
-// Fleeca ödeme sonrası bu URL'e token ile döner
+// ── Fleeca V2 Redirect (payment_id ile döner) ─────────────
+$fleecaPaymentId = $_GET['payment_id'] ?? null;
+if ($fleecaPaymentId) {
+    // Kullanıcıyı cüzdana yönlendir — webhook bakiyeyi zaten ekledi (veya ekleyecek)
+    require_once __DIR__ . '/../app/Config/database.php';
+    require_once __DIR__ . '/../app/Models/User.php';
+    require_once __DIR__ . '/../app/Models/Wallet.php';
+
+    $db = Database::getConnection();
+    $stmt = $db->prepare("SELECT status FROM fleeca_payments WHERE payment_id = ? LIMIT 1");
+    $stmt->execute([$fleecaPaymentId]);
+    $row = $stmt->fetch();
+
+    if ($row && $row['status'] === 'paid') {
+        Auth::setFlash('success', 'Ödeme başarıyla tamamlandı! Bakiyeniz güncellendi.');
+    } else {
+        Auth::setFlash('info', 'Ödemeniz işleniyor. Birkaç saniye içinde bakiyenize yansıyacak.');
+    }
+    header('Location: ' . BASE_URL . '/wallet');
+    exit;
+}
+
+// ── Fleeca V1 Legacy Token (geriye dönük uyumluluk) ───────
 $fleecaToken = $_GET['token'] ?? null;
 if ($fleecaToken) {
-    // Fleeca callback handler'a yönlendir
     require_once __DIR__ . '/api/fleeca-callback.php';
     exit;
 }
