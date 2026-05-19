@@ -57,6 +57,12 @@
         <a href="<?php echo BASE_URL; ?>/premium" class="sidebar-nav-item <?php echo ($activeNav ?? '') === 'premium' ? 'active' : ''; ?>">
             <i class="bi bi-gem"></i> Premium
         </a>
+        <a href="<?php echo BASE_URL; ?>/mystery-shopper"
+           class="sidebar-nav-item <?php echo ($activeNav ?? '') === 'mystery' ? 'active' : ''; ?>"
+           style="border: 1px solid rgba(99,102,241,0.2); background: rgba(99,102,241,0.06); margin-top: 4px;">
+            <i class="bi bi-person-bounding-box" style="color:#818cf8"></i>
+            <span style="color:#a5b4fc">Gizli Müşteri Ol</span>
+        </a>
         <a href="<?php echo BASE_URL; ?>/settings" class="sidebar-nav-item <?php echo ($activeNav ?? '') === 'settings' ? 'active' : ''; ?>">
             <i class="bi bi-gear"></i> Ayarlar
         </a>

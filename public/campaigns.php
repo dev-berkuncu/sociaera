@@ -7,6 +7,7 @@ require_once __DIR__ . '/../app/Config/env.php';
 loadEnv(dirname(__DIR__) . '/.env');
 require_once __DIR__ . '/../app/Config/app.php';
 require_once __DIR__ . '/../app/Config/database.php';
+require_once __DIR__ . '/../app/Core/RateLimit.php';
 require_once __DIR__ . '/../app/Core/Response.php';
 require_once __DIR__ . '/../app/Core/View.php';
 require_once __DIR__ . '/../app/Models/User.php';

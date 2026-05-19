@@ -21,21 +21,28 @@ if (!isset($post)) return;
             </a>
             <div>
                 <div class="font-label-md text-label-md text-on-surface flex items-center gap-2">
-                    <a href="<?php echo BASE_URL; ?>/profile?u=<?php echo escape($post['tag'] ?: $post['username']); ?>" class="hover:text-primary-container transition-colors font-bold"><?php echo escape($post['username']); ?></a>
-                    <?php if (!empty($post['is_premium'])): ?>
-                        <?php
-                        $userBadge = $post['badge'] ?? null;
-                        $badges = UserModel::availableBadges();
-                        if ($userBadge && isset($badges[$userBadge])):
-                            $b = $badges[$userBadge];
-                        ?>
-                        <span class="material-symbols-outlined text-[16px]" style="color: <?php echo $b['color']; ?>" title="Premium — <?php echo $b['label']; ?>" data-weight="fill"><?php echo $b['icon']; ?></span>
-                        <?php else: ?>
-                        <span class="material-symbols-outlined text-[14px] text-[#7bd0ff]" title="Premium" data-weight="fill">diamond</span>
+                    <?php if (!empty($post['is_mystery_shopper'])): ?>
+                        <span class="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full font-bold bg-indigo-500/15 text-indigo-300 border border-indigo-500/20" title="Bu yorum bir Gizli Müşteri tarafından yapıldı">
+                            <span class="material-symbols-outlined text-[11px]">visibility_off</span>
+                            Gizli Müşteri
+                        </span>
+                    <?php else: ?>
+                        <a href="<?php echo BASE_URL; ?>/profile?u=<?php echo escape($post['tag'] ?: $post['username']); ?>" class="hover:text-primary-container transition-colors font-bold"><?php echo escape($post['username']); ?></a>
+                        <?php if (!empty($post['is_premium'])): ?>
+                            <?php
+                            $userBadge = $post['badge'] ?? null;
+                            $badges = UserModel::availableBadges();
+                            if ($userBadge && isset($badges[$userBadge])):
+                                $b = $badges[$userBadge];
+                            ?>
+                            <span class="material-symbols-outlined text-[16px]" style="color: <?php echo $b['color']; ?>" title="Premium — <?php echo $b['label']; ?>" data-weight="fill"><?php echo $b['icon']; ?></span>
+                            <?php else: ?>
+                            <span class="material-symbols-outlined text-[14px] text-[#7bd0ff]" title="Premium" data-weight="fill">diamond</span>
+                            <?php endif; ?>
                         <?php endif; ?>
-                    <?php endif; ?>
-                    <?php if (!empty($post['tag'])): ?>
-                        <span class="text-slate-500 font-normal">@<?php echo escape($post['tag']); ?></span>
+                        <?php if (!empty($post['tag'])): ?>
+                            <span class="text-slate-500 font-normal">@<?php echo escape($post['tag']); ?></span>
+                        <?php endif; ?>
                     <?php endif; ?>
                 </div>
                 <div class="font-label-sm text-label-sm text-slate-400"><?php echo timeAgo($post['created_at']); ?></div>

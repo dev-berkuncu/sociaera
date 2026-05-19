@@ -207,6 +207,36 @@ require_once __DIR__ . '/_header.php';
 </div>
 
 <!-- Son Loglar -->
+<?php
+// Gizli müşteri bekleyen sayısı
+require_once __DIR__ . '/../../app/Models/MysteryShopperModel.php';
+$mysteryPending = (new MysteryShopperModel())->countPending();
+?>
+
+<!-- Mystery Shopper Kart -->
+<div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-indigo-500/20 rounded-xl p-6 flex items-center gap-4 mb-6 hover:border-indigo-500/40 transition-colors">
+    <div class="w-14 h-14 rounded-xl bg-indigo-500/15 flex items-center justify-center flex-shrink-0">
+        <span class="material-symbols-outlined text-indigo-400 text-[28px]">person_search</span>
+    </div>
+    <div class="flex-grow">
+        <div class="font-bold text-on-surface">Gizli Müşteri Başvuruları</div>
+        <div class="text-sm text-slate-400 mt-0.5">
+            <?php if ($mysteryPending > 0): ?>
+                <span class="text-amber-400 font-semibold"><?php echo $mysteryPending; ?> başvuru</span> inceleme bekliyor
+            <?php else: ?>
+                Bekleyen başvuru yok
+            <?php endif; ?>
+        </div>
+    </div>
+    <a href="<?php echo BASE_URL; ?>/admin/mystery"
+       class="flex-shrink-0 px-4 py-2 rounded-lg bg-indigo-500/15 text-indigo-400 border border-indigo-500/20 hover:bg-indigo-500/25 text-sm font-semibold transition-colors flex items-center gap-1">
+        <?php if ($mysteryPending > 0): ?>
+            <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+        <?php endif; ?>
+        İncele →
+    </a>
+</div>
+
 <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl shadow-[0_10px_20px_-10px_rgba(15,23,42,0.3)] overflow-hidden">
     <div class="px-6 py-4 border-b border-white/5 flex items-center justify-between">
         <h2 class="text-lg font-bold text-on-surface flex items-center gap-2">
