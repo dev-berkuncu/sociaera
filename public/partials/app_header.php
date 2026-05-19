@@ -214,7 +214,7 @@ if (!isset($currentUser) && Auth::check()) {
             'members'      => ['icon' => 'people',                  'label' => 'Üyeler',          'url' => '/members'],
             'wallet'       => ['icon' => 'account_balance_wallet',  'label' => 'Cüzdan',          'url' => '/wallet'],
             'premium'      => ['icon' => 'diamond',                 'label' => 'Premium',         'url' => '/premium'],
-            'mystery'      => ['icon' => 'person_search',           'label' => 'Gizli Müşteri',   'url' => '/mystery-shopper', 'special' => 'indigo'],
+            // 'mystery' => ['icon' => 'person_search', 'label' => 'Gizli Müşteri', 'url' => '/mystery-shopper', 'special' => 'indigo'], // TODO: aktifleştir
             'notifications'=> ['icon' => 'notifications',           'label' => 'Bildirimler',     'url' => '/notifications'],
             'settings'     => ['icon' => 'settings',                'label' => 'Ayarlar',         'url' => '/settings'],
         ];
