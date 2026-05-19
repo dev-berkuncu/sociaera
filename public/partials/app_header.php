@@ -207,22 +207,28 @@ if (!isset($currentUser) && Auth::check()) {
     <ul class="flex flex-col gap-2 flex-grow">
         <?php
         $navItems = [
-            'dashboard' => ['icon' => 'home', 'label' => 'Ana Sayfa', 'url' => '/dashboard'],
-            'venues' => ['icon' => 'location_on', 'label' => 'Mekanlar', 'url' => '/venues'],
-            'leaderboard' => ['icon' => 'leaderboard', 'label' => 'Liderlik', 'url' => '/leaderboard'],
-            'missions' => ['icon' => 'emoji_events', 'label' => 'Görevler', 'url' => '/missions'],
-            'members' => ['icon' => 'people', 'label' => 'Üyeler', 'url' => '/members'],
-            'wallet' => ['icon' => 'account_balance_wallet', 'label' => 'Cüzdan', 'url' => '/wallet'],
-            'premium' => ['icon' => 'diamond', 'label' => 'Premium', 'url' => '/premium'],
-            'notifications' => ['icon' => 'notifications', 'label' => 'Bildirimler', 'url' => '/notifications'],
-            'settings' => ['icon' => 'settings', 'label' => 'Ayarlar', 'url' => '/settings']
+            'dashboard'    => ['icon' => 'home',                    'label' => 'Ana Sayfa',       'url' => '/dashboard'],
+            'venues'       => ['icon' => 'location_on',             'label' => 'Mekanlar',        'url' => '/venues'],
+            'leaderboard'  => ['icon' => 'leaderboard',             'label' => 'Liderlik',        'url' => '/leaderboard'],
+            'missions'     => ['icon' => 'emoji_events',            'label' => 'Görevler',        'url' => '/missions'],
+            'members'      => ['icon' => 'people',                  'label' => 'Üyeler',          'url' => '/members'],
+            'wallet'       => ['icon' => 'account_balance_wallet',  'label' => 'Cüzdan',          'url' => '/wallet'],
+            'premium'      => ['icon' => 'diamond',                 'label' => 'Premium',         'url' => '/premium'],
+            'mystery'      => ['icon' => 'person_search',           'label' => 'Gizli Müşteri',   'url' => '/mystery-shopper', 'special' => 'indigo'],
+            'notifications'=> ['icon' => 'notifications',           'label' => 'Bildirimler',     'url' => '/notifications'],
+            'settings'     => ['icon' => 'settings',                'label' => 'Ayarlar',         'url' => '/settings'],
         ];
         $activeNav = $activeNav ?? '';
         foreach ($navItems as $key => $item):
             $isActive = $activeNav === $key;
-            $linkClass = $isActive 
-                ? 'flex items-center gap-4 px-4 py-3 bg-[#FF6B35] text-white rounded-lg shadow-[0_0_5px_rgba(255,107,53,0.2)] active:scale-[0.98] transition-transform font-label-md text-label-md'
-                : 'flex items-center gap-4 px-4 py-3 text-slate-400 hover:text-slate-100 hover:bg-white/5 transition-all duration-200 rounded-lg active:scale-[0.98] font-label-md text-label-md';
+            $isSpecialIndigo = !empty($item['special']) && $item['special'] === 'indigo';
+            if ($isActive) {
+                $linkClass = 'flex items-center gap-4 px-4 py-3 bg-[#FF6B35] text-white rounded-lg shadow-[0_0_5px_rgba(255,107,53,0.2)] active:scale-[0.98] transition-transform font-label-md text-label-md';
+            } elseif ($isSpecialIndigo) {
+                $linkClass = 'flex items-center gap-4 px-4 py-3 text-indigo-300 hover:text-indigo-100 hover:bg-indigo-500/10 transition-all duration-200 rounded-lg active:scale-[0.98] font-label-md text-label-md border border-indigo-500/20 bg-indigo-500/5 mt-1';
+            } else {
+                $linkClass = 'flex items-center gap-4 px-4 py-3 text-slate-400 hover:text-slate-100 hover:bg-white/5 transition-all duration-200 rounded-lg active:scale-[0.98] font-label-md text-label-md';
+            }
         ?>
         <li>
             <a class="<?php echo $linkClass; ?>" href="<?php echo BASE_URL . $item['url']; ?>">
