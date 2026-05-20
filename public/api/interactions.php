@@ -15,6 +15,7 @@ require_once __DIR__ . '/../../app/Models/Venue.php';
 require_once __DIR__ . '/../../app/Models/Checkin.php';
 require_once __DIR__ . '/../../app/Models/Notification.php';
 require_once __DIR__ . '/../../app/Models/Settings.php';
+require_once __DIR__ . '/../../app/Models/Badge.php';
 
 // GET requests — yorumları çek
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
@@ -52,6 +53,13 @@ switch ($action) {
     case 'like':
         if (!$checkinId) Response::error('Gönderi ID gerekli.');
         $checkinModel->like(Auth::id(), $checkinId);
+        // Beğeni alan kullanıcının rozetlerini kontrol et (heartbreaker vb.)
+        try {
+            $likedPost = $checkinModel->getById($checkinId);
+            if ($likedPost) {
+                (new BadgeModel())->checkAndAward((int)$likedPost['user_id']);
+            }
+        } catch (\Throwable $e) {}
         Response::success(null, 'Beğenildi.');
         break;
 
@@ -65,6 +73,13 @@ switch ($action) {
         if (!$checkinId) Response::error('Gönderi ID gerekli.');
         $quote = trim($_POST['quote'] ?? '');
         $checkinModel->repost(Auth::id(), $checkinId, $quote ?: null);
+        // Repost alan kullanıcının rozetlerini kontrol et (trendsetter vb.)
+        try {
+            $repostedPost = $checkinModel->getById($checkinId);
+            if ($repostedPost) {
+                (new BadgeModel())->checkAndAward((int)$repostedPost['user_id']);
+            }
+        } catch (\Throwable $e) {}
         Response::success(null, 'Paylaşıldı.');
         break;
 
@@ -104,6 +119,13 @@ switch ($action) {
             $from = $userModel->getById(Auth::id());
             $notifModel = new NotificationModel();
             $notifModel->create($userId, Auth::id(), 'follow', ($from['username'] ?? 'Birisi') . ' seni takip etmeye başladı.');
+            // Takip eden ve takip edilen kullanıcının rozetlerini kontrol et
+            // (social_butterfly: 20 kişi takip et, popular: 50 takipçi)
+            try {
+                $badgeModel = new BadgeModel();
+                $badgeModel->checkAndAward(Auth::id()); // social_butterfly
+                $badgeModel->checkAndAward($userId);    // popular
+            } catch (\Throwable $e) {}
             Response::success(['following' => true], 'Takip edildi.');
         }
         break;
