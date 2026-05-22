@@ -16,11 +16,38 @@ $settingsModel = new SettingsModel();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     Csrf::requireValid();
+    $action = $_POST['action'] ?? 'settings';
+
+    if ($action === 'change_password') {
+        // Admin kendi şifresini değiştiriyor
+        $currentPw  = $_POST['current_password'] ?? '';
+        $newPw      = $_POST['new_password'] ?? '';
+        $confirmPw  = $_POST['confirm_password'] ?? '';
+
+        $db      = Database::getConnection();
+        $stmt    = $db->prepare("SELECT password FROM users WHERE id = ?");
+        $stmt->execute([Auth::id()]);
+        $hash    = $stmt->fetchColumn();
+
+        if (!$hash || !password_verify($currentPw, $hash)) {
+            Auth::setFlash('error', 'Mevcut şifre yanlış.');
+        } elseif (strlen($newPw) < 8) {
+            Auth::setFlash('error', 'Yeni şifre en az 8 karakter olmalı.');
+        } elseif ($newPw !== $confirmPw) {
+            Auth::setFlash('error', 'Yeni şifre ve onay şifre eşleşmiyor.');
+        } else {
+            $db->prepare("UPDATE users SET password = ? WHERE id = ?")
+               ->execute([password_hash($newPw, PASSWORD_DEFAULT), Auth::id()]);
+            Auth::setFlash('success', 'Şifre başarıyla değiştirildi.');
+        }
+        header('Location: ' . BASE_URL . '/admin/settings'); exit;
+    }
+
+    // Site ayarları
     foreach ($_POST as $key => $value) {
-        if ($key === 'csrf_token') continue;
+        if (in_array($key, ['csrf_token', 'action'], true)) continue;
         $settingsModel->set($key, $value);
     }
-    Logger::adminAudit('update', 'settings', null, 'Site ayarları güncellendi');
     Auth::setFlash('success', 'Ayarlar kaydedildi.');
     header('Location: ' . BASE_URL . '/admin/settings'); exit;
 }
@@ -121,5 +148,37 @@ require_once __DIR__ . '/_header.php';
         <span class="material-symbols-outlined text-[20px]">save</span> Ayarları Kaydet
     </button>
 </form>
+
+<!-- Şifre Değiştir -->
+<div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-amber-500/20 rounded-xl p-6 shadow-[0_10px_20px_-10px_rgba(15,23,42,0.3)] mt-6">
+    <h2 class="text-lg font-bold text-on-surface mb-4 flex items-center gap-2">
+        <span class="material-symbols-outlined text-amber-400 text-[20px]">lock_reset</span> Şifre Değiştir
+    </h2>
+    <form method="POST" class="space-y-4">
+        <?php echo csrfField(); ?>
+        <input type="hidden" name="action" value="change_password">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+                <label class="block text-label-md text-slate-400 mb-1">Mevcut Şifre</label>
+                <input type="password" name="current_password" required autocomplete="current-password"
+                       class="w-full bg-white/5 border border-white/10 text-on-surface rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-amber-400/40 transition-colors">
+            </div>
+            <div>
+                <label class="block text-label-md text-slate-400 mb-1">Yeni Şifre</label>
+                <input type="password" name="new_password" required minlength="8" autocomplete="new-password"
+                       class="w-full bg-white/5 border border-white/10 text-on-surface rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-amber-400/40 transition-colors">
+                <p class="text-xs text-slate-500 mt-1">En az 8 karakter</p>
+            </div>
+            <div>
+                <label class="block text-label-md text-slate-400 mb-1">Yeni Şifre Onay</label>
+                <input type="password" name="confirm_password" required minlength="8" autocomplete="new-password"
+                       class="w-full bg-white/5 border border-white/10 text-on-surface rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-amber-400/40 transition-colors">
+            </div>
+        </div>
+        <button type="submit" class="bg-amber-500/20 text-amber-400 border border-amber-500/30 hover:bg-amber-500/30 px-6 py-2.5 rounded-xl text-label-md font-semibold transition-colors flex items-center gap-2">
+            <span class="material-symbols-outlined text-[20px]">lock_reset</span> Şifreyi Değiştir
+        </button>
+    </form>
+</div>
 
 <?php require_once __DIR__ . '/_footer.php'; ?>

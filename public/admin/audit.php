@@ -1,20 +1,13 @@
 <?php
-/**
- * Admin — Audit Log Görüntüleyici
- */
+// Audit log kaldırıldı — kullanıcı verisi tutulmayacak politikası gereği.
 require_once __DIR__ . '/../../app/Config/env.php';
 loadEnv(dirname(__DIR__, 2) . '/.env');
 require_once __DIR__ . '/../../app/Config/app.php';
-require_once __DIR__ . '/../../app/Config/database.php';
-require_once __DIR__ . '/../../app/Core/Response.php';
-require_once __DIR__ . '/../../app/Core/View.php';
-require_once __DIR__ . '/../../app/Services/Logger.php';
 require_once __DIR__ . '/../../app/Models/User.php';
-require_once __DIR__ . '/../../app/Models/Venue.php';
-require_once __DIR__ . '/../../app/Models/Notification.php';
-require_once __DIR__ . '/../../app/Models/Report.php';
-
 Auth::requireAdmin();
+Auth::setFlash('info', 'Audit log kaldırıldı.');
+header('Location: ' . BASE_URL . '/admin/');
+exit;
 
 $page = max(1, (int)($_GET['page'] ?? 1));
 $filters = [];

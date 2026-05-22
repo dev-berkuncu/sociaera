@@ -77,11 +77,13 @@ require_once __DIR__ . '/_header.php';
             </div>
             <div>
                 <label class="block text-label-md text-slate-400 mb-1">Gösterim Yeri</label>
-                <input type="hidden" name="position" value="feed">
-                <div class="w-full bg-white/5 border border-white/10 text-slate-300 rounded-lg px-4 py-2.5 text-sm flex items-center gap-2">
-                    <span class="material-symbols-outlined text-[16px] text-primary-container">dynamic_feed</span>
-                    Feed — Postlar Arasında
-                </div>
+                <select name="position" class="w-full bg-white/5 border border-white/10 text-on-surface rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary-container/40 transition-colors">
+                    <option value="feed" class="bg-background">&#128240; Feed — Postlar Arasında</option>
+                    <option value="sidebar_right" class="bg-background">&#128506; Sidebar — Sağ Sütun</option>
+                    <option value="sidebar_left" class="bg-background">&#128506; Sidebar — Sol Sütun</option>
+                    <option value="carousel" class="bg-background">&#127921; Carousel</option>
+                    <option value="footer_banner" class="bg-background">&#9644; Footer Banner</option>
+                </select>
             </div>
             <div>
                 <label class="block text-label-md text-slate-400 mb-1">Link URL</label>

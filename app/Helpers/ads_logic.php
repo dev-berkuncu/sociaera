@@ -8,6 +8,7 @@ $carouselAds     = [];
 $sidebarLeftAds  = [];
 $sidebarRightAds = [];
 $footerAds       = [];
+$feedAds         = [];
 
 try {
     $db = Database::getConnection();
@@ -33,6 +34,11 @@ try {
         // Footer banner (1 tane)
         $footerAds = $db->query(
             "SELECT * FROM ads WHERE position = 'footer_banner' AND is_active = 1 ORDER BY sort_order, id DESC LIMIT 1"
+        )->fetchAll();
+
+        // Feed reklamları — postlar arasında gösterilecek (max 3)
+        $feedAds = $db->query(
+            "SELECT * FROM ads WHERE position = 'feed' AND is_active = 1 ORDER BY sort_order, id DESC LIMIT 3"
         )->fetchAll();
     }
 } catch (Exception $e) {
