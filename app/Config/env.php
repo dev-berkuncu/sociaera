@@ -7,7 +7,8 @@
 function loadEnv(string $path): void
 {
     if (!file_exists($path)) {
-        return;
+        http_response_code(500);
+        die('<h1>Sunucu Hatası</h1><p>.env dosyası bulunamadı. Lütfen sunucu yöneticisiyle iletişime geçin.</p>');
     }
 
     $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);

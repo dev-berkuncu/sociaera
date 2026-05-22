@@ -36,17 +36,25 @@ Logger::info('Fleeca V2 webhook received', [
 ]);
 
 // ── HMAC imzasını doğrula ─────────────────────────────────
-if (!empty($signature) && !empty(FLEECA_AUTH_KEY)) {
-    $expected = 'sha256=' . hash_hmac('sha256', $rawBody, FLEECA_AUTH_KEY);
-    if (!hash_equals($expected, $signature)) {
-        Logger::error('Fleeca V2 webhook: signature mismatch', [
-            'expected' => substr($expected, 0, 30) . '...',
-            'got'      => substr($signature, 0, 30) . '...',
-        ]);
-        http_response_code(403);
-        echo json_encode(['error' => 'Invalid signature']);
-        exit;
-    }
+// Kritik: imza eksikse veya anahtar tanımlı değilse direkt 403
+if (empty($signature) || empty(FLEECA_AUTH_KEY)) {
+    Logger::error('Fleeca V2 webhook: missing signature or unconfigured key', [
+        'has_sig' => !empty($signature),
+        'has_key' => defined('FLEECA_AUTH_KEY') && !empty(FLEECA_AUTH_KEY),
+    ]);
+    http_response_code(403);
+    echo json_encode(['error' => 'Missing or unconfigured signature']);
+    exit;
+}
+$expected = 'sha256=' . hash_hmac('sha256', $rawBody, FLEECA_AUTH_KEY);
+if (!hash_equals($expected, $signature)) {
+    Logger::error('Fleeca V2 webhook: signature mismatch', [
+        'expected' => substr($expected, 0, 30) . '...',
+        'got'      => substr($signature, 0, 30) . '...',
+    ]);
+    http_response_code(403);
+    echo json_encode(['error' => 'Invalid signature']);
+    exit;
 }
 
 // ── Payload parse et ─────────────────────────────────────
@@ -142,9 +150,11 @@ try {
     // Bildirim gönder
     try {
         $notifModel = new NotificationModel();
-        $notifModel->create($userId, 'wallet_deposit',
-            '$' . number_format($amount, 2) . ' Fleeca Banking ile cüzdanına yüklendi.',
-            BASE_URL . '/wallet'
+        $notifModel->create(
+            $userId,          // to_user_id
+            0,                // from_user_id (0 = sistem bildirimi)
+            'wallet_deposit', // type
+            '$' . number_format($amount, 2) . ' Fleeca Banking ile cüzdanına yüklendi.' // content
         );
     } catch (\Throwable $e) {}
 

@@ -35,6 +35,10 @@ class WalletModel
 
     public function deposit(int $userId, float $amount, string $description = ''): void
     {
+        if ($amount <= 0) {
+            throw new \InvalidArgumentException('Miktar sıfırdan büyük olmalıdır.');
+        }
+
         $this->db->beginTransaction();
         try {
             // Bakiyeyi güncelle
@@ -56,9 +60,16 @@ class WalletModel
 
     public function withdraw(int $userId, float $amount, string $description = ''): bool
     {
+        if ($amount <= 0) {
+            throw new \InvalidArgumentException('Miktar sıfırdan büyük olmalıdır.');
+        }
+
         $this->db->beginTransaction();
         try {
-            $balance = $this->getBalance($userId);
+            // Kilitli okuma — eşzamanlı çekim işlemlerini önler
+            $stmt = $this->db->prepare("SELECT balance FROM wallets WHERE user_id = ? FOR UPDATE");
+            $stmt->execute([$userId]);
+            $balance = (float)($stmt->fetchColumn() ?: 0);
             if ($balance < $amount) {
                 $this->db->rollBack();
                 return false;

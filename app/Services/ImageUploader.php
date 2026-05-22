@@ -95,10 +95,7 @@ class ImageUploader
                     $options['quality'] ?? 85
                 );
                 if (!$result) {
-                    // Resize başarısızsa doğrudan taşı
-                    if (!move_uploaded_file($file['tmp_name'], $destPath)) {
-                        return $this->fail('Dosya yüklenemedi.');
-                    }
+                    return $this->fail('Resim boyutlandırılamadı. Lütfen daha küçük bir dosya deneyin.');
                 }
             } else {
                 if (!move_uploaded_file($file['tmp_name'], $destPath)) {
@@ -160,7 +157,8 @@ class ImageUploader
                 $result = imagejpeg($image, $dest, $quality);
                 break;
             case 'image/png':
-                $result = imagepng($image, $dest, min(9, (int)(9 - ($quality / 11))));
+                $pngLevel = max(0, min(9, (int)(9 - ($quality / 11))));
+                $result = imagepng($image, $dest, $pngLevel);
                 break;
             case 'image/gif':
                 $result = imagegif($image, $dest);

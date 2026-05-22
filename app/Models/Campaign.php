@@ -147,7 +147,7 @@ class CampaignModel
      */
     public function earn(int $campaignId, int $userId, int $venueId): string
     {
-        $code = strtoupper(substr(md5(uniqid("{$campaignId}{$userId}", true)), 0, 8));
+        $code = strtoupper(bin2hex(random_bytes(4)));
         $this->db->prepare("
             INSERT IGNORE INTO campaign_redemptions (campaign_id, user_id, venue_id, code)
             VALUES (?, ?, ?, ?)

@@ -39,7 +39,9 @@ $stats = $userModel->getStats($profileUser['id']);
 $isFollowing = !$isOwn ? $userModel->isFollowing(Auth::id(), $profileUser['id']) : false;
 $favVenue = $userModel->getFavoriteVenue($profileUser['id']);
 
-$tab = $_GET['tab'] ?? 'posts';
+// XSS: Whitelist ile güvenli hale getirildi
+$allowedTabs = ['posts', 'journey', 'likes', 'reposts'];
+$tab = in_array($_GET['tab'] ?? 'posts', $allowedTabs, true) ? ($_GET['tab'] ?? 'posts') : 'posts';
 $page = max(1, (int)($_GET['page'] ?? 1));
 
 switch ($tab) {
@@ -57,6 +59,15 @@ switch ($tab) {
 // Gezi günlüğü verileri
 $journey = $userModel->getCheckinJourney($profileUser['id']);
 $categoryLabels = VenueModel::categories();
+
+// Rozetler — HTML öncesinde çekiyoruz (hata mid-render'da olmasın)
+$profileBadges = [];
+$badgeDefs     = [];
+try {
+    $badgeModel    = new BadgeModel();
+    $profileBadges = $badgeModel->getUserBadges($profileUser['id']);
+    $badgeDefs     = BadgeModel::definitions();
+} catch (Exception $e) {}
 
 $trendVenues = [];
 $miniLeaderboard = [];
@@ -164,12 +175,7 @@ require_once __DIR__ . '/partials/app_header.php';
                 </div>
             </div>
             
-            <!-- Rozetler -->
-            <?php
-            $badgeModel = new BadgeModel();
-            $profileBadges = $badgeModel->getUserBadges($profileUser['id']);
-            $badgeDefs = BadgeModel::definitions();
-            ?>
+            <!-- Rozetler (logic bölümünden çekildi) -->
             <?php if (!empty($profileBadges)): ?>
             <div class="flex flex-wrap items-center gap-2 mt-6 pt-6 border-t border-white/10">
                 <span class="text-sm font-bold text-slate-400 mr-2">Kazanılan Rozetler:</span>

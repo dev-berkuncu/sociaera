@@ -84,7 +84,17 @@ class Response
         if (!Auth::check()) {
             self::error('Oturum açmanız gerekiyor.', 401);
         }
-        // Ban kontrolü
-        Auth::requireLogin();
+        // Ban kontrolü — API bağlamında JSON 403 dönelim, redirect değil
+        if (!empty($_SESSION['user_id'])) {
+            try {
+                $db   = Database::getConnection();
+                $stmt = $db->prepare("SELECT banned_until FROM users WHERE id = ?");
+                $stmt->execute([Auth::id()]);
+                $user = $stmt->fetch();
+                if ($user && $user['banned_until'] && strtotime($user['banned_until']) > time()) {
+                    self::error('Hesabınız askıya alınmıştır.', 403);
+                }
+            } catch (\Throwable $e) { /* sessizce devam et */ }
+        }
     }
 }

@@ -79,7 +79,8 @@ class Auth
      */
     public static function canWrite(): bool
     {
-        $role = $_SESSION['admin_role'] ?? 'super_admin';
+        if (!self::isAdmin()) return false;
+        $role = $_SESSION['admin_role'] ?? 'readonly_admin';
         return $role !== 'readonly_admin';
     }
 
@@ -108,9 +109,14 @@ class Auth
 
         if (ini_get('session.use_cookies')) {
             $p = session_get_cookie_params();
-            setcookie(session_name(), '', time() - 42000,
-                $p['path'], $p['domain'], $p['secure'], $p['httponly']
-            );
+            setcookie(session_name(), '', [
+                'expires'  => time() - 3600,
+                'path'     => $p['path'],
+                'domain'   => $p['domain'],
+                'secure'   => $p['secure'],
+                'httponly' => $p['httponly'],
+                'samesite' => 'Lax',
+            ]);
         }
 
         session_destroy();
@@ -162,6 +168,7 @@ class Auth
             if ($user && $user['banned_until'] && strtotime($user['banned_until']) > time()) {
                 self::logout();
                 session_start();
+                session_regenerate_id(true);
                 self::setFlash('error', 'Hesabınız askıya alınmıştır.');
                 header('Location: ' . BASE_URL . '/login');
                 exit;

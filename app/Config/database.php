@@ -20,11 +20,16 @@ class Database
             $pass    = env('DB_PASS', '');
             $charset = env('DB_CHARSET', 'utf8mb4');
 
+            // Charset whitelist — INIT_COMMAND injection’a karşı güvenli
+            $allowedCharsets = ['utf8mb4', 'utf8', 'latin1'];
+            if (!in_array($charset, $allowedCharsets, true)) {
+                $charset = 'utf8mb4';
+            }
+
             $dsn = "mysql:host={$host};dbname={$dbname};charset={$charset}";
 
             // APP_TIMEZONE sabitini MySQL offset'e çevir
             $phpTz    = new DateTimeZone(defined('APP_TIMEZONE') ? APP_TIMEZONE : 'Europe/Istanbul');
-            $utcTz    = new DateTimeZone('UTC');
             $now      = new DateTime('now', $phpTz);
             $offset   = $phpTz->getOffset($now);
             $sign     = $offset >= 0 ? '+' : '-';

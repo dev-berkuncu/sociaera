@@ -422,10 +422,10 @@ class CheckinModel
 
     private function attachViewerInteractions(array $posts, int $viewerId): array
     {
-        foreach ($posts as &$post) {
-            $post['viewer_liked']    = $this->hasLiked($viewerId, $post['id']);
-            $post['viewer_reposted'] = $this->hasReposted($viewerId, $post['id']);
-            $post['is_own']          = ((int)$post['user_id'] === $viewerId);
+        foreach ($posts as $i => $post) {
+            $posts[$i]['viewer_liked']    = $this->hasLiked($viewerId, $post['id']);
+            $posts[$i]['viewer_reposted'] = $this->hasReposted($viewerId, $post['id']);
+            $posts[$i]['is_own']          = ((int)$post['user_id'] === $viewerId);
         }
         return $posts;
     }
@@ -457,13 +457,13 @@ class CheckinModel
         preg_match_all('/@([a-zA-Z0-9_]+)/', $text, $matches);
         if (empty($matches[1])) return;
 
-        $userModel = new UserModel();
+        $userModel  = new UserModel();
         $notifModel = new NotificationModel();
+        $from       = $userModel->getById($fromUserId); // Loop dışına taşındı — N+1 önlendi
 
         foreach (array_unique($matches[1]) as $mentionedTag) {
             $mentioned = $userModel->getByUsername($mentionedTag);
             if ($mentioned && (int)$mentioned['id'] !== $fromUserId) {
-                $from = $userModel->getById($fromUserId);
                 $notifModel->create(
                     $mentioned['id'],
                     $fromUserId,

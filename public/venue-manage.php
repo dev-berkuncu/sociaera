@@ -66,7 +66,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Location: ' . BASE_URL . '/venue-manage?id=' . $venueId); exit;
 
     } elseif ($action === 'toggle_open') {
-        $newStatus = ($venue['is_open'] ?? 1) ? 0 : 1;
+        // Düzeltme: varsayılan 0 (kapalı) — NULL durumu açık kabul edilirse ilk toggle kapanıyordu
+        $newStatus = ($venue['is_open'] ?? 0) ? 0 : 1;
         $venueModel->update($venueId, ['is_open' => $newStatus]);
         Auth::setFlash('success', $newStatus ? 'İşletme açık olarak işaretlendi.' : 'İşletme kapalı olarak işaretlendi.');
         header('Location: ' . BASE_URL . '/venue-manage?id=' . $venueId); exit;

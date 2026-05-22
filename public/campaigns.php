@@ -44,14 +44,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 Auth::setFlash('error', 'Kampanya başlığı zorunludur.');
                 break;
             }
-            $campaignModel->create($venueId, $_POST);
+            // Güvenlik: $_POST yerine whitelist
+            $postData = [
+                'title'           => trim($_POST['title'] ?? ''),
+                'description'     => trim($_POST['description'] ?? ''),
+                'trigger_type'    => $_POST['trigger_type'] ?? 'nth_checkin',
+                'trigger_value'   => (int)($_POST['trigger_value'] ?? 0),
+                'reward_type'     => $_POST['reward_type'] ?? '',
+                'reward_value'    => $_POST['reward_value'] ?? '',
+                'reward_text'     => trim($_POST['reward_text'] ?? ''),
+                'starts_at'       => $_POST['starts_at'] ?: null,
+                'ends_at'         => $_POST['ends_at'] ?: null,
+                'max_redemptions' => (int)($_POST['max_redemptions'] ?? 0) ?: null,
+                'is_active'       => isset($_POST['is_active']) ? 1 : 0,
+            ];
+            $campaignModel->create($venueId, $postData);
             Auth::setFlash('success', 'Kampanya oluşturuldu!');
             break;
 
         case 'update':
             $cId = (int)($_POST['campaign_id'] ?? 0);
             if ($cId) {
-                $campaignModel->update($cId, $venueId, $_POST);
+                $updateData = [
+                    'title'           => trim($_POST['title'] ?? ''),
+                    'description'     => trim($_POST['description'] ?? ''),
+                    'trigger_type'    => $_POST['trigger_type'] ?? 'nth_checkin',
+                    'trigger_value'   => (int)($_POST['trigger_value'] ?? 0),
+                    'reward_type'     => $_POST['reward_type'] ?? '',
+                    'reward_value'    => $_POST['reward_value'] ?? '',
+                    'reward_text'     => trim($_POST['reward_text'] ?? ''),
+                    'starts_at'       => $_POST['starts_at'] ?: null,
+                    'ends_at'         => $_POST['ends_at'] ?: null,
+                    'max_redemptions' => (int)($_POST['max_redemptions'] ?? 0) ?: null,
+                    'is_active'       => isset($_POST['is_active']) ? 1 : 0,
+                ];
+                $campaignModel->update($cId, $venueId, $updateData);
                 Auth::setFlash('success', 'Kampanya güncellendi.');
             }
             break;
@@ -198,13 +225,13 @@ require_once __DIR__ . '/partials/app_header.php';
                 <div>
                     <label class="block text-label-md text-slate-400 mb-1.5">Başlangıç <span class="text-slate-600">(boş = hemen)</span></label>
                     <input type="datetime-local" name="starts_at"
-                           value="<?php echo $editCamp['starts_at'] ? date('Y-m-d\TH:i', strtotime($editCamp['starts_at'])) : ''; ?>"
+                           value="<?php echo !empty($editCamp['starts_at']) ? date('Y-m-d\TH:i', strtotime($editCamp['starts_at'])) : ''; ?>"
                            class="w-full bg-white/5 border border-white/10 text-on-surface rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-primary-container/40 transition-colors">
                 </div>
                 <div>
                     <label class="block text-label-md text-slate-400 mb-1.5">Bitiş <span class="text-slate-600">(boş = süresiz)</span></label>
                     <input type="datetime-local" name="ends_at"
-                           value="<?php echo $editCamp['ends_at'] ? date('Y-m-d\TH:i', strtotime($editCamp['ends_at'])) : ''; ?>"
+                           value="<?php echo !empty($editCamp['ends_at']) ? date('Y-m-d\TH:i', strtotime($editCamp['ends_at'])) : ''; ?>"
                            class="w-full bg-white/5 border border-white/10 text-on-surface rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-primary-container/40 transition-colors">
                 </div>
                 <div>

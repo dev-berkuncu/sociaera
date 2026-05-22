@@ -132,13 +132,13 @@ require_once __DIR__ . '/partials/app_header.php';
                     <?php if ($venue['website']): ?>
                         <div class="flex items-center gap-3">
                             <span class="material-symbols-outlined text-[24px] text-[#3b82f6]">language</span> 
-                            <a href="<?php echo escape($venue['website']); ?>" target="_blank" class="text-slate-300 hover:text-[#3b82f6] transition-colors truncate">Resmi Web Sitesi</a>
+                            <a href="<?php echo safeHref($venue['website']); ?>" target="_blank" rel="noopener noreferrer" class="text-slate-300 hover:text-[#3b82f6] transition-colors truncate">Resmi Web Sitesi</a>
                         </div>
                     <?php endif; ?>
                     <?php if ($venue['facebrowser_url']): ?>
                         <div class="flex items-center gap-3">
                             <span class="material-symbols-outlined text-[24px] text-[#3b5998]">link</span> 
-                            <a href="<?php echo escape($venue['facebrowser_url']); ?>" target="_blank" class="text-slate-300 hover:text-[#3b5998] transition-colors truncate">Facebrowser Sayfası</a>
+                            <a href="<?php echo safeHref($venue['facebrowser_url']); ?>" target="_blank" rel="noopener noreferrer" class="text-slate-300 hover:text-[#3b5998] transition-colors truncate">Facebrowser Sayfası</a>
                         </div>
                     <?php endif; ?>
                     

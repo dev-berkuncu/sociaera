@@ -8,6 +8,12 @@ require_once __DIR__ . '/../app/Models/User.php';
 $characters = $_SESSION['oauth_characters'] ?? [];
 $userId = $_SESSION['oauth_user_id'] ?? null;
 
+// Zaten giriş yapmış ve OAuth akışı yok ise dashboard'a yönlendir
+if (Auth::check() && !$userId) {
+    header('Location: ' . BASE_URL . '/dashboard');
+    exit;
+}
+
 if (!$userId) {
     Auth::setFlash('error', 'Oturum bilgisi bulunamadı.');
     header('Location: ' . BASE_URL . '/login');
@@ -30,12 +36,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $userModel = new UserModel();
         $userModel->updateCharacter($userId, $charId, $charName);
         $user = $userModel->getById($userId);
+
+        // Hesap silinmiş olabilir
+        if (!$user) {
+            Auth::setFlash('error', 'Kullanıcı bulunamadı. Lütfen tekrar giriş yapın.');
+            unset($_SESSION['oauth_characters'], $_SESSION['oauth_user_id']);
+            header('Location: ' . BASE_URL . '/login');
+            exit;
+        }
+
         Auth::login($user);
         Csrf::regenerate();
         unset($_SESSION['oauth_characters'], $_SESSION['oauth_user_id']);
         Logger::info('Character selected', ['user_id' => $userId, 'char' => $charName]);
         Auth::setFlash('success', $charName . ' olarak giriş yaptın! 🎭');
         header('Location: ' . BASE_URL . '/dashboard');
+        exit;
+    } elseif ($charId && !$charName) {
+        Auth::setFlash('error', 'Seçilen karakter için isim bilgisi alınamadı. Lütfen tekrar deneyin.');
+        header('Location: ' . BASE_URL . '/character-select');
         exit;
     }
 }
@@ -83,7 +102,7 @@ require_once __DIR__ . '/partials/flash.php';
                                 </div>
                                 
                                 <div class="font-light text-xl text-on-surface text-center mb-1"><?php echo escape($name); ?></div>
-                                <div class="text-sm text-slate-500 text-center font-light tracking-wide">ID: <?php echo $cid; ?></div>
+                                <div class="text-sm text-slate-500 text-center font-light tracking-wide">ID: <?php echo (int)$cid; ?></div>
                             </div>
                         </label>
                         <?php endforeach; ?>

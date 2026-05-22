@@ -21,6 +21,17 @@ function escapeUrl(?string $url): string
     return htmlspecialchars($url ?? '', ENT_QUOTES, 'UTF-8');
 }
 
+/**
+ * javascript: protocol injection'a karşı güvenli href
+ * Yalnızca http ve https URL'lere izin verir.
+ */
+function safeHref(?string $url): string
+{
+    if (!$url) return '#';
+    if (!preg_match('#^https?://#i', $url)) return '#';
+    return escape($url);
+}
+
 // ── Tarih / Zaman ─────────────────────────────────────────
 
 /**
@@ -99,10 +110,11 @@ function parseMentions(?string $text): string
 function linkify(?string $text): string
 {
     if (!$text) return '';
-    return preg_replace(
-        '#(https?://[^\s<]+)#i',
-        '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>',
-        $text
+    $escaped = escape($text);
+    return preg_replace_callback(
+        '#(https?://[^\s<&"]+)#i',
+        fn($m) => '<a href="' . escapeUrl($m[1]) . '" target="_blank" rel="noopener noreferrer">' . escape($m[1]) . '</a>',
+        $escaped
     );
 }
 

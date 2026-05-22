@@ -220,6 +220,10 @@ class UserModel
         $stmt->execute([$userId]);
         $user = $stmt->fetch();
 
+        if (!$user) {
+            return ['ok' => false, 'error' => 'Kullanıcı bulunamadı.'];
+        }
+
         if (!password_verify($current, $user['password_hash'])) {
             return ['ok' => false, 'error' => 'Mevcut şifre yanlış.'];
         }

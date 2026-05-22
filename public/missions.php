@@ -22,8 +22,9 @@ $badgeModel = new BadgeModel();
 $badgeModel->checkAndAward(Auth::id());
 
 $progress = $badgeModel->getProgress(Auth::id());
-$earnedCount = count(array_filter($progress, fn($b) => $b['earned']));
-$totalCount = count($progress);
+$earnedCount   = count(array_filter($progress, fn($b) => $b['earned']));
+$thisWeekCount = count(array_filter($progress, fn($b) => $b['this_week']));
+$totalCount    = count($progress);
 
 $trendVenues = [];
 $miniLeaderboard = [];
@@ -42,7 +43,10 @@ require_once __DIR__ . '/partials/app_header.php';
         <h1 class="text-3xl font-bold flex items-center gap-2 text-on-surface"><span class="material-symbols-outlined text-primary-container text-[32px]">emoji_events</span> Görevler & Rozetler</h1>
         <div class="bg-gradient-to-r from-primary-container/20 to-surface-container text-primary-container px-4 py-1.5 rounded-full font-label-md text-label-md border border-primary-container/30 flex items-center gap-2">
             <span class="material-symbols-outlined text-[18px]">military_tech</span>
-            <?php echo $earnedCount; ?>/<?php echo $totalCount; ?> bu hafta
+            <?php echo $earnedCount; ?>/<?php echo $totalCount; ?> kazanıldı
+            <?php if ($thisWeekCount > 0): ?>
+            <span class="text-[10px] text-emerald-400 font-bold">(<?php echo $thisWeekCount; ?> bu hafta)</span>
+            <?php endif; ?>
         </div>
     </div>
 
@@ -107,8 +111,10 @@ require_once __DIR__ . '/partials/app_header.php';
                         <?php if ($b['total_count'] > 0): ?>
                         <span class="bg-[#7bd0ff]/15 text-[#7bd0ff] text-[9px] font-black px-1.5 py-0.5 rounded border border-[#7bd0ff]/25">x<?php echo $b['total_count']; ?></span>
                         <?php endif; ?>
-                        <?php if ($b['earned']): ?>
+                        <?php if ($b['this_week']): ?>
                         <span class="bg-emerald-500/20 text-emerald-400 text-[9px] font-black px-1.5 py-0.5 rounded border border-emerald-500/30 uppercase tracking-wider">Bu Hafta ✓</span>
+                        <?php elseif ($b['earned']): ?>
+                        <span class="bg-white/5 text-slate-400 text-[9px] font-black px-1.5 py-0.5 rounded border border-white/10 uppercase tracking-wider">Kazanıldı</span>
                         <?php endif; ?>
                     </div>
                     <p class="text-sm text-slate-400 mb-2"><?php echo escape($b['desc']); ?></p>

@@ -160,8 +160,13 @@ class OAuthGtaWorld
         $error    = curl_error($ch);
         curl_close($ch);
 
-        if ($error) {
-            Logger::error('OAuth HTTP POST error', ['url' => $url, 'error' => $error, 'http_code' => $httpCode]);
+        if ($error || $httpCode < 200 || $httpCode >= 300) {
+            Logger::error('OAuth HTTP POST error', [
+                'url'       => $url,
+                'error'     => $error,
+                'http_code' => $httpCode,
+                'body'      => substr($response ?: '', 0, 500),
+            ]);
             return null;
         }
 
@@ -188,8 +193,13 @@ class OAuthGtaWorld
         $error    = curl_error($ch);
         curl_close($ch);
 
-        if ($error) {
-            Logger::error('OAuth HTTP GET error', ['url' => $url, 'error' => $error, 'http_code' => $httpCode]);
+        if ($error || $httpCode < 200 || $httpCode >= 300) {
+            Logger::error('OAuth HTTP GET error', [
+                'url'       => $url,
+                'error'     => $error,
+                'http_code' => $httpCode,
+                'body'      => substr($response ?: '', 0, 500),
+            ]);
             return null;
         }
 

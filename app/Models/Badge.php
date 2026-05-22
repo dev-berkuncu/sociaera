@@ -21,7 +21,8 @@ class BadgeModel
                 // week_start kolonu yoksa ekle ve indeksleri güncelle
                 $this->db->exec("ALTER TABLE user_badges ADD COLUMN week_start DATE NOT NULL AFTER badge_key");
                 $weekStart = self::currentWeekStart();
-                $this->db->exec("UPDATE user_badges SET week_start = '{$weekStart}' WHERE week_start = '0000-00-00' OR week_start IS NULL");
+                $stmt = $this->db->prepare("UPDATE user_badges SET week_start = ? WHERE week_start = '0000-00-00' OR week_start IS NULL");
+                $stmt->execute([$weekStart]);
                 
                 try { $this->db->exec("ALTER TABLE user_badges DROP INDEX uk_user_badge"); } catch (\Throwable $e) {}
                 try { $this->db->exec("ALTER TABLE user_badges ADD UNIQUE KEY uk_user_badge_week (user_id, badge_key, week_start)"); } catch (\Throwable $e) {}
@@ -253,6 +254,8 @@ class BadgeModel
 
         foreach ($defs as $key => $def) {
             $current = $this->calculateProgress($userId, $key);
+            $thisWeek = in_array($key, $thisWeekKeys);
+            $count    = $badgeCounts[$key] ?? 0;
             $progress[$key] = [
                 'key'         => $key,
                 'name'        => $def['name'],
@@ -261,8 +264,10 @@ class BadgeModel
                 'color'       => $def['color'],
                 'goal'        => $def['goal'],
                 'current'     => min($current, $def['goal']),
-                'earned'      => in_array($key, $thisWeekKeys),
-                'total_count' => $badgeCounts[$key] ?? 0,
+                // Daha önce hiç kazanıldıysa VEYA bu hafta kazanıldıysa earned=true
+                'earned'      => $count > 0 || $thisWeek,
+                'this_week'   => $thisWeek,
+                'total_count' => $count,
                 'percent'     => min(100, round(($current / max(1, $def['goal'])) * 100)),
             ];
         }
@@ -417,8 +422,10 @@ class BadgeModel
         }
 
         for ($i = 0; $i < count($dates) - 1; $i++) {
-            $diff = (strtotime($dates[$i]) - strtotime($dates[$i + 1])) / 86400;
-            if ($diff == 1) {
+            $d1   = new DateTime($dates[$i]);
+            $d2   = new DateTime($dates[$i + 1]);
+            $diff = (int)$d1->diff($d2)->days;
+            if ($diff === 1) {
                 $streak++;
             } else {
                 break;

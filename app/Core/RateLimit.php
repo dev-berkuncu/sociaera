@@ -74,7 +74,7 @@ class RateLimit
      */
     public function cleanup(int $olderThanSeconds = 7200): void
     {
-        $files = glob($this->storageDir . '/*.json');
+        $files = glob($this->storageDir . '/*.json') ?: [];
         $now   = time();
 
         foreach ($files as $file) {
@@ -89,17 +89,19 @@ class RateLimit
      */
     public static function getClientIp(): string
     {
-        $ip = $_SERVER['HTTP_X_FORWARDED_FOR']
-            ?? $_SERVER['HTTP_X_REAL_IP']
-            ?? $_SERVER['REMOTE_ADDR']
-            ?? '0.0.0.0';
+        $remote = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
 
-        // Birden fazla IP varsa ilkini al
-        if (strpos($ip, ',') !== false) {
-            $ip = trim(explode(',', $ip)[0]);
+        // Proxy header'lara yalnızca bilinen trusted proxy'den geliyorsa güven
+        $trustedProxies = ['127.0.0.1', '::1'];
+        if (in_array($remote, $trustedProxies, true)) {
+            $forwarded = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['HTTP_X_REAL_IP'] ?? null;
+            if ($forwarded) {
+                $ip = trim(explode(',', $forwarded)[0]);
+                return filter_var($ip, FILTER_VALIDATE_IP) ? $ip : $remote;
+            }
         }
 
-        return filter_var($ip, FILTER_VALIDATE_IP) ? $ip : '0.0.0.0';
+        return filter_var($remote, FILTER_VALIDATE_IP) ? $remote : '0.0.0.0';
     }
 
     // ── Private ───────────────────────────────────────────

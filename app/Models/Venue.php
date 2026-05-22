@@ -236,7 +236,7 @@ class VenueModel
             WHERE venue_id = ?
         ");
         $stmt->execute([$venueId]);
-        return $stmt->fetch();
+        return $stmt->fetch() ?: ['average_rating' => 0, 'rating_count' => 0];
     }
 
     /**

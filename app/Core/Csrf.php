@@ -82,7 +82,7 @@ class Csrf
                 exit;
             }
             Auth::setFlash('error', 'Güvenlik hatası (CSRF). Lütfen sayfayı yenileyip tekrar deneyin.');
-            header('Location: ' . $_SERVER['HTTP_REFERER'] ?? BASE_URL);
+            header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? BASE_URL));
             exit;
         }
     }

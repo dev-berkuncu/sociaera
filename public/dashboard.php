@@ -22,7 +22,9 @@ require_once __DIR__ . '/../app/Helpers/ads_logic.php';
 
 Auth::requireLogin();
 
-$feedFilter = $_GET['filter'] ?? 'all';
+// XSS: Whitelist ile güvenli hale getirildi
+$allowedFilters = ['all', 'following'];
+$feedFilter = in_array($_GET['filter'] ?? 'all', $allowedFilters, true) ? ($_GET['filter'] ?? 'all') : 'all';
 $page = max(1, (int)($_GET['page'] ?? 1));
 
 $checkinModel = new CheckinModel();
@@ -35,6 +37,13 @@ if ($feedFilter === 'following') {
 
 $userModel = new UserModel();
 $currentUser = $userModel->getById(Auth::id());
+
+// Hesap silinmişse oturumu kapat
+if (!$currentUser) {
+    Auth::logout();
+    header('Location: ' . BASE_URL . '/login');
+    exit;
+}
 
 $trendVenues = [];
 $miniLeaderboard = [];

@@ -11,7 +11,7 @@ class NotificationModel
         $this->db = Database::getConnection();
     }
 
-    public function create(int $userId, int $fromUserId, string $type, string $content, ?int $checkinId = null): void
+    public function create(int $userId, ?int $fromUserId, string $type, string $content, ?int $checkinId = null): void
     {
         $stmt = $this->db->prepare("
             INSERT INTO notifications (user_id, from_user_id, type, content, checkin_id)
