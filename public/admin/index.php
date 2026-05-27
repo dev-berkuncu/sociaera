@@ -3,6 +3,8 @@
  * Admin Panel — Dashboard (V1)
  * 13+ metrik kartı, grafikler, top listeler
  */
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 require_once __DIR__ . '/../../app/Config/env.php';
 loadEnv(dirname(__DIR__, 2) . '/.env');
 require_once __DIR__ . '/../../app/Config/app.php';
