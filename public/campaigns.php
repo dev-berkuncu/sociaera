@@ -59,6 +59,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'is_active'       => isset($_POST['is_active']) ? 1 : 0,
             ];
             $campaignModel->create($venueId, $postData);
+
+            // Mekana check-in yapmış kullanıcılara yeni kampanya bildirimi gönder
+            try {
+                $notifModel = new NotificationModel();
+                $userIds = $campaignModel->getVenueCheckinUserIds($venueId, Auth::id());
+                $rewardText = CampaignModel::formatReward($postData + ['reward_type' => $postData['reward_type'], 'reward_value' => $postData['reward_value'], 'reward_text' => $postData['reward_text']]);
+                foreach ($userIds as $uid) {
+                    $notifModel->create(
+                        (int)$uid,
+                        Auth::id(),
+                        'new_campaign',
+                        '🎯 ' . escape($venue['name']) . ' yeni kampanya ekledi: "' . escape($postData['title']) . '" — ' . $rewardText
+                    );
+                }
+            } catch (\Throwable $e) {}
+
             Auth::setFlash('success', 'Kampanya oluşturuldu!');
             break;
 

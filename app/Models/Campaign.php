@@ -247,4 +247,20 @@ class CampaignModel
             default          => $campaign['trigger_value'] . '. check-in',
         };
     }
+
+    /**
+     * Mekana check-in yapmış benzersiz kullanıcı ID'lerini döndür
+     */
+    public function getVenueCheckinUserIds(int $venueId, ?int $excludeUserId = null): array
+    {
+        $sql = "SELECT DISTINCT user_id FROM checkins WHERE venue_id = ? AND is_deleted = 0";
+        $params = [$venueId];
+        if ($excludeUserId) {
+            $sql .= " AND user_id != ?";
+            $params[] = $excludeUserId;
+        }
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll(\PDO::FETCH_COLUMN);
+    }
 }
