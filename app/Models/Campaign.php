@@ -279,7 +279,7 @@ class CampaignModel
      */
     public function getUserRedemptions(int $userId): array
     {
-        $stmt = $this->db->prepare("SELECT * FROM campaign_redemptions WHERE user_id = ? ORDER BY redeemed_at DESC");
+        $stmt = $this->db->prepare("SELECT * FROM campaign_redemptions WHERE user_id = ? ORDER BY earned_at DESC");
         $stmt->execute([$userId]);
         return $stmt->fetchAll();
     }

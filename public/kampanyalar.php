@@ -6,17 +6,7 @@
 require_once __DIR__ . '/../app/Config/env.php';
 loadEnv(dirname(__DIR__) . '/.env');
 require_once __DIR__ . '/../app/Config/app.php';
-require_once __DIR__ . '/../app/Config/database.php';
-require_once __DIR__ . '/../app/Core/Response.php';
-require_once __DIR__ . '/../app/Core/View.php';
-require_once __DIR__ . '/../app/Models/User.php';
-require_once __DIR__ . '/../app/Models/Venue.php';
 require_once __DIR__ . '/../app/Models/Campaign.php';
-require_once __DIR__ . '/../app/Models/Notification.php';
-require_once __DIR__ . '/../app/Models/Leaderboard.php';
-require_once __DIR__ . '/../app/Models/Ad.php';
-require_once __DIR__ . '/../app/Models/Settings.php';
-require_once __DIR__ . '/../app/Helpers/ads_logic.php';
 
 Auth::requireLogin();
 
