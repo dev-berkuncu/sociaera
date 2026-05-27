@@ -98,6 +98,7 @@ $_pendingVenues = $pendingVenues ?? 0;
     .mobile-sidebar { transform: translateX(-100%); transition: transform 0.3s ease; }
     .mobile-sidebar.active { transform: translateX(0); }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
 </head>
 <body class="bg-background text-on-background font-body text-sm min-h-screen antialiased flex selection:bg-primary-container/30 selection:text-primary-container">
 
