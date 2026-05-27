@@ -49,7 +49,7 @@ require_once __DIR__ . '/partials/app_header.php';
         <a href="<?php echo escape($sp['url'] ?? '#'); ?>" target="_blank" rel="noopener"
            class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl overflow-hidden hover:border-primary-container/40 hover:bg-white/[0.06] transition-all duration-300 group shadow-[0_10px_20px_-10px_rgba(15,23,42,0.3)] aspect-square relative">
             <?php if (!empty($sp['logo'])): ?>
-                <img src="<?php echo BASE_URL . '/' . escape($sp['logo']); ?>" alt="<?php echo escape($sp['name']); ?>" class="absolute inset-0 w-full h-full object-contain p-4">
+                <img src="<?php echo BASE_URL . '/' . escape($sp['logo']); ?>" alt="<?php echo escape($sp['name']); ?>" class="absolute inset-0 w-full h-full object-contain p-4" width="300" height="300" loading="lazy">
             <?php else: ?>
                 <div class="absolute inset-0 flex items-center justify-center">
                     <span class="material-symbols-outlined text-slate-500 text-[48px]">store</span>

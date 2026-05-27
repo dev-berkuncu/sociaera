@@ -62,10 +62,10 @@ require_once __DIR__ . '/partials/app_header.php';
             <div class="absolute inset-0 bg-gradient-to-t from-[#1E293B]/90 via-[#1E293B]/40 to-transparent z-10"></div>
             <?php if (!empty($venue['cover_image'])): ?>
                 <div class="absolute inset-0 bg-cover bg-center blur-2xl opacity-40 scale-110" style="background-image: url('<?php echo BASE_URL . '/uploads/venues/' . escape($venue['cover_image']); ?>')"></div>
-                <img src="<?php echo BASE_URL . '/uploads/venues/' . escape($venue['cover_image']); ?>" class="w-full h-full object-contain p-4 relative z-10">
+                <img src="<?php echo BASE_URL . '/uploads/venues/' . escape($venue['cover_image']); ?>" class="w-full h-full object-contain p-4 relative z-10" width="800" height="320">
             <?php elseif (!empty($venue['image'])): ?>
                 <div class="absolute inset-0 bg-cover bg-center blur-2xl opacity-40 scale-110" style="background-image: url('<?php echo uploadUrl('posts', $venue['image']); ?>')"></div>
-                <img src="<?php echo uploadUrl('posts', $venue['image']); ?>" class="w-full h-full object-contain p-4 relative z-10">
+                <img src="<?php echo uploadUrl('posts', $venue['image']); ?>" class="w-full h-full object-contain p-4 relative z-10" width="800" height="320">
             <?php else: ?>
                 <div class="w-full h-full flex items-center justify-center text-slate-600 bg-surface-container-high relative z-10"><span class="material-symbols-outlined text-[64px]">store</span></div>
             <?php endif; ?>

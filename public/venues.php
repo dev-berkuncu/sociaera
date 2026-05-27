@@ -76,10 +76,10 @@ require_once __DIR__ . '/partials/app_header.php';
                 <div class="h-48 bg-surface-container relative overflow-hidden">
                     <?php if (!empty($v['cover_image'])): ?>
                         <div class="absolute inset-0 bg-cover bg-center blur-2xl opacity-40 scale-110" style="background-image: url('<?php echo BASE_URL . '/uploads/venues/' . escape($v['cover_image']); ?>')"></div>
-                        <img src="<?php echo BASE_URL . '/uploads/venues/' . escape($v['cover_image']); ?>" class="w-full h-full object-contain p-2 relative z-10 group-hover:scale-105 transition-transform duration-500">
+                        <img src="<?php echo BASE_URL . '/uploads/venues/' . escape($v['cover_image']); ?>" class="w-full h-full object-contain p-2 relative z-10 group-hover:scale-105 transition-transform duration-500" width="600" height="192" loading="lazy">
                     <?php elseif (!empty($v['image'])): ?>
                         <div class="absolute inset-0 bg-cover bg-center blur-2xl opacity-40 scale-110" style="background-image: url('<?php echo uploadUrl('posts', $v['image']); ?>')"></div>
-                        <img src="<?php echo uploadUrl('posts', $v['image']); ?>" class="w-full h-full object-contain p-2 relative z-10 group-hover:scale-105 transition-transform duration-500">
+                        <img src="<?php echo uploadUrl('posts', $v['image']); ?>" class="w-full h-full object-contain p-2 relative z-10 group-hover:scale-105 transition-transform duration-500" width="600" height="192" loading="lazy">
                     <?php else: ?>
                         <div class="w-full h-full flex items-center justify-center text-slate-600 bg-surface-container-high group-hover:scale-105 transition-transform duration-500 relative z-10"><span class="material-symbols-outlined text-[48px]">store</span></div>
                     <?php endif; ?>

@@ -18,7 +18,7 @@ try {
                 <?php foreach ($carouselAds as $i => $cAd): ?>
                 <div class="carousel-item <?php echo $i === 0 ? 'active' : ''; ?>">
                     <a href="<?php echo escape($cAd['link_url'] ?: '#'); ?>" target="_blank" rel="noopener">
-                        <img src="<?php echo BASE_URL . '/' . escape($cAd['image_url']); ?>" alt="<?php echo escape($cAd['title']); ?>" class="carousel-ad-img">
+                        <img src="<?php echo BASE_URL . '/' . escape($cAd['image_url']); ?>" alt="<?php echo escape($cAd['title']); ?>" class="carousel-ad-img" width="320" height="180" loading="lazy">
                     </a>
                 </div>
                 <?php endforeach; ?>
@@ -77,7 +77,7 @@ try {
     <div class="sidebar-ad-slot">
         <?php $rAd = $sidebarRightAds[0]; ?>
         <a href="<?php echo escape($rAd['link_url'] ?: '#'); ?>" target="_blank" rel="noopener">
-            <img src="<?php echo BASE_URL . '/' . escape($rAd['image_url']); ?>" alt="<?php echo escape($rAd['title']); ?>" class="sidebar-ad-img">
+            <img src="<?php echo BASE_URL . '/' . escape($rAd['image_url']); ?>" alt="<?php echo escape($rAd['title']); ?>" class="sidebar-ad-img" width="320" height="250" loading="lazy">
         </a>
     </div>
     <?php endif; ?>

@@ -13,7 +13,7 @@
         <div class="sp-banner" <?php if (bannerUrl($sideUser['banner'] ?? null)): ?>style="background-image:url('<?php echo bannerUrl($sideUser['banner']); ?>')"<?php endif; ?>></div>
         <div class="sp-body">
             <a href="<?php echo BASE_URL; ?>/profile" class="sp-avatar">
-                <?php echo avatarHtml($sideUser['avatar'] ?? null, $sideUser['username'], '56'); ?>
+                <?php echo avatarHtml($sideUser['avatar'] ?? null, $sideUser['username'], '56', 'eager'); ?>
             </a>
             <a href="<?php echo BASE_URL; ?>/profile" class="sp-name"><?php echo escape($sideUser['username']); ?></a>
             <?php if (!empty($sideUser['tag'])): ?>
@@ -73,7 +73,7 @@
     <div class="sidebar-ad-slot">
         <?php $lAd = $sidebarLeftAds[0]; ?>
         <a href="<?php echo escape($lAd['link_url'] ?: '#'); ?>" target="_blank" rel="noopener">
-            <img src="<?php echo BASE_URL . '/' . escape($lAd['image_url']); ?>" alt="<?php echo escape($lAd['title']); ?>" class="sidebar-ad-img">
+            <img src="<?php echo BASE_URL . '/' . escape($lAd['image_url']); ?>" alt="<?php echo escape($lAd['title']); ?>" class="sidebar-ad-img" width="320" height="250" loading="lazy">
         </a>
     </div>
     <?php endif; ?>

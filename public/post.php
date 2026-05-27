@@ -53,7 +53,7 @@ require_once __DIR__ . '/partials/app_header.php';
         <h3 class="font-bold text-lg mb-4 text-on-surface">Yorum Yap</h3>
         <form onsubmit="App.submitComment(this, <?php echo $post['id']; ?>); return false;" class="flex items-start gap-4">
             <?php $myAvatarUrl = safeAvatarUrl($_SESSION['avatar'] ?? null, Auth::username()); ?>
-            <img src="<?php echo $myAvatarUrl; ?>" class="w-10 h-10 rounded-full object-cover border border-white/10 flex-shrink-0">
+            <img src="<?php echo $myAvatarUrl; ?>" class="w-10 h-10 rounded-full object-cover border border-white/10 flex-shrink-0" width="40" height="40">
             <div class="flex-grow">
                 <textarea class="w-full bg-background border border-white/10 rounded-xl px-4 py-3 text-on-surface focus:border-primary-container focus:outline-none transition-colors resize-y min-h-[80px]" placeholder="Yorumunu yaz..." maxlength="500"></textarea>
                 <div class="flex justify-end mt-3">
@@ -79,7 +79,7 @@ require_once __DIR__ . '/partials/app_header.php';
                 <div class="flex gap-4 p-5 border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors">
                     <a href="<?php echo BASE_URL; ?>/profile?u=<?php echo escape($c['tag'] ?: $c['username']); ?>" class="flex-shrink-0 mt-1">
                         <?php $cAvatar = safeAvatarUrl($c['avatar'] ?? null, $c['username']); ?>
-                        <img src="<?php echo $cAvatar; ?>" class="w-10 h-10 rounded-full object-cover border border-white/10">
+                        <img src="<?php echo $cAvatar; ?>" class="w-10 h-10 rounded-full object-cover border border-white/10" width="40" height="40" loading="lazy">
                     </a>
                     
                     <div class="flex-grow min-w-0">
@@ -92,7 +92,7 @@ require_once __DIR__ . '/partials/app_header.php';
                         
                         <?php if (!empty($c['image'])): ?>
                             <div class="mt-3 rounded-lg overflow-hidden border border-white/10 max-w-sm bg-black/10">
-                                <img src="<?php echo uploadUrl('posts', $c['image']); ?>" loading="lazy" class="block w-full max-w-full h-auto max-h-[300px] object-contain">
+                                <img src="<?php echo uploadUrl('posts', $c['image']); ?>" loading="lazy" class="block w-full max-w-full h-auto max-h-[300px] object-contain" width="400" height="300">
                             </div>
                         <?php endif; ?>
                     </div>

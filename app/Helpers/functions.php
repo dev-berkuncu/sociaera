@@ -191,12 +191,12 @@ function defaultAvatar(string $username, string $size = '40'): string
 /**
  * Avatar img veya default HTML
  */
-function avatarHtml(?string $avatar, string $username, string $size = '40'): string
+function avatarHtml(?string $avatar, string $username, string $size = '40', string $loading = 'lazy'): string
 {
     $url = avatarUrl($avatar);
     if ($url) {
         return '<img src="' . escapeUrl($url) . '" alt="' . escape($username) . '" '
-             . 'class="avatar-img" width="' . $size . '" height="' . $size . '" loading="lazy">';
+             . 'class="avatar-img" width="' . $size . '" height="' . $size . '" loading="' . escape($loading) . '">';
     }
     return defaultAvatar($username, $size);
 }

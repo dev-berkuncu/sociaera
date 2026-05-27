@@ -279,9 +279,9 @@ img { max-width: 100%; height: auto; }
 
 /* Sidebar Ads */
 .sidebar-ad-slot { margin-bottom: 16px; }
-.sidebar-ad-img { width: 100%; border-radius: var(--radius-lg); }
+.sidebar-ad-img { width: 100%; border-radius: var(--radius-lg); aspect-ratio: 320/250; object-fit: cover; background: rgba(0,0,0,0.03); }
 .sidebar-carousel { margin-bottom: 16px; }
-.carousel-ad-img { width: 100%; border-radius: var(--radius-lg); }
+.carousel-ad-img { width: 100%; border-radius: var(--radius-lg); aspect-ratio: 16/9; object-fit: cover; background: rgba(0,0,0,0.03); }
 .carousel-indicators-custom {
     display: flex; justify-content: center; gap: 6px; margin-top: 8px;
 }
@@ -443,6 +443,7 @@ img { max-width: 100%; height: auto; }
     border-radius: var(--radius-md);
     margin-top: 12px;
     background: rgba(0,0,0,0.03);
+    min-height: 80px;
 }
 .post-image-container .post-image {
     margin-top: 0;

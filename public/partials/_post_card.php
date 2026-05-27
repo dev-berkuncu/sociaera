@@ -51,7 +51,7 @@ if (!isset($post)) return;
 
     <?php if (!empty($post['image'])): ?>
     <div class="post-image-container">
-        <img src="<?php echo uploadUrl('posts', $post['image']); ?>" alt="Post" class="post-image" loading="lazy">
+        <img src="<?php echo uploadUrl('posts', $post['image']); ?>" alt="Post" class="post-image" loading="lazy" width="640" height="480">
     </div>
     <?php endif; ?>
 
