@@ -16,6 +16,7 @@ if (!isset($currentUser) && Auth::check()) {
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <meta name="csrf-token" content="<?php echo csrfToken(); ?>"/>
+<style id="cls-guard">body{opacity:0}body.ready{opacity:1;transition:opacity .2s ease-in}</style>
 <script>window.BASE_URL = '<?php echo BASE_URL; ?>';</script>
 
 <title><?php echo View::title($pageTitle ?? 'Sociaera'); ?></title>
@@ -190,6 +191,16 @@ if (!isset($currentUser) && Auth::check()) {
         animation-play-state: paused;
     }
 </style>
+<script>
+(function(){
+    var t=setTimeout(function(){document.body.classList.add('ready')},3000);
+    if(document.fonts&&document.fonts.ready){
+        document.fonts.ready.then(function(){clearTimeout(t);document.body.classList.add('ready')});
+    } else {
+        window.addEventListener('load',function(){clearTimeout(t);document.body.classList.add('ready')});
+    }
+})();
+</script>
 </head>
 <body class="bg-background text-on-background font-body-md text-body-md min-h-screen antialiased flex selection:bg-primary-container/30 selection:text-primary-container">
 
