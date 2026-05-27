@@ -42,7 +42,8 @@ $userCheckinHere = Auth::check() ? $campaignModel->getUserCheckinCount(Auth::id(
 // Favori durumu (Premium)
 $isFavorited = false;
 $favoriteCount = 0;
-$isPremiumUser = UserModel::isPremiumActive($currentUser ?? null);
+$currentUserData = Auth::check() ? (new UserModel())->getById(Auth::id()) : null;
+$isPremiumUser = UserModel::isPremiumActive($currentUserData);
 try {
     $favoriteCount = $venueModel->getFavoriteCount($venueId);
     if (Auth::check()) {

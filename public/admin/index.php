@@ -34,11 +34,16 @@ $recentTransactions = $adminModel->getRecentTransactions(5);
 $recentReports = $adminModel->getRecentReports(5);
 
 $db = Database::getConnection();
-$logs = $db->query("
-    SELECT al.*, u.username FROM admin_logs al
-    JOIN users u ON al.admin_id = u.id
-    ORDER BY al.created_at DESC LIMIT 10
-")->fetchAll();
+$logs = [];
+try {
+    $logs = $db->query("
+        SELECT al.*, u.username FROM admin_logs al
+        JOIN users u ON al.admin_id = u.id
+        ORDER BY al.created_at DESC LIMIT 10
+    ")->fetchAll();
+} catch (\Throwable $e) {
+    // admin_logs tablosu yoksa sessizce devam et
+}
 
 $pendingVenues = $stats['pending_venues'];
 $pageTitle = 'Dashboard';
@@ -210,7 +215,8 @@ require_once __DIR__ . '/_header.php';
 <?php
 // Gizli müşteri bekleyen sayısı
 require_once __DIR__ . '/../../app/Models/MysteryShopperModel.php';
-$mysteryPending = (new MysteryShopperModel())->countPending();
+$mysteryPending = 0;
+try { $mysteryPending = (new MysteryShopperModel())->countPending(); } catch (\Throwable $e) {}
 ?>
 
 <!-- Mystery Shopper Kart -->
