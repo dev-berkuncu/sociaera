@@ -58,6 +58,7 @@ require_once __DIR__ . '/partials/app_header.php';
                     elseif ($type === 'follow') { $icon = 'person_add'; $iconColor = 'text-[#10b981] bg-[#10b981]/10'; }
                     elseif ($type === 'repost') { $icon = 'repeat'; $iconColor = 'text-[#8b5cf6] bg-[#8b5cf6]/10'; }
                     elseif ($type === 'mention') { $icon = 'alternate_email'; $iconColor = 'text-[#f59e0b] bg-[#f59e0b]/10'; }
+                    elseif ($type === 'campaign_earned') { $icon = 'redeem'; $iconColor = 'text-[#a855f7] bg-[#a855f7]/10'; }
                     
                     $link = $n['checkin_id']
                         ? BASE_URL . '/post?id=' . (int)$n['checkin_id']

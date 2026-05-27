@@ -288,13 +288,79 @@ document.addEventListener('DOMContentLoaded', function() {
         const res = await App.post(App.baseUrl + '/api/create-post', formData);
 
         if (res.ok) {
-            App.flash('Check-in başarılı! 📍', 'success');
-            setTimeout(() => location.reload(), 800);
+            // Kampanya kazanıldı mı kontrol et
+            if (res.data && res.data.earned_campaigns && res.data.earned_campaigns.length > 0) {
+                showCampaignRewardModal(res.data.earned_campaigns);
+            } else {
+                App.flash(res.message || 'Check-in başarılı! 📍', 'success');
+                setTimeout(() => location.reload(), 800);
+            }
         } else {
             App.flash(res.error || 'Hata oluştu.', 'error');
             composeBtn.disabled = false;
             composeBtn.innerHTML = 'Post';
         }
     });
+
+    // ── Kampanya Ödül Modalı ──────────────────────────────
+    function showCampaignRewardModal(campaigns) {
+        // Varsa eski modalı kaldır
+        document.getElementById('campaignRewardOverlay')?.remove();
+
+        const overlay = document.createElement('div');
+        overlay.id = 'campaignRewardOverlay';
+        overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem;animation:fadeIn .3s ease';
+
+        let cardsHtml = campaigns.map(c => {
+            const rewardLabel = c.reward_text || c.title;
+            return `
+                <div style="background:linear-gradient(135deg,rgba(139,92,246,0.15),rgba(236,72,153,0.1));border:1px solid rgba(139,92,246,0.3);border-radius:16px;padding:1.5rem;text-align:center;">
+                    <div style="font-size:1.1rem;font-weight:700;color:#e2e8f0;margin-bottom:0.25rem;">${escapeHtml(c.title)}</div>
+                    ${c.reward_text ? `<div style="font-size:0.85rem;color:#a78bfa;margin-bottom:1rem;">${escapeHtml(c.reward_text)}</div>` : '<div style="margin-bottom:1rem;"></div>'}
+                    <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:#94a3b8;margin-bottom:0.5rem;">Ödül Kodun</div>
+                    <div id="campaignCode_${escapeHtml(c.code)}" 
+                         onclick="navigator.clipboard.writeText('${escapeHtml(c.code)}'); this.querySelector('.copy-hint').textContent='Kopyalandı!'; this.style.borderColor='#10b981';"
+                         style="font-family:monospace;font-size:1.6rem;font-weight:800;letter-spacing:0.2em;color:#a78bfa;background:rgba(139,92,246,0.1);border:2px dashed rgba(139,92,246,0.4);border-radius:12px;padding:0.75rem 1.5rem;cursor:pointer;transition:all 0.2s;">
+                        ${escapeHtml(c.code)}
+                        <div class="copy-hint" style="font-size:0.65rem;color:#64748b;margin-top:0.25rem;font-family:system-ui;letter-spacing:normal;">tıkla → kopyala</div>
+                    </div>
+                </div>`;
+        }).join('');
+
+        overlay.innerHTML = `
+            <div style="background:#1e293b;border:1px solid rgba(139,92,246,0.3);border-radius:24px;max-width:420px;width:100%;padding:2rem;position:relative;animation:slideUp .4s ease;box-shadow:0 25px 60px rgba(0,0,0,0.5),0 0 40px rgba(139,92,246,0.15);">
+                <!-- Confetti emoji header -->
+                <div style="text-align:center;font-size:3rem;margin-bottom:0.5rem;animation:bounce 0.6s ease;">🎉</div>
+                <h2 style="text-align:center;font-size:1.5rem;font-weight:800;color:#f1f5f9;margin:0 0 0.25rem;">Kampanya Kazandın!</h2>
+                <p style="text-align:center;font-size:0.85rem;color:#64748b;margin:0 0 1.5rem;">Check-in'in seni ödüllendirdi</p>
+                
+                <div style="display:flex;flex-direction:column;gap:1rem;margin-bottom:1.5rem;">
+                    ${cardsHtml}
+                </div>
+
+                <p style="text-align:center;font-size:0.75rem;color:#64748b;margin-bottom:1.25rem;">
+                    <span style="display:inline-flex;align-items:center;gap:4px;">
+                        <span class="material-symbols-outlined" style="font-size:14px;">info</span>
+                        Kodunu kasada göstererek ödülünü kullanabilirsin
+                    </span>
+                </p>
+
+                <button onclick="document.getElementById('campaignRewardOverlay').remove(); location.reload();"
+                        style="width:100%;padding:0.85rem;border:none;border-radius:14px;background:linear-gradient(135deg,#8b5cf6,#a855f7);color:white;font-size:0.95rem;font-weight:700;cursor:pointer;transition:all 0.2s;box-shadow:0 0 20px rgba(139,92,246,0.3);">
+                    Harika! 🎁
+                </button>
+            </div>
+        `;
+
+        document.body.appendChild(overlay);
+
+        // Click overlay dışına basınca kapat
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) {
+                overlay.remove();
+                location.reload();
+            }
+        });
+    }
 });
 </script>

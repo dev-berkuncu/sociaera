@@ -76,8 +76,28 @@ if ($result['ok']) {
     try {
         $campaignModel   = new CampaignModel();
         $earnedCampaigns = $campaignModel->checkAndAwardCampaigns(Auth::id(), $venueId);
+        $notifModel      = new NotificationModel();
         foreach ($earnedCampaigns as $ec) {
             $msg .= ' 🎁 Kampanya kazandın: ' . $ec['title'] . ' (Kod: ' . $ec['code'] . ')';
+
+            // Kullanıcıya kalıcı bildirim
+            $notifModel->create(
+                Auth::id(),
+                null,
+                'campaign_earned',
+                '🎁 "' . $ec['title'] . '" kampanyasını kazandın! Kodun: ' . $ec['code'] . ' — ' . $venue['name']
+            );
+
+            // Mekan sahibine bildirim
+            if (!empty($venue['created_by']) && (int)$venue['created_by'] !== Auth::id()) {
+                $currentUser = (new UserModel())->getById(Auth::id());
+                $notifModel->create(
+                    (int)$venue['created_by'],
+                    Auth::id(),
+                    'campaign_earned',
+                    ($currentUser['username'] ?? 'Bir kullanıcı') . ' "' . $ec['title'] . '" kampanyasını kazandı!'
+                );
+            }
         }
     } catch (\Throwable $e) {}
 
