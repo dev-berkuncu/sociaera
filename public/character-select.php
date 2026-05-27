@@ -2,19 +2,21 @@
 require_once __DIR__ . '/../app/Config/env.php';
 loadEnv(dirname(__DIR__) . '/.env');
 require_once __DIR__ . '/../app/Config/app.php';
+require_once __DIR__ . '/../app/Config/database.php';
 require_once __DIR__ . '/../app/Services/Logger.php';
 require_once __DIR__ . '/../app/Models/User.php';
 
-$characters = $_SESSION['oauth_characters'] ?? [];
-$userId = $_SESSION['oauth_user_id'] ?? null;
+$characters   = $_SESSION['oauth_characters'] ?? [];
+$gtaUserId    = $_SESSION['oauth_gta_user_id'] ?? null;
+$gtaUsername   = $_SESSION['oauth_gta_username'] ?? '';
 
 // Zaten giriş yapmış ve OAuth akışı yok ise dashboard'a yönlendir
-if (Auth::check() && !$userId) {
+if (Auth::check() && !$gtaUserId) {
     header('Location: ' . BASE_URL . '/dashboard');
     exit;
 }
 
-if (!$userId) {
+if (!$gtaUserId) {
     Auth::setFlash('error', 'Oturum bilgisi bulunamadı.');
     header('Location: ' . BASE_URL . '/login');
     exit;
@@ -34,22 +36,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($charId && $charName) {
         $userModel = new UserModel();
-        $userModel->updateCharacter($userId, $charId, $charName);
-        $user = $userModel->getById($userId);
 
-        // Hesap silinmiş olabilir
-        if (!$user) {
-            Auth::setFlash('error', 'Kullanıcı bulunamadı. Lütfen tekrar giriş yapın.');
-            unset($_SESSION['oauth_characters'], $_SESSION['oauth_user_id']);
-            header('Location: ' . BASE_URL . '/login');
+        // Karakter bazlı kullanıcı bul veya oluştur
+        $result = $userModel->findOrCreateByCharacter($gtaUserId, $gtaUsername, $charId, $charName);
+
+        if (!$result['ok']) {
+            Auth::setFlash('error', 'Hesap oluşturulamadı. Lütfen tekrar deneyin.');
+            header('Location: ' . BASE_URL . '/character-select');
             exit;
         }
 
+        $user = $result['user'];
+
         Auth::login($user);
         Csrf::regenerate();
-        unset($_SESSION['oauth_characters'], $_SESSION['oauth_user_id']);
-        Logger::info('Character selected', ['user_id' => $userId, 'char' => $charName]);
-        Auth::setFlash('success', $charName . ' olarak giriş yaptın! 🎭');
+        unset($_SESSION['oauth_characters'], $_SESSION['oauth_gta_user_id'], $_SESSION['oauth_gta_username']);
+
+        if ($result['is_new']) {
+            Logger::info('New character account created', ['user_id' => $user['id'], 'char' => $charName, 'char_id' => $charId]);
+            Auth::setFlash('success', 'Hoş geldin ' . $charName . '! 🎭 Yeni hesabın oluşturuldu.');
+        } else {
+            Logger::info('Character login', ['user_id' => $user['id'], 'char' => $charName]);
+            Auth::setFlash('success', $charName . ' olarak giriş yaptın! 🎭');
+        }
+
         header('Location: ' . BASE_URL . '/dashboard');
         exit;
     } elseif ($charId && !$charName) {

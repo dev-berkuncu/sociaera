@@ -92,28 +92,11 @@ Logger::info('OAuth user fetched', [
     'char_count' => count($characters),
 ]);
 
-// 4. DB'de kullanıcı oluştur veya bul
-$userModel = new UserModel();
-$result = $userModel->findOrCreateByOAuth(
-    $gtaUser['id'],
-    $gtaUser['username'] ?? 'user_' . $gtaUser['id'],
-    '' // GTA World API e-posta döndürmüyor
-);
+// 4. Session'a kaydet — kullanıcı oluşturma karakter seçimine ertelenir
+$_SESSION['oauth_characters']   = $characters;
+$_SESSION['oauth_gta_user_id']  = (int)$gtaUser['id'];
+$_SESSION['oauth_gta_username'] = $gtaUser['username'] ?? 'user_' . $gtaUser['id'];
 
-if (!$result['ok']) {
-    Auth::setFlash('error', 'Hesap oluşturulamadı: ' . ($result['error'] ?? 'Bilinmeyen hata'));
-    header('Location: ' . BASE_URL . '/login');
-    exit;
-}
-
-// 5. Session'a kaydet
-$_SESSION['oauth_characters'] = $characters;
-$_SESSION['oauth_user_id'] = $result['user']['id'];
-
-// 6. Karakter zaten seçilmiş olsa bile, kullanıcının her girişte karakter seçebilmesi için
-// otomatik giriş adımlarını (Step 6 ve Step 7) kaldırıyoruz.
-// Kullanıcı her login olduğunda character-select sayfasına yönlendirilecek.
-
-// 8. Birden fazla karakter → seçim sayfası
+// 5. Karakter seçim sayfasına yönlendir
 header('Location: ' . BASE_URL . '/character-select');
 exit;

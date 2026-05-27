@@ -64,16 +64,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             try {
                 $notifModel = new NotificationModel();
                 $userIds = $campaignModel->getVenueCheckinUserIds($venueId, Auth::id());
-                $rewardText = CampaignModel::formatReward($postData + ['reward_type' => $postData['reward_type'], 'reward_value' => $postData['reward_value'], 'reward_text' => $postData['reward_text']]);
+                $rewardText = CampaignModel::formatReward($postData);
                 foreach ($userIds as $uid) {
                     $notifModel->create(
                         (int)$uid,
                         Auth::id(),
                         'new_campaign',
-                        '🎯 ' . escape($venue['name']) . ' yeni kampanya ekledi: "' . escape($postData['title']) . '" — ' . $rewardText
+                        '🎯 ' . $venue['name'] . ' yeni kampanya ekledi: "' . $postData['title'] . '" — ' . $rewardText
                     );
                 }
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) {
+                error_log('Campaign notification error: ' . $e->getMessage());
+            }
 
             Auth::setFlash('success', 'Kampanya oluşturuldu!');
             break;

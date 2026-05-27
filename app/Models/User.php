@@ -154,6 +154,68 @@ class UserModel
         $stmt->execute([$characterId, $characterName, $characterName, $tag, $userId]);
     }
 
+    /**
+     * Karakter bazlı kullanıcı bul veya oluştur.
+     * Aynı GTA UCP hesabı altındaki farklı karakterler bağımsız hesaplardır.
+     */
+    public function findOrCreateByCharacter(int $gtaUserId, string $gtaUsername, int $characterId, string $characterName): array
+    {
+        // Önce bu karakter ile kayıtlı kullanıcıyı bul
+        $stmt = $this->db->prepare("SELECT * FROM users WHERE gta_user_id = ? AND gta_character_id = ?");
+        $stmt->execute([$gtaUserId, $characterId]);
+        $user = $stmt->fetch();
+
+        if ($user) {
+            // Mevcut karakter hesabı — giriş yap
+            $this->db->prepare("UPDATE users SET last_login_at = NOW() WHERE id = ?")->execute([$user['id']]);
+            return ['ok' => true, 'user' => $user, 'is_new' => false];
+        }
+
+        // Bu karakter için yeni hesap oluştur
+        $username = $characterName;
+        $tag = strtolower(preg_replace('/[^a-zA-Z0-9_]/', '', str_replace(' ', '_', $characterName)));
+
+        // Username/tag çakışma kontrolü
+        $counter = 0;
+        $originalTag = $tag;
+        $originalUsername = $username;
+        while (true) {
+            $checkName = $counter > 0 ? $originalUsername . $counter : $username;
+            $checkTag  = $counter > 0 ? $originalTag . $counter : $tag;
+            $stmt = $this->db->prepare("SELECT id FROM users WHERE username = ? OR tag = ?");
+            $stmt->execute([$checkName, $checkTag]);
+            if (!$stmt->fetch()) {
+                $username = $checkName;
+                $tag = $checkTag;
+                break;
+            }
+            $counter++;
+        }
+
+        $randomPass = password_hash(bin2hex(random_bytes(16)), PASSWORD_DEFAULT);
+
+        $stmt = $this->db->prepare("
+            INSERT INTO users (username, tag, email, password_hash, gta_user_id, gta_username, gta_character_id, gta_character_name, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())
+        ");
+        $stmt->execute([
+            $username,
+            $tag,
+            $username . '@gta.local',
+            $randomPass,
+            $gtaUserId,
+            $gtaUsername,
+            $characterId,
+            $characterName,
+        ]);
+
+        $userId = (int) $this->db->lastInsertId();
+        $this->db->prepare("INSERT INTO wallets (user_id, balance) VALUES (?, 0)")->execute([$userId]);
+
+        $user = $this->getById($userId);
+        return ['ok' => true, 'user' => $user, 'is_new' => true];
+    }
+
     // ── CRUD ──────────────────────────────────────────────
 
     public function getById(int $id): ?array
