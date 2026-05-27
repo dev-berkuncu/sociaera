@@ -14,6 +14,10 @@ Auth::requireLogin();
 $db = Database::getConnection();
 $campaignModel = new CampaignModel();
 
+// Premium erken erişim kontrolü
+$isPremium = UserModel::isPremiumActive((new UserModel())->getById(Auth::id()));
+$earlyAccessHours = $isPremium ? 24 : 0;
+
 // ── Aktif kampanyalar (tüm mekanlardan) ──────────────────
 $stmtActive = $db->prepare("
     SELECT vc.*, v.name as venue_name, v.id as venue_id, v.cover_image, v.image as venue_image, v.category,
@@ -23,13 +27,13 @@ $stmtActive = $db->prepare("
     LEFT JOIN campaign_redemptions cr ON cr.campaign_id = vc.id
     WHERE vc.is_active = 1
       AND v.status = 'approved'
-      AND (vc.starts_at IS NULL OR vc.starts_at <= NOW())
+      AND (vc.starts_at IS NULL OR vc.starts_at <= DATE_ADD(NOW(), INTERVAL ? HOUR))
       AND (vc.ends_at IS NULL OR vc.ends_at >= NOW())
       AND (vc.max_redemptions IS NULL OR (SELECT COUNT(*) FROM campaign_redemptions WHERE campaign_id = vc.id) < vc.max_redemptions)
     GROUP BY vc.id
     ORDER BY vc.created_at DESC
 ");
-$stmtActive->execute();
+$stmtActive->execute([$earlyAccessHours]);
 $activeCampaigns = $stmtActive->fetchAll();
 
 // ── Süresi dolmuş / pasif kampanyalar ───────────────────
@@ -124,6 +128,9 @@ require_once __DIR__ . '/partials/app_header.php';
                             <h3 class="font-bold text-on-surface"><?php echo escape($c['title']); ?></h3>
                             <?php if ($hasEarned): ?>
                                 <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">✓ Kazanıldı</span>
+                            <?php endif; ?>
+                            <?php if ($isPremium && $c['starts_at'] && strtotime($c['starts_at']) > time()): ?>
+                                <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-blue-500/10 text-blue-400 border border-blue-500/20">Erken Erişim 💎</span>
                             <?php endif; ?>
                         </div>
 

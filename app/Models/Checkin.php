@@ -20,6 +20,12 @@ class CheckinModel
         $settings = new SettingsModel();
         $cooldown = (int) $settings->get('checkin_cooldown', 300);
 
+        // Premium kullanıcılar için kısa cooldown
+        $currentUser = (new UserModel())->getById($userId);
+        if (UserModel::isPremiumActive($currentUser)) {
+            $cooldown = (int) ceil($cooldown / 2);
+        }
+
         $stmt = $this->db->prepare("
             SELECT id FROM checkins
             WHERE user_id = ? AND venue_id = ? AND is_deleted = 0
@@ -34,6 +40,11 @@ class CheckinModel
 
         // Rate limit kontrolü
         $rateLimit = (int) $settings->get('checkin_rate_limit', 10);
+        // Premium kullanıcılar için yüksek rate limit
+        if (!isset($currentUser)) $currentUser = (new UserModel())->getById($userId);
+        if (UserModel::isPremiumActive($currentUser)) {
+            $rateLimit = (int) ceil($rateLimit * 2.5);
+        }
         $rateWindow = (int) $settings->get('checkin_rate_window', 3600);
 
         $stmt = $this->db->prepare("

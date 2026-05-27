@@ -35,6 +35,18 @@ if ($username) {
 if (!$profileUser) { Response::notFound('Kullanıcı bulunamadı.'); }
 
 $isOwn = (int)$profileUser['id'] === Auth::id();
+
+// Profil teması
+$profileTheme = $profileUser['profile_theme'] ?? 'default';
+$themeAccents = [
+    'default' => '#FF6B35',
+    'ocean'   => '#0EA5E9',
+    'sunset'  => '#F59E0B',
+    'emerald' => '#10B981',
+    'purple'  => '#8B5CF6',
+    'crimson' => '#E11D48',
+];
+$accentColor = $themeAccents[$profileTheme] ?? '#FF6B35';
 $stats = $userModel->getStats($profileUser['id']);
 $isFollowing = !$isOwn ? $userModel->isFollowing(Auth::id(), $profileUser['id']) : false;
 $favVenue = $userModel->getFavoriteVenue($profileUser['id']);
@@ -76,6 +88,94 @@ try {
     $miniLeaderboard = (new LeaderboardModel())->getTopUsers(5);
 } catch (Exception $e) {}
 
+// Profil görüntüleme kaydı (başkasının profili ise)
+$profileViewCount = 0;
+$profileViewers = [];
+$db = Database::getConnection();
+if (!$isOwn && Auth::check()) {
+    try {
+        // Görüntülemeyi kaydet (günde 1 kez, aynı kişi)
+        $db->prepare("
+            INSERT INTO profile_views (profile_user_id, viewer_user_id)
+            SELECT ?, ? FROM DUAL
+            WHERE NOT EXISTS (
+                SELECT 1 FROM profile_views 
+                WHERE profile_user_id = ? AND viewer_user_id = ? 
+                AND viewed_at > DATE_SUB(NOW(), INTERVAL 1 DAY)
+            )
+        ")->execute([$profileUser['id'], Auth::id(), $profileUser['id'], Auth::id()]);
+    } catch (\Throwable $e) {} // Tablo yoksa sessizce devam et
+}
+
+// Premium: Kim baktı istatistikleri (kendi profilim ise)
+if ($isOwn && UserModel::isPremiumActive($profileUser)) {
+    try {
+        $stmt = $db->prepare("SELECT COUNT(DISTINCT viewer_user_id) FROM profile_views WHERE profile_user_id = ? AND viewed_at > DATE_SUB(NOW(), INTERVAL 7 DAY)");
+        $stmt->execute([$profileUser['id']]);
+        $profileViewCount = (int) $stmt->fetchColumn();
+
+        $stmt = $db->prepare("
+            SELECT u.id, u.username, u.tag, u.avatar, u.is_premium, pv.viewed_at
+            FROM profile_views pv
+            JOIN users u ON pv.viewer_user_id = u.id
+            WHERE pv.profile_user_id = ?
+            AND pv.viewed_at > DATE_SUB(NOW(), INTERVAL 7 DAY)
+            GROUP BY u.id
+            ORDER BY MAX(pv.viewed_at) DESC
+            LIMIT 10
+        ");
+        $stmt->execute([$profileUser['id']]);
+        $profileViewers = $stmt->fetchAll();
+    } catch (\Throwable $e) {}
+}
+
+// Premium detaylı istatistikler
+$premiumStats = [];
+if (UserModel::isPremiumActive($profileUser)) {
+    try {
+        // Haftalık trend (son 4 hafta)
+        $stmt = $db->prepare("
+            SELECT 
+                YEARWEEK(created_at, 1) as yw,
+                MIN(DATE(created_at)) as week_start,
+                COUNT(*) as cnt
+            FROM checkins 
+            WHERE user_id = ? AND is_deleted = 0 
+            AND created_at > DATE_SUB(NOW(), INTERVAL 4 WEEK)
+            GROUP BY YEARWEEK(created_at, 1)
+            ORDER BY yw ASC
+        ");
+        $stmt->execute([$profileUser['id']]);
+        $premiumStats['weekly_trend'] = $stmt->fetchAll();
+
+        // En aktif gün
+        $stmt = $db->prepare("
+            SELECT DAYNAME(created_at) as day_name, COUNT(*) as cnt
+            FROM checkins WHERE user_id = ? AND is_deleted = 0
+            GROUP BY DAYNAME(created_at)
+            ORDER BY cnt DESC LIMIT 1
+        ");
+        $stmt->execute([$profileUser['id']]);
+        $premiumStats['most_active_day'] = $stmt->fetch();
+
+        // Check-in streak (ardışık gün)
+        $stmt = $db->prepare("
+            SELECT DISTINCT DATE(created_at) as d 
+            FROM checkins WHERE user_id = ? AND is_deleted = 0 
+            ORDER BY d DESC LIMIT 60
+        ");
+        $stmt->execute([$profileUser['id']]);
+        $dates = $stmt->fetchAll(\PDO::FETCH_COLUMN);
+        $streak = 0;
+        $today = new \DateTime();
+        foreach ($dates as $i => $d) {
+            $expected = (clone $today)->modify("-{$i} days")->format('Y-m-d');
+            if ($d === $expected) { $streak++; } else { break; }
+        }
+        $premiumStats['streak'] = $streak;
+    } catch (\Throwable $e) {}
+}
+
 $pageTitle = $profileUser['username'];
 $activeNav = 'profile';
 require_once __DIR__ . '/partials/app_header.php';
@@ -104,7 +204,7 @@ require_once __DIR__ . '/partials/app_header.php';
             <?php if (bannerUrl($profileUser['banner'] ?? null)): ?>
                 <img src="<?php echo bannerUrl($profileUser['banner']); ?>" class="w-full h-full object-cover" width="800" height="288">
             <?php else: ?>
-                <div class="w-full h-full bg-gradient-to-r from-primary-container/40 to-surface-container-high"></div>
+                <div class="w-full h-full" style="background: linear-gradient(to right, <?php echo $accentColor; ?>66, #1E293B);"></div>
             <?php endif; ?>
         </div>
         
@@ -141,14 +241,14 @@ require_once __DIR__ . '/partials/app_header.php';
             </div>
             
             <div class="mt-2">
-                <h1 class="text-3xl md:text-4xl font-black <?php echo $isPremium ? 'text-white drop-shadow-md' : 'text-on-surface'; ?> tracking-tight flex items-center gap-2">
+                <h1 class="text-3xl md:text-4xl font-black <?php echo $isPremium ? 'drop-shadow-md' : ''; ?> tracking-tight flex items-center gap-2" style="color: <?php echo ($profileTheme !== 'default' && $isPremium) ? $accentColor : ''; ?>">
                     <?php echo escape($profileUser['username']); ?>
                     <?php if ($isPremium): ?>
                         <span class="material-symbols-outlined text-[#7bd0ff] text-[24px]" title="Premium">verified</span>
                     <?php endif; ?>
                 </h1>
                 <?php if (!empty($profileUser['tag'])): ?>
-                    <span class="text-primary-container font-medium text-lg block mt-1">@<?php echo escape($profileUser['tag']); ?></span>
+                    <span class="font-medium text-lg block mt-1" style="color: <?php echo $accentColor; ?>">@<?php echo escape($profileUser['tag']); ?></span>
                 <?php endif; ?>
             </div>
             
@@ -263,6 +363,93 @@ require_once __DIR__ . '/partials/app_header.php';
                 <span class="text-[10px] text-slate-400 uppercase tracking-widest font-semibold">Son 7 Gün</span>
             </div>
         </div>
+
+        <!-- Premium İstatistikler 💎 -->
+        <?php if (!empty($premiumStats)): ?>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+            <?php if (!empty($premiumStats['streak'])): ?>
+            <div class="bg-gradient-to-br from-amber-500/10 to-orange-500/5 border border-amber-500/20 rounded-xl p-5 flex flex-col items-center justify-center gap-1">
+                <span class="material-symbols-outlined text-amber-400 text-[28px]">local_fire_department</span>
+                <span class="text-2xl font-black text-amber-400"><?php echo $premiumStats['streak']; ?></span>
+                <span class="text-[10px] text-amber-400/70 uppercase tracking-widest font-semibold">Gün Streak 🔥</span>
+            </div>
+            <?php endif; ?>
+
+            <?php if (!empty($premiumStats['most_active_day'])): ?>
+            <?php
+                $dayNames = ['Monday'=>'Pazartesi','Tuesday'=>'Salı','Wednesday'=>'Çarşamba','Thursday'=>'Perşembe','Friday'=>'Cuma','Saturday'=>'Cumartesi','Sunday'=>'Pazar'];
+                $dayTr = $dayNames[$premiumStats['most_active_day']['day_name']] ?? $premiumStats['most_active_day']['day_name'];
+            ?>
+            <div class="bg-gradient-to-br from-purple-500/10 to-pink-500/5 border border-purple-500/20 rounded-xl p-5 flex flex-col items-center justify-center gap-1">
+                <span class="material-symbols-outlined text-purple-400 text-[28px]">today</span>
+                <span class="text-lg font-black text-purple-400"><?php echo $dayTr; ?></span>
+                <span class="text-[10px] text-purple-400/70 uppercase tracking-widest font-semibold">En Aktif Gün</span>
+            </div>
+            <?php endif; ?>
+
+            <?php if ($isOwn && $profileViewCount > 0): ?>
+            <div class="bg-gradient-to-br from-blue-500/10 to-cyan-500/5 border border-blue-500/20 rounded-xl p-5 flex flex-col items-center justify-center gap-1">
+                <span class="material-symbols-outlined text-blue-400 text-[28px]">visibility</span>
+                <span class="text-2xl font-black text-blue-400"><?php echo $profileViewCount; ?></span>
+                <span class="text-[10px] text-blue-400/70 uppercase tracking-widest font-semibold">Profil Ziyaretçi (7g)</span>
+            </div>
+            <?php endif; ?>
+        </div>
+
+        <!-- Haftalık Trend -->
+        <?php if (!empty($premiumStats['weekly_trend'])): ?>
+        <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-[#7bd0ff]/20 rounded-xl p-6">
+            <h3 class="text-base font-bold text-on-surface mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-[18px] text-[#7bd0ff]">trending_up</span>
+                Haftalık Trend
+                <span class="text-[10px] px-2 py-0.5 rounded-full bg-[#7bd0ff]/10 text-[#7bd0ff] font-bold border border-[#7bd0ff]/20">Premium 💎</span>
+            </h3>
+            <div class="flex items-end gap-2 h-24">
+                <?php 
+                $maxCnt = max(array_column($premiumStats['weekly_trend'], 'cnt'));
+                foreach ($premiumStats['weekly_trend'] as $wt):
+                    $heightPct = $maxCnt > 0 ? round(($wt['cnt'] / $maxCnt) * 100) : 10;
+                    $weekLabel = date('d M', strtotime($wt['week_start']));
+                ?>
+                <div class="flex-1 flex flex-col items-center gap-1">
+                    <span class="text-xs font-bold text-[#7bd0ff]"><?php echo $wt['cnt']; ?></span>
+                    <div class="w-full bg-[#7bd0ff]/20 rounded-t-lg transition-all" style="height: <?php echo max(8, $heightPct); ?>%">
+                        <div class="w-full h-full bg-gradient-to-t from-[#7bd0ff]/60 to-[#7bd0ff]/30 rounded-t-lg"></div>
+                    </div>
+                    <span class="text-[9px] text-slate-500"><?php echo $weekLabel; ?></span>
+                </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <?php endif; ?>
+        <?php endif; ?>
+
+        <!-- Kim Profilime Baktı (Premium) -->
+        <?php if ($isOwn && !empty($profileViewers)): ?>
+        <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-[#7bd0ff]/20 rounded-xl overflow-hidden">
+            <div class="px-6 py-4 border-b border-white/5 flex items-center justify-between">
+                <h3 class="text-base font-bold text-on-surface flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[18px] text-[#7bd0ff]">visibility</span>
+                    Kim Profilime Baktı
+                    <span class="text-[10px] px-2 py-0.5 rounded-full bg-[#7bd0ff]/10 text-[#7bd0ff] font-bold border border-[#7bd0ff]/20">Premium 💎</span>
+                </h3>
+                <span class="text-xs text-slate-500">Son 7 gün</span>
+            </div>
+            <div class="divide-y divide-white/5">
+                <?php foreach ($profileViewers as $pv): ?>
+                <a href="<?php echo BASE_URL; ?>/profile?u=<?php echo escape($pv['tag'] ?: $pv['username']); ?>" class="flex items-center gap-3 px-6 py-3 hover:bg-white/[0.03] transition-colors">
+                    <?php $pvAvatar = safeAvatarUrl($pv['avatar'] ?? null, $pv['username']); ?>
+                    <img src="<?php echo $pvAvatar; ?>" class="w-9 h-9 rounded-full object-cover border border-white/10" width="36" height="36" loading="lazy">
+                    <div class="flex-grow min-w-0">
+                        <span class="font-semibold text-on-surface text-sm truncate block"><?php echo escape($pv['username']); ?></span>
+                        <span class="text-xs text-slate-500">@<?php echo escape($pv['tag'] ?: $pv['username']); ?></span>
+                    </div>
+                    <span class="text-[10px] text-slate-600"><?php echo timeAgo($pv['viewed_at']); ?></span>
+                </a>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <?php endif; ?>
 
         <!-- En Çok Gidilen Mekan + Kategori -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">

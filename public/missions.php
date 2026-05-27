@@ -108,6 +108,9 @@ require_once __DIR__ . '/partials/app_header.php';
                 <div class="flex-grow min-w-0">
                     <div class="flex items-center gap-2 mb-1">
                         <span class="font-bold text-on-surface <?php echo $b['earned'] ? '' : 'text-slate-300'; ?>"><?php echo escape($b['name']); ?></span>
+                        <?php if (!empty($b['premium_only'])): ?>
+                        <span class="bg-blue-500/15 text-blue-400 text-[9px] font-black px-1.5 py-0.5 rounded border border-blue-500/25">💎 Premium</span>
+                        <?php endif; ?>
                         <?php if ($b['total_count'] > 0): ?>
                         <span class="bg-[#7bd0ff]/15 text-[#7bd0ff] text-[9px] font-black px-1.5 py-0.5 rounded border border-[#7bd0ff]/25">x<?php echo $b['total_count']; ?></span>
                         <?php endif; ?>

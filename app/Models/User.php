@@ -239,6 +239,13 @@ class UserModel
         $email    = trim($data['email'] ?? '');
         $bio      = trim($data['bio'] ?? '');
 
+        // Premium kullanıcılar 500 karakter, normal kullanıcılar 280 karakter
+        $currentUser = (new self())->getById($userId);
+        $maxBio = self::isPremiumActive($currentUser) ? 500 : 280;
+        if (mb_strlen($bio) > $maxBio) {
+            $bio = mb_substr($bio, 0, $maxBio);
+        }
+
         if (empty($username) || empty($email)) {
             return ['ok' => false, 'error' => 'Kullanıcı adı ve e-posta gereklidir.'];
         }
@@ -611,6 +618,14 @@ class UserModel
         } catch (\Throwable $e) {
             // badge kolonu yoksa sessizce geç
         }
+    }
+
+    public function updateField(int $userId, string $field, ?string $value): void
+    {
+        $allowed = ['profile_theme', 'badge'];
+        if (!in_array($field, $allowed, true)) return;
+        $stmt = $this->db->prepare("UPDATE users SET {$field} = ? WHERE id = ?");
+        $stmt->execute([$value, $userId]);
     }
 
     public static function availableBadges(): array

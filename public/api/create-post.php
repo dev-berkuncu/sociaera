@@ -39,8 +39,12 @@ if (!$venue || $venue['status'] !== 'approved') Response::error('Geçersiz veya 
 $imageName = null;
 if (!empty($_FILES['image']['name'])) {
     $uploader = new ImageUploader();
+    $uploadMaxSize = MAX_POST_SIZE; // 10MB default
+    if (UserModel::isPremiumActive((new UserModel())->getById(Auth::id()))) {
+        $uploadMaxSize = 20 * 1024 * 1024; // 20MB for premium
+    }
     $result = $uploader->upload($_FILES['image'], 'posts', [
-        'maxSize'      => MAX_POST_SIZE,
+        'maxSize'      => $uploadMaxSize,
         'outputFormat' => 'webp',
         'quality'      => 80,
     ]);
@@ -64,6 +68,20 @@ if ($result['ok']) {
             $newBadges[] = ['name' => $b['name'], 'icon' => $b['icon'], 'color' => $b['color']];
         }
     } catch (\Throwable $e) {}
+
+    // Premium kullanıcılar 2x check-in ödülü
+    try {
+        $checkinReward = 10; // Base reward per check-in
+        $rewardUser = (new UserModel())->getById(Auth::id());
+        if (UserModel::isPremiumActive($rewardUser)) {
+            $checkinReward *= 2;
+        }
+        $walletModel = new WalletModel();
+        $walletModel->deposit(Auth::id(), $checkinReward, 'Check-in ödülü' . (UserModel::isPremiumActive($rewardUser) ? ' (2x Premium)' : ''));
+    } catch (\Throwable $e) {
+        error_log('Check-in wallet reward error: ' . $e->getMessage());
+    }
+
     
     $msg = 'Check-in başarılı! 📍';
     if (!empty($newBadges)) {

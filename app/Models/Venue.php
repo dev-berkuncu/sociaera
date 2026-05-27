@@ -280,4 +280,45 @@ class VenueModel
             'diger'     => 'Diğer',
         ];
     }
+    // ── Favori Mekanlar (Premium) ────────────────────────
+
+    public function addFavorite(int $userId, int $venueId): void
+    {
+        $this->db->prepare("INSERT IGNORE INTO venue_favorites (user_id, venue_id) VALUES (?, ?)")
+                 ->execute([$userId, $venueId]);
+    }
+
+    public function removeFavorite(int $userId, int $venueId): void
+    {
+        $this->db->prepare("DELETE FROM venue_favorites WHERE user_id = ? AND venue_id = ?")
+                 ->execute([$userId, $venueId]);
+    }
+
+    public function isFavorited(int $userId, int $venueId): bool
+    {
+        $stmt = $this->db->prepare("SELECT 1 FROM venue_favorites WHERE user_id = ? AND venue_id = ?");
+        $stmt->execute([$userId, $venueId]);
+        return (bool) $stmt->fetch();
+    }
+
+    public function getUserFavorites(int $userId): array
+    {
+        $stmt = $this->db->prepare("
+            SELECT v.*, vf.created_at as favorited_at,
+                   (SELECT COUNT(*) FROM checkins WHERE venue_id = v.id AND is_deleted = 0) as checkin_count
+            FROM venue_favorites vf
+            JOIN venues v ON vf.venue_id = v.id
+            WHERE vf.user_id = ? AND v.status = 'approved'
+            ORDER BY vf.created_at DESC
+        ");
+        $stmt->execute([$userId]);
+        return $stmt->fetchAll();
+    }
+
+    public function getFavoriteCount(int $venueId): int
+    {
+        $stmt = $this->db->prepare("SELECT COUNT(*) FROM venue_favorites WHERE venue_id = ?");
+        $stmt->execute([$venueId]);
+        return (int) $stmt->fetchColumn();
+    }
 }

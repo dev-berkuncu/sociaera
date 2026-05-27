@@ -89,6 +89,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $user = $userModel->getById(Auth::id());
             }
         }
+    } elseif ($action === 'update_theme') {
+        if (!UserModel::isPremiumActive($user)) {
+            $error = 'Bu özellik Premium üyelere özeldir.';
+        } else {
+            $theme = $_POST['theme'] ?? 'default';
+            $validThemes = ['default', 'ocean', 'sunset', 'emerald', 'purple', 'crimson'];
+            if (!in_array($theme, $validThemes)) $theme = 'default';
+            $userModel->updateField(Auth::id(), 'profile_theme', $theme);
+            $success = 'Profil teması güncellendi! 🎨';
+            $user = $userModel->getById(Auth::id());
+        }
     }
 }
 
@@ -231,6 +242,60 @@ require_once __DIR__ . '/partials/app_header.php';
     </div>
     <?php endif; ?>
 
+    <!-- Profil Teması (Premium) -->
+    <?php
+    $themes = [
+        'default'  => ['label' => 'Varsayılan', 'colors' => ['#FF6B35', '#1E293B'], 'gradient' => 'from-[#FF6B35] to-[#E05520]'],
+        'ocean'    => ['label' => 'Okyanus', 'colors' => ['#0EA5E9', '#0284C7'], 'gradient' => 'from-[#0EA5E9] to-[#0369A1]'],
+        'sunset'   => ['label' => 'Gün Batımı', 'colors' => ['#F59E0B', '#EF4444'], 'gradient' => 'from-[#F59E0B] to-[#EF4444]'],
+        'emerald'  => ['label' => 'Zümrüt', 'colors' => ['#10B981', '#059669'], 'gradient' => 'from-[#10B981] to-[#047857]'],
+        'purple'   => ['label' => 'Mor', 'colors' => ['#8B5CF6', '#7C3AED'], 'gradient' => 'from-[#8B5CF6] to-[#6D28D9]'],
+        'crimson'  => ['label' => 'Kızıl', 'colors' => ['#E11D48', '#BE123C'], 'gradient' => 'from-[#E11D48] to-[#9F1239]'],
+    ];
+    $currentTheme = $user['profile_theme'] ?? 'default';
+    ?>
+    <?php if (UserModel::isPremiumActive($user)): ?>
+    <div class="bg-[#1E293B]/90 backdrop-blur-[20px] border border-[#7bd0ff]/40 rounded-2xl p-6 md:p-8 shadow-[0_0_30px_-5px_rgba(123,208,255,0.2)] relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-[#7bd0ff]/5 to-transparent pointer-events-none"></div>
+        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-30 mix-blend-overlay pointer-events-none"></div>
+        
+        <h2 class="text-2xl font-black flex items-center gap-2 mb-2 text-white drop-shadow-md relative z-10">
+            <span class="material-symbols-outlined text-[#7bd0ff] text-[28px]">palette</span> Profil Teması
+            <span class="bg-[#7bd0ff]/20 text-[#7bd0ff] text-[10px] font-black px-2 py-0.5 rounded border border-[#7bd0ff]/30 uppercase tracking-widest ml-2 shadow-[0_0_10px_rgba(123,208,255,0.3)]">Premium</span>
+        </h2>
+        <p class="text-slate-300 text-sm mb-6 relative z-10 font-medium">Profilinin renk temasını seç. Seçtiğin tema profil sayfanda görünecek.</p>
+        <form method="POST" class="relative z-10">
+            <?php echo csrfField(); ?>
+            <input type="hidden" name="action" value="update_theme">
+            <input type="hidden" name="theme" id="theme_input" value="<?php echo escape($currentTheme); ?>">
+            <div class="grid grid-cols-3 sm:grid-cols-6 gap-3 mb-6">
+                <?php foreach ($themes as $key => $theme): ?>
+                <button type="button" onclick="document.getElementById('theme_input').value='<?php echo $key; ?>';document.querySelectorAll('[data-theme-card]').forEach(c=>c.classList.remove('ring-2','ring-[#7bd0ff]','shadow-[0_0_15px_rgba(123,208,255,0.3)]'));this.querySelector('[data-theme-card]').classList.add('ring-2','ring-[#7bd0ff]','shadow-[0_0_15px_rgba(123,208,255,0.3)]')" class="group">
+                    <div data-theme-card class="flex flex-col items-center gap-2 p-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition-all <?php echo $currentTheme === $key ? 'ring-2 ring-[#7bd0ff] shadow-[0_0_15px_rgba(123,208,255,0.3)]' : ''; ?>">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br <?php echo $theme['gradient']; ?> shadow-lg"></div>
+                        <span class="text-[10px] text-slate-300 font-bold tracking-wide"><?php echo $theme['label']; ?></span>
+                    </div>
+                </button>
+                <?php endforeach; ?>
+            </div>
+            <button type="submit" class="bg-gradient-to-r from-[#7bd0ff]/20 to-[#7bd0ff]/10 text-[#7bd0ff] px-8 py-3 rounded-xl font-black border border-[#7bd0ff]/40 hover:bg-[#7bd0ff]/30 transition-all active:scale-95 w-full sm:w-auto shadow-[0_0_20px_rgba(123,208,255,0.15)] flex justify-center items-center gap-2">
+                <span class="material-symbols-outlined text-[20px]">save</span> Temayı Kaydet
+            </button>
+        </form>
+    </div>
+    <?php else: ?>
+    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl p-6 md:p-8 shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)] relative overflow-hidden group">
+        <div class="absolute inset-0 bg-gradient-to-br from-transparent via-[#7bd0ff]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+        <h2 class="text-xl font-bold flex items-center gap-2 mb-4 text-on-surface">
+            <span class="material-symbols-outlined text-slate-500 text-[24px]">palette</span> Profil Teması
+        </h2>
+        <p class="text-slate-400 text-sm mb-6 leading-relaxed">Profil temanı değiştirmek ve sayfanı kişiselleştirmek için Premium üye olman gerekir.</p>
+        <a href="<?php echo BASE_URL; ?>/premium" class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#7bd0ff]/20 to-[#7bd0ff]/10 text-[#7bd0ff] px-6 py-3 rounded-xl font-black text-sm border border-[#7bd0ff]/30 hover:bg-[#7bd0ff]/30 transition-all hover:shadow-[0_0_20px_rgba(123,208,255,0.2)]">
+            <span class="material-symbols-outlined text-[18px]">diamond</span> Premium'a Geç
+        </a>
+    </div>
+    <?php endif; ?>
+
     <!-- Profil Bilgileri -->
     <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl p-6 md:p-8 shadow-[0_15px_30px_-15px_rgba(15,23,42,0.5)]">
         <h2 class="text-xl font-bold flex items-center gap-2 mb-6 text-on-surface"><span class="material-symbols-outlined text-primary-container text-[24px]">contact_mail</span> Profil Bilgileri</h2>
@@ -263,10 +328,11 @@ require_once __DIR__ . '/partials/app_header.php';
             
             <div class="flex flex-col gap-2">
                 <label class="text-sm font-bold text-slate-300 ml-1">Biyografi</label>
-                <textarea name="bio" rows="3" maxlength="280" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-on-surface focus:border-primary-container focus:bg-white/10 outline-none transition-all shadow-inner resize-y"><?php echo escape($user['bio'] ?? ''); ?></textarea>
+                <?php $maxBio = UserModel::isPremiumActive($user) ? 500 : 280; ?>
+                <textarea name="bio" rows="3" maxlength="<?php echo $maxBio; ?>" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-on-surface focus:border-primary-container focus:bg-white/10 outline-none transition-all shadow-inner resize-y"><?php echo escape($user['bio'] ?? ''); ?></textarea>
                 <div class="text-xs text-slate-500 font-medium ml-1 flex items-center justify-between">
                     <span>Kendinizden kısaca bahsedin.</span>
-                    <span>Maks 280 karakter</span>
+                    <span><?php echo $maxBio === 500 ? 'Maks 500 karakter (Premium 💎)' : 'Maks 280 karakter'; ?></span>
                 </div>
             </div>
             

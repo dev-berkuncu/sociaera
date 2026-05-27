@@ -157,6 +157,38 @@ class BadgeModel
                 'color' => '#22d3ee',
                 'goal'  => 50,
             ],
+            'vip' => [
+                'name'  => 'VIP',
+                'desc'  => 'Premium üye ol',
+                'icon'  => 'diamond',
+                'color' => '#60A5FA',
+                'goal'  => 1,
+                'premium_only' => true,
+            ],
+            'high_roller' => [
+                'name'  => 'High Roller',
+                'desc'  => 'Premium\'ken 50 check-in yap',
+                'icon'  => 'casino',
+                'color' => '#FBBF24',
+                'goal'  => 50,
+                'premium_only' => true,
+            ],
+            'socialite' => [
+                'name'  => 'Sosyetik',
+                'desc'  => 'Premium\'ken 10 farklı mekan keşfet',
+                'icon'  => 'flare',
+                'color' => '#C084FC',
+                'goal'  => 10,
+                'premium_only' => true,
+            ],
+            'diamond_life' => [
+                'name'  => 'Diamond Life',
+                'desc'  => '30 gün boyunca premium ol',
+                'icon'  => 'workspace_premium',
+                'color' => '#2DD4BF',
+                'goal'  => 30,
+                'premium_only' => true,
+            ],
         ];
     }
 
@@ -269,6 +301,7 @@ class BadgeModel
                 'this_week'   => $thisWeek,
                 'total_count' => $count,
                 'percent'     => min(100, round(($current / max(1, $def['goal'])) * 100)),
+                'premium_only' => $def['premium_only'] ?? false,
             ];
         }
 
@@ -390,6 +423,41 @@ class BadgeModel
                     $stmt->execute([$userId]);
                     return (int)$stmt->fetchColumn();
 
+                case 'vip':
+                    // Premium üye mi?
+                    $user = (new UserModel())->getById($userId);
+                    return UserModel::isPremiumActive($user) ? 1 : 0;
+
+                case 'high_roller':
+                    // 50 check-in (premium iken)
+                    $user = (new UserModel())->getById($userId);
+                    if (!UserModel::isPremiumActive($user)) return 0;
+                    $stmt = $this->db->prepare("SELECT COUNT(*) FROM checkins WHERE user_id = ? AND is_deleted = 0");
+                    $stmt->execute([$userId]);
+                    return (int)$stmt->fetchColumn();
+
+                case 'socialite':
+                    // 10 farklı mekan (premium iken)
+                    $user = (new UserModel())->getById($userId);
+                    if (!UserModel::isPremiumActive($user)) return 0;
+                    $stmt = $this->db->prepare("SELECT COUNT(DISTINCT venue_id) FROM checkins WHERE user_id = ? AND is_deleted = 0");
+                    $stmt->execute([$userId]);
+                    return (int)$stmt->fetchColumn();
+
+                case 'diamond_life':
+                    // Premium olarak geçen gün sayısı
+                    $user = (new UserModel())->getById($userId);
+                    if (!UserModel::isPremiumActive($user) || empty($user['premium_until'])) return 0;
+                    $premiumUntil = new DateTime($user['premium_until']);
+                    $now = new DateTime();
+                    // premium_until gelecekte ise, kullanıcı premium_until - şimdi = kalan gün
+                    // toplam süre hesaplamak için: premium başlangıç bilinmiyorsa basitleştir
+                    $remainingDays = max(0, (int)$now->diff($premiumUntil)->days);
+                    // Kalan günleri 365'ten çıkarak yaklaşık süre hesapla (basit)
+                    // Daha doğru: premium_until'a kadar olan süreyi hesapla, ama başlangıç yok
+                    // Basit yaklaşım: premium aktifse ve premium_until - now farkından toplam süreyi tahmin et
+                    return max(1, 365 - $remainingDays); // En az 1 gün premium
+
                 default:
                     return 0;
             }
@@ -447,10 +515,44 @@ class BadgeModel
         foreach ($defs as $key => $def) {
             if (in_array($key, $thisWeekKeys)) continue; // Bu hafta zaten kazanılmış
 
+            // Premium-only rozetleri sadece premium kullanıcılara kontrol et
+            if (!empty($def['premium_only'])) continue;
+
             $current = $this->calculateProgress($userId, $key);
             if ($current >= $def['goal']) {
                 if ($this->award($userId, $key)) {
                     $newBadges[] = $def;
+                }
+            }
+        }
+
+        // Premium badges
+        $user = (new UserModel())->getById($userId);
+        if (UserModel::isPremiumActive($user)) {
+            // VIP — Premium üye ol
+            if (!in_array('vip', $thisWeekKeys)) {
+                $this->award($userId, 'vip');
+            }
+
+            // High Roller — 50 check-in (while premium)
+            if (!in_array('high_roller', $thisWeekKeys)) {
+                $totalCheckins = $this->db->prepare("SELECT COUNT(*) FROM checkins WHERE user_id = ? AND is_deleted = 0");
+                $totalCheckins->execute([$userId]);
+                if ((int)$totalCheckins->fetchColumn() >= 50) {
+                    if ($this->award($userId, 'high_roller')) {
+                        $newBadges[] = $defs['high_roller'];
+                    }
+                }
+            }
+
+            // Sosyetik — 10 farklı mekan
+            if (!in_array('socialite', $thisWeekKeys)) {
+                $uniqueVenues = $this->db->prepare("SELECT COUNT(DISTINCT venue_id) FROM checkins WHERE user_id = ? AND is_deleted = 0");
+                $uniqueVenues->execute([$userId]);
+                if ((int)$uniqueVenues->fetchColumn() >= 10) {
+                    if ($this->award($userId, 'socialite')) {
+                        $newBadges[] = $defs['socialite'];
+                    }
                 }
             }
         }

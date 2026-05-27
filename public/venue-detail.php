@@ -39,6 +39,35 @@ $campaignModel   = new CampaignModel();
 $activeCampaigns = $campaignModel->getActiveCampaigns($venueId);
 $userCheckinHere = Auth::check() ? $campaignModel->getUserCheckinCount(Auth::id(), $venueId) : 0;
 
+// Favori durumu (Premium)
+$isFavorited = false;
+$favoriteCount = 0;
+$isPremiumUser = UserModel::isPremiumActive($currentUser ?? null);
+try {
+    $favoriteCount = $venueModel->getFavoriteCount($venueId);
+    if (Auth::check()) {
+        $isFavorited = $venueModel->isFavorited(Auth::id(), $venueId);
+    }
+} catch (\Throwable $e) {}
+
+// Favori toggle POST handler
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'toggle_favorite') {
+    Csrf::requireValid();
+    if (!$isPremiumUser) {
+        Auth::setFlash('error', 'Bu özellik Premium üyelere özeldir. 💎');
+    } else {
+        if ($isFavorited) {
+            $venueModel->removeFavorite(Auth::id(), $venueId);
+            Auth::setFlash('success', 'Mekan favorilerden kaldırıldı.');
+        } else {
+            $venueModel->addFavorite(Auth::id(), $venueId);
+            Auth::setFlash('success', 'Mekan favorilere eklendi! ⭐');
+        }
+    }
+    header('Location: ' . BASE_URL . '/venue-detail?id=' . $venueId);
+    exit;
+}
+
 $trendVenues = [];
 $miniLeaderboard = [];
 try {
@@ -95,10 +124,21 @@ require_once __DIR__ . '/partials/app_header.php';
                     <h1 class="text-4xl md:text-5xl font-black text-white drop-shadow-md tracking-tight"><?php echo escape($venue['name']); ?></h1>
                 </div>
                 <!-- Call to action button -->
-                <a href="<?php echo BASE_URL; ?>/?venue_id=<?php echo $venue['id']; ?>" class="flex items-center justify-center gap-2 bg-primary-container text-white px-6 py-3 rounded-xl font-bold hover:bg-primary-container/90 transition-all shadow-[0_0_20px_rgba(255,107,53,0.3)] active:scale-95 group shrink-0">
-                    <span class="material-symbols-outlined text-[20px] group-hover:scale-110 transition-transform">pin_drop</span>
-                    Burada Check-in Yap
-                </a>
+                <div class="flex items-center gap-3">
+                    <a href="<?php echo BASE_URL; ?>/?venue_id=<?php echo $venue['id']; ?>" class="flex items-center justify-center gap-2 bg-primary-container text-white px-6 py-3 rounded-xl font-bold hover:bg-primary-container/90 transition-all shadow-[0_0_20px_rgba(255,107,53,0.3)] active:scale-95 group shrink-0">
+                        <span class="material-symbols-outlined text-[20px] group-hover:scale-110 transition-transform">pin_drop</span>
+                        Burada Check-in Yap
+                    </a>
+                    <!-- Favori Butonu (Premium) -->
+                    <form method="POST" class="inline">
+                        <input type="hidden" name="csrf_token" value="<?php echo csrfToken(); ?>">
+                        <input type="hidden" name="action" value="toggle_favorite">
+                        <button type="submit" class="flex items-center justify-center gap-1.5 <?php echo $isFavorited ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' : ($isPremiumUser ? 'bg-white/5 text-slate-400 border-white/10 hover:text-amber-400 hover:border-amber-500/30' : 'bg-white/5 text-slate-600 border-white/5 cursor-not-allowed'); ?> border px-4 py-3 rounded-xl font-bold transition-all active:scale-95 shrink-0" <?php echo !$isPremiumUser ? 'title="Premium özellik 💎"' : ''; ?>>
+                            <span class="material-symbols-outlined text-[20px]" <?php echo $isFavorited ? 'data-weight="fill"' : ''; ?>>star</span>
+                            <span class="text-xs"><?php echo $favoriteCount; ?></span>
+                        </button>
+                    </form>
+                </div>
             </div>
 
             <?php if ($venue['description']): ?>

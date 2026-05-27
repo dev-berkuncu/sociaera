@@ -93,37 +93,31 @@ require_once __DIR__ . '/partials/app_header.php';
                 <?php endif; ?>
             </div>
 
-            <div class="bg-white/5 border border-white/10 rounded-xl p-6 text-left space-y-4 mb-6">
+            <div class="bg-white/5 border border-white/10 rounded-xl p-6 text-left space-y-3 mb-6">
+                <?php
+                $premiumFeatures = [
+                    ['icon' => 'block', 'text' => 'Reklamsız deneyim'],
+                    ['icon' => 'badge', 'text' => 'Profil rozeti seçimi'],
+                    ['icon' => 'palette', 'text' => 'Özel profil temaları (6 tema)'],
+                    ['icon' => 'upload_file', 'text' => 'Yüksek yükleme limiti (20MB)'],
+                    ['icon' => 'timer', 'text' => 'Yarı cooldown & 2.5x rate limit'],
+                    ['icon' => 'paid', 'text' => '2x check-in cüzdan ödülü'],
+                    ['icon' => 'text_fields', 'text' => 'Uzun bio (500 karakter)'],
+                    ['icon' => 'early_on', 'text' => 'Kampanyalara erken erişim (24s)'],
+                    ['icon' => 'star', 'text' => 'Mekan favorileri'],
+                    ['icon' => 'analytics', 'text' => 'Detaylı istatistikler & trend'],
+                    ['icon' => 'visibility', 'text' => 'Profilime kim baktı'],
+                    ['icon' => 'military_tech', 'text' => 'Premium-only rozetler (4 rozet)'],
+                    ['icon' => 'leaderboard', 'text' => 'Sıralama tablosunda öne çıkma'],
+                ];
+                foreach ($premiumFeatures as $pf):
+                ?>
                 <div class="flex items-center gap-3 text-emerald-400">
-                    <span class="material-symbols-outlined">check_circle</span>
-                    <span class="text-on-surface">Reklamsız deneyim</span>
-                    <span class="ml-auto text-xs text-emerald-400 font-bold">AKTİF</span>
+                    <span class="material-symbols-outlined text-[18px]">check_circle</span>
+                    <span class="text-on-surface text-sm"><?php echo $pf['text']; ?></span>
+                    <span class="ml-auto text-[10px] text-emerald-400 font-bold">AKTİF</span>
                 </div>
-                <div class="flex items-center gap-3 text-emerald-400">
-                    <span class="material-symbols-outlined">check_circle</span>
-                    <span class="text-on-surface">Profil rozeti</span>
-                    <span class="ml-auto text-xs text-emerald-400 font-bold">AKTİF</span>
-                </div>
-                <div class="flex items-center gap-3 text-emerald-400">
-                    <span class="material-symbols-outlined">check_circle</span>
-                    <span class="text-on-surface">Yüksek yükleme limiti (20MB)</span>
-                    <span class="ml-auto text-xs text-emerald-400 font-bold">AKTİF</span>
-                </div>
-                <div class="flex items-center gap-3 text-emerald-400">
-                    <span class="material-symbols-outlined">check_circle</span>
-                    <span class="text-on-surface">Öncelikli destek</span>
-                    <span class="ml-auto text-xs text-emerald-400 font-bold">AKTİF</span>
-                </div>
-                <div class="flex items-center gap-3 text-emerald-400">
-                    <span class="material-symbols-outlined">check_circle</span>
-                    <span class="text-on-surface">Özel profil temaları</span>
-                    <span class="ml-auto text-xs text-emerald-400 font-bold">AKTİF</span>
-                </div>
-                <div class="flex items-center gap-3 text-emerald-400">
-                    <span class="material-symbols-outlined">check_circle</span>
-                    <span class="text-on-surface">Sıralama tablosunda öne çıkma</span>
-                    <span class="ml-auto text-xs text-emerald-400 font-bold">AKTİF</span>
-                </div>
+                <?php endforeach; ?>
             </div>
 
             <div class="flex flex-col sm:flex-row gap-3 justify-center">
@@ -155,37 +149,17 @@ require_once __DIR__ . '/partials/app_header.php';
             <h1 class="text-3xl md:text-4xl font-black text-on-surface mb-2">Premium Süresi Doldu</h1>
             <p class="text-amber-400 text-lg mb-6 font-medium">Premium ayrıcalıkların pasif durumda</p>
 
-            <div class="bg-white/5 border border-white/10 rounded-xl p-6 text-left space-y-4 mb-8">
+            <div class="bg-white/5 border border-white/10 rounded-xl p-6 text-left space-y-3 mb-8">
+                <?php
+                $expiredFeatures = ['Reklamsız deneyim','Profil rozeti seçimi','Özel profil temaları','Yüksek yükleme limiti (20MB)','Yarı cooldown & 2.5x rate limit','2x check-in ödülü','Uzun bio','Kampanya erken erişim','Mekan favorileri','Detaylı istatistikler','Profilime kim baktı','Premium rozetler','Sıralama öne çıkma'];
+                foreach ($expiredFeatures as $ef):
+                ?>
                 <div class="flex items-center gap-3 text-red-400">
-                    <span class="material-symbols-outlined">cancel</span>
-                    <span class="text-slate-400 line-through">Reklamsız deneyim</span>
-                    <span class="ml-auto text-xs text-red-400 font-bold">PASİF</span>
+                    <span class="material-symbols-outlined text-[18px]">cancel</span>
+                    <span class="text-slate-400 line-through text-sm"><?php echo $ef; ?></span>
+                    <span class="ml-auto text-[10px] text-red-400 font-bold">PASİF</span>
                 </div>
-                <div class="flex items-center gap-3 text-red-400">
-                    <span class="material-symbols-outlined">cancel</span>
-                    <span class="text-slate-400 line-through">Profil rozeti</span>
-                    <span class="ml-auto text-xs text-red-400 font-bold">PASİF</span>
-                </div>
-                <div class="flex items-center gap-3 text-red-400">
-                    <span class="material-symbols-outlined">cancel</span>
-                    <span class="text-slate-400 line-through">Yüksek yükleme limiti</span>
-                    <span class="ml-auto text-xs text-red-400 font-bold">PASİF</span>
-                </div>
-                <div class="flex items-center gap-3 text-red-400">
-                    <span class="material-symbols-outlined">cancel</span>
-                    <span class="text-slate-400 line-through">Öncelikli destek</span>
-                    <span class="ml-auto text-xs text-red-400 font-bold">PASİF</span>
-                </div>
-                <div class="flex items-center gap-3 text-red-400">
-                    <span class="material-symbols-outlined">cancel</span>
-                    <span class="text-slate-400 line-through">Özel profil temaları</span>
-                    <span class="ml-auto text-xs text-red-400 font-bold">PASİF</span>
-                </div>
-                <div class="flex items-center gap-3 text-red-400">
-                    <span class="material-symbols-outlined">cancel</span>
-                    <span class="text-slate-400 line-through">Sıralama tablosunda öne çıkma</span>
-                    <span class="ml-auto text-xs text-red-400 font-bold">PASİF</span>
-                </div>
+                <?php endforeach; ?>
             </div>
 
             <div class="my-6">
@@ -234,34 +208,30 @@ require_once __DIR__ . '/partials/app_header.php';
                 <span class="text-slate-400 text-lg ml-1">/ 7 gün</span>
             </div>
 
-            <ul class="flex flex-col gap-4 text-left max-w-sm mx-auto mb-8">
-                <li class="flex items-center gap-3 text-on-surface text-lg">
-                    <span class="material-symbols-outlined text-primary-container">check_circle</span>
-                    <span>Reklamsız deneyim</span>
+            <ul class="flex flex-col gap-3 text-left max-w-md mx-auto mb-8">
+                <?php
+                $newFeatures = [
+                    ['icon' => 'block', 'text' => 'Reklamsız deneyim'],
+                    ['icon' => 'badge', 'text' => 'Profil rozeti seçimi'],
+                    ['icon' => 'palette', 'text' => '6 özel profil teması'],
+                    ['icon' => 'upload_file', 'text' => '2x yükleme limiti (20MB)'],
+                    ['icon' => 'timer', 'text' => '½ cooldown & 2.5x rate limit'],
+                    ['icon' => 'paid', 'text' => '2x check-in cüzdan ödülü ($20)'],
+                    ['icon' => 'text_fields', 'text' => 'Uzun bio (500 karakter)'],
+                    ['icon' => 'early_on', 'text' => 'Kampanyalara 24s erken erişim'],
+                    ['icon' => 'star', 'text' => 'Mekan favorileri sistemi'],
+                    ['icon' => 'analytics', 'text' => 'Detaylı istatistik & trend grafik'],
+                    ['icon' => 'visibility', 'text' => 'Profilime kim baktı'],
+                    ['icon' => 'military_tech', 'text' => '4 özel premium rozet'],
+                    ['icon' => 'leaderboard', 'text' => 'Sıralama tablosunda öne çıkma'],
+                ];
+                foreach ($newFeatures as $nf):
+                ?>
+                <li class="flex items-center gap-3 text-on-surface">
+                    <span class="material-symbols-outlined text-primary-container text-[20px]"><?php echo $nf['icon']; ?></span>
+                    <span class="text-sm"><?php echo $nf['text']; ?></span>
                 </li>
-                <li class="flex items-center justify-between text-on-surface text-lg">
-                    <div class="flex items-center gap-3">
-                        <span class="material-symbols-outlined text-primary-container">check_circle</span>
-                        <span>Profil rozeti seçimi</span>
-                    </div>
-                    <span class="bg-[#7bd0ff]/20 text-[#7bd0ff] text-xs font-bold px-2 py-1 rounded border border-[#7bd0ff]/30 uppercase tracking-wider flex items-center gap-1"><span class="material-symbols-outlined text-[12px]">diamond</span> Premium</span>
-                </li>
-                <li class="flex items-center gap-3 text-on-surface text-lg">
-                    <span class="material-symbols-outlined text-primary-container">check_circle</span>
-                    <span>Yüksek yükleme limiti (20MB)</span>
-                </li>
-                <li class="flex items-center gap-3 text-on-surface text-lg">
-                    <span class="material-symbols-outlined text-primary-container">check_circle</span>
-                    <span>Öncelikli destek</span>
-                </li>
-                <li class="flex items-center gap-3 text-on-surface text-lg">
-                    <span class="material-symbols-outlined text-primary-container">check_circle</span>
-                    <span>Özel profil temaları</span>
-                </li>
-                <li class="flex items-center gap-3 text-on-surface text-lg">
-                    <span class="material-symbols-outlined text-primary-container">check_circle</span>
-                    <span>Sıralama tablosunda öne çıkma</span>
-                </li>
+                <?php endforeach; ?>
             </ul>
 
             <div class="bg-white/5 border border-white/10 rounded-xl p-4 mb-4 flex items-center justify-between">
