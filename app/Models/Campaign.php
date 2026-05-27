@@ -263,24 +263,4 @@ class CampaignModel
         $stmt->execute($params);
         return $stmt->fetchAll(\PDO::FETCH_COLUMN);
     }
-
-    /**
-     * Kullanıcının belirli mekandaki check-in sayısını döndür
-     */
-    public function getUserCheckinCount(int $userId, int $venueId): int
-    {
-        $stmt = $this->db->prepare("SELECT COUNT(*) FROM checkins WHERE user_id = ? AND venue_id = ? AND is_deleted = 0");
-        $stmt->execute([$userId, $venueId]);
-        return (int) $stmt->fetchColumn();
-    }
-
-    /**
-     * Kullanıcının tüm kampanya kazanımlarını döndür
-     */
-    public function getUserRedemptions(int $userId): array
-    {
-        $stmt = $this->db->prepare("SELECT * FROM campaign_redemptions WHERE user_id = ? ORDER BY earned_at DESC");
-        $stmt->execute([$userId]);
-        return $stmt->fetchAll();
-    }
 }

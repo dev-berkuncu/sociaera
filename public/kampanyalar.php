@@ -3,8 +3,6 @@
  * Sociaera — Kampanyalar (Kullanıcı Tarafı)
  * Tüm mekanlardaki aktif ve bitmiş kampanyaları görüntüler
  */
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
 
 require_once __DIR__ . '/../app/Config/env.php';
 loadEnv(dirname(__DIR__) . '/.env');
