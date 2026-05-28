@@ -140,7 +140,15 @@ require_once __DIR__ . '/partials/app_header.php';
                     </div>
                     <div class="flex-grow min-w-0">
                         <div class="font-bold text-on-surface truncate"><?php echo escape($tx['description'] ?: $tx['type']); ?></div>
-                        <div class="text-xs text-slate-400"><?php echo formatDate($tx['created_at'], true); ?></div>
+                        <div class="text-xs text-slate-400 flex items-center gap-2 mt-0.5">
+                            <span><?php echo formatDate($tx['created_at'], true); ?></span>
+                            <?php if ($tx['type'] === 'withdraw'): ?>
+                                <span class="px-1.5 py-0.5 rounded text-[10px] uppercase font-bold <?php 
+                                    echo ($tx['status'] ?? 'approved') === 'pending' ? 'bg-amber-500/20 text-amber-400' : 
+                                        (($tx['status'] ?? 'approved') === 'approved' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'); 
+                                ?>"><?php echo escape($tx['status'] ?? 'approved'); ?></span>
+                            <?php endif; ?>
+                        </div>
                     </div>
                     <div class="font-black text-lg flex-shrink-0 <?php echo $isIn ? 'text-[#10b981]' : 'text-error'; ?>">
                         <?php echo $isIn ? '+' : '-'; ?>$<?php echo number_format($tx['amount'], 2, ',', '.'); ?>

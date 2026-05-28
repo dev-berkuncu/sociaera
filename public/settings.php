@@ -325,6 +325,15 @@ require_once __DIR__ . '/partials/app_header.php';
                     <input type="email" name="email" value="<?php echo escape($user['email']); ?>" required class="w-full bg-white/5 border border-white/10 rounded-xl pl-12 pr-4 py-3 text-on-surface focus:border-primary-container focus:bg-white/10 outline-none transition-all shadow-inner">
                 </div>
             </div>
+
+            <div class="flex flex-col gap-2">
+                <label class="text-sm font-bold text-slate-300 ml-1">Banka Hesap Numarası <span class="text-error">*</span></label>
+                <div class="relative">
+                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 material-symbols-outlined text-[18px]">account_balance</span>
+                    <input type="text" name="bank_account" value="<?php echo escape($user['bank_account'] ?? ''); ?>" required placeholder="0300 8108 7" pattern="\d{4} \d{4} \d{1}" class="w-full bg-white/5 border border-white/10 rounded-xl pl-12 pr-4 py-3 text-on-surface focus:border-primary-container focus:bg-white/10 outline-none transition-all shadow-inner font-mono" title="Format: #### #### # (Örn: 0300 8108 7)">
+                </div>
+                <p class="text-[11px] text-slate-500 ml-1">Bakiye çekim işlemlerinizin gönderileceği banka hesap numarası (Zorunlu).</p>
+            </div>
             
             <div class="flex flex-col gap-2">
                 <label class="text-sm font-bold text-slate-300 ml-1">Biyografi</label>

@@ -45,6 +45,79 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && Auth::canWrite()) {
             Auth::setFlash('error', 'Tüm alanları doldurun.');
         }
         header('Location: ' . BASE_URL . '/admin/wallet'); exit;
+    } elseif ($action === 'approve_withdrawal') {
+        $txId = (int)($_POST['transaction_id'] ?? 0);
+        if ($txId) {
+            $txStmt = $db->prepare("SELECT * FROM transactions WHERE id = ? AND type = 'withdraw' AND status = 'pending'");
+            $txStmt->execute([$txId]);
+            $tx = $txStmt->fetch();
+            if ($tx) {
+                // Update transaction status to approved
+                $upStmt = $db->prepare("UPDATE transactions SET status = 'approved' WHERE id = ?");
+                $upStmt->execute([$txId]);
+                
+                // Send notification
+                $notifModel = new NotificationModel();
+                $refCode = $tx['reference_id'] ?: ('W-' . $txId);
+                $notifModel->create(
+                    $tx['user_id'],
+                    null,
+                    'wallet',
+                    "Para çekme talebiniz (Ref: {$refCode}, Tutar: $" . number_format($tx['amount'], 2) . ") onaylandı ve banka hesabınıza gönderildi. 💸"
+                );
+                
+                Logger::adminAudit('approve_withdrawal', 'transaction', $txId, "Approved withdrawal of $" . $tx['amount'] . " for user " . $tx['user_id']);
+                Auth::setFlash('success', 'Çekim talebi onaylandı ve kullanıcıya bildirim gönderildi.');
+            } else {
+                Auth::setFlash('error', 'Bekleyen çekim işlemi bulunamadı.');
+            }
+        }
+        header('Location: ' . BASE_URL . '/admin/wallet'); exit;
+    } elseif ($action === 'reject_withdrawal') {
+        $txId = (int)($_POST['transaction_id'] ?? 0);
+        $reason = trim($_POST['reject_reason'] ?? '');
+        if (empty($reason)) {
+            Auth::setFlash('error', 'Lütfen bir reddetme nedeni girin.');
+            header('Location: ' . BASE_URL . '/admin/wallet'); exit;
+        }
+        if ($txId) {
+            $txStmt = $db->prepare("SELECT * FROM transactions WHERE id = ? AND type = 'withdraw' AND status = 'pending'");
+            $txStmt->execute([$txId]);
+            $tx = $txStmt->fetch();
+            if ($tx) {
+                $db->beginTransaction();
+                try {
+                    // Update transaction status to rejected
+                    $upStmt = $db->prepare("UPDATE transactions SET status = 'rejected', description = ? WHERE id = ?");
+                    $upStmt->execute(["[RED] " . $reason . " (Eski açıklama: " . $tx['description'] . ")", $txId]);
+                    
+                    // Refund wallet balance
+                    $walletStmt = $db->prepare("UPDATE wallets SET balance = balance + ? WHERE user_id = ?");
+                    $walletStmt->execute([$tx['amount'], $tx['user_id']]);
+                    
+                    $db->commit();
+                    
+                    // Send notification
+                    $notifModel = new NotificationModel();
+                    $refCode = $tx['reference_id'] ?: ('W-' . $txId);
+                    $notifModel->create(
+                        $tx['user_id'],
+                        null,
+                        'wallet',
+                        "Para çekme talebiniz (Ref: {$refCode}, Tutar: $" . number_format($tx['amount'], 2) . ") reddedildi. Neden: {$reason}. Tutar cüzdanınıza iade edildi."
+                    );
+                    
+                    Logger::adminAudit('reject_withdrawal', 'transaction', $txId, "Rejected withdrawal: " . $reason);
+                    Auth::setFlash('success', 'Çekim talebi reddedildi, bakiye iade edildi ve kullanıcıya bildirim gönderildi.');
+                } catch (Exception $ex) {
+                    $db->rollBack();
+                    Auth::setFlash('error', 'Bir hata oluştu: ' . $ex->getMessage());
+                }
+            } else {
+                Auth::setFlash('error', 'Bekleyen çekim işlemi bulunamadı.');
+            }
+        }
+        header('Location: ' . BASE_URL . '/admin/wallet'); exit;
     }
 }
 
@@ -79,6 +152,14 @@ $stmt = $db->prepare("
 ");
 $stmt->execute($lParams);
 $transactions = $stmt->fetchAll();
+
+// Bekleyen Çekim Talepleri
+$pendingWithdrawals = $db->query("
+    SELECT t.*, u.username, u.bank_account FROM transactions t
+    JOIN users u ON t.user_id = u.id
+    WHERE t.type = 'withdraw' AND t.status = 'pending'
+    ORDER BY t.created_at ASC
+")->fetchAll();
 
 $pendingVenues = (new VenueModel())->getPendingCount();
 $pageTitle = 'Cüzdan & Ödemeler';
@@ -130,6 +211,68 @@ require_once __DIR__ . '/_header.php';
 </div>
 <?php endif;?>
 
+<!-- Bekleyen Çekim Talepleri -->
+<div class="bg-[#1E293B]/80 border border-white/10 rounded-xl p-6 mb-6">
+    <h3 class="font-bold text-on-surface mb-4 flex items-center gap-2">
+        <span class="material-symbols-outlined text-amber-400 text-[20px]">hourglass_empty</span> Bekleyen Para Çekme Talepleri
+    </h3>
+    <?php if (empty($pendingWithdrawals)): ?>
+        <p class="text-slate-400 text-sm">Bekleyen para çekme talebi bulunmuyor.</p>
+    <?php else: ?>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead class="bg-white/[0.03] text-slate-400 text-label-sm uppercase">
+                    <tr>
+                        <th class="px-6 py-3">Kullanıcı</th>
+                        <th class="px-6 py-3">Banka Hesap No</th>
+                        <th class="px-6 py-3">Tutar</th>
+                        <th class="px-6 py-3">Referans</th>
+                        <th class="px-6 py-3">Tarih</th>
+                        <?php if (Auth::canWrite()): ?>
+                            <th class="px-6 py-3 text-right">İşlemler</th>
+                        <?php endif; ?>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-white/5">
+                    <?php foreach ($pendingWithdrawals as $pw): ?>
+                        <tr class="hover:bg-white/[0.02] transition-colors">
+                            <td class="px-6 py-3 font-semibold text-on-surface">
+                                <a href="<?php echo BASE_URL; ?>/admin/user-detail?id=<?php echo $pw['user_id']; ?>" class="hover:text-primary-container">
+                                    <?php echo escape($pw['username']); ?>
+                                </a>
+                            </td>
+                            <td class="px-6 py-3 text-slate-300 font-mono"><?php echo escape($pw['bank_account'] ?: 'Belirtilmemiş'); ?></td>
+                            <td class="px-6 py-3 font-bold text-red-400">$<?php echo number_format($pw['amount'], 2); ?></td>
+                            <td class="px-6 py-3 text-slate-400 text-xs font-mono"><?php echo escape($pw['reference_id']); ?></td>
+                            <td class="px-6 py-3 text-slate-500 text-xs"><?php echo timeAgo($pw['created_at']); ?></td>
+                            <?php if (Auth::canWrite()): ?>
+                                <td class="px-6 py-3 text-right">
+                                    <div class="flex items-center justify-end gap-2">
+                                        <!-- Onayla Form -->
+                                        <form method="POST" class="inline m-0" onsubmit="return confirm('Bu para çekme talebini onaylamak istediğinize emin misiniz?');">
+                                            <input type="hidden" name="csrf_token" value="<?php echo csrfToken(); ?>">
+                                            <input type="hidden" name="action" value="approve_withdrawal">
+                                            <input type="hidden" name="transaction_id" value="<?php echo $pw['id']; ?>">
+                                            <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded text-xs font-bold transition-colors">
+                                                Onayla
+                                            </button>
+                                        </form>
+                                        
+                                        <!-- Reddet Buton -->
+                                        <button onclick="openRejectModal(<?php echo $pw['id']; ?>, '<?php echo escape(addslashes($pw['username'])); ?>', <?php echo $pw['amount']; ?>)" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded text-xs font-bold transition-colors">
+                                            Reddet
+                                        </button>
+                                    </div>
+                                </td>
+                            <?php endif; ?>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    <?php endif; ?>
+</div>
+
 <!-- Filtreler -->
 <div class="flex gap-2 mb-4 flex-wrap">
     <?php foreach(['' => 'Tümü','deposit'=>'Yükleme','withdraw'=>'Çekim'] as $k=>$l):
@@ -143,7 +286,7 @@ require_once __DIR__ . '/_header.php';
     <div class="overflow-x-auto">
         <table class="w-full text-left">
             <thead class="bg-white/[0.03] text-slate-400 text-label-sm uppercase">
-                <tr><th class="px-6 py-3">#</th><th class="px-6 py-3">Kullanıcı</th><th class="px-6 py-3">Tip</th><th class="px-6 py-3">Tutar</th><th class="px-6 py-3">Açıklama</th><th class="px-6 py-3">Ref</th><th class="px-6 py-3">Tarih</th></tr>
+                <tr><th class="px-6 py-3">#</th><th class="px-6 py-3">Kullanıcı</th><th class="px-6 py-3">Tip</th><th class="px-6 py-3">Tutar</th><th class="px-6 py-3">Durum</th><th class="px-6 py-3">Açıklama</th><th class="px-6 py-3">Ref</th><th class="px-6 py-3">Tarih</th></tr>
             </thead>
             <tbody class="divide-y divide-white/5">
                 <?php foreach($transactions as $t):?>
@@ -152,7 +295,17 @@ require_once __DIR__ . '/_header.php';
                     <td class="px-6 py-3 font-semibold text-on-surface"><a href="<?php echo BASE_URL;?>/admin/user-detail?id=<?php echo $t['user_id'];?>" class="hover:text-primary-container"><?php echo escape($t['username']);?></a></td>
                     <td class="px-6 py-3"><span class="text-xs px-2 py-1 rounded <?php echo $t['type']==='deposit'?'bg-emerald-500/10 text-emerald-400':'bg-red-500/10 text-red-400';?>"><?php echo escape($t['type']);?></span></td>
                     <td class="px-6 py-3 font-bold <?php echo $t['type']==='deposit'?'text-emerald-400':'text-red-400';?>">$<?php echo number_format($t['amount'],2);?></td>
-                    <td class="px-6 py-3 text-slate-400 text-xs max-w-[200px] truncate"><?php echo escape(truncate($t['description']??'',40));?></td>
+                    <td class="px-6 py-3">
+                        <?php if ($t['type'] === 'withdraw'): ?>
+                            <span class="text-xs px-2 py-1 rounded <?php 
+                                echo $t['status'] === 'pending' ? 'bg-amber-500/10 text-amber-400' : 
+                                    ($t['status'] === 'approved' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'); 
+                            ?>"><?php echo escape($t['status']); ?></span>
+                        <?php else: ?>
+                            <span class="text-xs px-2 py-1 rounded bg-emerald-500/10 text-emerald-400">approved</span>
+                        <?php endif; ?>
+                    </td>
+                    <td class="px-6 py-3 text-slate-400 text-xs max-w-[200px] truncate" title="<?php echo escape($t['description']??''); ?>"><?php echo escape(truncate($t['description']??'',40));?></td>
                     <td class="px-6 py-3 text-slate-500 text-xs font-mono"><?php echo escape(truncate($t['reference_id']??'-',12));?></td>
                     <td class="px-6 py-3 text-slate-500 text-xs"><?php echo timeAgo($t['created_at']);?></td>
                 </tr>
@@ -169,5 +322,47 @@ require_once __DIR__ . '/_header.php';
     <?php endfor;?>
 </div>
 <?php endif;?>
+
+<!-- Reddetme Modalı -->
+<div id="rejectModal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/60 backdrop-blur-sm">
+    <div class="bg-[#1E293B] border border-white/10 w-full max-w-md p-6 rounded-2xl shadow-2xl relative">
+        <button onclick="closeRejectModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+        <h3 class="text-xl font-bold text-on-surface mb-4">Talebi Reddet</h3>
+        <p class="text-slate-400 text-sm mb-4">
+            <span id="rejectUserName" class="text-white font-semibold"></span> kullanıcısının 
+            <span id="rejectAmount" class="text-white font-semibold"></span> tutarındaki çekim talebini reddetmek üzeresiniz.
+        </p>
+        <form method="POST" id="rejectForm">
+            <input type="hidden" name="csrf_token" value="<?php echo csrfToken(); ?>">
+            <input type="hidden" name="action" value="reject_withdrawal">
+            <input type="hidden" name="transaction_id" id="rejectTxId">
+            
+            <div class="mb-4">
+                <label class="block text-sm font-semibold text-slate-300 mb-1">Red Nedeni</label>
+                <textarea name="reject_reason" required rows="3" placeholder="Örn: Geçersiz hesap numarası, yetersiz oyun içi bakiye..." class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-on-surface focus:outline-none focus:border-primary-container"></textarea>
+            </div>
+            
+            <div class="flex justify-end gap-3">
+                <button type="button" onclick="closeRejectModal()" class="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-xl transition-colors">İptal</button>
+                <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-xl font-bold transition-colors">Reddet ve İade Et</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function openRejectModal(txId, username, amount) {
+    document.getElementById('rejectTxId').value = txId;
+    document.getElementById('rejectUserName').textContent = username;
+    document.getElementById('rejectAmount').textContent = '$' + amount.toFixed(2);
+    document.getElementById('rejectModal').classList.remove('hidden');
+}
+
+function closeRejectModal() {
+    document.getElementById('rejectModal').classList.add('hidden');
+}
+</script>
 
 <?php require_once __DIR__ . '/_footer.php'; ?>

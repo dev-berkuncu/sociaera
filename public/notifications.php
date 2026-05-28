@@ -60,6 +60,7 @@ require_once __DIR__ . '/partials/app_header.php';
                     elseif ($type === 'mention') { $icon = 'alternate_email'; $iconColor = 'text-[#f59e0b] bg-[#f59e0b]/10'; }
                     elseif ($type === 'campaign_earned') { $icon = 'redeem'; $iconColor = 'text-[#a855f7] bg-[#a855f7]/10'; }
                     elseif ($type === 'new_campaign') { $icon = 'campaign'; $iconColor = 'text-[#f97316] bg-[#f97316]/10'; }
+                    elseif ($type === 'wallet') { $icon = 'account_balance_wallet'; $iconColor = 'text-[#f59e0b] bg-[#f59e0b]/10'; }
                     
                     $link = $n['checkin_id']
                         ? BASE_URL . '/post?id=' . (int)$n['checkin_id']

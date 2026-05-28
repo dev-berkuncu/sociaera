@@ -234,10 +234,11 @@ class UserModel
 
     public function updateProfile(int $userId, array $data): array
     {
-        $username = trim($data['username'] ?? '');
-        $tag      = trim(ltrim($data['tag'] ?? '', '@'));
-        $email    = trim($data['email'] ?? '');
-        $bio      = trim($data['bio'] ?? '');
+        $username    = trim($data['username'] ?? '');
+        $tag         = trim(ltrim($data['tag'] ?? '', '@'));
+        $email       = trim($data['email'] ?? '');
+        $bio         = trim($data['bio'] ?? '');
+        $bankAccount = trim($data['bank_account'] ?? '');
 
         // Premium kullanıcılar 500 karakter, normal kullanıcılar 280 karakter
         $currentUser = (new self())->getById($userId);
@@ -248,6 +249,14 @@ class UserModel
 
         if (empty($username) || empty($email)) {
             return ['ok' => false, 'error' => 'Kullanıcı adı ve e-posta gereklidir.'];
+        }
+
+        if (empty($bankAccount)) {
+            return ['ok' => false, 'error' => 'Banka hesap numarası zorunludur.'];
+        }
+
+        if (!preg_match('/^\d{4} \d{4} \d{1}$/', $bankAccount)) {
+            return ['ok' => false, 'error' => 'Banka hesap numarası formatı geçersiz. (Örn: 0300 8108 7)'];
         }
 
         if (!empty($tag) && !preg_match('/^[a-zA-Z0-9_]{3,30}$/', $tag)) {
@@ -263,8 +272,8 @@ class UserModel
             return ['ok' => false, 'error' => 'Bu kullanıcı adı, etiket veya e-posta zaten kullanılıyor.'];
         }
 
-        $stmt = $this->db->prepare("UPDATE users SET username = ?, tag = ?, email = ?, bio = ? WHERE id = ?");
-        $stmt->execute([$username, $tag ?: null, $email, $bio, $userId]);
+        $stmt = $this->db->prepare("UPDATE users SET username = ?, tag = ?, email = ?, bio = ?, bank_account = ? WHERE id = ?");
+        $stmt->execute([$username, $tag ?: null, $email, $bio, $bankAccount, $userId]);
 
         return ['ok' => true];
     }

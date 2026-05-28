@@ -79,7 +79,7 @@ class WalletModel
             $stmt->execute([$amount, $userId]);
 
             $stmt = $this->db->prepare("
-                INSERT INTO transactions (user_id, type, amount, description) VALUES (?, 'withdraw', ?, ?)
+                INSERT INTO transactions (user_id, type, amount, description, status) VALUES (?, 'withdraw', ?, ?, 'pending')
             ");
             $stmt->execute([$userId, $amount, $description]);
 
