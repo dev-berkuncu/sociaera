@@ -60,7 +60,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             Auth::setFlash('success', $charName . ' olarak giriş yaptın! 🎭');
         }
 
-        header('Location: ' . BASE_URL . '/settings');
+        $redirectUrl = !empty($user['bank_account']) ? '/dashboard' : '/settings';
+        header('Location: ' . BASE_URL . $redirectUrl);
         exit;
     } elseif ($charId && !$charName) {
         Auth::setFlash('error', 'Seçilen karakter için isim bilgisi alınamadı. Lütfen tekrar deneyin.');

@@ -51,7 +51,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $charName = $targetUser['gta_character_name'] ?: $targetUser['username'];
     Auth::setFlash('success', "{$charName} karakterine başarıyla geçiş yapıldı! 🎭");
     
-    header('Location: ' . BASE_URL . '/settings');
+    $redirectUrl = !empty($targetUser['bank_account']) ? '/dashboard' : '/settings';
+    header('Location: ' . BASE_URL . $redirectUrl);
     exit;
 }
 
