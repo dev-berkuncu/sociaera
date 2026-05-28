@@ -26,7 +26,7 @@ $_pendingVenues = $pendingVenues ?? 0;
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@500;600;700;900&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet"/>
 <script>
     tailwind.config = {
         darkMode: "class",
@@ -98,6 +98,16 @@ $_pendingVenues = $pendingVenues ?? 0;
     /* FOUC prevention — Tailwind CDN işleyene kadar gizle */
     body { opacity: 0; }
     body.ready { opacity: 1; transition: opacity 0.15s ease-in; }
+    
+    /* Font yüklenene kadar simge adlarının taşarak tasarımı bozmasını engeller */
+    .material-symbols-outlined {
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+        overflow: hidden;
+        white-space: nowrap;
+        word-wrap: normal;
+    }
 </style>
 <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
 </head>

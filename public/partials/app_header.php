@@ -187,6 +187,16 @@ if (!isset($currentUser) && Auth::check()) {
     .animate-marquee:hover {
         animation-play-state: paused;
     }
+
+    /* Font yüklenene kadar simge adlarının taşarak tasarımı bozmasını engeller */
+    .material-symbols-outlined {
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+        overflow: hidden;
+        white-space: nowrap;
+        word-wrap: normal;
+    }
 </style>
 <script>
 (function(){

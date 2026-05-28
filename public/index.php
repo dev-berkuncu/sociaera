@@ -15,7 +15,7 @@ if (Auth::check()) { header('Location: ' . BASE_URL . '/dashboard'); exit; }
 <title><?php echo APP_NAME; ?> - Nexus | Dijital Ajans</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet"/>
 <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
@@ -130,6 +130,16 @@ if (Auth::check()) { header('Location: ' . BASE_URL . '/dashboard'); exit; }
             background: linear-gradient(to right, #dae2fd, #aeb9d0);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+        }
+        
+        /* Font yüklenene kadar simge adlarının taşarak tasarımı bozmasını engeller */
+        .material-symbols-outlined {
+            display: inline-block;
+            width: 1em;
+            height: 1em;
+            overflow: hidden;
+            white-space: nowrap;
+            word-wrap: normal;
         }
     </style>
 </head>
