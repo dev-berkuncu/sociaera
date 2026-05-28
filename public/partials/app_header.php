@@ -284,6 +284,52 @@ if (!isset($currentUser) && Auth::check()) {
     </div>
     <?php endif; ?>
 
+    <!-- Karakter Değiştirme -->
+    <?php
+    $otherCharacters = [];
+    if (!empty($currentUser['gta_user_id'])) {
+        try {
+            $db = Database::getConnection();
+            $stmt = $db->prepare("SELECT id, username, gta_character_name, avatar, tag FROM users WHERE gta_user_id = ? AND id != ? AND is_active = 1");
+            $stmt->execute([$currentUser['gta_user_id'], $currentUser['id']]);
+            $otherCharacters = $stmt->fetchAll();
+        } catch (Exception $e) {}
+    }
+    ?>
+    <?php if (!empty($otherCharacters) || !empty($currentUser['gta_user_id'])): ?>
+    <div class="mt-4 pt-4 border-t border-white/5">
+        <h3 class="text-label-sm text-slate-500 uppercase tracking-wider px-4 mb-2 flex items-center justify-between">
+            <span>Karakter Değiştir</span>
+            <span class="material-symbols-outlined text-[16px] text-slate-500">switch_account</span>
+        </h3>
+        <ul class="flex flex-col gap-1">
+            <?php foreach ($otherCharacters as $oc): ?>
+            <li>
+                <form action="<?php echo BASE_URL; ?>/switch-character" method="POST" class="m-0">
+                    <?php echo csrfField(); ?>
+                    <input type="hidden" name="target_user_id" value="<?php echo $oc['id']; ?>">
+                    <button type="submit" class="w-full flex items-center gap-3 px-4 py-2 text-slate-400 hover:text-slate-100 hover:bg-white/5 transition-all duration-200 rounded-lg text-label-md text-left active:scale-[0.98]">
+                        <span class="shrink-0">
+                            <?php $ocAvatarUrl = safeAvatarUrl($oc['avatar'] ?? null, $oc['username']); ?>
+                            <img src="<?php echo $ocAvatarUrl; ?>" alt="Avatar" class="w-6 h-6 rounded-full border border-white/10 object-cover shadow-sm" width="24" height="24">
+                        </span>
+                        <span class="truncate flex-grow"><?php echo escape($oc['gta_character_name'] ?: $oc['username']); ?></span>
+                        <span class="material-symbols-outlined text-slate-600 text-[16px]">swap_horiz</span>
+                    </button>
+                </form>
+            </li>
+            <?php endforeach; ?>
+            
+            <li>
+                <a href="<?php echo BASE_URL; ?>/oauth-login" class="flex items-center gap-3 px-4 py-2 text-slate-500 hover:text-primary-container transition-all duration-200 rounded-lg text-label-md">
+                    <span class="material-symbols-outlined text-[20px] text-slate-500">add_circle</span>
+                    <span class="flex-grow font-semibold">Yeni Karakter Bağla</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <?php endif; ?>
+
     <div class="mt-4 pt-4 border-t border-white/5">
         <a href="<?php echo BASE_URL; ?>/logout" class="flex items-center gap-4 px-4 py-3 text-error hover:bg-error/10 transition-all duration-200 rounded-lg active:scale-[0.98] font-label-md text-label-md">
             <span class="material-symbols-outlined">logout</span>
