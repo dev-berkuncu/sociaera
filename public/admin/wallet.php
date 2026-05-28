@@ -126,6 +126,15 @@ $totalBalance = (float)$db->query("SELECT COALESCE(SUM(balance),0) FROM wallets"
 $todayDeposits = (float)$db->query("SELECT COALESCE(SUM(amount),0) FROM transactions WHERE type='deposit' AND DATE(created_at)=CURDATE()")->fetchColumn();
 $totalDeposits = (int)$db->query("SELECT COUNT(*) FROM transactions WHERE type='deposit'")->fetchColumn();
 
+// Toplam Giriş Miktarı (Tüm yüklemeler / deposit)
+$totalDepositsSum = (float)$db->query("SELECT COALESCE(SUM(amount),0) FROM transactions WHERE type='deposit'")->fetchColumn();
+
+// Ödenen Miktar (Onaylanmış çekimler)
+$totalPaidSum = (float)$db->query("SELECT COALESCE(SUM(amount),0) FROM transactions WHERE type='withdraw' AND status='approved'")->fetchColumn();
+
+// Bekleyen Çekim Miktarı (Bekleyen çekimler)
+$totalPendingWithdrawSum = (float)$db->query("SELECT COALESCE(SUM(amount),0) FROM transactions WHERE type='withdraw' AND status='pending'")->fetchColumn();
+
 // İşlem listesi
 $page = max(1, (int)($_GET['page'] ?? 1));
 $perPage = 30;
@@ -168,21 +177,31 @@ require_once __DIR__ . '/_header.php';
 ?>
 
 <!-- Stats -->
-<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
     <div class="bg-[#1E293B]/80 border border-white/10 rounded-xl p-5">
         <span class="material-symbols-outlined text-yellow-400 text-[28px] mb-2">account_balance_wallet</span>
         <div class="text-2xl font-black text-on-surface">$<?php echo number_format($totalBalance,2);?></div>
         <div class="text-label-sm text-slate-400 mt-1">Toplam Bakiye</div>
     </div>
     <div class="bg-[#1E293B]/80 border border-white/10 rounded-xl p-5">
-        <span class="material-symbols-outlined text-emerald-400 text-[28px] mb-2">trending_up</span>
-        <div class="text-2xl font-black text-on-surface">$<?php echo number_format($todayDeposits,2);?></div>
-        <div class="text-label-sm text-slate-400 mt-1">Bugün Yüklenen</div>
+        <span class="material-symbols-outlined text-emerald-400 text-[28px] mb-2">payments</span>
+        <div class="text-2xl font-black text-on-surface">$<?php echo number_format($totalDepositsSum,2);?></div>
+        <div class="text-label-sm text-slate-400 mt-1">Toplam Giriş (Yüklemeler)</div>
     </div>
     <div class="bg-[#1E293B]/80 border border-white/10 rounded-xl p-5">
-        <span class="material-symbols-outlined text-blue-400 text-[28px] mb-2">receipt_long</span>
-        <div class="text-2xl font-black text-on-surface"><?php echo $totalDeposits;?></div>
-        <div class="text-label-sm text-slate-400 mt-1">Toplam Yükleme</div>
+        <span class="material-symbols-outlined text-blue-400 text-[28px] mb-2">check_circle</span>
+        <div class="text-2xl font-black text-on-surface">$<?php echo number_format($totalPaidSum,2);?></div>
+        <div class="text-label-sm text-slate-400 mt-1">Ödenen Tutar (Çekim)</div>
+    </div>
+    <div class="bg-[#1E293B]/80 border border-white/10 rounded-xl p-5">
+        <span class="material-symbols-outlined text-amber-500 text-[28px] mb-2">hourglass_empty</span>
+        <div class="text-2xl font-black text-on-surface">$<?php echo number_format($totalPendingWithdrawSum,2);?></div>
+        <div class="text-label-sm text-slate-400 mt-1">Bekleyen Çekim Talebi</div>
+    </div>
+    <div class="bg-[#1E293B]/80 border border-white/10 rounded-xl p-5">
+        <span class="material-symbols-outlined text-indigo-400 text-[28px] mb-2">trending_up</span>
+        <div class="text-2xl font-black text-on-surface">$<?php echo number_format($todayDeposits,2);?></div>
+        <div class="text-label-sm text-slate-400 mt-1">Bugün Yüklenen</div>
     </div>
 </div>
 
