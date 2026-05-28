@@ -77,12 +77,9 @@ require_once __DIR__ . '/_header.php';
             </div>
             <div>
                 <label class="block text-label-md text-slate-400 mb-1">Gösterim Yeri</label>
-                <select name="position" class="w-full bg-white/5 border border-white/10 text-on-surface rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary-container/40 transition-colors">
-                    <option value="feed" class="bg-background">&#128240; Feed — Postlar Arasında</option>
-                    <option value="sidebar_right" class="bg-background">&#128506; Sidebar — Sağ Sütun</option>
-                    <option value="sidebar_left" class="bg-background">&#128506; Sidebar — Sol Sütun</option>
-                    <option value="carousel" class="bg-background">&#127921; Carousel</option>
-                    <option value="footer_banner" class="bg-background">&#9644; Footer Banner</option>
+                <select name="position" class="w-full bg-white/5 border border-white/10 text-on-surface rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary-container/40 transition-colors font-sans">
+                    <option value="carousel" class="bg-background">🎟️ Sponsorlarımız (Logo Slider)</option>
+                    <option value="sidebar_right" class="bg-background">🗺️ Reklam Alanı (300x600 Sidebar)</option>
                 </select>
             </div>
             <div>
@@ -114,7 +111,17 @@ require_once __DIR__ . '/_header.php';
                 <tr class="hover:bg-white/[0.02] transition-colors">
                     <td class="px-6 py-3 text-slate-500"><?php echo $ad['id']; ?></td>
                     <td class="px-6 py-3 font-semibold text-on-surface"><?php echo escape($ad['title']); ?></td>
-                    <td class="px-6 py-3"><span class="bg-white/5 text-slate-300 text-xs px-2 py-1 rounded"><?php echo escape($ad['position']); ?></span></td>
+                    <td class="px-6 py-3">
+                        <span class="bg-white/5 text-slate-300 text-xs px-2 py-1 rounded">
+                            <?php 
+                            echo match($ad['position']) {
+                                'carousel' => 'Sponsorlarımız (Slider)',
+                                'sidebar_right' => 'Reklam Alanı (Sidebar)',
+                                default => escape($ad['position'])
+                            };
+                            ?>
+                        </span>
+                    </td>
                     <td class="px-6 py-3">
                         <?php if ($ad['is_active']): ?>
                             <span class="text-xs font-semibold px-2 py-1 rounded border bg-emerald-500/10 text-emerald-400 border-emerald-500/20">Aktif</span>

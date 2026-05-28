@@ -83,10 +83,31 @@ $hideSidebar = $hideSidebar ?? false;
 
             <!-- Sponsorlarımız -->
             <?php
-            $rightSidebarSponsors = [
-                ['name' => 'COLOSSEUM', 'logo' => 'assets/img/sponsors/colosseum.png', 'url' => 'https://face-tr.gta.world/page/colosseum'],
-                ['name' => 'Paradise Group', 'logo' => 'assets/img/sponsors/paradise-group.png', 'url' => 'https://face-tr.gta.world/page/paradise'],
-            ];
+            if (!class_exists('AdModel')) {
+                require_once dirname(__DIR__, 2) . '/app/Models/Ad.php';
+            }
+            $rightSidebarSponsors = [];
+            $sidebarRightAds = [];
+            try {
+                $adModel = new AdModel();
+                $dbSponsors = $adModel->getByPosition('carousel');
+                foreach ($dbSponsors as $ds) {
+                    $rightSidebarSponsors[] = [
+                        'name' => $ds['title'],
+                        'logo' => $ds['image_url'],
+                        'url'  => $ds['link_url']
+                    ];
+                }
+                $sidebarRightAds = $adModel->getByPosition('sidebar_right');
+            } catch (Exception $e) {}
+
+            // Eğer veritabanında hiç sponsor yoksa, varsayılanları göster (boş kalmaması için)
+            if (empty($rightSidebarSponsors)) {
+                $rightSidebarSponsors = [
+                    ['name' => 'COLOSSEUM', 'logo' => 'assets/img/sponsors/colosseum.png', 'url' => 'https://face-tr.gta.world/page/colosseum'],
+                    ['name' => 'Paradise Group', 'logo' => 'assets/img/sponsors/paradise-group.png', 'url' => 'https://face-tr.gta.world/page/paradise'],
+                ];
+            }
             ?>
             <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-6 shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)] overflow-hidden">
                 <h2 class="font-headline-md text-headline-md text-on-surface mb-4 flex items-center gap-2">
@@ -139,7 +160,24 @@ $hideSidebar = $hideSidebar ?? false;
                 <?php endif; ?>
             </div>
 
-            <!-- Showcase Area -->
+            <!-- Showcase Area / Reklam Alanı -->
+            <?php if (!empty($sidebarRightAds)): 
+                // İlk aktif reklamı göster
+                $activeShowcase = $sidebarRightAds[0];
+            ?>
+            <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl overflow-hidden shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)] flex flex-col relative w-full h-[600px] group hover:border-primary-container/30 transition-colors">
+                <a href="<?php echo escape($activeShowcase['link_url'] ?? '#'); ?>" target="_blank" rel="noopener" class="block w-full h-full relative">
+                    <img src="<?php echo BASE_URL . '/' . escape($activeShowcase['logo'] ?? $activeShowcase['image_url']); ?>" alt="<?php echo escape($activeShowcase['title']); ?>" class="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500" loading="lazy">
+                    <!-- Hover overlay for premium touch -->
+                    <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-[2px]">
+                        <div class="w-12 h-12 rounded-full bg-primary-container text-white flex items-center justify-center shadow-lg transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                            <span class="material-symbols-outlined text-[24px]">arrow_outward</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <?php else: ?>
+            <!-- Varsayılan Reklam Alanı Taslağı (Placeholder) -->
             <div class="bg-[#1E293B]/40 backdrop-blur-[20px] border border-dashed border-white/20 rounded-xl overflow-hidden shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)] flex flex-col relative w-full h-[600px] group hover:border-primary-container/50 transition-colors">
                 <a href="mailto:info@sociaera.online" class="absolute inset-0 flex flex-col items-center justify-center p-6 transition-colors text-center cursor-pointer z-10">
                     <span class="material-symbols-outlined text-slate-600 text-[48px] mb-4 group-hover:scale-110 group-hover:text-primary-container transition-all duration-300">view_carousel</span>
@@ -157,6 +195,7 @@ $hideSidebar = $hideSidebar ?? false;
                     <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-blue-500/5 rounded-full blur-3xl group-hover:bg-blue-500/10 transition-colors"></div>
                 </div>
             </div>
+            <?php endif; ?>
         </aside>
         <?php endif; /* !$hideSidebar */ ?>
     </div> <!-- flex-grow flex p-gutter ... -->
