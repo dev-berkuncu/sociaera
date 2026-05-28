@@ -16,6 +16,7 @@ if (Auth::check()) { header('Location: ' . BASE_URL . '/dashboard'); exit; }
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet"/>
+<link rel="preload" href="<?php echo BASE_URL; ?>/assets/images/hero-bg.jpg" as="image" type="image/jpeg"/>
 <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
