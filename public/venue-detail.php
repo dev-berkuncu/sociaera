@@ -126,7 +126,7 @@ require_once __DIR__ . '/partials/app_header.php';
                 </div>
                 <!-- Call to action button -->
                 <div class="flex items-center gap-3">
-                    <a href="<?php echo BASE_URL; ?>/?venue_id=<?php echo $venue['id']; ?>" class="flex items-center justify-center gap-2 bg-primary-container text-white px-6 py-3 rounded-xl font-bold hover:bg-primary-container/90 transition-all shadow-[0_0_20px_rgba(255,107,53,0.3)] active:scale-95 group shrink-0">
+                    <a href="<?php echo BASE_URL; ?>/dashboard?venue_id=<?php echo $venue['id']; ?>" class="flex items-center justify-center gap-2 bg-primary-container text-white px-6 py-3 rounded-xl font-bold hover:bg-primary-container/90 transition-all shadow-[0_0_20px_rgba(255,107,53,0.3)] active:scale-95 group shrink-0">
                         <span class="material-symbols-outlined text-[20px] group-hover:scale-110 transition-transform">pin_drop</span>
                         Burada Check-in Yap
                     </a>

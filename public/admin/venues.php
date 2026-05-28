@@ -13,7 +13,7 @@ require_once __DIR__ . '/../../app/Models/Notification.php';
 Auth::requireAdmin();
 $venueModel = new VenueModel();
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && Auth::canWrite()) {
     Csrf::requireValid();
     $action = $_POST['action'] ?? '';
     $venueId = (int)($_POST['venue_id'] ?? 0);

@@ -14,7 +14,7 @@ require_once __DIR__ . '/../../app/Models/Notification.php';
 Auth::requireAdmin();
 $settingsModel = new SettingsModel();
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && Auth::canWrite()) {
     Csrf::requireValid();
     $action = $_POST['action'] ?? 'settings';
 
@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $confirmPw  = $_POST['confirm_password'] ?? '';
 
         $db      = Database::getConnection();
-        $stmt    = $db->prepare("SELECT password FROM users WHERE id = ?");
+        $stmt    = $db->prepare("SELECT password_hash FROM users WHERE id = ?");
         $stmt->execute([Auth::id()]);
         $hash    = $stmt->fetchColumn();
 
@@ -36,17 +36,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } elseif ($newPw !== $confirmPw) {
             Auth::setFlash('error', 'Yeni şifre ve onay şifre eşleşmiyor.');
         } else {
-            $db->prepare("UPDATE users SET password = ? WHERE id = ?")
+            $db->prepare("UPDATE users SET password_hash = ? WHERE id = ?")
                ->execute([password_hash($newPw, PASSWORD_DEFAULT), Auth::id()]);
             Auth::setFlash('success', 'Şifre başarıyla değiştirildi.');
         }
         header('Location: ' . BASE_URL . '/admin/settings'); exit;
     }
 
-    // Site ayarları
-    foreach ($_POST as $key => $value) {
-        if (in_array($key, ['csrf_token', 'action'], true)) continue;
-        $settingsModel->set($key, $value);
+    // Site ayarları — only whitelisted keys
+    $allowedKeys = [
+        'site_name', 'site_description', 'site_email',
+        'checkin_cooldown', 'checkin_rate_limit', 'checkin_rate_window',
+        'login_max_attempts', 'login_window_seconds',
+        'maintenance_mode',
+    ];
+    foreach ($allowedKeys as $key) {
+        if (isset($_POST[$key])) {
+            $settingsModel->set($key, $_POST[$key]);
+        }
     }
     Auth::setFlash('success', 'Ayarlar kaydedildi.');
     header('Location: ' . BASE_URL . '/admin/settings'); exit;

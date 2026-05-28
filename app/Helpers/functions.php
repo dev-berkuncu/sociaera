@@ -110,11 +110,11 @@ function parseMentions(?string $text): string
 function linkify(?string $text): string
 {
     if (!$text) return '';
-    $escaped = escape($text);
+    // Not: text zaten parseMentions() tarafından escape edilmiş olmalı
     return preg_replace_callback(
         '#(https?://[^\s<&"]+)#i',
-        fn($m) => '<a href="' . escapeUrl($m[1]) . '" target="_blank" rel="noopener noreferrer">' . escape($m[1]) . '</a>',
-        $escaped
+        fn($m) => '<a href="' . escapeUrl($m[1]) . '" target="_blank" rel="noopener noreferrer">' . $m[1] . '</a>',
+        $text
     );
 }
 

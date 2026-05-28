@@ -15,7 +15,7 @@ require_once __DIR__ . '/../../app/Models/Settings.php';
 Auth::requireAdmin();
 $checkinModel = new CheckinModel();
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && Auth::canWrite()) {
     Csrf::requireValid();
     $action = $_POST['action'] ?? '';
     $postId = (int)($_POST['post_id'] ?? 0);

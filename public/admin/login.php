@@ -23,6 +23,7 @@ if (Auth::isAdmin()) {
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    Csrf::requireValid();
     $username = trim($_POST['username'] ?? '');
     $password = $_POST['password'] ?? '';
 
@@ -82,6 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php endif; ?>
 
         <form method="POST" class="space-y-4">
+            <?php echo csrfField(); ?>
             <div>
                 <label class="block text-xs font-semibold text-slate-400 uppercase tracking-widest mb-1.5">Kullanıcı Adı</label>
                 <input type="text" name="username" required autofocus

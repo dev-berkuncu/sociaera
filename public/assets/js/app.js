@@ -75,7 +75,6 @@ const App = {
 
     // ── Like Toggle ───────────────────────────────────────
     async toggleLike(btn, checkinId) {
-        const icon = btn.querySelector('i');
         const countEl = btn.querySelector('.action-count');
         const isLiked = btn.classList.contains('liked');
 
@@ -89,7 +88,7 @@ const App = {
 
         if (res.ok) {
             btn.classList.toggle('liked');
-            if (icon) icon.className = btn.classList.contains('liked') ? 'bi bi-heart-fill' : 'bi bi-heart';
+            btn.classList.toggle('text-primary-container');
             if (countEl) {
                 let c = parseInt(countEl.textContent) || 0;
                 countEl.textContent = btn.classList.contains('liked') ? c + 1 : Math.max(0, c - 1);
@@ -115,8 +114,7 @@ const App = {
 
         if (res.ok) {
             btn.classList.toggle('reposted');
-            const icon = btn.querySelector('i');
-            if (icon) icon.className = btn.classList.contains('reposted') ? 'bi bi-arrow-repeat' : 'bi bi-arrow-repeat';
+            btn.classList.toggle('text-primary-container');
             if (countEl) {
                 let c = parseInt(countEl.textContent) || 0;
                 countEl.textContent = btn.classList.contains('reposted') ? c + 1 : Math.max(0, c - 1);
@@ -142,12 +140,14 @@ const App = {
         if (res.ok) {
             if (res.data?.following) {
                 btn.classList.add('following');
-                btn.innerHTML = '<i class="bi bi-person-check-fill"></i> Takip Ediliyor';
-                btn.className = btn.className.replace('btn-primary-orange', 'btn-outline-orange');
+                btn.textContent = 'Takip Ediliyor';
+                btn.classList.remove('bg-primary-container', 'text-white');
+                btn.classList.add('bg-white/10', 'text-slate-300', 'border-white/10');
             } else {
                 btn.classList.remove('following');
-                btn.innerHTML = '<i class="bi bi-person-plus"></i> Takip Et';
-                btn.className = btn.className.replace('btn-outline-orange', 'btn-primary-orange');
+                btn.textContent = 'Takip Et';
+                btn.classList.remove('bg-white/10', 'text-slate-300', 'border-white/10');
+                btn.classList.add('bg-primary-container', 'text-white');
             }
         } else {
             this.flash(res.error || 'Hata oluştu.', 'error');
