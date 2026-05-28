@@ -412,6 +412,56 @@ const App = {
             this.flash(res.error || 'Hata oluştu.', 'error');
         }
         if (btn) btn.disabled = false;
+    },
+
+    // ── Report Modal ─────────────────────────────────────
+    openReportModal(entityType, entityId) {
+        const modal = document.getElementById('reportModal');
+        if (!modal) return;
+        document.getElementById('report_entity_type').value = entityType;
+        document.getElementById('report_entity_id').value = entityId;
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    },
+
+    closeReportModal() {
+        const modal = document.getElementById('reportModal');
+        if (!modal) return;
+        modal.classList.add('hidden');
+        document.body.style.overflow = '';
+        // Reset form
+        const form = document.getElementById('reportForm');
+        if (form) form.reset();
+    },
+
+    async submitReport(e) {
+        e.preventDefault();
+        const btn = document.getElementById('reportSubmitBtn');
+        if (btn) btn.disabled = true;
+
+        const formData = new FormData();
+        formData.append('csrf_token', this.csrfToken);
+        formData.append('entity_type', document.getElementById('report_entity_type').value);
+        formData.append('entity_id', document.getElementById('report_entity_id').value);
+
+        const reason = document.querySelector('#reportForm input[name="reason"]:checked');
+        if (!reason) {
+            this.flash('Lütfen bir neden seçin.', 'error');
+            if (btn) btn.disabled = false;
+            return;
+        }
+        formData.append('reason', reason.value);
+        formData.append('description', document.getElementById('report_description')?.value || '');
+
+        const res = await this.post(this.baseUrl + '/api/report', formData);
+
+        if (res.ok) {
+            this.closeReportModal();
+            this.flash(res.message || 'Raporunuz alındı. Teşekkürler!', 'success');
+        } else {
+            this.flash(res.error || 'Rapor gönderilemedi.', 'error');
+        }
+        if (btn) btn.disabled = false;
     }
 };
 

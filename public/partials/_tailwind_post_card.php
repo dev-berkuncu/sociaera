@@ -84,6 +84,11 @@ if (!isset($post)) return;
         <button onclick="navigator.clipboard.writeText('<?php echo BASE_URL; ?>/post?id=<?php echo $post['id']; ?>'); App.flash('Link kopyalandı!', 'success');" class="flex items-center gap-2 hover:text-on-surface transition-colors ml-auto">
             <span class="material-symbols-outlined">share</span>
         </button>
+        <?php if (Auth::check() && empty($post['is_own'])): ?>
+        <button onclick="App.openReportModal('checkin', <?php echo $post['id']; ?>)" class="flex items-center gap-2 hover:text-red-400 transition-colors" title="Raporla">
+            <span class="material-symbols-outlined text-[20px]">flag</span>
+        </button>
+        <?php endif; ?>
     </div>
     
     <!-- Inline Comments Section -->

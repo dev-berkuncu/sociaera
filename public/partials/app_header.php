@@ -228,6 +228,7 @@ if (!isset($currentUser) && Auth::check()) {
             'kampanyalar'  => ['icon' => 'campaign',                 'label' => 'Kampanyalar',     'url' => '/kampanyalar'],
             // 'mystery' => ['icon' => 'person_search', 'label' => 'Gizli Müşteri', 'url' => '/mystery-shopper', 'special' => 'indigo'], // TODO: aktifleştir
             'notifications'=> ['icon' => 'notifications',           'label' => 'Bildirimler',     'url' => '/notifications'],
+            'report'       => ['icon' => 'flag',                    'label' => 'Raporla',         'url' => '/report'],
             'settings'     => ['icon' => 'settings',                'label' => 'Ayarlar',         'url' => '/settings'],
         ];
         $activeNav = $activeNav ?? '';

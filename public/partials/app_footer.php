@@ -205,6 +205,71 @@ $hideSidebar = $hideSidebar ?? false;
 </style>
 <?php endif; ?>
 
+<!-- Report Modal -->
+<?php if (Auth::check()): ?>
+<div id="reportModal" class="fixed inset-0 z-[9999] hidden">
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="App.closeReportModal()"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4">
+        <div class="bg-[#1E293B] border border-white/10 rounded-2xl w-full max-w-md shadow-2xl relative animate-[modalIn_0.2s_ease-out]">
+            <div class="flex items-center justify-between p-6 border-b border-white/5">
+                <h3 class="text-lg font-bold text-on-surface flex items-center gap-2">
+                    <span class="material-symbols-outlined text-red-400">flag</span> İçeriği Raporla
+                </h3>
+                <button onclick="App.closeReportModal()" class="text-slate-400 hover:text-white transition-colors">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <form id="reportForm" onsubmit="App.submitReport(event)" class="p-6">
+                <input type="hidden" name="entity_type" id="report_entity_type">
+                <input type="hidden" name="entity_id" id="report_entity_id">
+                
+                <label class="block text-sm font-bold text-slate-300 mb-3">Neden raporlıyorsunuz?</label>
+                <div class="grid grid-cols-1 gap-2 mb-5">
+                    <?php
+                    $reasons = [
+                        'spam' => ['icon' => 'mark_email_unread', 'label' => 'Spam / Reklam'],
+                        'harassment' => ['icon' => 'report', 'label' => 'Taciz / Zorbalık'],
+                        'inappropriate' => ['icon' => 'block', 'label' => 'Uygunsuz İçerik'],
+                        'fake_checkin' => ['icon' => 'location_off', 'label' => 'Sahte Check-in'],
+                        'fraud' => ['icon' => 'gpp_bad', 'label' => 'Dolandırıcılık'],
+                        'privacy' => ['icon' => 'privacy_tip', 'label' => 'Gizlilik İhlali'],
+                        'copyright' => ['icon' => 'copyright', 'label' => 'Telif Hakkı'],
+                        'other' => ['icon' => 'more_horiz', 'label' => 'Diğer'],
+                    ];
+                    foreach ($reasons as $key => $r):
+                    ?>
+                    <label class="cursor-pointer">
+                        <input type="radio" name="reason" value="<?php echo $key; ?>" class="sr-only peer" required>
+                        <div class="flex items-center gap-3 px-4 py-3 rounded-xl border border-white/10 bg-white/5 peer-checked:border-red-400/50 peer-checked:bg-red-500/10 hover:bg-white/10 transition-all">
+                            <span class="material-symbols-outlined text-[18px] text-slate-400 peer-checked:text-red-400"><?php echo $r['icon']; ?></span>
+                            <span class="text-sm text-slate-300"><?php echo $r['label']; ?></span>
+                        </div>
+                    </label>
+                    <?php endforeach; ?>
+                </div>
+
+                <label class="block text-sm font-bold text-slate-300 mb-2">Açıklama <span class="text-slate-500 font-normal">(opsiyonel)</span></label>
+                <textarea name="description" id="report_description" rows="3" maxlength="500" 
+                    class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-on-surface text-sm focus:border-red-400/50 focus:bg-white/10 outline-none transition-all resize-none mb-5"
+                    placeholder="Detay eklemek isterseniz..."></textarea>
+
+                <div class="flex gap-3">
+                    <button type="button" onclick="App.closeReportModal()" class="flex-1 py-3 rounded-xl bg-white/5 text-slate-300 font-bold text-sm border border-white/10 hover:bg-white/10 transition-colors">
+                        İptal
+                    </button>
+                    <button type="submit" id="reportSubmitBtn" class="flex-1 py-3 rounded-xl bg-red-500/20 text-red-400 font-bold text-sm border border-red-500/30 hover:bg-red-500/30 transition-colors flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined text-[18px]">send</span> Rapor Gönder
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<style>
+@keyframes modalIn { from { opacity:0; transform:scale(0.95) translateY(10px); } to { opacity:1; transform:scale(1) translateY(0); } }
+</style>
+<?php endif; ?>
+
 <script src="<?php echo asset('js/app.js'); ?>"></script>
 </body>
 </html>
