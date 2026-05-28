@@ -14,6 +14,45 @@ require_once __DIR__ . '/../app/Models/Venue.php';
 Auth::requireLogin();
 
 $walletModel = new WalletModel();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    Csrf::requireValid();
+    $action = $_POST['action'] ?? '';
+    
+    if ($action === 'withdraw') {
+        $amount = (float)($_POST['amount'] ?? 0);
+        if ($amount <= 0) {
+            Auth::setFlash('error', 'Çekmek istediğiniz tutar 0\'dan büyük olmalıdır.');
+            header('Location: ' . BASE_URL . '/wallet');
+            exit;
+        }
+        
+        $balance = $walletModel->getBalance(Auth::id());
+        if ($balance < $amount) {
+            Auth::setFlash('error', 'Cüzdanınızda bu miktarda bakiye bulunmuyor.');
+            header('Location: ' . BASE_URL . '/wallet');
+            exit;
+        }
+        
+        $refCode = 'W-' . strtoupper(bin2hex(random_bytes(4)));
+        $description = "Para Çekme Talebi - Ref: " . $refCode;
+        
+        if ($walletModel->withdraw(Auth::id(), $amount, $description)) {
+            try {
+                $db = Database::getConnection();
+                $stmt = $db->prepare("UPDATE transactions SET reference_id = ? WHERE user_id = ? AND type = 'withdraw' AND description = ? ORDER BY id DESC LIMIT 1");
+                $stmt->execute([$refCode, Auth::id(), $description]);
+            } catch (Exception $e) {}
+            
+            Auth::setFlash('success', "Çekim talebiniz oluşturuldu! Referans Kodu: <strong>{$refCode}</strong>. Oyun içi ödemeniz için bu kodu yöneticilere bildirebilirsiniz.");
+        } else {
+            Auth::setFlash('error', 'Çekim işlemi sırasında bir hata oluştu.');
+        }
+        header('Location: ' . BASE_URL . '/wallet');
+        exit;
+    }
+}
+
 $walletModel->ensureWallet(Auth::id());
 $balance = $walletModel->getBalance(Auth::id());
 $transactions = $walletModel->getTransactions(Auth::id());
@@ -71,9 +110,14 @@ require_once __DIR__ . '/partials/app_header.php';
         <div class="relative z-10">
             <div class="text-white/80 font-semibold mb-1 tracking-wider uppercase text-sm">Mevcut Bakiye</div>
             <div class="text-5xl font-black mb-6">$<?php echo number_format($balance, 2, ',', '.'); ?></div>
-            <button onclick="openTopupModal()" class="bg-white text-primary-container px-6 py-3 rounded-full font-bold shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center gap-2 w-fit">
-                <span class="material-symbols-outlined">add_circle</span> Bakiye Yükle
-            </button>
+            <div class="flex flex-wrap gap-3">
+                <button onclick="openTopupModal()" class="bg-white text-primary-container px-6 py-3 rounded-full font-bold shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center gap-2 w-fit">
+                    <span class="material-symbols-outlined">add_circle</span> Bakiye Yükle
+                </button>
+                <button onclick="openWithdrawModal()" class="bg-white/10 hover:bg-white/20 border border-white/20 text-white px-6 py-3 rounded-full font-bold shadow-lg hover:scale-105 active:scale-95 transition-all flex items-center gap-2 w-fit">
+                    <span class="material-symbols-outlined">payments</span> Para Çek
+                </button>
+            </div>
         </div>
     </div>
 
@@ -144,6 +188,45 @@ require_once __DIR__ . '/partials/app_header.php';
     </div>
 </div>
 
+<!-- Para Çek Modal -->
+<div class="topup-overlay" id="withdrawOverlay" onclick="closeWithdrawModal(event)">
+    <div class="bg-[#1E293B] border border-white/10 rounded-2xl w-[90%] max-w-md overflow-hidden shadow-2xl relative" onclick="event.stopPropagation()">
+        <button onclick="closeWithdrawModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white"><span class="material-symbols-outlined">close</span></button>
+        
+        <form method="POST" class="p-8 text-center m-0">
+            <?php echo csrfField(); ?>
+            <input type="hidden" name="action" value="withdraw">
+            
+            <div class="w-16 h-16 mx-auto bg-primary-container/20 text-primary-container rounded-full flex items-center justify-center mb-4">
+                <span class="material-symbols-outlined text-[32px]">account_balance</span>
+            </div>
+            <h2 class="text-2xl font-bold text-white mb-2">Para Çek</h2>
+            <p class="text-slate-400 text-sm mb-6">Cüzdanınızdaki bakiyeyi banka hesabınıza aktarın.</p>
+            
+            <div class="relative mb-6">
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xl">$</span>
+                <input type="number" name="amount" id="withdrawAmount" class="w-full bg-background border border-white/10 rounded-xl pl-8 pr-4 py-4 text-white text-xl font-bold focus:border-primary-container focus:outline-none transition-colors text-center" placeholder="Tutar (USD)" min="1" max="<?php echo (int)$balance; ?>" step="1" oninput="updateWithdrawAmount()" required>
+            </div>
+            
+            <div class="bg-surface-container rounded-lg p-3 mb-6 text-sm flex justify-between items-center border border-white/5">
+                <span class="text-slate-400">Çekilecek Tutar</span>
+                <span class="font-bold text-white text-lg">$<span id="withdrawValue">0.00</span></span>
+            </div>
+            
+            <div class="flex gap-3">
+                <button type="button" onclick="closeWithdrawModal()" class="flex-1 bg-white/10 hover:bg-white/20 text-white py-3 rounded-xl font-bold transition-colors border border-white/10">VAZGEÇ</button>
+                <button id="withdrawBtn" type="submit" disabled class="flex-1 bg-primary-container text-white py-3 rounded-xl font-bold shadow-[0_0_15px_rgba(255,107,53,0.3)] hover:bg-primary-container/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined text-[18px]">outbox</span> ÇEK
+                </button>
+            </div>
+            
+            <p class="text-[10px] text-slate-500 mt-6 uppercase tracking-wider font-bold">
+                (( Para çekim talebiniz sonrası sistem size bir referans kodu verecektir. Bu kodu oyun içinden yöneticilere ileterek paranızı tahsil edebilirsiniz. ))
+            </p>
+        </form>
+    </div>
+</div>
+
 <script>
 function openTopupModal() {
     document.getElementById('topupOverlay').classList.add('active');
@@ -194,8 +277,31 @@ async function redirectToFleeca() {
     }
 }
 
+function openWithdrawModal() {
+    document.getElementById('withdrawOverlay').classList.add('active');
+    document.body.style.overflow = 'hidden';
+    document.getElementById('withdrawAmount').value = '';
+    updateWithdrawAmount();
+}
+
+function closeWithdrawModal(e) {
+    if (e && e.target !== e.currentTarget) return;
+    document.getElementById('withdrawOverlay').classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+function updateWithdrawAmount() {
+    const amount = parseFloat(document.getElementById('withdrawAmount').value) || 0;
+    const maxVal = parseFloat(document.getElementById('withdrawAmount').max) || 0;
+    document.getElementById('withdrawValue').textContent = amount.toFixed(2);
+    document.getElementById('withdrawBtn').disabled = amount <= 0 || amount > maxVal;
+}
+
 document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeTopupModal();
+    if (e.key === 'Escape') {
+        closeTopupModal();
+        closeWithdrawModal();
+    }
 });
 </script>
 

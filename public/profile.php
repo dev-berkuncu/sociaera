@@ -273,6 +273,24 @@ require_once __DIR__ . '/partials/app_header.php';
                     <span class="material-symbols-outlined text-[18px] text-slate-500">calendar_month</span>
                     <span class="text-slate-300"><?php echo formatDate($profileUser['created_at']); ?> katıldı</span>
                 </div>
+                <?php if ($isOwn): ?>
+                    <?php
+                    if (!class_exists('WalletModel')) {
+                        require_once __DIR__ . '/../app/Models/Wallet.php';
+                    }
+                    $walletModel = new WalletModel();
+                    $walletModel->ensureWallet(Auth::id());
+                    $balance = $walletModel->getBalance(Auth::id());
+                    ?>
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-[18px] text-[#10b981]">account_balance_wallet</span>
+                        <span class="text-slate-300 font-medium">Bakiye:</span>
+                        <span class="text-[#10b981] font-black">$<?php echo number_format($balance, 2, ',', '.'); ?></span>
+                        <a href="<?php echo BASE_URL; ?>/wallet" class="ml-1 text-[11px] bg-[#10b981]/15 text-[#10b981] hover:bg-[#10b981]/25 border border-[#10b981]/20 px-2 py-0.5 rounded transition-all font-bold uppercase flex items-center gap-0.5">
+                            Cüzdan <span class="material-symbols-outlined text-[12px]">arrow_forward</span>
+                        </a>
+                    </div>
+                <?php endif; ?>
             </div>
             
             <!-- Rozetler (logic bölümünden çekildi) -->
