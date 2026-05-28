@@ -9,7 +9,6 @@ class BadgeModel
     public function __construct()
     {
         $this->db = Database::getConnection();
-        $this->ensureSchema();
     }
 
     private function ensureSchema(): void
