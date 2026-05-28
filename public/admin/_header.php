@@ -3,8 +3,6 @@
  * Admin Panel — Tailwind Header (V1)
  * Rol bazlı sidebar menü, genişletilmiş navigasyon
  */
-header('Cache-Control: no-cache, must-revalidate');
-header('Pragma: no-cache');
 
 if (!isset($currentUser) && Auth::check()) {
     $currentUser = (new UserModel())->getById(Auth::id());
@@ -97,10 +95,14 @@ $_pendingVenues = $pendingVenues ?? 0;
     .mobile-menu-overlay.active { display: block; }
     .mobile-sidebar { transform: translateX(-100%); transition: transform 0.3s ease; }
     .mobile-sidebar.active { transform: translateX(0); }
+    /* FOUC prevention — Tailwind CDN işleyene kadar gizle */
+    body { opacity: 0; }
+    body.ready { opacity: 1; transition: opacity 0.15s ease-in; }
 </style>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
 </head>
 <body class="bg-background text-on-background font-body text-sm min-h-screen antialiased flex selection:bg-primary-container/30 selection:text-primary-container">
+<script>document.body.classList.add('ready');</script>
 
 <!-- Admin Sidebar -->
 <nav class="hidden md:flex flex-col fixed left-0 top-0 h-full p-6 bg-[#1E293B]/80 backdrop-blur-lg font-display antialiased w-64 border-r border-white/10 shadow-[30px_0_30px_-15px_rgba(15,23,42,0.15)] z-50 overflow-y-auto">

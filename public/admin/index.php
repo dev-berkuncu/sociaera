@@ -3,8 +3,6 @@
  * Admin Panel — Dashboard (V1)
  * 13+ metrik kartı, grafikler, top listeler
  */
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
 require_once __DIR__ . '/../../app/Config/env.php';
 loadEnv(dirname(__DIR__, 2) . '/.env');
 require_once __DIR__ . '/../../app/Config/app.php';
@@ -86,14 +84,14 @@ require_once __DIR__ . '/_header.php';
         <h3 class="text-lg font-bold text-on-surface mb-4 flex items-center gap-2">
             <span class="material-symbols-outlined text-blue-400 text-[20px]">person_add</span> Son 7 Gün — Kayıtlar
         </h3>
-        <canvas id="regChart" height="200"></canvas>
+        <div class="relative" style="height:200px"><canvas id="regChart"></canvas></div>
     </div>
     <!-- Check-in Grafiği -->
     <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-6 shadow-[0_10px_20px_-10px_rgba(15,23,42,0.3)]">
         <h3 class="text-lg font-bold text-on-surface mb-4 flex items-center gap-2">
             <span class="material-symbols-outlined text-purple-400 text-[20px]">edit_note</span> Son 7 Gün — Check-in'ler
         </h3>
-        <canvas id="checkinChart" height="200"></canvas>
+        <div class="relative" style="height:200px"><canvas id="checkinChart"></canvas></div>
     </div>
 </div>
 
