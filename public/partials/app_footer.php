@@ -8,44 +8,52 @@ $hideSidebar = $hideSidebar ?? false;
         <?php if (!$hideSidebar): ?>
         <!-- Right Sidebar: Discovery Rail -->
         <aside class="hidden lg:flex flex-col col-span-12 lg:col-span-3 xl:col-span-3 space-y-lg sticky top-20 h-[calc(100vh-100px)] overflow-y-auto custom-scrollbar pl-2 pb-6">
-            <!-- Popular Places -->
-            <?php if (!empty($trendVenues)): ?>
-            <div class="bg-surface-container-low p-5 rounded-xl border border-outline-variant/10 shadow-md">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Popüler Mekanlar</h3>
-                    <a href="<?php echo BASE_URL; ?>/venues" class="text-[#ff9100] text-[10px] font-bold hover:underline">Tümünü Gör</a>
+            <!-- Yakındaki Mekanlar (Nearby Places) -->
+            <?php
+            $nearbyVenues = [];
+            try {
+                $nearbyVenues = (new VenueModel())->getApproved('', '', 3);
+            } catch (Exception $e) {}
+            if (!empty($nearbyVenues)):
+            ?>
+            <div class="bg-surface-container-low p-4 rounded-xl border border-outline-variant/20 shadow-md">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="text-[9px] text-on-surface-variant font-bold uppercase tracking-wider font-mono">Yakındaki Mekanlar</h3>
+                    <a href="<?php echo BASE_URL; ?>/venues" class="text-primary text-[9px] font-bold hover:underline">Tümünü Gör</a>
                 </div>
-                <div class="space-y-4">
-                    <?php foreach ($trendVenues as $i => $tv): ?>
-                    <div class="flex items-center gap-3 group cursor-pointer" onclick="window.location.href='<?php echo BASE_URL; ?>/venue-detail?id=<?php echo $tv['id']; ?>'">
-                        <div class="text-xs font-black text-slate-600 w-4"><?php echo $i + 1; ?></div>
-                        
-                        <div class="w-12 h-12 rounded-lg overflow-hidden bg-surface-container flex items-center justify-center text-[#ff9100] border border-white/5 group-hover:border-[#ff9100]/40 transition-colors flex-shrink-0 relative">
-                            <?php if (!empty($tv['cover_image'])): ?>
-                                <img src="<?php echo BASE_URL . '/uploads/venues/' . escape($tv['cover_image']); ?>" class="w-full h-full object-cover" width="48" height="48" loading="lazy">
-                            <?php elseif (!empty($tv['image'])): ?>
-                                <img src="<?php echo uploadUrl('posts', $tv['image']); ?>" class="w-full h-full object-cover" width="48" height="48" loading="lazy">
+                <div class="space-y-3">
+                    <?php foreach ($nearbyVenues as $index => $nv): ?>
+                    <div class="flex items-center gap-3 group cursor-pointer" onclick="window.location.href='<?php echo BASE_URL; ?>/venue-detail?id=<?php echo $nv['id']; ?>'">
+                        <div class="w-12 h-12 rounded-lg overflow-hidden bg-surface-container flex items-center justify-center text-primary border border-white/5 group-hover:border-primary/40 transition-colors flex-shrink-0 relative">
+                            <?php if (!empty($nv['cover_image'])): ?>
+                                <img src="<?php echo BASE_URL . '/uploads/venues/' . escape($nv['cover_image']); ?>" class="w-full h-full object-cover" width="48" height="48" loading="lazy">
+                            <?php elseif (!empty($nv['image'])): ?>
+                                <img src="<?php echo uploadUrl('posts', $nv['image']); ?>" class="w-full h-full object-cover" width="48" height="48" loading="lazy">
                             <?php else: ?>
                                 <span class="material-symbols-outlined text-[20px]">store</span>
-                            <?php endif; ?>
-                            <?php if (isset($tv['is_open']) && $tv['is_open']): ?>
-                                <div class="absolute -top-0.5 -right-0.5 w-2 h-2 bg-emerald-400 rounded-full border border-[#0e0e0f]"></div>
                             <?php endif; ?>
                         </div>
                         
                         <div class="flex-grow min-w-0">
-                            <div class="font-bold text-xs text-on-surface group-hover:text-[#ff9100] transition-colors truncate"><?php echo escape($tv['name']); ?></div>
-                            <div class="text-[10px] text-slate-500 mt-0.5 truncate flex items-center gap-1.5">
-                                <?php if (!empty($tv['category'])): ?>
-                                    <span class="text-[#ff9100] font-semibold"><?php echo escape(VenueModel::categories()[$tv['category']] ?? $tv['category']); ?></span>
-                                <?php endif; ?>
-                                <span>• <?php echo $tv['weekly_checkins']; ?></span>
+                            <div class="text-xs font-bold text-on-surface group-hover:text-primary transition-colors truncate"><?php echo escape($nv['name']); ?></div>
+                            <div class="text-[10px] text-on-surface-variant truncate mt-0.5">
+                                <?php echo escape(VenueModel::categories()[$nv['category']] ?? ($nv['category'] ?? 'Mekan')); ?> 
+                                • <?php echo (110 + ($index * 140)) . ' m'; ?>
                             </div>
                         </div>
                         
                         <!-- Rating score badge -->
-                        <div class="bg-[#ff9100]/15 text-[#ff9100] text-[10px] font-bold px-1.5 py-0.5 rounded flex-shrink-0 border border-[#ff9100]/25">
-                            <?php echo number_format(9.5 - ($i * 0.2), 1); ?>
+                        <div class="bg-green-600 text-white text-[11px] font-bold px-1.5 py-0.5 rounded flex-shrink-0">
+                            <?php 
+                            $nvRating = 9.2 - ($index * 0.2);
+                            try {
+                                $ratingData = (new VenueModel())->getVenueRating($nv['id']);
+                                if ($ratingData['average_rating'] > 0) {
+                                    $nvRating = $ratingData['average_rating'];
+                                }
+                            } catch (Exception $e) {}
+                            echo number_format($nvRating, 1); 
+                            ?>
                         </div>
                     </div>
                     <?php endforeach; ?>
@@ -53,62 +61,96 @@ $hideSidebar = $hideSidebar ?? false;
             </div>
             <?php endif; ?>
 
-            <!-- Map View Bento Widget -->
-            <div class="bg-surface-container-low rounded-xl border border-outline-variant/10 overflow-hidden shadow-md flex flex-col relative">
+            <!-- Map View Bento Widget (Yakında) -->
+            <div class="bg-surface-container-low rounded-xl border border-outline-variant/20 overflow-hidden shadow-md flex flex-col relative">
                 <div class="p-4 flex justify-between items-center">
-                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 font-mono">Keşif Radarı</h3>
-                    <a href="<?php echo BASE_URL; ?>/venues" class="text-[#ff9100] text-[10px] font-bold hover:underline">Genişlet</a>
+                    <h3 class="text-[9px] text-on-surface-variant font-bold uppercase tracking-wider font-mono">Yakında</h3>
+                    <a href="<?php echo BASE_URL; ?>/venues" class="text-primary text-[9px] font-bold hover:underline">Tümünü Gör</a>
                 </div>
-                <div class="h-32 relative bg-surface-container-highest/60 cursor-pointer overflow-hidden group" onclick="window.location.href='<?php echo BASE_URL; ?>/venues'">
-                    <img class="w-full h-full object-cover opacity-35 grayscale-[0.2] invert-[0.9] group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida/AP1WRLudjIkYlGBmWTPYJUvLFzH2Tw0cGp8ikU9WEO9mqsjg7gsgTevDFlnp2dkPXUro1NNq4mTrbxUvyIxDMPZBe60dHROByG9EheR2Gbi3nAH-wyKDQsdWm1yunx-ZqK9Sz-a_FPJJp29JteU3WWba1-_UkQtdFpYlWjgRj5k6m2Ibqu3P4VbGVL-xL6pheN38RhYZyrEtz-en_Au81D2NNMcT0IbPxd9hXc-JIRF6xlDNhqwX3kxs7Kns6v4" alt="City Map" loading="lazy">
+                <div class="h-48 relative bg-surface-container-highest cursor-pointer group overflow-hidden" onclick="window.location.href='<?php echo BASE_URL; ?>/venues'">
+                    <img class="w-full h-full object-cover opacity-60 grayscale-[0.5] invert-[0.9] group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida/AP1WRLudjIkYlGBmWTPYJUvLFzH2Tw0cGp8ikU9WEO9mqsjg7gsgTevDFlnp2dkPXUro1NNq4mTrbxUvyIxDMPZBe60dHROByG9EheR2Gbi3nAH-wyKDQsdWm1yunx-ZqK9Sz-a_FPJJp29JteU3WWba1-_UkQtdFpYlWjgRj5k6m2Ibqu3P4VbGVL-xL6pheN38RhYZyrEtz-en_Au81D2NNMcT0IbPxd9hXc-JIRF6xlDNhqwX3kxs7Kns6v4" alt="City Map" loading="lazy">
                     <div class="absolute inset-0 pointer-events-none">
-                        <div class="absolute top-1/4 left-1/3 p-1 bg-[#ff9100] rounded-full border border-white shadow-lg animate-pulse">
-                            <span class="material-symbols-outlined text-[10px] text-white" style="display:block;">restaurant</span>
+                        <div class="absolute top-1/4 left-1/3 p-1.5 bg-primary rounded-full border-2 border-white shadow-lg animate-pulse">
+                            <span class="material-symbols-outlined text-[12px] text-white" style="display:block;">restaurant</span>
                         </div>
-                        <div class="absolute top-1/2 left-1/2 p-1 bg-purple-500 rounded-full border border-white shadow-lg">
-                            <span class="material-symbols-outlined text-[10px] text-white" style="display:block;">local_cafe</span>
+                        <div class="absolute top-1/2 left-1/2 p-1.5 bg-secondary rounded-full border-2 border-white shadow-lg">
+                            <span class="material-symbols-outlined text-[12px] text-white" style="display:block;">local_cafe</span>
                         </div>
-                        <div class="absolute bottom-1/4 right-1/4 p-1 bg-emerald-500 rounded-full border border-white shadow-lg">
-                            <span class="material-symbols-outlined text-[10px] text-white" style="display:block;">shopping_bag</span>
+                        <div class="absolute bottom-1/4 right-1/4 p-1.5 bg-primary-container rounded-full border-2 border-white shadow-lg">
+                            <span class="material-symbols-outlined text-[12px] text-on-primary-container" style="display:block;">shopping_bag</span>
                         </div>
                     </div>
-                    <div class="absolute inset-0 bg-black/20 group-hover:bg-black/5 transition-all duration-300"></div>
-                    <div class="absolute bottom-3 left-1/2 -translate-x-1/2 glass-effect px-4 py-1 rounded-full text-[10px] font-bold border border-white/10 whitespace-nowrap text-white">
-                        Haritayı Aç
+                    <div class="absolute bottom-4 left-1/2 -translate-x-1/2 glass-effect px-4 py-1.5 rounded-full text-[10px] font-bold border border-white/20 whitespace-nowrap text-white">
+                        Haritayı Büyüt
                     </div>
                 </div>
             </div>
 
-            <!-- Weekly Leaderboard -->
-            <?php if (!empty($miniLeaderboard)): ?>
-            <div class="bg-surface-container-low p-5 rounded-xl border border-outline-variant/10 shadow-md">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Haftalık Liderler</h3>
-                    <a href="<?php echo BASE_URL; ?>/leaderboard" class="text-[#ff9100] text-[10px] font-bold hover:underline">Tümünü Gör</a>
+            <!-- Trend Olan Mekanlar (Trending Places) -->
+            <?php
+            $footerTrendVenues = $trendVenues ?? [];
+            if (empty($footerTrendVenues)) {
+                try {
+                    $footerTrendVenues = (new VenueModel())->getTrending(3);
+                } catch (Exception $e) {}
+            }
+            if (empty($footerTrendVenues)) {
+                try {
+                    $footerTrendVenues = (new VenueModel())->getApproved('', '', 3);
+                } catch (Exception $e) {}
+            }
+            $footerTrendVenues = array_slice($footerTrendVenues, 0, 3);
+            if (!empty($footerTrendVenues)):
+            ?>
+            <div class="bg-surface-container-low p-4 rounded-xl border border-outline-variant/20 shadow-md">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="text-[9px] text-on-surface-variant font-bold uppercase tracking-wider font-mono">Trend Olan Mekanlar</h3>
+                    <a href="<?php echo BASE_URL; ?>/venues" class="text-primary text-[9px] font-bold hover:underline">Tümünü Gör</a>
                 </div>
                 <div class="space-y-4">
-                    <?php foreach ($miniLeaderboard as $i => $lb): ?>
-                    <div class="flex items-center gap-3 group cursor-pointer" onclick="window.location.href='<?php echo BASE_URL; ?>/profile?u=<?php echo escape($lb['tag'] ?: $lb['username']); ?>'">
-                        <div class="text-xs font-black text-slate-600 w-4"><?php echo $i + 1; ?></div>
+                    <?php foreach ($footerTrendVenues as $i => $tv): ?>
+                    <div class="flex items-center gap-3 group cursor-pointer" onclick="window.location.href='<?php echo BASE_URL; ?>/venue-detail?id=<?php echo $tv['id']; ?>'">
+                        <div class="text-headline-sm font-bold text-on-surface-variant/40 w-4"><?php echo $i + 1; ?></div>
                         
-                        <div class="relative flex-shrink-0">
-                            <?php $lbAvatar = safeAvatarUrl($lb['avatar'] ?? null, $lb['username']); ?>
-                            <img alt="Leader avatar" class="w-10 h-10 rounded-full object-cover border border-white/10 group-hover:border-[#ff9100]/40 transition-colors" src="<?php echo $lbAvatar; ?>" width="40" height="40" loading="lazy"/>
+                        <div class="w-14 h-14 rounded-lg overflow-hidden bg-surface-container flex items-center justify-center text-primary border border-white/5 group-hover:border-primary/40 transition-colors flex-shrink-0 relative">
+                            <?php if (!empty($tv['cover_image'])): ?>
+                                <img src="<?php echo BASE_URL . '/uploads/venues/' . escape($tv['cover_image']); ?>" class="w-full h-full object-cover" width="56" height="56" loading="lazy">
+                            <?php elseif (!empty($tv['image'])): ?>
+                                <img src="<?php echo uploadUrl('posts', $tv['image']); ?>" class="w-full h-full object-cover" width="56" height="56" loading="lazy">
+                            <?php else: ?>
+                                <span class="material-symbols-outlined text-[24px]">store</span>
+                            <?php endif; ?>
                         </div>
                         
                         <div class="flex-grow min-w-0">
-                            <div class="font-bold text-xs text-on-surface group-hover:text-[#ff9100] transition-colors truncate"><?php echo escape($lb['username']); ?></div>
-                            <div class="text-[10px] text-slate-500 mt-0.5 truncate">
-                                @<?php echo escape($lb['tag'] ?: $lb['username']); ?>
+                            <div class="text-xs font-bold text-on-surface group-hover:text-primary transition-colors truncate"><?php echo escape($tv['name']); ?></div>
+                            <div class="text-[10px] text-on-surface-variant truncate mt-0.5">
+                                <?php echo escape(VenueModel::categories()[$tv['category'] ?? 'kafe'] ?? ($tv['category'] ?? 'Mekan')); ?> 
+                                • <?php echo escape($tv['weekly_checkins'] ?? ($tv['checkin_count'] ?? 0)); ?> Check-in
                             </div>
                         </div>
                         
-                        <div class="bg-[#ff9100]/10 text-[#ff9100] text-[10px] font-bold px-2.5 py-0.5 rounded-full flex-shrink-0 border border-[#ff9100]/20">
-                            <?php echo $lb['checkin_count']; ?> Puan
+                        <!-- Rating score badge -->
+                        <div class="bg-red-900/40 text-secondary text-[11px] font-bold px-1.5 py-0.5 rounded flex-shrink-0">
+                            <?php 
+                            $tvRating = 9.4 - ($i * 0.2);
+                            try {
+                                $ratingData = (new VenueModel())->getVenueRating($tv['id']);
+                                if ($ratingData['average_rating'] > 0) {
+                                    $tvRating = $ratingData['average_rating'];
+                                }
+                            } catch (Exception $e) {}
+                            echo number_format($tvRating, 1); 
+                            ?>
                         </div>
                     </div>
                     <?php endforeach; ?>
                 </div>
+                
+                <button onclick="window.location.href='<?php echo BASE_URL; ?>/venues'" class="w-full mt-4 border border-outline-variant py-2.5 rounded-lg text-label-md font-bold hover:bg-surface-container transition-all flex items-center justify-center gap-xs text-xs">
+                    <span class="material-symbols-outlined text-sm">explore</span>
+                    Keşfetmeye Devam Et
+                </button>
             </div>
             <?php endif; ?>
 

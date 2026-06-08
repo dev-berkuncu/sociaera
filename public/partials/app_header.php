@@ -165,22 +165,88 @@ if (!isset($currentUser) && Auth::check()) {
             <?php endif; ?>
         </a>
         
-        <!-- User Pill -->
-        <a href="<?php echo BASE_URL; ?>/profile" class="flex items-center gap-sm bg-surface-container-high px-3 py-1.5 rounded-full cursor-pointer hover:bg-surface-variant transition-all">
-            <div class="relative">
-                <?php $avatarUrl = safeAvatarUrl($currentUser['avatar'] ?? null, $currentUser['username']); ?>
-                <img alt="<?php echo escape($currentUser['username']); ?>" class="w-8 h-8 rounded-full border border-primary" src="<?php echo $avatarUrl; ?>"/>
-                <div class="absolute -bottom-1 -right-1 bg-primary text-[8px] font-bold px-1 rounded-full text-on-primary"><?php 
-                    $stats = (new UserModel())->getStats($currentUser['id']);
-                    echo floor(($stats['checkins'] ?? 0) / 15) + 1; 
-                ?></div>
+        <!-- User Pill with Hover Dropdown -->
+        <?php 
+            $stats = (new UserModel())->getStats($currentUser['id']);
+            $streak = 0;
+            $weeklyCheckins = 0;
+            $followingUsers = [];
+            try {
+                $db = Database::getConnection();
+                $stmt = $db->prepare("SELECT DISTINCT DATE(created_at) as d FROM checkins WHERE user_id = ? AND is_deleted = 0 ORDER BY d DESC LIMIT 60");
+                $stmt->execute([$currentUser['id']]);
+                $dates = $stmt->fetchAll(PDO::FETCH_COLUMN);
+                $today = new DateTime();
+                foreach ($dates as $i => $d) {
+                    $expected = (clone $today)->modify("-{$i} days")->format('Y-m-d');
+                    if ($d === $expected) { $streak++; } else { break; }
+                }
+                $weeklyCheckins = (new CheckinModel())->getWeeklyCheckinCount($currentUser['id']);
+                $stmt = $db->prepare("SELECT u.id, u.username, u.avatar, u.tag, u.is_active FROM users u JOIN user_follows f ON u.id = f.following_id WHERE f.follower_id = ? AND u.is_active = 1 LIMIT 10");
+                $stmt->execute([$currentUser['id']]);
+                $followingUsers = $stmt->fetchAll();
+                if (empty($followingUsers)) {
+                    $stmt = $db->prepare("SELECT u.id, u.username, u.avatar, u.tag, u.is_active, (SELECT COUNT(*) FROM user_follows WHERE following_id = u.id) as followers FROM users u WHERE u.id != ? AND u.is_active = 1 ORDER BY followers DESC, u.id DESC LIMIT 10");
+                    $stmt->execute([$currentUser['id']]);
+                    $followingUsers = $stmt->fetchAll();
+                }
+            } catch (Exception $e) {}
+        ?>
+        <div class="relative group">
+            <button class="flex items-center gap-sm bg-surface-container-high px-3 py-1.5 rounded-full cursor-pointer hover:bg-surface-variant transition-all focus:outline-none">
+                <div class="relative flex-shrink-0">
+                    <?php $avatarUrl = safeAvatarUrl($currentUser['avatar'] ?? null, $currentUser['username']); ?>
+                    <img alt="<?php echo escape($currentUser['username']); ?>" class="w-8 h-8 rounded-full border border-primary object-cover" src="<?php echo $avatarUrl; ?>"/>
+                    <div class="absolute -bottom-1 -right-1 bg-primary text-[8px] font-bold px-1 rounded-full text-on-primary">
+                        <?php echo floor(($stats['checkins'] ?? 0) / 15) + 1; ?>
+                    </div>
+                </div>
+                <div class="hidden lg:block text-left">
+                    <div class="text-label-md font-bold leading-none text-on-surface"><?php echo escape($currentUser['username']); ?></div>
+                    <div class="text-[10px] text-primary mt-0.5">Seviye <?php echo floor(($stats['checkins'] ?? 0) / 15) + 1; ?></div>
+                </div>
+                <span class="material-symbols-outlined text-on-surface-variant text-sm">expand_more</span>
+            </button>
+            <div class="absolute right-0 mt-1 w-52 bg-surface-container-high border border-outline-variant/30 rounded-xl shadow-2xl py-2 hidden group-hover:block hover:block z-50 animate-[fadeIn_0.15s_ease-out]">
+                <a href="<?php echo BASE_URL; ?>/profile" class="flex items-center gap-3 px-4 py-2 text-sm text-on-surface hover:bg-surface-variant transition-colors">
+                    <span class="material-symbols-outlined text-base text-primary">person</span>
+                    <span>Profilim</span>
+                </a>
+                <a href="<?php echo BASE_URL; ?>/wallet" class="flex items-center gap-3 px-4 py-2 text-sm text-on-surface hover:bg-surface-variant transition-colors">
+                    <span class="material-symbols-outlined text-base text-primary">account_balance_wallet</span>
+                    <span>Cüzdanım</span>
+                </a>
+                <a href="<?php echo BASE_URL; ?>/missions" class="flex items-center gap-3 px-4 py-2 text-sm text-on-surface hover:bg-surface-variant transition-colors">
+                    <span class="material-symbols-outlined text-base text-primary">assignment</span>
+                    <span>Görevler</span>
+                </a>
+                <a href="<?php echo BASE_URL; ?>/leaderboard" class="flex items-center gap-3 px-4 py-2 text-sm text-on-surface hover:bg-surface-variant transition-colors">
+                    <span class="material-symbols-outlined text-base text-primary">leaderboard</span>
+                    <span>Liderlik Tablosu</span>
+                </a>
+                <a href="<?php echo BASE_URL; ?>/kampanyalar" class="flex items-center gap-3 px-4 py-2 text-sm text-on-surface hover:bg-surface-variant transition-colors">
+                    <span class="material-symbols-outlined text-base text-primary">campaign</span>
+                    <span>Kampanyalar</span>
+                </a>
+                <a href="<?php echo BASE_URL; ?>/premium" class="flex items-center gap-3 px-4 py-2 text-sm text-on-surface hover:bg-surface-variant transition-colors">
+                    <span class="material-symbols-outlined text-base text-primary">diamond</span>
+                    <span>Premium Geçiş</span>
+                </a>
+                <a href="<?php echo BASE_URL; ?>/mystery-shopper" class="flex items-center gap-3 px-4 py-2 text-sm text-on-surface hover:bg-surface-variant transition-colors">
+                    <span class="material-symbols-outlined text-base text-primary">visibility_off</span>
+                    <span>Gizli Müşteri</span>
+                </a>
+                <a href="<?php echo BASE_URL; ?>/settings" class="flex items-center gap-3 px-4 py-2 text-sm text-on-surface hover:bg-surface-variant transition-colors">
+                    <span class="material-symbols-outlined text-base text-primary">settings</span>
+                    <span>Ayarlar</span>
+                </a>
+                <div class="border-t border-white/5 my-1"></div>
+                <a href="<?php echo BASE_URL; ?>/logout" class="flex items-center gap-3 px-4 py-2 text-sm text-red-400 hover:bg-red-500/10 transition-colors">
+                    <span class="material-symbols-outlined text-base">logout</span>
+                    <span>Çıkış Yap</span>
+                </a>
             </div>
-            <div class="hidden lg:block">
-                <div class="text-label-md font-bold leading-none"><?php echo escape($currentUser['username']); ?></div>
-                <div class="text-[10px] text-primary">Seviye <?php echo floor(($stats['checkins'] ?? 0) / 15) + 1; ?></div>
-            </div>
-            <span class="material-symbols-outlined text-on-surface-variant text-sm">expand_more</span>
-        </a>
+        </div>
     </div>
 </header>
 <?php endif; ?>
@@ -199,27 +265,27 @@ if (!isset($currentUser) && Auth::check()) {
                     <img alt="Profil Fotoğrafı" class="w-24 h-24 rounded-full border-4 border-surface-container-low shadow-xl object-cover" src="<?php echo $avatarUrl; ?>"/>
                     <?php if (!empty($currentUser['is_premium'])): ?>
                         <div class="absolute bottom-0 right-0 bg-primary-container p-1 rounded-full text-on-primary-container border-2 border-surface-container-low">
-                            <span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
+                            <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
                         </div>
                     <?php endif; ?>
                 </div>
             </div>
             <div class="p-md text-center pt-10">
                 <h2 class="text-headline-sm font-headline-sm truncate px-2" title="<?php echo escape($currentUser['gta_character_name'] ?: $currentUser['username']); ?>"><?php echo escape($currentUser['gta_character_name'] ?: $currentUser['username']); ?></h2>
-                <p class="text-label-md text-on-surface-variant">@<?php echo escape($currentUser['tag'] ?: $currentUser['username']); ?></p>
+                <p class="text-label-md text-on-surface-variant">Swarm'a hoş geldin!</p>
                 
                 <div class="grid grid-cols-2 gap-sm mt-lg">
                     <div class="bg-surface-container px-2 py-3 rounded-lg text-left">
                         <div class="flex items-center gap-xs text-primary mb-1">
-                            <span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
-                            <span class="text-headline-sm font-bold">16</span>
+                            <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+                            <span class="text-headline-sm font-bold"><?php echo $streak; ?></span>
                         </div>
                         <span class="text-label-sm text-on-surface-variant">Günlük Seri</span>
                     </div>
                     <div class="bg-surface-container px-2 py-3 rounded-lg text-left">
                         <div class="flex items-center gap-xs text-primary mb-1">
-                            <span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">location_on</span>
-                            <span class="text-xs font-bold"><?php echo $stats['checkins'] ?? 0; ?></span>
+                            <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">location_on</span>
+                            <span class="text-headline-sm font-bold"><?php echo $stats['checkins'] ?? 0; ?></span>
                         </div>
                         <span class="text-label-sm text-on-surface-variant">Check-in</span>
                     </div>
@@ -227,43 +293,30 @@ if (!isset($currentUser) && Auth::check()) {
                 
                 <div class="mt-lg text-left">
                     <div class="flex justify-between text-label-sm mb-xs">
-                        <span class="text-on-surface-variant">Haftalık Hedef: 5</span>
-                        <span class="text-primary font-bold"><?php echo min(5, $stats['checkins'] ?? 0); ?> / 5</span>
+                        <span class="text-on-surface-variant">Haftalık Hedef: 5 check-in</span>
+                        <span class="text-primary font-bold"><?php echo min(5, $weeklyCheckins); ?> / 5</span>
                     </div>
                     <div class="h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
-                        <div class="h-full bg-primary-container" style="width: <?php echo min(100, (($stats['checkins'] ?? 0) / 5) * 100); ?>%"></div>
+                        <div class="h-full bg-primary-container" style="width: <?php echo min(100, ($weeklyCheckins / 5) * 100); ?>%"></div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Navigation Bento Links -->
-        <div class="space-y-1">
-            <?php
-            $navItems = [
-                'dashboard'    => ['icon' => 'home',                   'label' => 'Ana Sayfa',       'url' => '/dashboard'],
-                'venues'       => ['icon' => 'explore',                'label' => 'Mekan Keşfet',    'url' => '/venues'],
-                'missions'     => ['icon' => 'assignment',             'label' => 'Görevler',        'url' => '/missions'],
-                'mystery-shopper'=>['icon' => 'visibility_off',        'label' => 'Gizli Müşteri',   'url' => '/mystery-shopper'],
-                'leaderboard'  => ['icon' => 'leaderboard',            'label' => 'Liderlik Tablosu','url' => '/leaderboard'],
-                'wallet'       => ['icon' => 'account_balance_wallet',  'label' => 'Cüzdan',          'url' => '/wallet'],
-                'premium'      => ['icon' => 'diamond',                 'label' => 'Premium Geçiş',   'url' => '/premium'],
-                'kampanyalar'  => ['icon' => 'campaign',                'label' => 'Kampanyalar',     'url' => '/kampanyalar'],
-                'settings'     => ['icon' => 'settings',                'label' => 'Ayarlar',         'url' => '/settings'],
-            ];
-            $activeNav = $activeNav ?? '';
-            foreach ($navItems as $key => $item):
-                $isActive = $activeNav === $key;
-                $linkClass = $isActive
-                    ? 'w-full bg-primary-container text-on-primary-container font-bold py-3.5 rounded-lg flex items-center justify-start px-md gap-md transition-all hover:brightness-110 active:scale-95'
-                    : 'w-full bg-surface-container-high text-on-surface font-semibold py-3.5 rounded-lg flex items-center justify-start px-md gap-md hover:bg-surface-variant transition-colors group';
-                $iconClass = $isActive ? 'text-on-primary' : 'text-on-surface-variant group-hover:text-primary transition-colors';
-            ?>
-            <a class="<?php echo $linkClass; ?>" href="<?php echo BASE_URL . $item['url']; ?>">
-                <span class="material-symbols-outlined text-[18px] <?php echo $iconClass; ?>" <?php echo $isActive ? 'data-weight="fill"' : ''; ?>><?php echo $item['icon']; ?></span>
-                <span class="text-xs font-bold whitespace-nowrap"><?php echo $item['label']; ?></span>
+        <!-- Primary Actions -->
+        <div class="space-y-sm">
+            <button onclick="triggerCheckin()" class="w-full bg-primary-container text-on-primary-container font-bold py-3.5 rounded-lg flex items-center justify-center gap-sm transition-all hover:brightness-110 active:scale-95 shadow-[0_0_20px_rgba(255,145,0,0.3)]">
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add_location_alt</span>
+                Check-in Yap
+            </button>
+            <a href="<?php echo BASE_URL; ?>/venues" class="w-full bg-surface-container-high text-on-surface font-semibold py-3.5 rounded-lg flex items-center justify-start px-md gap-md hover:bg-surface-variant transition-colors group">
+                <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">search</span>
+                Mekan Ara
             </a>
-            <?php endforeach; ?>
+            <a href="<?php echo BASE_URL; ?>/members" class="w-full bg-surface-container-high text-on-surface font-semibold py-3.5 rounded-lg flex items-center justify-start px-md gap-md hover:bg-surface-variant transition-colors group">
+                <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">group</span>
+                Arkadaşlarımı Gör
+            </a>
         </div>
 
         <!-- Owned Venues (İşletmelerim) -->
@@ -349,21 +402,42 @@ if (!isset($currentUser) && Auth::check()) {
         <div class="bg-surface-container-low p-4 rounded-xl border border-outline-variant/10 shadow-md">
             <div class="flex justify-between items-center mb-3">
                 <h3 class="text-[9px] text-on-surface-variant font-bold uppercase tracking-wider font-mono">Rozetlerim</h3>
-                <span class="text-primary text-[9px] font-bold">4 Rozet</span>
+                <a href="<?php echo BASE_URL; ?>/missions" class="text-primary text-[9px] font-bold hover:underline">Tümünü Gör</a>
             </div>
             <div class="grid grid-cols-4 gap-1.5">
                 <div class="aspect-square bg-surface-container rounded-lg flex items-center justify-center relative group cursor-help border border-white/5" title="16 Günlük Seri">
                     <span class="material-symbols-outlined text-primary text-base" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+                    <div class="absolute -bottom-1 -right-1 bg-surface-container px-1 rounded-md text-[8px] font-bold border border-outline-variant/30"><?php echo $streak; ?></div>
                 </div>
                 <div class="aspect-square bg-surface-container rounded-lg flex items-center justify-center relative border border-white/5" title="Fotoğrafçı">
                     <span class="material-symbols-outlined text-on-surface-variant text-base" style="font-variation-settings: 'FILL' 1;">photo_camera</span>
+                    <div class="absolute -bottom-1 -right-1 bg-surface-container px-1 rounded-md text-[8px] font-bold border border-outline-variant/30">50</div>
                 </div>
                 <div class="aspect-square bg-surface-container rounded-lg flex items-center justify-center relative border border-white/5" title="Denetleyici">
                     <span class="material-symbols-outlined text-on-surface-variant text-base" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
+                    <div class="absolute -bottom-1 -right-1 bg-surface-container px-1 rounded-md text-[8px] font-bold border border-outline-variant/30">10</div>
                 </div>
                 <div class="aspect-square bg-surface-container rounded-lg flex items-center justify-center relative border border-white/5" title="Gezgin">
                     <span class="material-symbols-outlined text-on-surface-variant text-base" style="font-variation-settings: 'FILL' 1;">hive</span>
+                    <div class="absolute -bottom-1 -right-1 bg-surface-container px-1 rounded-md text-[8px] font-bold border border-outline-variant/30">5</div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Yakın Arkadaşlarım Bento Widget -->
+        <div class="bg-surface-container-low p-4 rounded-xl border border-outline-variant/10 shadow-md">
+            <div class="flex justify-between items-center mb-3">
+                <h3 class="text-[9px] text-on-surface-variant font-bold uppercase tracking-wider font-mono">Yakın Arkadaşlarım</h3>
+                <a href="<?php echo BASE_URL; ?>/members" class="text-primary text-[9px] font-bold hover:underline">Tümünü Gör</a>
+            </div>
+            <div class="flex -space-x-3 overflow-hidden">
+                <?php foreach (array_slice($followingUsers, 0, 5) as $fu): ?>
+                    <?php $fuAvatar = safeAvatarUrl($fu['avatar'] ?? null, $fu['username']); ?>
+                    <img alt="<?php echo escape($fu['username']); ?>" class="inline-block h-8 w-8 rounded-full ring-2 ring-surface-container-low object-cover" src="<?php echo $fuAvatar; ?>" width="32" height="32" title="<?php echo escape($fu['username']); ?>" />
+                <?php endforeach; ?>
+                <?php if (count($followingUsers) > 5): ?>
+                    <div class="flex h-8 w-8 items-center justify-center rounded-full bg-surface-container-highest ring-2 ring-surface-container-low text-[10px] font-bold text-on-surface">+<?php echo count($followingUsers) - 5; ?></div>
+                <?php endif; ?>
             </div>
         </div>
 

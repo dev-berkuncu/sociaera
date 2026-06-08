@@ -74,45 +74,109 @@ require_once __DIR__ . '/partials/app_header.php';
         <a href="?filter=following" class="<?php echo $feedFilter === 'following' ? 'text-[#ff9100] font-bold text-sm border-b-2 border-[#ff9100] pb-2 px-1 -mb-[10px]' : 'text-slate-400 hover:text-white text-sm pb-2 px-1 transition-colors'; ?>">Takip Ettiklerim</a>
     </div>
 
-    <!-- Compose Box -->
-    <div class="bg-surface-container-low border border-white/5 rounded-xl p-5 shadow-lg overflow-visible relative">
-        <form id="composeForm" enctype="multipart/form-data">
-            <input type="hidden" name="csrf_token" value="<?php echo csrfToken(); ?>">
-            <input type="hidden" name="venue_id" id="selectedVenueId" value="">
-            <div class="flex gap-4">
-                <?php $avatarUrl = safeAvatarUrl($currentUser['avatar'] ?? null, $currentUser['username']); ?>
-                <img alt="User avatar" class="w-10 h-10 rounded-full object-cover border border-white/10 flex-shrink-0" src="<?php echo $avatarUrl; ?>" width="40" height="40"/>
-                <div class="flex-grow relative">
-                    <div id="selectedVenueDisplay" class="flex items-center gap-2 mb-2 bg-[#ff9100]/10 w-fit px-3 py-1 rounded-full border border-[#ff9100]/20" style="display:none;">
-                        <span class="material-symbols-outlined text-[14px] text-[#ff9100]" style="font-variation-settings: 'FILL' 1;">location_on</span>
-                        <span id="selectedVenueName" class="text-xs font-bold text-slate-300"></span>
-                        <button type="button" onclick="removeVenue()" class="text-slate-500 hover:text-red-400 transition-colors"><span class="material-symbols-outlined text-[14px]">close</span></button>
-                    </div>
-                    <textarea class="w-full bg-transparent border-none text-on-surface placeholder:text-slate-500 text-sm focus:ring-0 resize-none outline-none p-0 mt-2" name="note" id="composeNote" placeholder="Neredesin? Ne yapıyorsun?" rows="2"></textarea>
-                    <div id="composePreview" class="mt-2 rounded-xl overflow-hidden border border-white/10 relative" style="display:none;"></div>
-                    
-                    <!-- @ Mention Dropdown -->
-                    <div id="mentionDropdown" class="absolute left-0 w-64 bg-surface-container border border-white/10 rounded-lg shadow-xl z-50 max-h-48 overflow-y-auto" style="display:none;"></div>
+    <!-- Story/Friends Ribbon -->
+    <div class="bg-surface-container-low p-md rounded-xl border border-outline-variant/10 overflow-x-auto custom-scrollbar">
+        <div class="flex items-center justify-between mb-md">
+            <h3 class="text-headline-sm font-headline-sm">Yakındaki Arkadaşlar</h3>
+            <a href="<?php echo BASE_URL; ?>/members" class="text-on-surface-variant text-label-sm hover:text-primary transition-colors">Tümünü Gör</a>
+        </div>
+        <div class="flex gap-lg pb-2">
+            <!-- Add Story -->
+            <div onclick="triggerCheckin()" class="flex flex-col items-center gap-xs cursor-pointer group shrink-0">
+                <div class="w-16 h-16 rounded-full border-2 border-dashed border-outline-variant/60 flex items-center justify-center group-hover:border-primary transition-colors">
+                    <span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">add</span>
                 </div>
+                <span class="text-label-sm text-on-surface-variant">Hikaye Ekle</span>
             </div>
-            <div class="mt-4 flex items-center justify-between pt-4 border-t border-white/5">
-                <div class="flex items-center gap-2">
-                    <label class="flex items-center justify-center w-9 h-9 rounded-lg bg-surface-container hover:bg-surface-variant text-slate-400 hover:text-white transition-colors cursor-pointer" title="Fotoğraf ekle">
-                        <span class="material-symbols-outlined text-[18px]">image</span>
-                        <input type="file" name="image" id="composeImage" accept="image/*" class="hidden">
-                    </label>
-                    <button type="button" id="venueToggleBtn" class="flex items-center justify-center w-9 h-9 rounded-lg bg-surface-container hover:bg-surface-variant text-slate-400 hover:text-white transition-colors" title="Mekan seç">
-                        <span class="material-symbols-outlined text-[18px]">location_on</span>
+            <!-- Friends -->
+            <?php foreach ($followingUsers as $fu): ?>
+            <div class="flex flex-col items-center gap-xs cursor-pointer shrink-0" onclick="window.location.href='<?php echo BASE_URL; ?>/profile?u=<?php echo escape($fu['tag'] ?: $fu['username']); ?>'">
+                <div class="relative">
+                    <?php $fuAvatar = safeAvatarUrl($fu['avatar'] ?? null, $fu['username']); ?>
+                    <img alt="<?php echo escape($fu['username']); ?>" class="w-16 h-16 rounded-full border-2 border-primary-container p-0.5 object-cover" src="<?php echo $fuAvatar; ?>" width="64" height="64" />
+                    <?php if ($fu['is_active']): ?>
+                    <div class="absolute bottom-0 right-0 w-4 h-4 bg-green-500 rounded-full border-2 border-surface-container-low animate-pulse"></div>
+                    <?php endif; ?>
+                </div>
+                <span class="text-label-sm max-w-[70px] truncate"><?php echo escape($fu['username']); ?></span>
+            </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+
+    <!-- Preset Venue PHP Logic -->
+    <?php 
+    $presetVenueId = (int)($_GET['venue_id'] ?? 0); 
+    $presetVenueName = '';
+    if ($presetVenueId > 0) {
+        try {
+            $pv = (new VenueModel())->getById($presetVenueId);
+            if ($pv) $presetVenueName = $pv['name'];
+        } catch(Exception $e){}
+    }
+    ?>
+
+    <!-- Compose Modal (Check-in Modalı) -->
+    <div id="composeModal" class="fixed inset-0 z-[9999] hidden">
+        <!-- Blur Backdrop -->
+        <div class="absolute inset-0 bg-black/70 backdrop-blur-md" onclick="document.getElementById('composeModal').classList.add('hidden')"></div>
+        <!-- Modal Content Container -->
+        <div class="absolute inset-0 flex items-center justify-center p-4">
+            <div class="bg-[#2a2a2b] border border-white/10 rounded-2xl w-full max-w-lg shadow-2xl relative p-6 animate-[modalIn_0.25s_ease-out]">
+                <!-- Modal Header -->
+                <div class="flex items-center justify-between pb-4 border-b border-white/5 mb-4">
+                    <h3 class="text-lg font-bold text-on-surface flex items-center gap-2">
+                        <span class="material-symbols-outlined text-[#ff9100]">add_location_alt</span> Check-in Yap
+                    </h3>
+                    <button type="button" onclick="document.getElementById('composeModal').classList.add('hidden')" class="text-slate-400 hover:text-white transition-colors">
+                        <span class="material-symbols-outlined">close</span>
                     </button>
                 </div>
+                
+                <form id="composeForm" enctype="multipart/form-data">
+                    <input type="hidden" name="csrf_token" value="<?php echo csrfToken(); ?>">
+                    <input type="hidden" name="venue_id" id="selectedVenueId" value="<?php echo $presetVenueId ?: ''; ?>">
+                    
+                    <!-- Venue Selection Status -->
+                    <div id="selectedVenueDisplay" class="flex items-center gap-2 mb-3 bg-[#ff9100]/10 w-fit px-3 py-1 rounded-full border border-[#ff9100]/20" style="<?php echo $presetVenueId > 0 ? '' : 'display:none;'; ?>">
+                        <span class="material-symbols-outlined text-[14px] text-[#ff9100]" style="font-variation-settings: 'FILL' 1;">location_on</span>
+                        <span id="selectedVenueName" class="text-xs font-bold text-slate-300"><?php echo escape($presetVenueName); ?></span>
+                        <button type="button" onclick="removeVenue()" class="text-slate-500 hover:text-red-400 transition-colors"><span class="material-symbols-outlined text-[14px]">close</span></button>
+                    </div>
 
-                <button type="submit" id="composeSubmitBtn" disabled class="bg-[#ff9100] text-white px-5 py-2 rounded-lg font-bold text-xs shadow-md hover:brightness-110 transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed">Paylaş</button>
+                    <div class="flex gap-4">
+                        <?php $avatarUrl = safeAvatarUrl($currentUser['avatar'] ?? null, $currentUser['username']); ?>
+                        <img alt="User avatar" class="w-12 h-12 rounded-full object-cover border border-white/10 flex-shrink-0" src="<?php echo $avatarUrl; ?>" width="48" height="48"/>
+                        <div class="flex-grow relative">
+                            <!-- Textarea styled nicely as input -->
+                            <textarea class="w-full bg-surface-container border border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface placeholder:text-slate-500 text-sm focus:outline-none focus:border-[#ff9100]/40 transition-colors resize-none outline-none" name="note" id="composeNote" placeholder="Neredesin? Ne yapıyorsun?" rows="3"></textarea>
+                            <div id="composePreview" class="mt-2 rounded-xl overflow-hidden border border-white/10 relative" style="display:none;"></div>
+                            
+                            <!-- @ Mention Dropdown -->
+                            <div id="mentionDropdown" class="absolute left-0 w-64 bg-surface-container border border-white/10 rounded-lg shadow-xl z-50 max-h-48 overflow-y-auto" style="display:none;"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-5 flex items-center justify-between pt-4 border-t border-white/5">
+                        <div class="flex items-center gap-2">
+                            <label class="flex items-center justify-center w-10 h-10 rounded-xl bg-surface-container hover:bg-surface-variant text-slate-400 hover:text-white transition-colors cursor-pointer border border-outline-variant/30" title="Fotoğraf ekle">
+                                <span class="material-symbols-outlined text-[20px]">image</span>
+                                <input type="file" name="image" id="composeImage" accept="image/*" class="hidden">
+                            </label>
+                            <button type="button" id="venueToggleBtn" class="flex items-center justify-center w-10 h-10 rounded-xl bg-surface-container hover:bg-surface-variant text-slate-400 hover:text-white transition-colors border border-outline-variant/30" title="Mekan seç">
+                                <span class="material-symbols-outlined text-[20px]">location_on</span>
+                            </button>
+                        </div>
+
+                        <button type="submit" id="composeSubmitBtn" disabled class="bg-[#ff9100] text-white px-6 py-2.5 rounded-xl font-bold text-sm shadow-[0_0_20px_rgba(255,145,0,0.3)] hover:brightness-110 transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed">Paylaş</button>
+                    </div>
+                </form>
             </div>
-        </form>
+        </div>
     </div>
 
     <!-- Venue Search Dropdown (outside compose card to avoid backdrop-blur clipping) -->
-    <div id="venueSearchWrap" style="display:none;" class="fixed w-72 bg-surface-container-high border border-outline-variant/30 rounded-xl shadow-2xl p-3 z-[9999]">
+    <div id="venueSearchWrap" style="display:none;" class="fixed w-72 bg-surface-container-high border border-outline-variant/30 rounded-xl shadow-2xl p-3 z-[10000]">
         <input type="text" id="venueSearchInput" class="w-full bg-surface-container border border-outline-variant/30 rounded-lg px-3 py-2 text-on-surface text-sm focus:outline-none focus:border-[#ff9100]/40 mb-2" placeholder="Mekan ara..." autocomplete="off">
         <div id="venueDropdown" class="max-h-48 overflow-y-auto"></div>
     </div>
