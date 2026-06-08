@@ -21,61 +21,59 @@ if (!isset($currentUser) && Auth::check()) {
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet"/>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">
+<script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
             theme: {
                 extend: {
                     "colors": {
-                        "on-tertiary-fixed-variant": "#6900b3",
-                        "on-primary-fixed-variant": "#6c3a00",
-                        "error": "#ffb4ab",
-                        "secondary-fixed": "#ffdadb",
-                        "background": "#131314",
-                        "surface-bright": "#39393a",
-                        "tertiary-container": "#cb95ff",
-                        "on-surface": "#e5e2e3",
-                        "on-secondary-fixed": "#40000d",
-                        "on-tertiary-fixed": "#2c0051",
-                        "on-background": "#e5e2e3",
-                        "surface": "#131314",
-                        "secondary": "#ffb2b7",
+                        "tertiary-fixed": "#c4e7ff",
                         "on-error": "#690005",
-                        "surface-container-low": "#1c1b1c",
-                        "tertiary-fixed-dim": "#ddb7ff",
-                        "on-tertiary": "#490080",
-                        "error-container": "#93000a",
-                        "inverse-on-surface": "#313031",
-                        "on-surface-variant": "#dcc2ae",
-                        "on-secondary-fixed-variant": "#92002a",
-                        "surface-container": "#201f20",
-                        "inverse-surface": "#e5e2e3",
-                        "primary-fixed": "#ffdcc1",
-                        "tertiary-fixed": "#f0dbff",
-                        "secondary-container": "#b50036",
-                        "primary-fixed-dim": "#ffb778",
-                        "secondary-fixed-dim": "#ffb2b7",
-                        "on-secondary": "#67001b",
-                        "surface-tint": "#ffb778",
-                        "inverse-primary": "#8e4e00",
-                        "on-tertiary-container": "#6000a4",
-                        "primary": "#ffb97c",
+                        "inverse-on-surface": "#283044",
+                        "tertiary-container": "#00a5de",
+                        "primary-fixed-dim": "#ffb59d",
+                        "on-tertiary-container": "#00364b",
+                        "primary": "#ffb59d",
+                        "error": "#ffb4ab",
+                        "surface-tint": "#ffb59d",
+                        "primary-fixed": "#ffdbd0",
+                        "on-surface": "#dae2fd",
+                        "secondary-fixed-dim": "#bcc7de",
+                        "surface-container-high": "#222a3d",
+                        "on-primary": "#5d1900",
+                        "on-primary-fixed": "#390c00",
+                        "surface-bright": "#31394d",
+                        "on-secondary-fixed": "#111c2d",
+                        "secondary": "#bcc7de",
+                        "background": "#0b1326",
+                        "on-surface-variant": "#e1bfb5",
+                        "surface-container-highest": "#2d3449",
+                        "secondary-fixed": "#d8e3fb",
+                        "outline": "#a98a80",
+                        "inverse-primary": "#ab3500",
+                        "on-tertiary-fixed-variant": "#004c69",
+                        "on-secondary": "#263143",
+                        "tertiary": "#7bd0ff",
+                        "surface-container": "#171f33",
                         "on-error-container": "#ffdad6",
-                        "surface-container-high": "#2a2a2b",
-                        "tertiary": "#deb9ff",
-                        "surface-variant": "#353436",
-                        "surface-container-highest": "#353436",
-                        "primary-container": "#ff9100",
-                        "surface-dim": "#131314",
-                        "on-primary-fixed": "#2e1500",
-                        "outline-variant": "#564334",
-                        "on-secondary-container": "#ffc2c4",
-                        "outline": "#a48c7a",
-                        "surface-container-lowest": "#0e0e0f",
-                        "on-primary": "#4c2700",
-                        "on-primary-container": "#633500",
-                        "tertiary-fixed-dim-old": "#7bd0ff",
-                        "tertiary-old": "#7bd0ff"
+                        "on-background": "#dae2fd",
+                        "on-secondary-fixed-variant": "#3c475a",
+                        "surface-variant": "#2d3449",
+                        "secondary-container": "#3e495d",
+                        "error-container": "#93000a",
+                        "surface-dim": "#0b1326",
+                        "outline-variant": "#594139",
+                        "tertiary-fixed-dim": "#7bd0ff",
+                        "on-primary-fixed-variant": "#832600",
+                        "surface-container-lowest": "#060e20",
+                        "on-tertiary": "#00354a",
+                        "surface": "#0b1326",
+                        "primary-container": "#ff6b35",
+                        "surface-container-low": "#131b2e",
+                        "on-tertiary-fixed": "#001e2c",
+                        "on-primary-container": "#5f1900",
+                        "on-secondary-container": "#aeb9d0",
+                        "inverse-surface": "#dae2fd"
                     },
                     "borderRadius": {
                         "DEFAULT": "0.25rem",
@@ -122,16 +120,23 @@ if (!isset($currentUser) && Auth::check()) {
         }
     </script>
 <style>
-    body { background-color: #131314; color: #e5e2e3; font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { background-color: #0b1326; color: #dae2fd; font-family: 'Plus Jakarta Sans', sans-serif; }
     
-    .hero-pattern { background-image: radial-gradient(#ff9100 0.5px, transparent 0.5px); background-size: 20px 20px; }
+    .hero-pattern {
+        background: linear-gradient(to bottom, rgba(255,107,53,0.18) 0%, rgba(11,19,38,0) 100%),
+                    url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+    }
     
-    .glass-effect { background: rgba(32, 31, 32, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); }
+    .glass-effect {
+        backdrop-filter: blur(12px);
+        background: rgba(23, 31, 51, 0.75);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+    }
 
     ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: #131314; }
-    ::-webkit-scrollbar-thumb { background: #353436; border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: #ff9100; }
+    ::-webkit-scrollbar-track { background: #0b1326; }
+    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #ff6b35; }
 
     .material-symbols-outlined {
         font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
@@ -357,32 +362,12 @@ if (!isset($currentUser) && Auth::check()) {
         box-shadow: none !important;
     }
     
-    body {
-        background-color: #131314;
-        color: #e5e2e3;
-        font-family: 'Plus Jakarta Sans', sans-serif;
-        -webkit-font-smoothing: antialiased;
-    }
-    
-    .hero-pattern {
-        background: linear-gradient(to bottom, rgba(255,145,0,0.2) 0%, rgba(19,19,20,0) 100%),
-                    url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
-    }
-    
-    .glass-effect {
-        backdrop-filter: blur(12px);
-        background: rgba(26, 26, 28, 0.8);
-        border: 1px solid rgba(63, 63, 70, 0.5);
-    }
-    
     .custom-scrollbar::-webkit-scrollbar {
         width: 4px;
         height: 4px;
     }
     .custom-scrollbar::-webkit-scrollbar-thumb {
-        background: #353436;
-        border-radius: 10px;
-    }
+        background: rgba(255, 255, 255, 0.15);
         border-radius: 10px;
     }
     .custom-scrollbar::-webkit-scrollbar-track {
@@ -403,195 +388,247 @@ if (!isset($currentUser) && Auth::check()) {
 <body class="bg-background text-on-background font-body-md text-body-md min-h-screen antialiased flex selection:bg-primary-container/30 selection:text-primary-container">
 
 <?php if (Auth::check() && $currentUser): ?>
-<!-- SideNavBar: Identity Rail -->
-<nav class="hidden md:flex flex-col fixed left-0 top-0 h-full p-5 w-72 bg-[#0e0e0f]/95 z-50 overflow-y-auto custom-scrollbar border-r border-white/5 gap-4">
-    <!-- Profile Bento Card -->
-    <div class="bg-surface-container-low rounded-xl overflow-hidden relative border border-white/5 shadow-md flex-shrink-0">
-        <!-- Carbon Fibre Hero Background -->
-        <div class="h-20 hero-pattern relative flex items-center justify-center">
-            <div class="absolute -bottom-8">
-                <?php $avatarUrl = safeAvatarUrl($currentUser['avatar'] ?? null, $currentUser['username']); ?>
-                <a href="<?php echo BASE_URL; ?>/profile">
-                    <img alt="User Avatar" class="w-16 h-16 rounded-full border-4 border-surface-container-low object-cover shadow-lg hover:border-[#FF6B35] transition-all" src="<?php echo $avatarUrl; ?>" width="64" height="64"/>
-                </a>
-            </div>
-        </div>
-        <div class="p-4 text-center pt-10">
-            <h2 class="text-sm font-bold text-on-surface truncate px-2" title="<?php echo escape($currentUser['gta_character_name'] ?: $currentUser['username']); ?>"><?php echo escape($currentUser['gta_character_name'] ?: $currentUser['username']); ?></h2>
-            <a href="<?php echo BASE_URL; ?>/profile" class="text-[10px] font-mono text-slate-500 hover:text-white transition-colors">@<?php echo escape($currentUser['tag'] ?: $currentUser['username']); ?></a>
-            
-            <?php 
-            // Fetch stats dynamically
-            $stats = (new UserModel())->getStats($currentUser['id']);
-            ?>
-            <div class="grid grid-cols-2 gap-2 mt-4">
-                <div class="bg-surface-container px-2 py-2 rounded-lg text-left">
-                    <div class="flex items-center gap-1 text-[#FF6B35] mb-0.5">
-                        <span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">explore</span>
-                        <span class="text-xs font-bold"><?php echo $stats['venues'] ?? 0; ?></span>
-                    </div>
-                    <span class="text-[8px] text-slate-500 uppercase tracking-wide">Keşif</span>
-                </div>
-                <div class="bg-surface-container px-2 py-2 rounded-lg text-left">
-                    <div class="flex items-center gap-1 text-[#FF6B35] mb-0.5">
-                        <span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">location_on</span>
-                        <span class="text-xs font-bold"><?php echo $stats['checkins'] ?? 0; ?></span>
-                    </div>
-                    <span class="text-[8px] text-slate-500 uppercase tracking-wide">Check-in</span>
-                </div>
-            </div>
-            
-            <div class="mt-4 text-left">
-                <div class="flex justify-between text-[10px] mb-1">
-                    <span class="text-slate-500">Haftalık Hedef: 5 check-in</span>
-                    <span class="text-[#FF6B35] font-bold"><?php echo min(5, $stats['checkins'] ?? 0); ?> / 5</span>
-                </div>
-                <div class="h-1 bg-surface-container-highest rounded-full overflow-hidden">
-                    <div class="h-full bg-[#FF6B35]" style="width: <?php echo min(100, (($stats['checkins'] ?? 0) / 5) * 100); ?>%"></div>
-                </div>
-            </div>
+<!-- Top Navigation Bar -->
+<header class="bg-background sticky top-0 z-50 flex justify-between items-center w-full px-6 py-3 max-w-[1920px] mx-auto border-b border-white/5 backdrop-blur-md">
+    <div class="flex items-center gap-6">
+        <a href="<?php echo BASE_URL; ?>/dashboard" class="text-sm sm:text-base font-bold text-primary flex items-center gap-1.5 hover:opacity-90 transition-all font-sans uppercase tracking-wider">
+            <span class="material-symbols-outlined text-primary text-2xl" style="font-variation-settings: 'FILL' 1;">hive</span>
+            Sociaera
+        </a>
+        <div class="hidden md:flex relative group">
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">search</span>
+            <input class="bg-surface-container-low border border-white/5 rounded-lg pl-10 pr-12 py-1.5 text-xs w-[320px] focus:ring-1 focus:ring-primary focus:border-primary transition-all text-on-surface placeholder:text-slate-500" placeholder="Mekan, kategori veya arkadaş ara..." type="text" onkeyup="if(event.key === 'Enter') window.location.href='<?php echo BASE_URL; ?>/venues?search=' + encodeURIComponent(this.value)"/>
         </div>
     </div>
-
-    <!-- Navigation List -->
-    <ul class="flex flex-col gap-1 flex-grow">
+    
+    <div class="flex items-center gap-4">
+        <!-- Notification Bell -->
         <?php
-        $navItems = [
-            'dashboard'    => ['icon' => 'home',                    'label' => 'Ana Sayfa',       'url' => '/dashboard'],
-            'venues'       => ['icon' => 'location_on',             'label' => 'Mekanlar',        'url' => '/venues'],
-            'leaderboard'  => ['icon' => 'leaderboard',             'label' => 'Liderlik',        'url' => '/leaderboard'],
-            'missions'     => ['icon' => 'emoji_events',            'label' => 'Görevler',        'url' => '/missions'],
-            'members'      => ['icon' => 'people',                  'label' => 'Üyeler',          'url' => '/members'],
-            'wallet'       => ['icon' => 'account_balance_wallet',  'label' => 'Cüzdan',          'url' => '/wallet'],
-            'premium'      => ['icon' => 'diamond',                 'label' => 'Premium',         'url' => '/premium'],
-            'kampanyalar'  => ['icon' => 'campaign',                 'label' => 'Kampanyalar',     'url' => '/kampanyalar'],
-            'notifications'=> ['icon' => 'notifications',           'label' => 'Bildirimler',     'url' => '/notifications'],
-            'settings'     => ['icon' => 'settings',                'label' => 'Ayarlar',         'url' => '/settings'],
-        ];
-        $activeNav = $activeNav ?? '';
-        foreach ($navItems as $key => $item):
-            $isActive = $activeNav === $key;
-            if ($isActive) {
-                $linkClass = 'w-full bg-[#FF6B35] text-white font-bold py-2.5 rounded-lg flex items-center justify-start px-4 gap-3 transition-all duration-150';
-            } else {
-                $linkClass = 'w-full bg-surface-container-high/40 hover:bg-surface-container-high text-slate-300 font-semibold py-2.5 rounded-lg flex items-center justify-start px-4 gap-3 transition-all hover:text-white duration-150 group';
-            }
-        ?>
-        <li>
-            <a class="<?php echo $linkClass; ?>" href="<?php echo BASE_URL . $item['url']; ?>">
-                <span class="material-symbols-outlined text-[18px] <?php echo $isActive ? 'text-white' : 'text-slate-500 group-hover:text-[#FF6B35]'; ?> transition-colors" <?php echo $isActive ? 'data-weight="fill"' : ''; ?>><?php echo $item['icon']; ?></span>
-                <span class="text-xs tracking-wide"><?php echo $item['label']; ?></span>
-            </a>
-        </li>
-        <?php endforeach; ?>
-    </ul>
-
-    <!-- Owned Venues -->
-    <?php
-    $userVenues = [];
-    try {
-        $userVenues = (new VenueModel())->getByOwner(Auth::id());
-    } catch (Exception $e) {}
-    if (!empty($userVenues)):
-    ?>
-    <div class="mt-2 pt-3 border-t border-white/5 flex-shrink-0">
-        <h3 class="text-[9px] text-slate-500 uppercase tracking-widest px-3 mb-2 font-mono">İşletmelerim</h3>
-        <ul class="flex flex-col gap-1">
-            <?php foreach ($userVenues as $uv):
-                $isVenueActive = ($activeNav ?? '') === 'venue_manage_' . $uv['id'];
-                $venueLinkClass = $isVenueActive
-                    ? 'w-full bg-[#FF6B35] text-white font-bold py-2 rounded-lg flex items-center justify-start px-4 gap-3 transition-all'
-                    : 'w-full bg-surface-container-high/20 hover:bg-surface-container-high text-slate-400 hover:text-white font-medium py-2 rounded-lg flex items-center justify-start px-4 gap-3 transition-all duration-150';
-            ?>
-            <li>
-                <a class="<?php echo $venueLinkClass; ?>" href="<?php echo BASE_URL; ?>/venue-manage?id=<?php echo $uv['id']; ?>">
-                    <span class="material-symbols-outlined text-[16px] text-slate-500" <?php echo $isVenueActive ? 'data-weight="fill"' : ''; ?>>storefront</span>
-                    <span class="truncate text-xs flex-grow"><?php echo escape($uv['name']); ?></span>
-                    <?php if ($uv['status'] === 'pending'): ?>
-                        <span class="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0"></span>
-                    <?php elseif (!empty($uv['is_open'])): ?>
-                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0"></span>
-                    <?php else: ?>
-                        <span class="w-1.5 h-1.5 rounded-full bg-red-400 shrink-0"></span>
-                    <?php endif; ?>
-                </a>
-            </li>
-            <?php endforeach; ?>
-        </ul>
-    </div>
-    <?php endif; ?>
-
-    <!-- Character Selection -->
-    <?php
-    $otherCharacters = [];
-    if (!empty($currentUser['gta_user_id'])) {
+        $notifCount = 0;
         try {
-            $db = Database::getConnection();
-            $stmt = $db->prepare("SELECT id, username, gta_character_name, avatar, tag FROM users WHERE gta_user_id = ? AND id != ? AND is_active = 1");
-            $stmt->execute([$currentUser['gta_user_id'], $currentUser['id']]);
-            $otherCharacters = $stmt->fetchAll();
+            $notifCount = (new NotificationModel())->getUnreadCount($currentUser['id']);
         } catch (Exception $e) {}
-    }
-    ?>
-    <?php if (!empty($otherCharacters) || !empty($currentUser['gta_user_id'])): ?>
-    <div class="mt-2 pt-3 border-t border-white/5 flex-shrink-0">
-        <h3 class="text-[9px] text-slate-500 uppercase tracking-widest px-3 mb-2 font-mono flex items-center justify-between">
-            <span>Karakter Değiştir</span>
-            <span class="material-symbols-outlined text-[14px] text-slate-600">switch_account</span>
-        </h3>
-        <ul class="flex flex-col gap-1">
-            <?php foreach ($otherCharacters as $oc): ?>
-            <li>
-                <form action="<?php echo BASE_URL; ?>/switch-character" method="POST" class="m-0">
-                    <?php echo csrfField(); ?>
-                    <input type="hidden" name="target_user_id" value="<?php echo $oc['id']; ?>">
-                    <button type="submit" class="w-full bg-surface-container-high/20 hover:bg-surface-container-high text-slate-400 hover:text-white py-1.5 px-4 rounded-lg flex items-center justify-start gap-3 transition-all duration-150 text-left">
-                        <span class="shrink-0">
-                            <?php $ocAvatarUrl = safeAvatarUrl($oc['avatar'] ?? null, $oc['username']); ?>
-                            <img src="<?php echo $ocAvatarUrl; ?>" alt="Avatar" class="w-5 h-5 rounded-full border border-white/10 object-cover shadow-sm" width="20" height="20">
-                        </span>
-                        <span class="truncate text-xs flex-grow"><?php echo escape($oc['gta_character_name'] ?: $oc['username']); ?></span>
-                        <span class="material-symbols-outlined text-slate-600 text-[14px]">swap_horiz</span>
-                    </button>
-                </form>
-            </li>
-            <?php endforeach; ?>
-            
-            <li>
-                <a href="<?php echo BASE_URL; ?>/oauth-login" class="w-full hover:bg-[#FF6B35]/15 text-slate-500 hover:text-[#FF6B35] py-2 px-4 rounded-lg flex items-center justify-start gap-3 transition-all duration-150">
-                    <span class="material-symbols-outlined text-[16px]">add_circle</span>
-                    <span class="text-xs font-bold">Karakter Bağla</span>
-                </a>
-            </li>
-        </ul>
-    </div>
-    <?php endif; ?>
-
-    <!-- Logout -->
-    <div class="mt-auto pt-3 border-t border-white/5 flex-shrink-0">
-        <a href="<?php echo BASE_URL; ?>/logout" class="w-full bg-red-500/10 hover:bg-red-500/20 text-red-400 font-bold py-2 rounded-lg flex items-center justify-start px-4 gap-3 transition-all duration-150">
-            <span class="material-symbols-outlined text-[18px]">logout</span>
-            <span class="text-xs">Çıkış Yap</span>
+        ?>
+        <a href="<?php echo BASE_URL; ?>/notifications" class="relative p-2 hover:bg-surface-container rounded-lg transition-colors active:scale-95 duration-150 text-slate-400 hover:text-white block">
+            <span class="material-symbols-outlined text-xl">notifications</span>
+            <?php if ($notifCount > 0): ?>
+                <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-secondary rounded-full"></span>
+            <?php endif; ?>
+        </a>
+        
+        <!-- User Pill -->
+        <a href="<?php echo BASE_URL; ?>/profile" class="flex items-center gap-2 bg-surface-container-low border border-white/5 px-3 py-1.5 rounded-full cursor-pointer hover:bg-surface-container transition-all">
+            <div class="relative flex-shrink-0">
+                <?php $avatarUrl = safeAvatarUrl($currentUser['avatar'] ?? null, $currentUser['username']); ?>
+                <img alt="<?php echo escape($currentUser['username']); ?>" class="w-8 h-8 rounded-full border border-primary object-cover" src="<?php echo $avatarUrl; ?>"/>
+                <?php if (!empty($currentUser['is_premium'])): ?>
+                    <div class="absolute -bottom-1 -right-1 bg-primary text-[7px] font-bold px-1 rounded-full text-on-primary">VIP</div>
+                <?php endif; ?>
+            </div>
+            <div class="hidden sm:block text-left max-w-[100px]">
+                <div class="text-xs font-bold leading-none text-on-surface truncate"><?php echo escape($currentUser['username']); ?></div>
+                <div class="text-[9px] text-primary mt-0.5">Seviye <?php 
+                    $stats = (new UserModel())->getStats($currentUser['id']);
+                    echo floor(($stats['checkins'] ?? 0) / 15) + 1; 
+                ?></div>
+            </div>
+            <span class="material-symbols-outlined text-on-surface-variant text-sm">expand_more</span>
         </a>
     </div>
-</nav>
+</header>
 <?php endif; ?>
 
-<!-- Main Content Canvas -->
-<main class="<?php echo Auth::check() ? 'ml-0 md:ml-72' : ''; ?> flex-grow flex flex-col min-h-screen">
-    <?php if (Auth::check()): ?>
-    <!-- TopAppBar (Mobile) -->
-    <header class="flex items-center justify-between px-8 py-4 bg-[#0F172A]/50 backdrop-blur-md font-manrope font-medium w-full sticky top-0 z-40 border-b border-white/10 md:hidden">
-        <div class="flex items-center gap-2 text-xl font-bold text-[#FF6B35]">
-            <img src="<?php echo BASE_URL; ?>/assets/images/logo.png" alt="Logo" class="h-6 w-auto opacity-90" width="24" height="24">
-            Sociaera
+<!-- Main Grid Container -->
+<main class="max-w-[1920px] mx-auto px-6 grid grid-cols-12 gap-lg mt-4 w-full flex-grow">
+    
+    <?php if (Auth::check() && $currentUser): ?>
+    <!-- Sol Sidebar: Identity Rail -->
+    <aside class="hidden lg:flex flex-col col-span-12 lg:col-span-3 xl:col-span-2 space-y-lg sticky top-24 h-[calc(100vh-120px)] overflow-y-auto custom-scrollbar pr-2 pb-6">
+        
+        <!-- Profile Card -->
+        <div class="bg-surface-container-low rounded-xl overflow-hidden relative border border-outline-variant/10 shadow-md flex-shrink-0">
+            <div class="h-24 hero-pattern relative flex items-center justify-center">
+                <div class="relative mt-8">
+                    <img alt="Profil Fotoğrafı" class="w-16 h-16 rounded-full border-4 border-surface-container-low shadow-lg object-cover" src="<?php echo $avatarUrl; ?>"/>
+                    <?php if (!empty($currentUser['is_premium'])): ?>
+                        <div class="absolute bottom-0 right-0 bg-primary p-0.5 rounded-full text-on-primary border-2 border-surface-container-low">
+                            <span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+            <div class="p-4 text-center pt-8">
+                <h2 class="text-sm font-bold text-on-surface truncate px-2" title="<?php echo escape($currentUser['gta_character_name'] ?: $currentUser['username']); ?>"><?php echo escape($currentUser['gta_character_name'] ?: $currentUser['username']); ?></h2>
+                <p class="text-[10px] text-on-surface-variant font-mono">@<?php echo escape($currentUser['tag'] ?: $currentUser['username']); ?></p>
+                
+                <div class="grid grid-cols-2 gap-2 mt-4">
+                    <div class="bg-surface-container px-2 py-2 rounded-lg text-left border border-white/5">
+                        <div class="flex items-center gap-1 text-primary mb-0.5">
+                            <span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+                            <span class="text-xs font-bold">16</span>
+                        </div>
+                        <span class="text-[8px] text-on-surface-variant uppercase tracking-wider font-semibold">Seri</span>
+                    </div>
+                    <div class="bg-surface-container px-2 py-2 rounded-lg text-left border border-white/5">
+                        <div class="flex items-center gap-1 text-primary mb-0.5">
+                            <span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">location_on</span>
+                            <span class="text-xs font-bold"><?php echo $stats['checkins'] ?? 0; ?></span>
+                        </div>
+                        <span class="text-[8px] text-on-surface-variant uppercase tracking-wider font-semibold">Check-in</span>
+                    </div>
+                </div>
+                
+                <div class="mt-4 text-left">
+                    <div class="flex justify-between text-[10px] mb-1">
+                        <span class="text-on-surface-variant">Haftalık Hedef: 5</span>
+                        <span class="text-primary font-bold"><?php echo min(5, $stats['checkins'] ?? 0); ?> / 5</span>
+                    </div>
+                    <div class="h-1 bg-surface-container-highest rounded-full overflow-hidden">
+                        <div class="h-full bg-primary" style="width: <?php echo min(100, (($stats['checkins'] ?? 0) / 5) * 100); ?>%"></div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="flex items-center gap-4 text-slate-400">
-            <a href="<?php echo BASE_URL; ?>/profile" class="text-slate-400 hover:text-[#FF6B35] transition-colors"><span class="material-symbols-outlined">account_circle</span></a>
-            <a href="<?php echo BASE_URL; ?>/settings" class="text-slate-400 hover:text-[#FF6B35] transition-colors"><span class="material-symbols-outlined">tune</span></a>
+
+        <!-- Navigation Bento Links -->
+        <div class="space-y-1">
+            <?php
+            $navItems = [
+                'dashboard'    => ['icon' => 'home',                   'label' => 'Ana Sayfa',       'url' => '/dashboard'],
+                'venues'       => ['icon' => 'explore',                'label' => 'Mekan Keşfet',    'url' => '/venues'],
+                'missions'     => ['icon' => 'assignment',             'label' => 'Görevler',        'url' => '/missions'],
+                'mystery-shopper'=>['icon' => 'visibility_off',        'label' => 'Gizli Müşteri',   'url' => '/mystery-shopper'],
+                'leaderboard'  => ['icon' => 'leaderboard',            'label' => 'Liderlik Tablosu','url' => '/leaderboard'],
+                'wallet'       => ['icon' => 'account_balance_wallet',  'label' => 'Cüzdan',          'url' => '/wallet'],
+                'premium'      => ['icon' => 'diamond',                 'label' => 'Premium Geçiş',   'url' => '/premium'],
+                'kampanyalar'  => ['icon' => 'campaign',                'label' => 'Kampanyalar',     'url' => '/kampanyalar'],
+                'settings'     => ['icon' => 'settings',                'label' => 'Ayarlar',         'url' => '/settings'],
+            ];
+            $activeNav = $activeNav ?? '';
+            foreach ($navItems as $key => $item):
+                $isActive = $activeNav === $key;
+                $linkClass = $isActive
+                    ? 'w-full bg-primary text-on-primary font-bold py-2.5 rounded-lg flex items-center justify-start px-4 gap-3 transition-all duration-150'
+                    : 'w-full bg-surface-container-low border border-white/5 text-on-surface font-semibold py-2.5 rounded-lg flex items-center justify-start px-4 gap-3 hover:bg-surface-container transition-colors duration-150 group';
+                $iconClass = $isActive ? 'text-on-primary' : 'text-on-surface-variant group-hover:text-primary transition-colors';
+            ?>
+            <a class="<?php echo $linkClass; ?>" href="<?php echo BASE_URL . $item['url']; ?>">
+                <span class="material-symbols-outlined text-[18px] <?php echo $iconClass; ?>" <?php echo $isActive ? 'data-weight="fill"' : ''; ?>><?php echo $item['icon']; ?></span>
+                <span class="text-xs font-bold"><?php echo $item['label']; ?></span>
+            </a>
+            <?php endforeach; ?>
         </div>
-    </header>
+
+        <!-- Owned Venues (İşletmelerim) -->
+        <?php
+        $userVenues = [];
+        try {
+            $userVenues = (new VenueModel())->getByOwner(Auth::id());
+        } catch (Exception $e) {}
+        if (!empty($userVenues)):
+        ?>
+        <div class="bg-surface-container-low p-4 rounded-xl border border-outline-variant/10 shadow-md">
+            <h3 class="text-[9px] text-on-surface-variant uppercase tracking-widest mb-2 font-mono">İşletmelerim</h3>
+            <ul class="flex flex-col gap-1">
+                <?php foreach ($userVenues as $uv):
+                    $isVenueActive = ($activeNav ?? '') === 'venue_manage_' . $uv['id'];
+                    $venueLinkClass = $isVenueActive
+                        ? 'w-full bg-primary text-on-primary font-bold py-1.5 px-3 rounded-lg flex items-center justify-start gap-2.5 transition-all text-xs'
+                        : 'w-full bg-surface-container/30 hover:bg-surface-container text-on-surface-variant hover:text-on-surface font-medium py-1.5 px-3 rounded-lg flex items-center justify-start gap-2.5 transition-all text-xs';
+                ?>
+                <li>
+                    <a class="<?php echo $venueLinkClass; ?>" href="<?php echo BASE_URL; ?>/venue-manage?id=<?php echo $uv['id']; ?>">
+                        <span class="material-symbols-outlined text-[14px]">storefront</span>
+                        <span class="truncate flex-grow"><?php echo escape($uv['name']); ?></span>
+                        <?php if ($uv['status'] === 'pending'): ?>
+                            <span class="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0"></span>
+                        <?php elseif (!empty($uv['is_open'])): ?>
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0"></span>
+                        <?php else: ?>
+                            <span class="w-1.5 h-1.5 rounded-full bg-red-400 shrink-0"></span>
+                        <?php endif; ?>
+                    </a>
+                </li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+        <?php endif; ?>
+
+        <!-- Character Selection -->
+        <?php
+        $otherCharacters = [];
+        if (!empty($currentUser['gta_user_id'])) {
+            try {
+                $db = Database::getConnection();
+                $stmt = $db->prepare("SELECT id, username, gta_character_name, avatar, tag FROM users WHERE gta_user_id = ? AND id != ? AND is_active = 1");
+                $stmt->execute([$currentUser['gta_user_id'], $currentUser['id']]);
+                $otherCharacters = $stmt->fetchAll();
+            } catch (Exception $e) {}
+        }
+        if (!empty($otherCharacters) || !empty($currentUser['gta_user_id'])):
+        ?>
+        <div class="bg-surface-container-low p-4 rounded-xl border border-outline-variant/10 shadow-md">
+            <h3 class="text-[9px] text-on-surface-variant uppercase tracking-widest mb-2 font-mono flex items-center justify-between">
+                <span>Karakter Değiştir</span>
+                <span class="material-symbols-outlined text-[14px]">switch_account</span>
+            </h3>
+            <ul class="flex flex-col gap-1">
+                <?php foreach ($otherCharacters as $oc): ?>
+                <li>
+                    <form action="<?php echo BASE_URL; ?>/switch-character" method="POST" class="m-0">
+                        <?php echo csrfField(); ?>
+                        <input type="hidden" name="target_user_id" value="<?php echo $oc['id']; ?>">
+                        <button type="submit" class="w-full bg-surface-container/30 hover:bg-surface-container text-on-surface-variant hover:text-on-surface py-1.5 px-3 rounded-lg flex items-center justify-start gap-2.5 transition-all text-xs text-left">
+                            <span class="shrink-0">
+                                <?php $ocAvatarUrl = safeAvatarUrl($oc['avatar'] ?? null, $oc['username']); ?>
+                                <img src="<?php echo $ocAvatarUrl; ?>" alt="Avatar" class="w-4 h-4 rounded-full border border-white/10 object-cover" width="16" height="16">
+                            </span>
+                            <span class="truncate flex-grow"><?php echo escape($oc['gta_character_name'] ?: $oc['username']); ?></span>
+                        </button>
+                    </form>
+                </li>
+                <?php endforeach; ?>
+                <li>
+                    <a href="<?php echo BASE_URL; ?>/oauth-login" class="w-full hover:bg-primary/10 text-on-surface-variant hover:text-primary py-1.5 px-3 rounded-lg flex items-center justify-start gap-2.5 transition-colors text-xs font-bold">
+                        <span class="material-symbols-outlined text-[14px]">add_circle</span>
+                        <span>Karakter Bağla</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <?php endif; ?>
+
+        <!-- Rozetlerim Bento Widget -->
+        <div class="bg-surface-container-low p-4 rounded-xl border border-outline-variant/10 shadow-md">
+            <div class="flex justify-between items-center mb-3">
+                <h3 class="text-[9px] text-on-surface-variant font-bold uppercase tracking-wider font-mono">Rozetlerim</h3>
+                <span class="text-primary text-[9px] font-bold">4 Rozet</span>
+            </div>
+            <div class="grid grid-cols-4 gap-1.5">
+                <div class="aspect-square bg-surface-container rounded-lg flex items-center justify-center relative group cursor-help border border-white/5" title="16 Günlük Seri">
+                    <span class="material-symbols-outlined text-primary text-base" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+                </div>
+                <div class="aspect-square bg-surface-container rounded-lg flex items-center justify-center relative border border-white/5" title="Fotoğrafçı">
+                    <span class="material-symbols-outlined text-on-surface-variant text-base" style="font-variation-settings: 'FILL' 1;">photo_camera</span>
+                </div>
+                <div class="aspect-square bg-surface-container rounded-lg flex items-center justify-center relative border border-white/5" title="Denetleyici">
+                    <span class="material-symbols-outlined text-on-surface-variant text-base" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
+                </div>
+                <div class="aspect-square bg-surface-container rounded-lg flex items-center justify-center relative border border-white/5" title="Gezgin">
+                    <span class="material-symbols-outlined text-on-surface-variant text-base" style="font-variation-settings: 'FILL' 1;">hive</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Logout Link -->
+        <a href="<?php echo BASE_URL; ?>/logout" class="w-full bg-red-500/10 hover:bg-red-500/20 text-red-400 font-bold py-2.5 rounded-lg flex items-center justify-start px-4 gap-3 transition-all text-xs">
+            <span class="material-symbols-outlined text-[18px]">logout</span>
+            <span>Çıkış Yap</span>
+        </a>
+    </aside>
     <?php endif; ?>
 
-    <div class="flex-grow flex p-gutter gap-gutter max-w-7xl mx-auto w-full">
+    <!-- Center Content Panel (Feed) -->
+    <?php $feedCols = !empty($hideSidebar) ? 'col-span-12 lg:col-span-9 xl:col-span-10' : 'col-span-12 lg:col-span-9 xl:col-span-7'; ?>
+    <section class="<?php echo Auth::check() ? $feedCols : 'col-span-12'; ?> flex flex-col gap-6 pb-6">
         <!-- Page Content Starts Here -->

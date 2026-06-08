@@ -4,9 +4,10 @@
  */
 $hideSidebar = $hideSidebar ?? false;
 ?>
+        </section>
         <?php if (!$hideSidebar): ?>
         <!-- Right Sidebar: Discovery Rail -->
-        <aside class="hidden lg:flex flex-col w-80 gap-6 ml-auto">
+        <aside class="hidden lg:flex flex-col col-span-12 lg:col-span-3 xl:col-span-3 space-y-lg sticky top-24 h-[calc(100vh-120px)] overflow-y-auto custom-scrollbar pl-2 pb-6">
             <!-- Popular Places -->
             <?php if (!empty($trendVenues)): ?>
             <div class="bg-surface-container-low p-5 rounded-xl border border-outline-variant/10 shadow-md">
@@ -222,7 +223,6 @@ $hideSidebar = $hideSidebar ?? false;
             <?php endif; ?>
         </aside>
         <?php endif; /* !$hideSidebar */ ?>
-    </div> <!-- flex-grow flex p-gutter ... -->
 </main>
 
 <!-- Mobile Bottom Navigation -->
