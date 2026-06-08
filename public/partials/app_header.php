@@ -19,7 +19,7 @@ if (!isset($currentUser) && Auth::check()) {
 <title><?php echo View::title($pageTitle ?? 'Sociaera'); ?></title>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script id="tailwind-config">
@@ -91,13 +91,13 @@ if (!isset($currentUser) && Auth::check()) {
                         "stack-md": "24px"
                     },
                     "fontFamily": {
-                        "display-lg": ["Manrope"],
-                        "label-sm": ["Inter"],
-                        "label-md": ["Inter"],
-                        "body-lg": ["Inter"],
-                        "headline-lg": ["Manrope"],
-                        "headline-md": ["Manrope"],
-                        "body-md": ["Inter"]
+                        "display-lg": ["Plus Jakarta Sans"],
+                        "label-sm": ["Plus Jakarta Sans"],
+                        "label-md": ["Plus Jakarta Sans"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "body-md": ["Plus Jakarta Sans"]
                     },
                     "fontSize": {
                         "display-lg": ["48px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
@@ -336,6 +336,33 @@ if (!isset($currentUser) && Auth::check()) {
         border-color: #ff6b35 !important;
         box-shadow: none !important;
     }
+    
+    body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    
+    .hero-pattern {
+        background: linear-gradient(to bottom, rgba(255,107,53,0.18) 0%, rgba(11,19,38,0) 100%),
+                    url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+    }
+    
+    .glass-effect {
+        backdrop-filter: blur(12px);
+        background: rgba(23, 31, 51, 0.75);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 4px;
+        height: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+    }
 </style>
 <script>
 (function(){
@@ -351,17 +378,58 @@ if (!isset($currentUser) && Auth::check()) {
 <body class="bg-background text-on-background font-body-md text-body-md min-h-screen antialiased flex selection:bg-primary-container/30 selection:text-primary-container">
 
 <?php if (Auth::check() && $currentUser): ?>
-<!-- SideNavBar -->
-<nav class="hidden md:flex flex-col fixed left-0 top-0 h-full p-8 bg-[#1E293B]/80 backdrop-blur-lg font-manrope antialiased w-72 border-r border-white/10 shadow-[30px_0_30px_-15px_rgba(15,23,42,0.15)] z-50 overflow-y-auto">
-    <div class="mb-stack-lg flex items-center gap-4">
-        <?php $avatarUrl = safeAvatarUrl($currentUser['avatar'] ?? null, $currentUser['username']); ?>
-        <a href="<?php echo BASE_URL; ?>/profile"><img alt="User Avatar" class="w-12 h-12 rounded-full border-2 border-white/10 object-cover shadow-lg" src="<?php echo $avatarUrl; ?>" width="48" height="48"/></a>
-        <div>
-            <h1 class="text-2xl font-black tracking-tight text-[#FF6B35]"><?php echo escape($currentUser['gta_character_name'] ?: $currentUser['username']); ?></h1>
-            <a href="<?php echo BASE_URL; ?>/profile" class="text-label-sm font-label-sm text-slate-400 hover:text-white transition-colors">@<?php echo escape($currentUser['tag'] ?: $currentUser['username']); ?></a>
+<!-- SideNavBar: Identity Rail -->
+<nav class="hidden md:flex flex-col fixed left-0 top-0 h-full p-5 w-72 bg-[#0e0e0f]/95 z-50 overflow-y-auto custom-scrollbar border-r border-white/5 gap-4">
+    <!-- Profile Bento Card -->
+    <div class="bg-surface-container-low rounded-xl overflow-hidden relative border border-white/5 shadow-md flex-shrink-0">
+        <!-- Carbon Fibre Hero Background -->
+        <div class="h-20 hero-pattern relative flex items-center justify-center">
+            <div class="absolute -bottom-8">
+                <?php $avatarUrl = safeAvatarUrl($currentUser['avatar'] ?? null, $currentUser['username']); ?>
+                <a href="<?php echo BASE_URL; ?>/profile">
+                    <img alt="User Avatar" class="w-16 h-16 rounded-full border-4 border-surface-container-low object-cover shadow-lg hover:border-[#FF6B35] transition-all" src="<?php echo $avatarUrl; ?>" width="64" height="64"/>
+                </a>
+            </div>
+        </div>
+        <div class="p-4 text-center pt-10">
+            <h2 class="text-sm font-bold text-on-surface truncate px-2" title="<?php echo escape($currentUser['gta_character_name'] ?: $currentUser['username']); ?>"><?php echo escape($currentUser['gta_character_name'] ?: $currentUser['username']); ?></h2>
+            <a href="<?php echo BASE_URL; ?>/profile" class="text-[10px] font-mono text-slate-500 hover:text-white transition-colors">@<?php echo escape($currentUser['tag'] ?: $currentUser['username']); ?></a>
+            
+            <?php 
+            // Fetch stats dynamically
+            $stats = (new UserModel())->getStats($currentUser['id']);
+            ?>
+            <div class="grid grid-cols-2 gap-2 mt-4">
+                <div class="bg-surface-container px-2 py-2 rounded-lg text-left">
+                    <div class="flex items-center gap-1 text-[#FF6B35] mb-0.5">
+                        <span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">explore</span>
+                        <span class="text-xs font-bold"><?php echo $stats['venues'] ?? 0; ?></span>
+                    </div>
+                    <span class="text-[8px] text-slate-500 uppercase tracking-wide">Keşif</span>
+                </div>
+                <div class="bg-surface-container px-2 py-2 rounded-lg text-left">
+                    <div class="flex items-center gap-1 text-[#FF6B35] mb-0.5">
+                        <span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">location_on</span>
+                        <span class="text-xs font-bold"><?php echo $stats['checkins'] ?? 0; ?></span>
+                    </div>
+                    <span class="text-[8px] text-slate-500 uppercase tracking-wide">Check-in</span>
+                </div>
+            </div>
+            
+            <div class="mt-4 text-left">
+                <div class="flex justify-between text-[10px] mb-1">
+                    <span class="text-slate-500">Haftalık Hedef: 5 check-in</span>
+                    <span class="text-[#FF6B35] font-bold"><?php echo min(5, $stats['checkins'] ?? 0); ?> / 5</span>
+                </div>
+                <div class="h-1 bg-surface-container-highest rounded-full overflow-hidden">
+                    <div class="h-full bg-[#FF6B35]" style="width: <?php echo min(100, (($stats['checkins'] ?? 0) / 5) * 100); ?>%"></div>
+                </div>
+            </div>
         </div>
     </div>
-    <ul class="flex flex-col gap-2 flex-grow">
+
+    <!-- Navigation List -->
+    <ul class="flex flex-col gap-1 flex-grow">
         <?php
         $navItems = [
             'dashboard'    => ['icon' => 'home',                    'label' => 'Ana Sayfa',       'url' => '/dashboard'],
@@ -372,59 +440,54 @@ if (!isset($currentUser) && Auth::check()) {
             'wallet'       => ['icon' => 'account_balance_wallet',  'label' => 'Cüzdan',          'url' => '/wallet'],
             'premium'      => ['icon' => 'diamond',                 'label' => 'Premium',         'url' => '/premium'],
             'kampanyalar'  => ['icon' => 'campaign',                 'label' => 'Kampanyalar',     'url' => '/kampanyalar'],
-            // 'mystery' => ['icon' => 'person_search', 'label' => 'Gizli Müşteri', 'url' => '/mystery-shopper', 'special' => 'indigo'], // TODO: aktifleştir
             'notifications'=> ['icon' => 'notifications',           'label' => 'Bildirimler',     'url' => '/notifications'],
-            'report'       => ['icon' => 'flag',                    'label' => 'Raporla',         'url' => '/report'],
             'settings'     => ['icon' => 'settings',                'label' => 'Ayarlar',         'url' => '/settings'],
         ];
         $activeNav = $activeNav ?? '';
         foreach ($navItems as $key => $item):
             $isActive = $activeNav === $key;
-            $isSpecialIndigo = !empty($item['special']) && $item['special'] === 'indigo';
             if ($isActive) {
-                $linkClass = 'flex items-center gap-4 px-4 py-3 bg-[#FF6B35] text-white rounded-lg shadow-[0_0_5px_rgba(255,107,53,0.2)] active:scale-[0.98] transition-transform font-label-md text-label-md';
-            } elseif ($isSpecialIndigo) {
-                $linkClass = 'flex items-center gap-4 px-4 py-3 text-indigo-300 hover:text-indigo-100 hover:bg-indigo-500/10 transition-all duration-200 rounded-lg active:scale-[0.98] font-label-md text-label-md border border-indigo-500/20 bg-indigo-500/5 mt-1';
+                $linkClass = 'w-full bg-[#FF6B35] text-white font-bold py-2.5 rounded-lg flex items-center justify-start px-4 gap-3 transition-all duration-150';
             } else {
-                $linkClass = 'flex items-center gap-4 px-4 py-3 text-slate-400 hover:text-slate-100 hover:bg-white/5 transition-all duration-200 rounded-lg active:scale-[0.98] font-label-md text-label-md';
+                $linkClass = 'w-full bg-surface-container-high/40 hover:bg-surface-container-high text-slate-300 font-semibold py-2.5 rounded-lg flex items-center justify-start px-4 gap-3 transition-all hover:text-white duration-150 group';
             }
         ?>
         <li>
             <a class="<?php echo $linkClass; ?>" href="<?php echo BASE_URL . $item['url']; ?>">
-                <span class="material-symbols-outlined" <?php echo $isActive ? 'data-weight="fill"' : ''; ?>><?php echo $item['icon']; ?></span>
-                <?php echo $item['label']; ?>
+                <span class="material-symbols-outlined text-[18px] <?php echo $isActive ? 'text-white' : 'text-slate-500 group-hover:text-[#FF6B35]'; ?> transition-colors" <?php echo $isActive ? 'data-weight="fill"' : ''; ?>><?php echo $item['icon']; ?></span>
+                <span class="text-xs tracking-wide"><?php echo $item['label']; ?></span>
             </a>
         </li>
         <?php endforeach; ?>
     </ul>
 
+    <!-- Owned Venues -->
     <?php
-    // İşletmelerim — Kullanıcının sahip olduğu mekanlar
     $userVenues = [];
     try {
         $userVenues = (new VenueModel())->getByOwner(Auth::id());
     } catch (Exception $e) {}
     if (!empty($userVenues)):
     ?>
-    <div class="mt-4 pt-4 border-t border-white/5">
-        <h3 class="text-label-sm text-slate-500 uppercase tracking-wider px-4 mb-2">İşletmelerim</h3>
+    <div class="mt-2 pt-3 border-t border-white/5 flex-shrink-0">
+        <h3 class="text-[9px] text-slate-500 uppercase tracking-widest px-3 mb-2 font-mono">İşletmelerim</h3>
         <ul class="flex flex-col gap-1">
             <?php foreach ($userVenues as $uv):
                 $isVenueActive = ($activeNav ?? '') === 'venue_manage_' . $uv['id'];
                 $venueLinkClass = $isVenueActive
-                    ? 'flex items-center gap-3 px-4 py-2.5 bg-[#FF6B35] text-white rounded-lg shadow-[0_0_5px_rgba(255,107,53,0.2)] text-label-md'
-                    : 'flex items-center gap-3 px-4 py-2.5 text-slate-400 hover:text-slate-100 hover:bg-white/5 transition-all duration-200 rounded-lg text-label-md';
+                    ? 'w-full bg-[#FF6B35] text-white font-bold py-2 rounded-lg flex items-center justify-start px-4 gap-3 transition-all'
+                    : 'w-full bg-surface-container-high/20 hover:bg-surface-container-high text-slate-400 hover:text-white font-medium py-2 rounded-lg flex items-center justify-start px-4 gap-3 transition-all duration-150';
             ?>
             <li>
                 <a class="<?php echo $venueLinkClass; ?>" href="<?php echo BASE_URL; ?>/venue-manage?id=<?php echo $uv['id']; ?>">
-                    <span class="material-symbols-outlined text-[18px]" <?php echo $isVenueActive ? 'data-weight="fill"' : ''; ?>>storefront</span>
-                    <span class="truncate flex-grow"><?php echo escape($uv['name']); ?></span>
+                    <span class="material-symbols-outlined text-[16px] text-slate-500" <?php echo $isVenueActive ? 'data-weight="fill"' : ''; ?>>storefront</span>
+                    <span class="truncate text-xs flex-grow"><?php echo escape($uv['name']); ?></span>
                     <?php if ($uv['status'] === 'pending'): ?>
-                        <span class="w-2 h-2 rounded-full bg-amber-400 shrink-0"></span>
+                        <span class="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0"></span>
                     <?php elseif (!empty($uv['is_open'])): ?>
-                        <span class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0"></span>
                     <?php else: ?>
-                        <span class="w-2 h-2 rounded-full bg-red-400 shrink-0"></span>
+                        <span class="w-1.5 h-1.5 rounded-full bg-red-400 shrink-0"></span>
                     <?php endif; ?>
                 </a>
             </li>
@@ -433,7 +496,7 @@ if (!isset($currentUser) && Auth::check()) {
     </div>
     <?php endif; ?>
 
-    <!-- Karakter Değiştirme -->
+    <!-- Character Selection -->
     <?php
     $otherCharacters = [];
     if (!empty($currentUser['gta_user_id'])) {
@@ -446,10 +509,10 @@ if (!isset($currentUser) && Auth::check()) {
     }
     ?>
     <?php if (!empty($otherCharacters) || !empty($currentUser['gta_user_id'])): ?>
-    <div class="mt-4 pt-4 border-t border-white/5">
-        <h3 class="text-label-sm text-slate-500 uppercase tracking-wider px-4 mb-2 flex items-center justify-between">
+    <div class="mt-2 pt-3 border-t border-white/5 flex-shrink-0">
+        <h3 class="text-[9px] text-slate-500 uppercase tracking-widest px-3 mb-2 font-mono flex items-center justify-between">
             <span>Karakter Değiştir</span>
-            <span class="material-symbols-outlined text-[16px] text-slate-500">switch_account</span>
+            <span class="material-symbols-outlined text-[14px] text-slate-600">switch_account</span>
         </h3>
         <ul class="flex flex-col gap-1">
             <?php foreach ($otherCharacters as $oc): ?>
@@ -457,32 +520,33 @@ if (!isset($currentUser) && Auth::check()) {
                 <form action="<?php echo BASE_URL; ?>/switch-character" method="POST" class="m-0">
                     <?php echo csrfField(); ?>
                     <input type="hidden" name="target_user_id" value="<?php echo $oc['id']; ?>">
-                    <button type="submit" class="w-full flex items-center gap-3 px-4 py-2 text-slate-400 hover:text-slate-100 hover:bg-white/5 transition-all duration-200 rounded-lg text-label-md text-left active:scale-[0.98]">
+                    <button type="submit" class="w-full bg-surface-container-high/20 hover:bg-surface-container-high text-slate-400 hover:text-white py-1.5 px-4 rounded-lg flex items-center justify-start gap-3 transition-all duration-150 text-left">
                         <span class="shrink-0">
                             <?php $ocAvatarUrl = safeAvatarUrl($oc['avatar'] ?? null, $oc['username']); ?>
-                            <img src="<?php echo $ocAvatarUrl; ?>" alt="Avatar" class="w-6 h-6 rounded-full border border-white/10 object-cover shadow-sm" width="24" height="24">
+                            <img src="<?php echo $ocAvatarUrl; ?>" alt="Avatar" class="w-5 h-5 rounded-full border border-white/10 object-cover shadow-sm" width="20" height="20">
                         </span>
-                        <span class="truncate flex-grow"><?php echo escape($oc['gta_character_name'] ?: $oc['username']); ?></span>
-                        <span class="material-symbols-outlined text-slate-600 text-[16px]">swap_horiz</span>
+                        <span class="truncate text-xs flex-grow"><?php echo escape($oc['gta_character_name'] ?: $oc['username']); ?></span>
+                        <span class="material-symbols-outlined text-slate-600 text-[14px]">swap_horiz</span>
                     </button>
                 </form>
             </li>
             <?php endforeach; ?>
             
             <li>
-                <a href="<?php echo BASE_URL; ?>/oauth-login" class="flex items-center gap-3 px-4 py-2 text-slate-500 hover:text-primary-container transition-all duration-200 rounded-lg text-label-md">
-                    <span class="material-symbols-outlined text-[20px] text-slate-500">add_circle</span>
-                    <span class="flex-grow font-semibold">Yeni Karakter Bağla</span>
+                <a href="<?php echo BASE_URL; ?>/oauth-login" class="w-full hover:bg-[#FF6B35]/15 text-slate-500 hover:text-[#FF6B35] py-2 px-4 rounded-lg flex items-center justify-start gap-3 transition-all duration-150">
+                    <span class="material-symbols-outlined text-[16px]">add_circle</span>
+                    <span class="text-xs font-bold">Karakter Bağla</span>
                 </a>
             </li>
         </ul>
     </div>
     <?php endif; ?>
 
-    <div class="mt-4 pt-4 border-t border-white/5">
-        <a href="<?php echo BASE_URL; ?>/logout" class="flex items-center gap-4 px-4 py-3 text-error hover:bg-error/10 transition-all duration-200 rounded-lg active:scale-[0.98] font-label-md text-label-md">
-            <span class="material-symbols-outlined">logout</span>
-            Çıkış Yap
+    <!-- Logout -->
+    <div class="mt-auto pt-3 border-t border-white/5 flex-shrink-0">
+        <a href="<?php echo BASE_URL; ?>/logout" class="w-full bg-red-500/10 hover:bg-red-500/20 text-red-400 font-bold py-2 rounded-lg flex items-center justify-start px-4 gap-3 transition-all duration-150">
+            <span class="material-symbols-outlined text-[18px]">logout</span>
+            <span class="text-xs">Çıkış Yap</span>
         </a>
     </div>
 </nav>

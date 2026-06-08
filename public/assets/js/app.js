@@ -468,4 +468,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Image previews
     App.initImagePreview('composeImage', 'composePreview');
+
+    // Smooth interaction scale for post cards, aside modules, and buttons
+    document.querySelectorAll('.post-card, aside > div, button, .btn-glow').forEach(el => {
+        el.addEventListener('mousedown', () => {
+            el.style.transform = 'scale(0.97)';
+            el.style.transition = 'transform 0.1s ease';
+        });
+        el.addEventListener('mouseup', () => {
+            el.style.transform = '';
+        });
+        el.addEventListener('mouseleave', () => {
+            el.style.transform = '';
+        });
+    });
 });
