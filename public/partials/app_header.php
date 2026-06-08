@@ -21,6 +21,7 @@ if (!isset($currentUser) && Auth::check()) {
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
@@ -133,10 +134,10 @@ if (!isset($currentUser) && Auth::check()) {
         border: 1px solid rgba(255, 255, 255, 0.08);
     }
 
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: #0b1326; }
-    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: #ff6b35; }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); }
+    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
 
     .material-symbols-outlined {
         font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
@@ -194,12 +195,6 @@ if (!isset($currentUser) && Auth::check()) {
     .spin { animation: spin 1s linear infinite; }
     @keyframes spin { 100% { transform: rotate(360deg); } }
     .liked .material-symbols-outlined { font-variation-settings: 'FILL' 1; color: #ffb59d; }
-    
-    /* Scrollbar */
-    ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); }
-    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
 
     /* Sponsor Marquee */
     @keyframes marquee {
@@ -211,16 +206,6 @@ if (!isset($currentUser) && Auth::check()) {
     }
     .animate-marquee:hover {
         animation-play-state: paused;
-    }
-
-    /* Font yüklenene kadar simge adlarının taşarak tasarımı bozmasını engeller */
-    .material-symbols-outlined {
-        display: inline-block;
-        width: 1em;
-        height: 1em;
-        overflow: hidden;
-        white-space: nowrap;
-        word-wrap: normal;
     }
 
     /* ── CUSTOM EXPLORER HUD & EXPERIENCE TICKET SYSTEM ── */
