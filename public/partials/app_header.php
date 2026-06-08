@@ -21,60 +21,61 @@ if (!isset($currentUser) && Auth::check()) {
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet"/>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<script id="tailwind-config">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
             theme: {
                 extend: {
                     "colors": {
-                        "tertiary-fixed": "#c4e7ff",
-                        "on-error": "#690005",
-                        "inverse-on-surface": "#283044",
-                        "tertiary-container": "#00a5de",
-                        "primary-fixed-dim": "#ffb59d",
-                        "on-tertiary-container": "#00364b",
-                        "primary": "#ffb59d",
+                        "on-tertiary-fixed-variant": "#6900b3",
+                        "on-primary-fixed-variant": "#6c3a00",
                         "error": "#ffb4ab",
-                        "surface-tint": "#ffb59d",
-                        "primary-fixed": "#ffdbd0",
-                        "on-surface": "#dae2fd",
-                        "secondary-fixed-dim": "#bcc7de",
-                        "surface-container-high": "#222a3d",
-                        "on-primary": "#5d1900",
-                        "on-primary-fixed": "#390c00",
-                        "surface-bright": "#31394d",
-                        "on-secondary-fixed": "#111c2d",
-                        "secondary": "#bcc7de",
-                        "background": "#0b1326",
-                        "on-surface-variant": "#e1bfb5",
-                        "surface-container-highest": "#2d3449",
-                        "secondary-fixed": "#d8e3fb",
-                        "outline": "#a98a80",
-                        "inverse-primary": "#ab3500",
-                        "on-tertiary-fixed-variant": "#004c69",
-                        "on-secondary": "#263143",
-                        "tertiary": "#7bd0ff",
-                        "surface-container": "#171f33",
-                        "on-error-container": "#ffdad6",
-                        "on-background": "#dae2fd",
-                        "on-secondary-fixed-variant": "#3c475a",
-                        "surface-variant": "#2d3449",
-                        "secondary-container": "#3e495d",
+                        "secondary-fixed": "#ffdadb",
+                        "background": "#131314",
+                        "surface-bright": "#39393a",
+                        "tertiary-container": "#cb95ff",
+                        "on-surface": "#e5e2e3",
+                        "on-secondary-fixed": "#40000d",
+                        "on-tertiary-fixed": "#2c0051",
+                        "on-background": "#e5e2e3",
+                        "surface": "#131314",
+                        "secondary": "#ffb2b7",
+                        "on-error": "#690005",
+                        "surface-container-low": "#1c1b1c",
+                        "tertiary-fixed-dim": "#ddb7ff",
+                        "on-tertiary": "#490080",
                         "error-container": "#93000a",
-                        "surface-dim": "#0b1326",
-                        "outline-variant": "#594139",
-                        "tertiary-fixed-dim": "#7bd0ff",
-                        "on-primary-fixed-variant": "#832600",
-                        "surface-container-lowest": "#060e20",
-                        "on-tertiary": "#00354a",
-                        "surface": "#0b1326",
-                        "primary-container": "#ff6b35",
-                        "surface-container-low": "#131b2e",
-                        "on-tertiary-fixed": "#001e2c",
-                        "on-primary-container": "#5f1900",
-                        "on-secondary-container": "#aeb9d0",
-                        "inverse-surface": "#dae2fd"
+                        "inverse-on-surface": "#313031",
+                        "on-surface-variant": "#dcc2ae",
+                        "on-secondary-fixed-variant": "#92002a",
+                        "surface-container": "#201f20",
+                        "inverse-surface": "#e5e2e3",
+                        "primary-fixed": "#ffdcc1",
+                        "tertiary-fixed": "#f0dbff",
+                        "secondary-container": "#b50036",
+                        "primary-fixed-dim": "#ffb778",
+                        "secondary-fixed-dim": "#ffb2b7",
+                        "on-secondary": "#67001b",
+                        "surface-tint": "#ffb778",
+                        "inverse-primary": "#8e4e00",
+                        "on-tertiary-container": "#6000a4",
+                        "primary": "#ffb97c",
+                        "on-error-container": "#ffdad6",
+                        "surface-container-high": "#2a2a2b",
+                        "tertiary": "#deb9ff",
+                        "surface-variant": "#353436",
+                        "surface-container-highest": "#353436",
+                        "primary-container": "#ff9100",
+                        "surface-dim": "#131314",
+                        "on-primary-fixed": "#2e1500",
+                        "outline-variant": "#564334",
+                        "on-secondary-container": "#ffc2c4",
+                        "outline": "#a48c7a",
+                        "surface-container-lowest": "#0e0e0f",
+                        "on-primary": "#4c2700",
+                        "on-primary-container": "#633500",
+                        "tertiary-fixed-dim-old": "#7bd0ff",
+                        "tertiary-old": "#7bd0ff"
                     },
                     "borderRadius": {
                         "DEFAULT": "0.25rem",
@@ -83,36 +84,55 @@ if (!isset($currentUser) && Auth::check()) {
                         "full": "9999px"
                     },
                     "spacing": {
+                        "md": "16px",
+                        "base": "4px",
+                        "margin": "24px",
+                        "gutter": "16px",
+                        "xl": "32px",
+                        "sm": "12px",
+                        "xs": "8px",
+                        "lg": "24px",
                         "stack-sm": "12px",
                         "container-padding": "32px",
-                        "gutter": "24px",
-                        "base": "8px",
                         "stack-lg": "48px",
                         "stack-md": "24px"
                     },
                     "fontFamily": {
-                        "display-lg": ["Plus Jakarta Sans"],
-                        "label-sm": ["Plus Jakarta Sans"],
-                        "label-md": ["Plus Jakarta Sans"],
-                        "body-lg": ["Plus Jakarta Sans"],
-                        "headline-lg": ["Plus Jakarta Sans"],
                         "headline-md": ["Plus Jakarta Sans"],
-                        "body-md": ["Plus Jakarta Sans"]
+                        "body-md": ["Plus Jakarta Sans"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "display-lg": ["Plus Jakarta Sans"],
+                        "label-md": ["Plus Jakarta Sans"],
+                        "headline-sm": ["Plus Jakarta Sans"],
+                        "label-sm": ["Plus Jakarta Sans"],
+                        "headline-lg": ["Plus Jakarta Sans"]
                     },
                     "fontSize": {
-                        "display-lg": ["48px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
-                        "label-sm": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }],
-                        "label-md": ["14px", { "lineHeight": "1.2", "letterSpacing": "0.01em", "fontWeight": "500" }],
-                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
-                        "headline-lg": ["32px", { "lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600" }],
-                        "headline-md": ["24px", { "lineHeight": "1.4", "fontWeight": "600" }],
-                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }]
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "headline-sm": ["16px", {"lineHeight": "24px", "fontWeight": "600"}],
+                        "label-sm": ["11px", {"lineHeight": "14px", "fontWeight": "400"}],
+                        "headline-lg": ["32px", { "lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600" }]
                     }
-                }
-            }
+                },
+            },
         }
     </script>
 <style>
+    body { background-color: #131314; color: #e5e2e3; font-family: 'Plus Jakarta Sans', sans-serif; }
+    
+    .hero-pattern { background-image: radial-gradient(#ff9100 0.5px, transparent 0.5px); background-size: 20px 20px; }
+    
+    .glass-effect { background: rgba(32, 31, 32, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); }
+
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #131314; }
+    ::-webkit-scrollbar-thumb { background: #353436; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #ff9100; }
+
     .material-symbols-outlined {
         font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
     }
@@ -338,18 +358,21 @@ if (!isset($currentUser) && Auth::check()) {
     }
     
     body {
+        background-color: #131314;
+        color: #e5e2e3;
         font-family: 'Plus Jakarta Sans', sans-serif;
+        -webkit-font-smoothing: antialiased;
     }
     
     .hero-pattern {
-        background: linear-gradient(to bottom, rgba(255,107,53,0.18) 0%, rgba(11,19,38,0) 100%),
+        background: linear-gradient(to bottom, rgba(255,145,0,0.2) 0%, rgba(19,19,20,0) 100%),
                     url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
     }
     
     .glass-effect {
         backdrop-filter: blur(12px);
-        background: rgba(23, 31, 51, 0.75);
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(26, 26, 28, 0.8);
+        border: 1px solid rgba(63, 63, 70, 0.5);
     }
     
     .custom-scrollbar::-webkit-scrollbar {
@@ -357,7 +380,9 @@ if (!isset($currentUser) && Auth::check()) {
         height: 4px;
     }
     .custom-scrollbar::-webkit-scrollbar-thumb {
-        background: rgba(255, 255, 255, 0.1);
+        background: #353436;
+        border-radius: 10px;
+    }
         border-radius: 10px;
     }
     .custom-scrollbar::-webkit-scrollbar-track {
