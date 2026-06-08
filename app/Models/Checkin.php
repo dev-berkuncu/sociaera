@@ -84,7 +84,7 @@ class CheckinModel
             $stmt = $this->db->prepare("
                 (SELECT c.id, c.user_id, c.venue_id, c.note, c.image, c.created_at,
                        u.username, u.tag, u.avatar, u.is_premium,
-                       v.name as venue_name, v.category as venue_category,
+                       v.name as venue_name, v.category as venue_category, v.address as venue_address,
                        (SELECT COUNT(*) FROM post_likes WHERE checkin_id = c.id) as like_count,
                        (SELECT COUNT(*) FROM post_comments WHERE checkin_id = c.id AND is_deleted = 0) as comment_count,
                        (SELECT COUNT(*) FROM post_reposts WHERE checkin_id = c.id) as repost_count,
@@ -96,7 +96,7 @@ class CheckinModel
                 UNION ALL
                 (SELECT c.id, c.user_id, c.venue_id, c.note, c.image, c.created_at,
                        u.username, u.tag, u.avatar, u.is_premium,
-                       v.name as venue_name, v.category as venue_category,
+                       v.name as venue_name, v.category as venue_category, v.address as venue_address,
                        (SELECT COUNT(*) FROM post_likes WHERE checkin_id = c.id) as like_count,
                        (SELECT COUNT(*) FROM post_comments WHERE checkin_id = c.id AND is_deleted = 0) as comment_count,
                        (SELECT COUNT(*) FROM post_reposts WHERE checkin_id = c.id) as repost_count,
@@ -117,7 +117,7 @@ class CheckinModel
             $stmt = $this->db->prepare("
                 SELECT c.id, c.user_id, c.venue_id, c.note, c.image, c.created_at,
                        u.username, u.tag, u.avatar, u.is_premium,
-                       v.name as venue_name, v.category as venue_category,
+                       v.name as venue_name, v.category as venue_category, v.address as venue_address,
                        (SELECT COUNT(*) FROM post_likes WHERE checkin_id = c.id) as like_count,
                        (SELECT COUNT(*) FROM post_comments WHERE checkin_id = c.id AND is_deleted = 0) as comment_count,
                        (SELECT COUNT(*) FROM post_reposts WHERE checkin_id = c.id) as repost_count,
@@ -147,7 +147,7 @@ class CheckinModel
 
         $stmt = $this->db->prepare("
             SELECT c.*, u.username, u.tag, u.avatar, u.is_premium,
-                   v.name as venue_name, v.category as venue_category,
+                   v.name as venue_name, v.category as venue_category, v.address as venue_address,
                    (SELECT COUNT(*) FROM post_likes WHERE checkin_id = c.id) as like_count,
                    (SELECT COUNT(*) FROM post_comments WHERE checkin_id = c.id AND is_deleted = 0) as comment_count,
                    (SELECT COUNT(*) FROM post_reposts WHERE checkin_id = c.id) as repost_count
@@ -171,7 +171,7 @@ class CheckinModel
 
         $stmt = $this->db->prepare("
             SELECT c.*, u.username, u.tag, u.avatar, u.is_premium,
-                   v.name as venue_name, v.category as venue_category,
+                   v.name as venue_name, v.category as venue_category, v.address as venue_address,
                    (SELECT COUNT(*) FROM post_likes WHERE checkin_id = c.id) as like_count,
                    (SELECT COUNT(*) FROM post_comments WHERE checkin_id = c.id AND is_deleted = 0) as comment_count,
                    (SELECT COUNT(*) FROM post_reposts WHERE checkin_id = c.id) as repost_count
@@ -197,7 +197,7 @@ class CheckinModel
 
         $stmt = $this->db->prepare("
             SELECT c.*, u.username, u.tag, u.avatar, u.is_premium,
-                   v.name as venue_name, v.category as venue_category,
+                   v.name as venue_name, v.category as venue_category, v.address as venue_address,
                    (SELECT COUNT(*) FROM post_likes WHERE checkin_id = c.id) as like_count,
                    (SELECT COUNT(*) FROM post_comments WHERE checkin_id = c.id AND is_deleted = 0) as comment_count,
                    (SELECT COUNT(*) FROM post_reposts WHERE checkin_id = c.id) as repost_count
@@ -223,7 +223,7 @@ class CheckinModel
     {
         $stmt = $this->db->prepare("
             SELECT c.*, u.username, u.tag, u.avatar, u.is_premium,
-                   v.name as venue_name, v.category as venue_category, v.id as venue_id_ref,
+                   v.name as venue_name, v.category as venue_category, v.id as venue_id_ref, v.address as venue_address,
                    (SELECT COUNT(*) FROM post_likes WHERE checkin_id = c.id) as like_count,
                    (SELECT COUNT(*) FROM post_comments WHERE checkin_id = c.id AND is_deleted = 0) as comment_count,
                    (SELECT COUNT(*) FROM post_reposts WHERE checkin_id = c.id) as repost_count
@@ -336,7 +336,7 @@ class CheckinModel
         $offset = ($page - 1) * $perPage;
         $stmt = $this->db->prepare("
             SELECT c.*, u.username, u.tag, u.avatar, u.is_premium,
-                   v.name as venue_name, v.category as venue_category,
+                   v.name as venue_name, v.category as venue_category, v.address as venue_address,
                    (SELECT COUNT(*) FROM post_likes WHERE checkin_id = c.id) as like_count,
                    (SELECT COUNT(*) FROM post_comments WHERE checkin_id = c.id AND is_deleted = 0) as comment_count,
                    (SELECT COUNT(*) FROM post_reposts WHERE checkin_id = c.id) as repost_count
@@ -357,7 +357,7 @@ class CheckinModel
         $offset = ($page - 1) * $perPage;
         $stmt = $this->db->prepare("
             SELECT c.*, u.username, u.tag, u.avatar, u.is_premium,
-                   v.name as venue_name, v.category as venue_category,
+                   v.name as venue_name, v.category as venue_category, v.address as venue_address,
                    pr.quote as repost_quote,
                    (SELECT COUNT(*) FROM post_likes WHERE checkin_id = c.id) as like_count,
                    (SELECT COUNT(*) FROM post_comments WHERE checkin_id = c.id AND is_deleted = 0) as comment_count,
