@@ -7,7 +7,7 @@ $hideSidebar = $hideSidebar ?? false;
         </section>
         <?php if (!$hideSidebar): ?>
         <!-- Right Sidebar: Discovery Rail -->
-        <aside class="hidden lg:flex flex-col col-span-12 lg:col-span-3 xl:col-span-3 space-y-lg sticky top-24 h-[calc(100vh-120px)] overflow-y-auto custom-scrollbar pl-2 pb-6">
+        <aside class="hidden lg:flex flex-col col-span-12 lg:col-span-3 xl:col-span-3 space-y-lg sticky top-20 h-[calc(100vh-100px)] overflow-y-auto custom-scrollbar pl-2 pb-6">
             <!-- Popular Places -->
             <?php if (!empty($trendVenues)): ?>
             <div class="bg-surface-container-low p-5 rounded-xl border border-outline-variant/10 shadow-md">
@@ -273,7 +273,7 @@ $hideSidebar = $hideSidebar ?? false;
 <div id="reportModal" class="fixed inset-0 z-[9999] hidden">
     <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="App.closeReportModal()"></div>
     <div class="absolute inset-0 flex items-center justify-center p-4">
-        <div class="bg-[#1E293B] border border-white/10 rounded-2xl w-full max-w-md shadow-2xl relative animate-[modalIn_0.2s_ease-out]">
+        <div class="bg-[#2a2a2b] border border-white/10 rounded-2xl w-full max-w-md shadow-2xl relative animate-[modalIn_0.2s_ease-out]">
             <div class="flex items-center justify-between p-6 border-b border-white/5">
                 <h3 class="text-lg font-bold text-on-surface flex items-center gap-2">
                     <span class="material-symbols-outlined text-red-400">flag</span> İçeriği Raporla

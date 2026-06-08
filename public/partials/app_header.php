@@ -415,17 +415,17 @@ if (!isset($currentUser) && Auth::check()) {
 <?php endif; ?>
 
 <!-- Main Grid Container -->
-<main class="max-w-[1920px] mx-auto px-6 grid grid-cols-12 gap-lg mt-4 w-full flex-grow">
+<main class="max-w-[1920px] mx-auto px-6 grid grid-cols-12 gap-lg mt-md w-full flex-grow">
     
     <?php if (Auth::check() && $currentUser): ?>
     <!-- Sol Sidebar: Identity Rail -->
-    <aside class="hidden lg:flex flex-col col-span-12 lg:col-span-3 xl:col-span-2 space-y-lg sticky top-24 h-[calc(100vh-120px)] overflow-y-auto custom-scrollbar pr-2 pb-6">
+    <aside class="hidden lg:flex flex-col col-span-12 lg:col-span-3 xl:col-span-3 space-y-lg sticky top-20 h-[calc(100vh-100px)] overflow-y-auto custom-scrollbar pr-2 pb-6">
         
         <!-- Profile Card -->
         <div class="bg-surface-container-low rounded-xl overflow-hidden relative border border-outline-variant/10 shadow-md flex-shrink-0">
-            <div class="h-24 hero-pattern relative flex items-center justify-center">
+            <div class="h-32 hero-pattern relative flex items-center justify-center">
                 <div class="relative mt-8">
-                    <img alt="Profil Fotoğrafı" class="w-16 h-16 rounded-full border-4 border-surface-container-low shadow-lg object-cover" src="<?php echo $avatarUrl; ?>"/>
+                    <img alt="Profil Fotoğrafı" class="w-24 h-24 rounded-full border-4 border-surface-container-low shadow-xl object-cover" src="<?php echo $avatarUrl; ?>"/>
                     <?php if (!empty($currentUser['is_premium'])): ?>
                         <div class="absolute bottom-0 right-0 bg-primary p-0.5 rounded-full text-on-primary border-2 border-surface-container-low">
                             <span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
@@ -433,34 +433,34 @@ if (!isset($currentUser) && Auth::check()) {
                     <?php endif; ?>
                 </div>
             </div>
-            <div class="p-4 text-center pt-8">
-                <h2 class="text-sm font-bold text-on-surface truncate px-2" title="<?php echo escape($currentUser['gta_character_name'] ?: $currentUser['username']); ?>"><?php echo escape($currentUser['gta_character_name'] ?: $currentUser['username']); ?></h2>
-                <p class="text-[10px] text-on-surface-variant font-mono">@<?php echo escape($currentUser['tag'] ?: $currentUser['username']); ?></p>
+            <div class="p-md text-center pt-10">
+                <h2 class="text-headline-sm font-headline-sm truncate px-2" title="<?php echo escape($currentUser['gta_character_name'] ?: $currentUser['username']); ?>"><?php echo escape($currentUser['gta_character_name'] ?: $currentUser['username']); ?></h2>
+                <p class="text-label-md text-on-surface-variant">@<?php echo escape($currentUser['tag'] ?: $currentUser['username']); ?></p>
                 
-                <div class="grid grid-cols-2 gap-2 mt-4">
-                    <div class="bg-surface-container px-2 py-2 rounded-lg text-left border border-white/5">
-                        <div class="flex items-center gap-1 text-primary mb-0.5">
+                <div class="grid grid-cols-2 gap-sm mt-lg">
+                    <div class="bg-surface-container px-2 py-3 rounded-lg text-left">
+                        <div class="flex items-center gap-xs text-primary mb-1">
                             <span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
-                            <span class="text-xs font-bold">16</span>
+                            <span class="text-headline-sm font-bold">16</span>
                         </div>
-                        <span class="text-[8px] text-on-surface-variant uppercase tracking-wider font-semibold">Seri</span>
+                        <span class="text-label-sm text-on-surface-variant">Günlük Seri</span>
                     </div>
-                    <div class="bg-surface-container px-2 py-2 rounded-lg text-left border border-white/5">
-                        <div class="flex items-center gap-1 text-primary mb-0.5">
+                    <div class="bg-surface-container px-2 py-3 rounded-lg text-left">
+                        <div class="flex items-center gap-xs text-primary mb-1">
                             <span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">location_on</span>
                             <span class="text-xs font-bold"><?php echo $stats['checkins'] ?? 0; ?></span>
                         </div>
-                        <span class="text-[8px] text-on-surface-variant uppercase tracking-wider font-semibold">Check-in</span>
+                        <span class="text-label-sm text-on-surface-variant">Check-in</span>
                     </div>
                 </div>
                 
-                <div class="mt-4 text-left">
-                    <div class="flex justify-between text-[10px] mb-1">
+                <div class="mt-lg text-left">
+                    <div class="flex justify-between text-label-sm mb-xs">
                         <span class="text-on-surface-variant">Haftalık Hedef: 5</span>
                         <span class="text-primary font-bold"><?php echo min(5, $stats['checkins'] ?? 0); ?> / 5</span>
                     </div>
-                    <div class="h-1 bg-surface-container-highest rounded-full overflow-hidden">
-                        <div class="h-full bg-primary" style="width: <?php echo min(100, (($stats['checkins'] ?? 0) / 5) * 100); ?>%"></div>
+                    <div class="h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+                        <div class="h-full bg-primary-container" style="width: <?php echo min(100, (($stats['checkins'] ?? 0) / 5) * 100); ?>%"></div>
                     </div>
                 </div>
             </div>
@@ -484,13 +484,13 @@ if (!isset($currentUser) && Auth::check()) {
             foreach ($navItems as $key => $item):
                 $isActive = $activeNav === $key;
                 $linkClass = $isActive
-                    ? 'w-full bg-primary text-on-primary font-bold py-2.5 rounded-lg flex items-center justify-start px-4 gap-3 transition-all duration-150'
-                    : 'w-full bg-surface-container-low border border-white/5 text-on-surface font-semibold py-2.5 rounded-lg flex items-center justify-start px-4 gap-3 hover:bg-surface-container transition-colors duration-150 group';
+                    ? 'w-full bg-primary-container text-on-primary-container font-bold py-3.5 rounded-lg flex items-center justify-start px-md gap-md transition-all hover:brightness-110 active:scale-95'
+                    : 'w-full bg-surface-container-high text-on-surface font-semibold py-3.5 rounded-lg flex items-center justify-start px-md gap-md hover:bg-surface-variant transition-colors group';
                 $iconClass = $isActive ? 'text-on-primary' : 'text-on-surface-variant group-hover:text-primary transition-colors';
             ?>
             <a class="<?php echo $linkClass; ?>" href="<?php echo BASE_URL . $item['url']; ?>">
                 <span class="material-symbols-outlined text-[18px] <?php echo $iconClass; ?>" <?php echo $isActive ? 'data-weight="fill"' : ''; ?>><?php echo $item['icon']; ?></span>
-                <span class="text-xs font-bold"><?php echo $item['label']; ?></span>
+                <span class="text-xs font-bold whitespace-nowrap"><?php echo $item['label']; ?></span>
             </a>
             <?php endforeach; ?>
         </div>
@@ -605,6 +605,6 @@ if (!isset($currentUser) && Auth::check()) {
     <?php endif; ?>
 
     <!-- Center Content Panel (Feed) -->
-    <?php $feedCols = !empty($hideSidebar) ? 'col-span-12 lg:col-span-9 xl:col-span-10' : 'col-span-12 lg:col-span-9 xl:col-span-7'; ?>
+    <?php $feedCols = !empty($hideSidebar) ? 'col-span-12 lg:col-span-9 xl:col-span-9' : 'col-span-12 lg:col-span-6 xl:col-span-6'; ?>
     <section class="<?php echo Auth::check() ? $feedCols : 'col-span-12'; ?> flex flex-col gap-6 pb-6">
         <!-- Page Content Starts Here -->
