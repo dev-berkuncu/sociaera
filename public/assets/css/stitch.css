@@ -201,7 +201,3 @@ body {
     border-color: #ff9100 !important;
     box-shadow: none !important;
 }
-
-/* ── CLS GUARD ── */
-body { opacity: 0; }
-body.ready { opacity: 1; transition: opacity .2s ease-in; }

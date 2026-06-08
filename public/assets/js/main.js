@@ -4,14 +4,7 @@
 
 document.addEventListener('DOMContentLoaded', function() {
 
-    // ── CLS Guard: show body when fonts ready ──
-    var t = setTimeout(function(){ document.body.classList.add('ready'); }, 3000);
-    if (document.fonts && document.fonts.ready) {
-        document.fonts.ready.then(function(){ clearTimeout(t); document.body.classList.add('ready'); });
-    } else {
-        clearTimeout(t);
-        document.body.classList.add('ready');
-    }
+
 
     // ── Card & Button micro-interaction ──
     document.querySelectorAll('article, button').forEach(function(el) {

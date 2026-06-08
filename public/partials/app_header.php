@@ -13,7 +13,7 @@ if (!isset($currentUser) && Auth::check()) {
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <meta name="csrf-token" content="<?php echo csrfToken(); ?>"/>
-
+<style>body{opacity:0}body.ready{opacity:1;transition:opacity .15s ease-in}</style>
 <script>window.BASE_URL = '<?php echo BASE_URL; ?>';</script>
 
 <title><?php echo View::title($pageTitle ?? 'Sociaera'); ?></title>
@@ -121,6 +121,16 @@ if (!isset($currentUser) && Auth::check()) {
         }
     </script>
 <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/stitch.css"/>
+<script>
+(function(){
+    var t=setTimeout(function(){document.body.classList.add('ready')},1500);
+    if(document.fonts&&document.fonts.ready){
+        document.fonts.ready.then(function(){clearTimeout(t);document.body.classList.add('ready')});
+    } else {
+        clearTimeout(t);document.body.classList.add('ready');
+    }
+})();
+</script>
 <script defer src="<?php echo BASE_URL; ?>/assets/js/main.js"></script>
 </head>
 <body class="dark overflow-x-hidden">
