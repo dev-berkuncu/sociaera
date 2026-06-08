@@ -39,14 +39,14 @@ $isOwn = (int)$profileUser['id'] === Auth::id();
 // Profil teması
 $profileTheme = $profileUser['profile_theme'] ?? 'default';
 $themeAccents = [
-    'default' => '#FF6B35',
+    'default' => '#ff9100',
     'ocean'   => '#0EA5E9',
     'sunset'  => '#F59E0B',
     'emerald' => '#10B981',
     'purple'  => '#8B5CF6',
     'crimson' => '#E11D48',
 ];
-$accentColor = $themeAccents[$profileTheme] ?? '#FF6B35';
+$accentColor = $themeAccents[$profileTheme] ?? '#ff9100';
 $stats = $userModel->getStats($profileUser['id']);
 $isFollowing = !$isOwn ? $userModel->isFollowing(Auth::id(), $profileUser['id']) : false;
 $favVenue = $userModel->getFavoriteVenue($profileUser['id']);
@@ -184,8 +184,8 @@ require_once __DIR__ . '/partials/app_header.php';
 <section class="flex-1 flex flex-col gap-stack-md max-w-3xl w-full mx-auto lg:mx-0">
     <?php 
         $isPremium = !empty($profileUser['is_premium']); 
-        $premiumBorder = $isPremium ? 'border-[#7bd0ff]/40 shadow-[0_0_30px_-5px_rgba(123,208,255,0.25)]' : 'border-white/10 shadow-[0_20px_40px_-15px_rgba(15,23,42,0.5)]';
-        $premiumBg = $isPremium ? 'bg-[#1E293B]/90' : 'bg-[#1E293B]/80';
+        $premiumBorder = $isPremium ? 'border-[#7bd0ff]/40 shadow-[0_0_30px_-5px_rgba(123,208,255,0.25)]' : 'border-white/10 shadow-[0_20px_40px_-15px_rgba(19,19,20,0.5)]';
+        $premiumBg = $isPremium ? 'bg-[#2a2a2b]/90' : 'bg-[#2a2a2b]/80';
     ?>
     <!-- Profile Header -->
     <div class="<?php echo $premiumBg; ?> backdrop-blur-[20px] border <?php echo $premiumBorder; ?> rounded-2xl overflow-hidden relative mb-4">
@@ -196,7 +196,7 @@ require_once __DIR__ . '/partials/app_header.php';
 
         <!-- Banner -->
         <div class="h-56 md:h-72 w-full bg-surface-container relative">
-            <div class="absolute inset-0 bg-gradient-to-t from-[#1E293B]/95 via-[#1E293B]/30 to-transparent z-10"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-[#2a2a2b]/95 via-[#2a2a2b]/30 to-transparent z-10"></div>
             <?php if ($isPremium): ?>
                 <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-30 mix-blend-overlay z-10 pointer-events-none"></div>
             <?php endif; ?>
@@ -204,7 +204,7 @@ require_once __DIR__ . '/partials/app_header.php';
             <?php if (bannerUrl($profileUser['banner'] ?? null)): ?>
                 <img src="<?php echo bannerUrl($profileUser['banner']); ?>" class="w-full h-full object-cover" width="800" height="288">
             <?php else: ?>
-                <div class="w-full h-full" style="background: linear-gradient(to right, <?php echo $accentColor; ?>66, #1E293B);"></div>
+                <div class="w-full h-full" style="background: linear-gradient(to right, <?php echo $accentColor; ?>66, #2a2a2b);"></div>
             <?php endif; ?>
         </div>
         
@@ -214,7 +214,7 @@ require_once __DIR__ . '/partials/app_header.php';
                 <!-- Avatar -->
                 <div class="relative inline-block">
                     <?php $pAvatar = safeAvatarUrl($profileUser['avatar'] ?? null, $profileUser['username']); ?>
-                    <img src="<?php echo $pAvatar; ?>" class="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover border-4 <?php echo $isPremium ? 'border-[#1E293B] shadow-[0_0_20px_rgba(123,208,255,0.3)]' : 'border-[#1E293B] shadow-xl'; ?> bg-[#1E293B] relative z-10" width="160" height="160">
+                    <img src="<?php echo $pAvatar; ?>" class="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover border-4 <?php echo $isPremium ? 'border-[#2a2a2b] shadow-[0_0_20px_rgba(123,208,255,0.3)]' : 'border-[#2a2a2b] shadow-xl'; ?> bg-[#2a2a2b] relative z-10" width="160" height="160">
                     
                     <?php if ($isPremium): ?>
                         <div class="absolute inset-0 rounded-full bg-[#7bd0ff] blur-md -z-10 opacity-40"></div>
@@ -227,7 +227,7 @@ require_once __DIR__ . '/partials/app_header.php';
                 <!-- Action Buttons -->
                 <div class="flex gap-3 w-full md:w-auto mt-2 md:mt-0">
                     <?php if (!$isOwn): ?>
-                        <button class="flex-1 md:flex-none px-6 py-2.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 <?php echo $isFollowing ? 'bg-white/5 border border-primary-container text-primary-container hover:bg-white/10' : 'bg-primary-container text-white hover:bg-primary-container/90 shadow-[0_0_15px_rgba(255,107,53,0.3)] active:scale-95'; ?>"
+                        <button class="flex-1 md:flex-none px-6 py-2.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 <?php echo $isFollowing ? 'bg-white/5 border border-primary-container text-primary-container hover:bg-white/10' : 'bg-primary-container text-white hover:bg-primary-container/90 shadow-[0_0_15px_rgba(255,145,0,0.3)] active:scale-95'; ?>"
                                 onclick="App.toggleFollow(this, <?php echo $profileUser['id']; ?>)">
                             <span class="material-symbols-outlined text-[18px]"><?php echo $isFollowing ? 'person_check' : 'person_add'; ?></span>
                             <?php echo $isFollowing ? 'Takip Ediliyor' : 'Takip Et'; ?>
@@ -305,7 +305,7 @@ require_once __DIR__ . '/partials/app_header.php';
                 <div class="relative flex items-center justify-center w-10 h-10 rounded-xl transition-transform hover:scale-110 cursor-default" style="background: <?php echo $def['color']; ?>15; border: 1.5px solid <?php echo $def['color']; ?>40;" title="<?php echo escape($def['name'] . ' — ' . $def['desc'] . ($count > 1 ? ' (x' . $count . ')' : '')); ?>">
                     <span class="material-symbols-outlined text-[20px]" style="color: <?php echo $def['color']; ?>"><?php echo $def['icon']; ?></span>
                     <?php if ($count > 1): ?>
-                    <span class="absolute -top-1.5 -right-1.5 min-w-[18px] h-5 flex items-center justify-center bg-primary-container text-white text-[10px] font-black rounded-full px-1 shadow-[0_2px_8px_rgba(255,107,53,0.5)]"><?php echo $count; ?></span>
+                    <span class="absolute -top-1.5 -right-1.5 min-w-[18px] h-5 flex items-center justify-center bg-primary-container text-white text-[10px] font-black rounded-full px-1 shadow-[0_2px_8px_rgba(255,145,0,0.5)]"><?php echo $count; ?></span>
                     <?php endif; ?>
                 </div>
                 <?php endforeach; ?>
@@ -351,7 +351,7 @@ require_once __DIR__ . '/partials/app_header.php';
         <!-- ── Gezi Günlüğü ────────────────────────────── -->
 
         <?php if ($stats['checkins'] === 0): ?>
-            <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-10 text-center text-slate-400 mt-4">
+            <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-10 text-center text-slate-400 mt-4">
                 <span class="material-symbols-outlined text-[48px] mb-3 opacity-50 block">explore</span>
                 <p class="text-lg font-semibold mb-1">Henüz hiç check-in yok</p>
                 <p class="text-sm">Check-in yaparak kişisel gezi günlüğünü oluştur!</p>
@@ -360,22 +360,22 @@ require_once __DIR__ . '/partials/app_header.php';
 
         <!-- İstatistik Kartları -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-5 flex flex-col items-center justify-center gap-1 hover:border-white/20 transition-colors">
+            <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-5 flex flex-col items-center justify-center gap-1 hover:border-white/20 transition-colors">
                 <span class="material-symbols-outlined text-primary-container text-[28px]">edit_note</span>
                 <span class="text-2xl font-black text-on-surface"><?php echo shortNumber($stats['checkins']); ?></span>
                 <span class="text-[10px] text-slate-400 uppercase tracking-widest font-semibold">Toplam Check-in</span>
             </div>
-            <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-5 flex flex-col items-center justify-center gap-1 hover:border-white/20 transition-colors">
+            <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-5 flex flex-col items-center justify-center gap-1 hover:border-white/20 transition-colors">
                 <span class="material-symbols-outlined text-emerald-400 text-[28px]">location_on</span>
                 <span class="text-2xl font-black text-on-surface"><?php echo shortNumber($journey['unique_venues']); ?></span>
                 <span class="text-[10px] text-slate-400 uppercase tracking-widest font-semibold">Keşfedilen Mekan</span>
             </div>
-            <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-5 flex flex-col items-center justify-center gap-1 hover:border-white/20 transition-colors">
+            <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-5 flex flex-col items-center justify-center gap-1 hover:border-white/20 transition-colors">
                 <span class="material-symbols-outlined text-blue-400 text-[28px]">calendar_month</span>
                 <span class="text-2xl font-black text-on-surface"><?php echo $journey['this_month']; ?></span>
                 <span class="text-[10px] text-slate-400 uppercase tracking-widest font-semibold">Bu Ay</span>
             </div>
-            <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-5 flex flex-col items-center justify-center gap-1 hover:border-white/20 transition-colors">
+            <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-5 flex flex-col items-center justify-center gap-1 hover:border-white/20 transition-colors">
                 <span class="material-symbols-outlined text-amber-400 text-[28px]">local_fire_department</span>
                 <span class="text-2xl font-black text-on-surface"><?php echo $journey['last_7_days']; ?></span>
                 <span class="text-[10px] text-slate-400 uppercase tracking-widest font-semibold">Son 7 Gün</span>
@@ -416,7 +416,7 @@ require_once __DIR__ . '/partials/app_header.php';
 
         <!-- Haftalık Trend -->
         <?php if (!empty($premiumStats['weekly_trend'])): ?>
-        <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-[#7bd0ff]/20 rounded-xl p-6">
+        <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-[#7bd0ff]/20 rounded-xl p-6">
             <h3 class="text-base font-bold text-on-surface mb-4 flex items-center gap-2">
                 <span class="material-symbols-outlined text-[18px] text-[#7bd0ff]">trending_up</span>
                 Haftalık Trend
@@ -444,7 +444,7 @@ require_once __DIR__ . '/partials/app_header.php';
 
         <!-- Kim Profilime Baktı (Premium) -->
         <?php if ($isOwn && !empty($profileViewers)): ?>
-        <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-[#7bd0ff]/20 rounded-xl overflow-hidden">
+        <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-[#7bd0ff]/20 rounded-xl overflow-hidden">
             <div class="px-6 py-4 border-b border-white/5 flex items-center justify-between">
                 <h3 class="text-base font-bold text-on-surface flex items-center gap-2">
                     <span class="material-symbols-outlined text-[18px] text-[#7bd0ff]">visibility</span>
@@ -473,7 +473,7 @@ require_once __DIR__ . '/partials/app_header.php';
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
             <?php if ($favVenue): ?>
-            <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-primary-container/20 rounded-xl p-5 flex items-center gap-4 hover:border-primary-container/40 transition-colors">
+            <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-primary-container/20 rounded-xl p-5 flex items-center gap-4 hover:border-primary-container/40 transition-colors">
                 <div class="w-12 h-12 rounded-xl bg-primary-container/15 flex items-center justify-center flex-shrink-0">
                     <span class="material-symbols-outlined text-primary-container text-[24px]">star</span>
                 </div>
@@ -503,7 +503,7 @@ require_once __DIR__ . '/partials/app_header.php';
                 ];
                 $catIcon = $catIcons[$catKey] ?? 'category';
             ?>
-            <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-purple-500/20 rounded-xl p-5 flex items-center gap-4 hover:border-purple-500/40 transition-colors">
+            <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-purple-500/20 rounded-xl p-5 flex items-center gap-4 hover:border-purple-500/40 transition-colors">
                 <div class="w-12 h-12 rounded-xl bg-purple-500/15 flex items-center justify-center flex-shrink-0">
                     <span class="material-symbols-outlined text-purple-400 text-[24px]"><?php echo $catIcon; ?></span>
                 </div>
@@ -518,7 +518,7 @@ require_once __DIR__ . '/partials/app_header.php';
 
         <!-- Kategori Dağılımı -->
         <?php if (!empty($journey['category_breakdown'])): ?>
-        <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-6">
+        <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-6">
             <h3 class="text-base font-bold text-on-surface mb-4 flex items-center gap-2">
                 <span class="material-symbols-outlined text-[18px] text-slate-400">donut_large</span>
                 Mekan Türü Dağılımı
@@ -550,7 +550,7 @@ require_once __DIR__ . '/partials/app_header.php';
 
         <!-- Son Ziyaretler -->
         <?php if (!empty($journey['recent_venues'])): ?>
-        <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl overflow-hidden">
+        <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl overflow-hidden">
             <div class="px-6 py-4 border-b border-white/5">
                 <h3 class="text-base font-bold text-on-surface flex items-center gap-2">
                     <span class="material-symbols-outlined text-[18px] text-slate-400">history</span>
@@ -598,7 +598,7 @@ require_once __DIR__ . '/partials/app_header.php';
         <?php else: /* posts, likes, reposts tabs */ ?>
 
             <?php if (empty($posts)): ?>
-                <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-10 text-center text-slate-400 mt-4 shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)]">
+                <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-10 text-center text-slate-400 mt-4 shadow-[0_15px_30px_-15px_rgba(19,19,20,0.3)]">
                     <span class="material-symbols-outlined text-[48px] mb-3 opacity-50">post_add</span>
                     <p class="text-lg">Henüz gönderi yok.</p>
                 </div>

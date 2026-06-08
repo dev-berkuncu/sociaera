@@ -28,53 +28,53 @@ if (!isset($currentUser) && Auth::check()) {
             theme: {
                 extend: {
                     "colors": {
-                        "tertiary-fixed": "#c4e7ff",
-                        "on-error": "#690005",
-                        "inverse-on-surface": "#283044",
-                        "tertiary-container": "#00a5de",
-                        "primary-fixed-dim": "#ffb59d",
-                        "on-tertiary-container": "#00364b",
-                        "primary": "#ffb59d",
+                        "on-tertiary-fixed-variant": "#6900b3",
+                        "on-primary-fixed-variant": "#6c3a00",
                         "error": "#ffb4ab",
-                        "surface-tint": "#ffb59d",
-                        "primary-fixed": "#ffdbd0",
-                        "on-surface": "#dae2fd",
-                        "secondary-fixed-dim": "#bcc7de",
-                        "surface-container-high": "#222a3d",
-                        "on-primary": "#5d1900",
-                        "on-primary-fixed": "#390c00",
-                        "surface-bright": "#31394d",
-                        "on-secondary-fixed": "#111c2d",
-                        "secondary": "#bcc7de",
-                        "background": "#0b1326",
-                        "on-surface-variant": "#e1bfb5",
-                        "surface-container-highest": "#2d3449",
-                        "secondary-fixed": "#d8e3fb",
-                        "outline": "#a98a80",
-                        "inverse-primary": "#ab3500",
-                        "on-tertiary-fixed-variant": "#004c69",
-                        "on-secondary": "#263143",
-                        "tertiary": "#7bd0ff",
-                        "surface-container": "#171f33",
-                        "on-error-container": "#ffdad6",
-                        "on-background": "#dae2fd",
-                        "on-secondary-fixed-variant": "#3c475a",
-                        "surface-variant": "#2d3449",
-                        "secondary-container": "#3e495d",
+                        "secondary-fixed": "#ffdadb",
+                        "background": "#131314",
+                        "surface-bright": "#39393a",
+                        "tertiary-container": "#cb95ff",
+                        "on-surface": "#e5e2e3",
+                        "on-secondary-fixed": "#40000d",
+                        "on-tertiary-fixed": "#2c0051",
+                        "on-background": "#e5e2e3",
+                        "surface": "#131314",
+                        "secondary": "#ffb2b7",
+                        "on-error": "#690005",
+                        "surface-container-low": "#1c1b1c",
+                        "tertiary-fixed-dim": "#ddb7ff",
+                        "on-tertiary": "#490080",
                         "error-container": "#93000a",
-                        "surface-dim": "#0b1326",
-                        "outline-variant": "#594139",
-                        "tertiary-fixed-dim": "#7bd0ff",
-                        "on-primary-fixed-variant": "#832600",
-                        "surface-container-lowest": "#060e20",
-                        "on-tertiary": "#00354a",
-                        "surface": "#0b1326",
-                        "primary-container": "#ff6b35",
-                        "surface-container-low": "#131b2e",
-                        "on-tertiary-fixed": "#001e2c",
-                        "on-primary-container": "#5f1900",
-                        "on-secondary-container": "#aeb9d0",
-                        "inverse-surface": "#dae2fd"
+                        "inverse-on-surface": "#313031",
+                        "on-surface-variant": "#dcc2ae",
+                        "on-secondary-fixed-variant": "#92002a",
+                        "surface-container": "#201f20",
+                        "inverse-surface": "#e5e2e3",
+                        "primary-fixed": "#ffdcc1",
+                        "tertiary-fixed": "#f0dbff",
+                        "secondary-container": "#b50036",
+                        "primary-fixed-dim": "#ffb778",
+                        "secondary-fixed-dim": "#ffb2b7",
+                        "on-secondary": "#67001b",
+                        "surface-tint": "#ffb778",
+                        "inverse-primary": "#8e4e00",
+                        "on-tertiary-container": "#6000a4",
+                        "primary": "#ffb97c",
+                        "on-error-container": "#ffdad6",
+                        "surface-container-high": "#2a2a2b",
+                        "tertiary": "#deb9ff",
+                        "surface-variant": "#353436",
+                        "surface-container-highest": "#353436",
+                        "primary-container": "#ff9100",
+                        "surface-dim": "#131314",
+                        "on-primary-fixed": "#2e1500",
+                        "outline-variant": "#564334",
+                        "on-secondary-container": "#ffc2c4",
+                        "outline": "#a48c7a",
+                        "surface-container-lowest": "#0e0e0f",
+                        "on-primary": "#4c2700",
+                        "on-primary-container": "#633500"
                     },
                     "borderRadius": {
                         "DEFAULT": "0.25rem",
@@ -121,17 +121,20 @@ if (!isset($currentUser) && Auth::check()) {
         }
     </script>
 <style>
-    body { background-color: #0b1326; color: #dae2fd; font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { background-color: #131314; color: #e5e2e3; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-font-smoothing: antialiased; }
     
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #353436; border-radius: 10px; }
+
     .hero-pattern {
-        background: linear-gradient(to bottom, rgba(255,107,53,0.18) 0%, rgba(11,19,38,0) 100%),
+        background: linear-gradient(to bottom, rgba(255,145,0,0.2) 0%, rgba(19,19,20,0) 100%),
                     url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
     }
     
     .glass-effect {
         backdrop-filter: blur(12px);
-        background: rgba(23, 31, 51, 0.75);
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(26, 26, 28, 0.8);
+        border: 1px solid rgba(63, 63, 70, 0.5);
     }
 
     ::-webkit-scrollbar { width: 8px; height: 8px; }
@@ -152,16 +155,16 @@ if (!isset($currentUser) && Auth::check()) {
         top: 20px;
         right: 20px;
         z-index: 9999;
-        background: #1e293b;
+        background: #2a2a2b;
         color: #fff;
         padding: 12px 20px;
         border-radius: 8px;
         display: flex;
         align-items: center;
         gap: 12px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.3);
         animation: slideInRight 0.3s ease forwards;
-        border-left: 4px solid #ff6b35;
+        border-left: 4px solid #ff9100;
     }
     .flash-message.flash-success { border-color: #10b981; }
     .flash-message.flash-error { border-color: #ef4444; }
@@ -179,8 +182,8 @@ if (!isset($currentUser) && Auth::check()) {
     /* Comments & Utilities */
     .comment-item { display: flex; gap: 12px; align-items: flex-start; padding: 8px 0; }
     .comment-body { background: rgba(255,255,255,0.05); padding: 10px 14px; border-radius: 12px; flex-grow: 1; }
-    .comment-author { font-weight: 600; color: #ffb59d; margin-right: 8px; text-decoration: none; }
-    .comment-text { color: #dae2fd; }
+    .comment-author { font-weight: 600; color: #ffb97c; margin-right: 8px; text-decoration: none; }
+    .comment-text { color: #e5e2e3; }
     .comment-time { display: block; font-size: 0.75rem; color: #94a3b8; margin-top: 4px; }
     
     .venue-picker-item { padding: 8px 12px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); }
@@ -194,7 +197,7 @@ if (!isset($currentUser) && Auth::check()) {
     }
     .spin { animation: spin 1s linear infinite; }
     @keyframes spin { 100% { transform: rotate(360deg); } }
-    .liked .material-symbols-outlined { font-variation-settings: 'FILL' 1; color: #ffb59d; }
+    .liked .material-symbols-outlined { font-variation-settings: 'FILL' 1; color: #ffb2b7; }
 
     /* Sponsor Marquee */
     @keyframes marquee {
@@ -212,18 +215,18 @@ if (!isset($currentUser) && Auth::check()) {
     
     /* Receipt Card Base */
     .receipt-card {
-        background: rgba(23, 31, 51, 0.85);
-        border: 1px solid rgba(255, 107, 53, 0.15);
+        background: rgba(32, 31, 32, 0.85);
+        border: 1px solid rgba(255, 145, 0, 0.15);
         border-radius: 12px;
         position: relative;
-        overflow: visible !important; /* Allow stamps to float outside if needed */
+        overflow: visible !important;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .receipt-card:hover {
-        border-color: rgba(255, 107, 53, 0.3);
+        border-color: rgba(255, 145, 0, 0.3);
         transform: translateY(-2px);
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), 0 0 15px rgba(255, 107, 53, 0.05);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), 0 0 15px rgba(255, 145, 0, 0.05);
     }
     
     /* Jagged Edge effect for tickets */
@@ -234,7 +237,7 @@ if (!isset($currentUser) && Auth::check()) {
         left: 0;
         right: 0;
         height: 4px;
-        background: linear-gradient(135deg, transparent 50%, #ff6b35 50%), linear-gradient(225deg, transparent 50%, #ff6b35 50%);
+        background: linear-gradient(135deg, transparent 50%, #ff9100 50%), linear-gradient(225deg, transparent 50%, #ff9100 50%);
         background-size: 8px 8px;
         background-repeat: repeat-x;
         opacity: 0.9;
@@ -279,7 +282,7 @@ if (!isset($currentUser) && Auth::check()) {
         font-size: 0.7rem;
         box-shadow: 0 0 10px currentColor;
         opacity: 0.85;
-        background: rgba(15, 23, 42, 0.9);
+        background: rgba(19, 19, 20, 0.9);
         backdrop-filter: blur(2px);
     }
     .stamp-mystery {
@@ -298,7 +301,7 @@ if (!isset($currentUser) && Auth::check()) {
     /* monospaced radio chatter / logs */
     .radio-log-container {
         font-family: 'Courier New', Courier, monospace;
-        background-color: rgba(6, 14, 32, 0.5) !important;
+        background-color: rgba(14, 14, 15, 0.5) !important;
         border: 1px solid rgba(255, 255, 255, 0.05) !important;
         border-radius: 8px;
         padding: 12px;
@@ -318,12 +321,12 @@ if (!isset($currentUser) && Auth::check()) {
         border-bottom: none;
     }
     .radio-tag {
-        color: #ffb59d;
+        color: #ffb97c;
         font-weight: bold;
         flex-shrink: 0;
     }
     .radio-msg {
-        color: #e2e8f0;
+        color: #e5e2e3;
         word-break: break-word;
     }
     .radio-time {
@@ -339,24 +342,12 @@ if (!isset($currentUser) && Auth::check()) {
         border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
         border-radius: 0 !important;
         padding: 8px 4px !important;
-        color: #e2e8f0 !important;
+        color: #e5e2e3 !important;
         font-size: 0.85rem !important;
     }
     .radio-input-line:focus {
-        border-color: #ff6b35 !important;
+        border-color: #ff9100 !important;
         box-shadow: none !important;
-    }
-    
-    .custom-scrollbar::-webkit-scrollbar {
-        width: 4px;
-        height: 4px;
-    }
-    .custom-scrollbar::-webkit-scrollbar-thumb {
-        background: rgba(255, 255, 255, 0.15);
-        border-radius: 10px;
-    }
-    .custom-scrollbar::-webkit-scrollbar-track {
-        background: transparent;
     }
 </style>
 <script>

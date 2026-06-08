@@ -109,7 +109,7 @@ require_once __DIR__ . '/partials/app_header.php';
                     $progress = min(100, round(($userCheckins / $target) * 100));
                 }
             ?>
-            <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border <?php echo $hasEarned ? 'border-emerald-500/30' : 'border-white/10'; ?> rounded-xl overflow-hidden hover:border-white/20 transition-colors">
+            <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border <?php echo $hasEarned ? 'border-emerald-500/30' : 'border-white/10'; ?> rounded-xl overflow-hidden hover:border-white/20 transition-colors">
                 <div class="flex items-start gap-4 p-5">
                     <!-- Mekan logo -->
                     <a href="<?php echo BASE_URL; ?>/venue-detail?id=<?php echo $c['venue_id']; ?>" class="w-14 h-14 rounded-xl overflow-hidden bg-surface-container flex items-center justify-center border border-white/10 flex-shrink-0 hover:border-primary-container/50 transition-colors">
@@ -187,7 +187,7 @@ require_once __DIR__ . '/partials/app_header.php';
         </div>
     </div>
     <?php else: ?>
-    <div class="bg-[#1E293B]/80 border border-white/10 rounded-xl p-10 text-center text-slate-400">
+    <div class="bg-[#2a2a2b]/80 border border-white/10 rounded-xl p-10 text-center text-slate-400">
         <span class="material-symbols-outlined text-[48px] mb-3 opacity-40 block">campaign</span>
         <p class="font-semibold">Şu an aktif kampanya yok.</p>
         <p class="text-sm mt-1">Mekanlar yeni kampanyalar eklediğinde burada görünecek!</p>
@@ -206,7 +206,7 @@ require_once __DIR__ . '/partials/app_header.php';
                 $hasEarned = in_array($c['id'], $earnedCampaignIds);
                 $myRedemption = $earnedCodes[$c['id']] ?? null;
             ?>
-            <div class="bg-[#1E293B]/50 border border-white/5 rounded-xl p-4 flex items-center gap-4 opacity-60">
+            <div class="bg-[#2a2a2b]/50 border border-white/5 rounded-xl p-4 flex items-center gap-4 opacity-60">
                 <!-- İkon -->
                 <div class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center flex-shrink-0">
                     <span class="material-symbols-outlined text-slate-500 text-[20px]">

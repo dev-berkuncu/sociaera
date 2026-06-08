@@ -67,7 +67,7 @@ require_once __DIR__ . '/partials/app_header.php';
 
     <?php if ($isPremiumActive): ?>
     <!-- Aktif Premium -->
-    <div class="bg-gradient-to-br from-[#1E293B]/80 to-surface-container border border-[#7bd0ff]/30 rounded-2xl p-8 md:p-12 text-center shadow-[0_20px_40px_-15px_rgba(123,208,255,0.2)] relative overflow-hidden">
+    <div class="bg-gradient-to-br from-[#2a2a2b]/80 to-surface-container border border-[#7bd0ff]/30 rounded-2xl p-8 md:p-12 text-center shadow-[0_20px_40px_-15px_rgba(123,208,255,0.2)] relative overflow-hidden">
         <div class="absolute -right-10 -top-10 text-[150px] opacity-5 text-[#7bd0ff] leading-none select-none">
             <span class="material-symbols-outlined" style="font-size:inherit;">diamond</span>
         </div>
@@ -138,7 +138,7 @@ require_once __DIR__ . '/partials/app_header.php';
 
     <?php elseif ($hadPremium): ?>
     <!-- Süresi Dolmuş Premium -->
-    <div class="bg-gradient-to-br from-[#1E293B]/80 to-surface-container border border-amber-500/20 rounded-2xl p-8 md:p-12 text-center shadow-[0_20px_40px_-15px_rgba(245,158,11,0.15)] relative overflow-hidden">
+    <div class="bg-gradient-to-br from-[#2a2a2b]/80 to-surface-container border border-amber-500/20 rounded-2xl p-8 md:p-12 text-center shadow-[0_20px_40px_-15px_rgba(245,158,11,0.15)] relative overflow-hidden">
         <div class="absolute -right-10 -top-10 text-[150px] opacity-5 text-amber-500 leading-none select-none">
             <span class="material-symbols-outlined" style="font-size:inherit;">timer_off</span>
         </div>
@@ -192,12 +192,12 @@ require_once __DIR__ . '/partials/app_header.php';
 
     <?php else: ?>
     <!-- İlk Kez Satın Alma -->
-    <div class="bg-gradient-to-br from-[#1E293B]/80 to-surface-container border border-primary-container/20 rounded-2xl p-8 md:p-12 text-center shadow-[0_20px_40px_-15px_rgba(255,107,53,0.2)] relative overflow-hidden">
+    <div class="bg-gradient-to-br from-[#2a2a2b]/80 to-surface-container border border-primary-container/20 rounded-2xl p-8 md:p-12 text-center shadow-[0_20px_40px_-15px_rgba(255,145,0,0.2)] relative overflow-hidden">
         <div class="absolute -right-10 -top-10 text-[150px] opacity-5 text-primary-container leading-none select-none">
             <span class="material-symbols-outlined" style="font-size:inherit;">diamond</span>
         </div>
         <div class="relative z-10">
-            <div class="w-20 h-20 mx-auto bg-gradient-to-br from-primary-container to-[#ff9e7d] rounded-2xl flex items-center justify-center text-white mb-6 shadow-[0_10px_25px_-5px_rgba(255,107,53,0.5)] transform -rotate-6">
+            <div class="w-20 h-20 mx-auto bg-gradient-to-br from-primary-container to-[#ff9e7d] rounded-2xl flex items-center justify-center text-white mb-6 shadow-[0_10px_25px_-5px_rgba(255,145,0,0.5)] transform -rotate-6">
                 <span class="material-symbols-outlined text-[40px]">diamond</span>
             </div>
             <h1 class="text-3xl md:text-4xl font-black text-on-surface mb-2"><?php echo APP_NAME; ?> Premium</h1>
@@ -242,7 +242,7 @@ require_once __DIR__ . '/partials/app_header.php';
             <?php if ($balance >= $premiumPrice): ?>
             <form method="POST">
                 <?php echo csrfField(); ?>
-                <button type="submit" onclick="return confirm('$<?php echo number_format($premiumPrice, 0, ',', '.'); ?> cüzdanınızdan çekilecek. 7 günlük Premium başlayacak. Onaylıyor musunuz?')" class="w-full bg-gradient-to-r from-primary-container to-[#ff9e7d] text-white py-4 rounded-xl font-black text-lg shadow-[0_10px_25px_-5px_rgba(255,107,53,0.4)] hover:shadow-[0_15px_30px_-5px_rgba(255,107,53,0.5)] hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2">
+                <button type="submit" onclick="return confirm('$<?php echo number_format($premiumPrice, 0, ',', '.'); ?> cüzdanınızdan çekilecek. 7 günlük Premium başlayacak. Onaylıyor musunuz?')" class="w-full bg-gradient-to-r from-primary-container to-[#ff9e7d] text-white py-4 rounded-xl font-black text-lg shadow-[0_10px_25px_-5px_rgba(255,145,0,0.4)] hover:shadow-[0_15px_30px_-5px_rgba(255,145,0,0.5)] hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2">
                     <span class="material-symbols-outlined">diamond</span> Premium'a Geç (7 Gün)
                 </button>
             </form>

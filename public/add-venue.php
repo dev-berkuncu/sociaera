@@ -70,13 +70,13 @@ require_once __DIR__ . '/partials/app_header.php';
     </div>
 
     <?php if ($success): ?>
-        <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-8 text-center text-slate-400 shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)]">
+        <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-8 text-center text-slate-400 shadow-[0_15px_30px_-15px_rgba(19,19,20,0.3)]">
             <span class="material-symbols-outlined text-[64px] mb-4 text-[#10b981]">check_circle</span>
             <p class="text-xl text-on-surface mb-6">Mekan öneriniz başarıyla gönderildi!</p>
-            <a href="<?php echo BASE_URL; ?>/venues" class="inline-block bg-primary-container text-white px-6 py-3 rounded-lg font-label-md text-label-md shadow-[0_0_10px_rgba(255,107,53,0.2)] hover:bg-primary-container/90 transition-all">Mekanlara Dön</a>
+            <a href="<?php echo BASE_URL; ?>/venues" class="inline-block bg-primary-container text-white px-6 py-3 rounded-lg font-label-md text-label-md shadow-[0_0_10px_rgba(255,145,0,0.2)] hover:bg-primary-container/90 transition-all">Mekanlara Dön</a>
         </div>
     <?php else: ?>
-        <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-6 md:p-8 shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)]">
+        <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-6 md:p-8 shadow-[0_15px_30px_-15px_rgba(19,19,20,0.3)]">
             <?php if ($error): ?>
                 <div class="bg-error/10 border border-error/50 text-error px-4 py-3 rounded-lg mb-6 flex items-center gap-3">
                     <span class="material-symbols-outlined">error</span>
@@ -122,7 +122,7 @@ require_once __DIR__ . '/partials/app_header.php';
                     <input type="url" id="website" name="website" value="<?php echo escape($_POST['website'] ?? ''); ?>" placeholder="https://..." class="bg-background border border-white/10 rounded-lg px-4 py-3 text-on-surface placeholder:text-slate-600 focus:border-primary-container focus:outline-none transition-colors shadow-sm">
                 </div>
                 
-                <button type="submit" class="mt-4 bg-primary-container text-white px-6 py-3 rounded-lg font-label-md text-label-md shadow-[0_0_15px_rgba(255,107,53,0.3)] hover:bg-primary-container/90 transition-all flex items-center justify-center gap-2 active:scale-95">
+                <button type="submit" class="mt-4 bg-primary-container text-white px-6 py-3 rounded-lg font-label-md text-label-md shadow-[0_0_15px_rgba(255,145,0,0.3)] hover:bg-primary-container/90 transition-all flex items-center justify-center gap-2 active:scale-95">
                     <span class="material-symbols-outlined">send</span> Mekan Öner
                 </button>
             </form>

@@ -40,11 +40,11 @@ require_once __DIR__ . '/partials/app_header.php';
 
     <form method="GET" class="relative mb-6">
         <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">search</span>
-        <input type="text" name="q" placeholder="Kullanıcı ara..." value="<?php echo escape($search); ?>" class="w-full bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl pl-12 pr-4 py-3.5 text-on-surface focus:border-primary-container focus:outline-none transition-colors shadow-[0_10px_30px_-15px_rgba(15,23,42,0.3)]">
+        <input type="text" name="q" placeholder="Kullanıcı ara..." value="<?php echo escape($search); ?>" class="w-full bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl pl-12 pr-4 py-3.5 text-on-surface focus:border-primary-container focus:outline-none transition-colors shadow-[0_10px_30px_-15px_rgba(19,19,20,0.3)]">
     </form>
 
     <?php if (empty($result['members'])): ?>
-        <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-10 text-center text-slate-400">
+        <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-10 text-center text-slate-400">
             <span class="material-symbols-outlined text-[48px] mb-2 opacity-50">person_off</span>
             <p>Üye bulunamadı.</p>
         </div>
@@ -57,8 +57,8 @@ require_once __DIR__ . '/partials/app_header.php';
                 $mIsPremium = UserModel::isPremiumActive($m);
             ?>
             <div class="<?php echo $mIsPremium
-                ? 'bg-[#1E293B]/90 backdrop-blur-[20px] border border-[#7bd0ff]/40 rounded-2xl shadow-[0_0_20px_-5px_rgba(123,208,255,0.3)] flex flex-col items-center text-center hover:border-[#7bd0ff]/80 hover:shadow-[0_0_30px_rgba(123,208,255,0.4)] transition-all duration-300 group relative overflow-hidden transform hover:-translate-y-1'
-                : 'bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl shadow-[0_15px_30px_-15px_rgba(15,23,42,0.5)] flex flex-col items-center text-center hover:border-primary-container/40 hover:shadow-[0_15px_40px_-10px_rgba(255,107,53,0.2)] transition-all duration-300 group relative overflow-hidden transform hover:-translate-y-1'; ?>">
+                ? 'bg-[#2a2a2b]/90 backdrop-blur-[20px] border border-[#7bd0ff]/40 rounded-2xl shadow-[0_0_20px_-5px_rgba(123,208,255,0.3)] flex flex-col items-center text-center hover:border-[#7bd0ff]/80 hover:shadow-[0_0_30px_rgba(123,208,255,0.4)] transition-all duration-300 group relative overflow-hidden transform hover:-translate-y-1'
+                : 'bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl shadow-[0_15px_30px_-15px_rgba(19,19,20,0.5)] flex flex-col items-center text-center hover:border-primary-container/40 hover:shadow-[0_15px_40px_-10px_rgba(255,145,0,0.2)] transition-all duration-300 group relative overflow-hidden transform hover:-translate-y-1'; ?>">
                 
                 <!-- Mini Banner -->
                 <div class="w-full h-20 absolute top-0 left-0 z-0 <?php echo $mIsPremium ? 'bg-gradient-to-r from-[#0f1f3d] via-[#1a365d] to-[#0f1f3d]' : 'bg-surface-container-high/50'; ?>">
@@ -78,7 +78,7 @@ require_once __DIR__ . '/partials/app_header.php';
                 <a href="<?php echo BASE_URL; ?>/profile?u=<?php echo escape($m['tag'] ?: $m['username']); ?>" class="relative mt-8 mb-3 block z-10">
                     <?php $mAvatar = safeAvatarUrl($m['avatar'] ?? null, $m['username']); ?>
                     <div class="relative inline-block">
-                        <img alt="User avatar" class="w-24 h-24 rounded-full object-cover border-4 <?php echo $mIsPremium ? 'border-[#1E293B] group-hover:border-[#7bd0ff]/30' : 'border-[#1E293B] group-hover:border-primary-container/30'; ?> transition-all shadow-xl bg-[#1E293B]" src="<?php echo $mAvatar; ?>" width="96" height="96" loading="lazy"/>
+                        <img alt="User avatar" class="w-24 h-24 rounded-full object-cover border-4 <?php echo $mIsPremium ? 'border-[#2a2a2b] group-hover:border-[#7bd0ff]/30' : 'border-[#2a2a2b] group-hover:border-primary-container/30'; ?> transition-all shadow-xl bg-[#2a2a2b]" src="<?php echo $mAvatar; ?>" width="96" height="96" loading="lazy"/>
                         <?php if ($mIsPremium): ?>
                             <!-- Glowing ring behind avatar for premium -->
                             <div class="absolute inset-0 rounded-full bg-[#7bd0ff] blur-md -z-10 opacity-20 group-hover:opacity-40 transition-opacity"></div>
@@ -114,7 +114,7 @@ require_once __DIR__ . '/partials/app_header.php';
                 <!-- Action Button -->
                 <div class="mt-auto w-full px-5 pb-5 z-10">
                     <?php if (Auth::id() !== (int)$m['id']): ?>
-                    <button class="w-full py-2.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 <?php echo $mIsFollowing ? 'bg-white/5 text-primary-container border border-primary-container/30 hover:bg-white/10' : 'bg-primary-container text-white hover:bg-primary-container/90 shadow-[0_0_15px_rgba(255,107,53,0.3)] active:scale-95'; ?>"
+                    <button class="w-full py-2.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 <?php echo $mIsFollowing ? 'bg-white/5 text-primary-container border border-primary-container/30 hover:bg-white/10' : 'bg-primary-container text-white hover:bg-primary-container/90 shadow-[0_0_15px_rgba(255,145,0,0.3)] active:scale-95'; ?>"
                             onclick="App.toggleFollow(this, <?php echo $m['id']; ?>)">
                         <?php if ($mIsFollowing): ?>
                             <span class="material-symbols-outlined text-[18px]">person_check</span> Takipte
@@ -135,7 +135,7 @@ require_once __DIR__ . '/partials/app_header.php';
         <?php if ($result['pages'] > 1): ?>
         <div class="flex justify-center gap-2 mt-8">
             <?php for ($p = 1; $p <= $result['pages']; $p++): ?>
-                <a href="?q=<?php echo urlencode($search); ?>&page=<?php echo $p; ?>" class="w-10 h-10 flex items-center justify-center rounded-lg transition-colors font-bold <?php echo $p === $page ? 'bg-primary-container text-white shadow-[0_0_10px_rgba(255,107,53,0.3)]' : 'bg-surface-container text-slate-400 hover:text-white hover:bg-white/10 border border-white/5'; ?>"><?php echo $p; ?></a>
+                <a href="?q=<?php echo urlencode($search); ?>&page=<?php echo $p; ?>" class="w-10 h-10 flex items-center justify-center rounded-lg transition-colors font-bold <?php echo $p === $page ? 'bg-primary-container text-white shadow-[0_0_10px_rgba(255,145,0,0.3)]' : 'bg-surface-container text-slate-400 hover:text-white hover:bg-white/10 border border-white/5'; ?>"><?php echo $p; ?></a>
             <?php endfor; ?>
         </div>
         <?php endif; ?>

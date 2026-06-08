@@ -134,12 +134,12 @@ require_once __DIR__ . '/partials/app_header.php';
     <?php endif; ?>
 
     <!-- Avatar -->
-    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl p-6 md:p-8 shadow-[0_15px_30px_-15px_rgba(15,23,42,0.5)]">
+    <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl p-6 md:p-8 shadow-[0_15px_30px_-15px_rgba(19,19,20,0.5)]">
         <h2 class="text-xl font-bold flex items-center gap-2 mb-6 text-on-surface"><span class="material-symbols-outlined text-primary-container text-[24px]">account_circle</span> Avatar</h2>
         <div class="flex flex-col sm:flex-row items-center gap-6">
             <?php $pAvatar = safeAvatarUrl($user['avatar'] ?? null, $user['username']); ?>
             <div class="relative group">
-                <img src="<?php echo $pAvatar; ?>" class="w-32 h-32 rounded-full object-cover border-4 border-[#1E293B] shadow-xl flex-shrink-0 relative z-10 bg-[#1E293B]">
+                <img src="<?php echo $pAvatar; ?>" class="w-32 h-32 rounded-full object-cover border-4 border-[#2a2a2b] shadow-xl flex-shrink-0 relative z-10 bg-[#2a2a2b]">
                 <div class="absolute inset-0 rounded-full bg-primary-container blur-md -z-10 opacity-20 group-hover:opacity-40 transition-opacity"></div>
             </div>
             
@@ -160,7 +160,7 @@ require_once __DIR__ . '/partials/app_header.php';
     </div>
 
     <!-- Banner -->
-    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl p-6 md:p-8 shadow-[0_15px_30px_-15px_rgba(15,23,42,0.5)]">
+    <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl p-6 md:p-8 shadow-[0_15px_30px_-15px_rgba(19,19,20,0.5)]">
         <h2 class="text-xl font-bold flex items-center gap-2 mb-6 text-on-surface"><span class="material-symbols-outlined text-primary-container text-[24px]">image</span> Banner</h2>
         <div class="h-40 rounded-xl overflow-hidden bg-surface-container relative mb-5 border border-white/10 shadow-inner group">
             <?php if (bannerUrl($user['banner'])): ?>
@@ -183,7 +183,7 @@ require_once __DIR__ . '/partials/app_header.php';
                     <input type="file" name="banner" accept="image/*" required class="hidden" onchange="this.nextElementSibling.innerText = this.files[0].name">
                     <span class="hidden"></span>
                 </label>
-                <button type="submit" class="w-full sm:w-auto h-12 bg-primary-container hover:bg-primary-container/90 text-white px-6 rounded-xl text-sm font-bold transition-all shadow-[0_0_15px_rgba(255,107,53,0.3)] active:scale-95 shrink-0 flex items-center justify-center gap-2">
+                <button type="submit" class="w-full sm:w-auto h-12 bg-primary-container hover:bg-primary-container/90 text-white px-6 rounded-xl text-sm font-bold transition-all shadow-[0_0_15px_rgba(255,145,0,0.3)] active:scale-95 shrink-0 flex items-center justify-center gap-2">
                     <span class="material-symbols-outlined text-[18px]">cloud_upload</span> Yükle
                 </button>
             </div>
@@ -193,7 +193,7 @@ require_once __DIR__ . '/partials/app_header.php';
 
     <!-- Rozet Seçimi (Premium) -->
     <?php if (UserModel::isPremiumActive($user)): ?>
-    <div class="bg-[#1E293B]/90 backdrop-blur-[20px] border border-[#7bd0ff]/40 rounded-2xl p-6 md:p-8 shadow-[0_0_30px_-5px_rgba(123,208,255,0.2)] relative overflow-hidden">
+    <div class="bg-[#2a2a2b]/90 backdrop-blur-[20px] border border-[#7bd0ff]/40 rounded-2xl p-6 md:p-8 shadow-[0_0_30px_-5px_rgba(123,208,255,0.2)] relative overflow-hidden">
         <div class="absolute inset-0 bg-gradient-to-r from-transparent via-[#7bd0ff]/5 to-transparent pointer-events-none"></div>
         <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-30 mix-blend-overlay pointer-events-none"></div>
         
@@ -230,7 +230,7 @@ require_once __DIR__ . '/partials/app_header.php';
         </form>
     </div>
     <?php else: ?>
-    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl p-6 md:p-8 shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)] relative overflow-hidden group">
+    <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl p-6 md:p-8 shadow-[0_15px_30px_-15px_rgba(19,19,20,0.3)] relative overflow-hidden group">
         <div class="absolute inset-0 bg-gradient-to-br from-transparent via-[#7bd0ff]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
         <h2 class="text-xl font-bold flex items-center gap-2 mb-4 text-on-surface">
             <span class="material-symbols-outlined text-slate-500 text-[24px]">workspace_premium</span> Profil Rozeti
@@ -245,7 +245,7 @@ require_once __DIR__ . '/partials/app_header.php';
     <!-- Profil Teması (Premium) -->
     <?php
     $themes = [
-        'default'  => ['label' => 'Varsayılan', 'colors' => ['#FF6B35', '#1E293B'], 'gradient' => 'from-[#FF6B35] to-[#E05520]'],
+        'default'  => ['label' => 'Varsayılan', 'colors' => ['#ff9100', '#2a2a2b'], 'gradient' => 'from-[#ff9100] to-[#E05520]'],
         'ocean'    => ['label' => 'Okyanus', 'colors' => ['#0EA5E9', '#0284C7'], 'gradient' => 'from-[#0EA5E9] to-[#0369A1]'],
         'sunset'   => ['label' => 'Gün Batımı', 'colors' => ['#F59E0B', '#EF4444'], 'gradient' => 'from-[#F59E0B] to-[#EF4444]'],
         'emerald'  => ['label' => 'Zümrüt', 'colors' => ['#10B981', '#059669'], 'gradient' => 'from-[#10B981] to-[#047857]'],
@@ -255,7 +255,7 @@ require_once __DIR__ . '/partials/app_header.php';
     $currentTheme = $user['profile_theme'] ?? 'default';
     ?>
     <?php if (UserModel::isPremiumActive($user)): ?>
-    <div class="bg-[#1E293B]/90 backdrop-blur-[20px] border border-[#7bd0ff]/40 rounded-2xl p-6 md:p-8 shadow-[0_0_30px_-5px_rgba(123,208,255,0.2)] relative overflow-hidden">
+    <div class="bg-[#2a2a2b]/90 backdrop-blur-[20px] border border-[#7bd0ff]/40 rounded-2xl p-6 md:p-8 shadow-[0_0_30px_-5px_rgba(123,208,255,0.2)] relative overflow-hidden">
         <div class="absolute inset-0 bg-gradient-to-r from-transparent via-[#7bd0ff]/5 to-transparent pointer-events-none"></div>
         <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-30 mix-blend-overlay pointer-events-none"></div>
         
@@ -284,7 +284,7 @@ require_once __DIR__ . '/partials/app_header.php';
         </form>
     </div>
     <?php else: ?>
-    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl p-6 md:p-8 shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)] relative overflow-hidden group">
+    <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl p-6 md:p-8 shadow-[0_15px_30px_-15px_rgba(19,19,20,0.3)] relative overflow-hidden group">
         <div class="absolute inset-0 bg-gradient-to-br from-transparent via-[#7bd0ff]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
         <h2 class="text-xl font-bold flex items-center gap-2 mb-4 text-on-surface">
             <span class="material-symbols-outlined text-slate-500 text-[24px]">palette</span> Profil Teması
@@ -297,7 +297,7 @@ require_once __DIR__ . '/partials/app_header.php';
     <?php endif; ?>
 
     <!-- Profil Bilgileri -->
-    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl p-6 md:p-8 shadow-[0_15px_30px_-15px_rgba(15,23,42,0.5)]">
+    <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl p-6 md:p-8 shadow-[0_15px_30px_-15px_rgba(19,19,20,0.5)]">
         <h2 class="text-xl font-bold flex items-center gap-2 mb-6 text-on-surface"><span class="material-symbols-outlined text-primary-container text-[24px]">contact_mail</span> Profil Bilgileri</h2>
         <form method="POST" class="flex flex-col gap-5">
             <?php echo csrfField(); ?>
@@ -345,14 +345,14 @@ require_once __DIR__ . '/partials/app_header.php';
                 </div>
             </div>
             
-            <button type="submit" class="mt-4 bg-primary-container text-white px-8 py-3 rounded-xl font-bold shadow-[0_0_20px_rgba(255,107,53,0.3)] hover:bg-primary-container/90 transition-all active:scale-95 w-full sm:w-auto flex justify-center items-center gap-2">
+            <button type="submit" class="mt-4 bg-primary-container text-white px-8 py-3 rounded-xl font-bold shadow-[0_0_20px_rgba(255,145,0,0.3)] hover:bg-primary-container/90 transition-all active:scale-95 w-full sm:w-auto flex justify-center items-center gap-2">
                 <span class="material-symbols-outlined text-[20px]">save</span> Bilgileri Kaydet
             </button>
         </form>
     </div>
 
     <!-- Şifre Değiştir -->
-    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl p-6 md:p-8 shadow-[0_15px_30px_-15px_rgba(15,23,42,0.5)]">
+    <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl p-6 md:p-8 shadow-[0_15px_30px_-15px_rgba(19,19,20,0.5)]">
         <h2 class="text-xl font-bold flex items-center gap-2 mb-6 text-on-surface"><span class="material-symbols-outlined text-primary-container text-[24px]">lock</span> Şifre Değiştir</h2>
         <form method="POST" class="flex flex-col gap-5">
             <?php echo csrfField(); ?>

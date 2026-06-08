@@ -31,45 +31,45 @@ if (Auth::check()) { header('Location: ' . BASE_URL . '/dashboard'); exit; }
                         "tertiary": "#7bd0ff",
                         "on-secondary-fixed-variant": "#3c475a",
                         "error": "#ffb4ab",
-                        "surface-container-highest": "#2d3449",
+                        "surface-container-highest": "#353436",
                         "on-primary-fixed": "#390c00",
                         "outline": "#a98a80",
                         "on-surface-variant": "#e1bfb5",
                         "on-primary-container": "#5f1900",
                         "tertiary-fixed": "#c4e7ff",
-                        "surface-container-low": "#131b2e",
+                        "surface-container-low": "#1c1b1c",
                         "on-error-container": "#ffdad6",
-                        "surface-container-high": "#222a3d",
-                        "on-surface": "#dae2fd",
-                        "primary": "#ffb59d",
+                        "surface-container-high": "#2a2a2b",
+                        "on-surface": "#e5e2e3",
+                        "primary": "#ffb97c",
                         "tertiary-fixed-dim": "#7bd0ff",
-                        "inverse-surface": "#dae2fd",
+                        "inverse-surface": "#e5e2e3",
                         "inverse-on-surface": "#283044",
                         "inverse-primary": "#ab3500",
                         "error-container": "#93000a",
                         "secondary": "#bcc7de",
-                        "background": "#0b1326",
-                        "surface-dim": "#0b1326",
-                        "surface-container": "#171f33",
+                        "background": "#131314",
+                        "surface-dim": "#131314",
+                        "surface-container": "#201f20",
                         "secondary-fixed-dim": "#bcc7de",
                         "on-tertiary-fixed-variant": "#004c69",
                         "on-tertiary": "#00354a",
                         "on-primary": "#5d1900",
                         "primary-fixed": "#ffdbd0",
                         "tertiary-container": "#00a5de",
-                        "surface-container-lowest": "#060e20",
-                        "primary-container": "#ff6b35",
+                        "surface-container-lowest": "#0e0e0f",
+                        "primary-container": "#ff9100",
                         "outline-variant": "#594139",
-                        "surface-tint": "#ffb59d",
-                        "primary-fixed-dim": "#ffb59d",
+                        "surface-tint": "#ffb97c",
+                        "primary-fixed-dim": "#ffb97c",
                         "on-secondary-fixed": "#111c2d",
                         "on-tertiary-fixed": "#001e2c",
-                        "surface": "#0b1326",
+                        "surface": "#131314",
                         "secondary-container": "#3e495d",
                         "secondary-fixed": "#d8e3fb",
-                        "on-background": "#dae2fd",
+                        "on-background": "#e5e2e3",
                         "on-primary-fixed-variant": "#832600",
-                        "surface-variant": "#2d3449"
+                        "surface-variant": "#353436"
                     },
                     "borderRadius": {
                         "DEFAULT": "0.25rem",
@@ -120,15 +120,15 @@ if (Auth::check()) { header('Location: ' . BASE_URL . '/dashboard'); exit; }
     </script>
 <style>
         .glass-card {
-            background-color: rgba(30, 41, 59, 0.8);
+            background-color: rgba(19, 19, 20, 0.8);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
         .btn-glow {
-            box-shadow: 0 0 15px rgba(255, 107, 53, 0.2);
+            box-shadow: 0 0 15px rgba(255, 145, 0, 0.2);
         }
         .text-gradient {
-            background: linear-gradient(to right, #dae2fd, #aeb9d0);
+            background: linear-gradient(to right, #e5e2e3, #aeb9d0);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -144,14 +144,14 @@ if (Auth::check()) { header('Location: ' . BASE_URL . '/dashboard'); exit; }
         }
     </style>
 </head>
-<body class="text-on-background antialiased selection:bg-primary-container selection:text-white relative bg-[#0b1326] min-h-screen">
+<body class="text-on-background antialiased selection:bg-primary-container selection:text-white relative bg-[#131314] min-h-screen">
 <!-- Full Page Background -->
 <div class="fixed inset-0 z-[-2] bg-cover bg-center bg-no-repeat" style="background-image: url('<?php echo BASE_URL; ?>/assets/images/hero-bg.jpg');"></div>
 <div class="fixed inset-0 z-[-1] bg-background/85 backdrop-blur-sm"></div>
 <!-- TopNavBar -->
-<nav class="bg-[#0F172A]/80 backdrop-blur-xl font-['Manrope'] text-sm tracking-wide font-medium w-full top-0 sticky border-b border-white/10 shadow-[0_30px_30px_rgba(15,23,42,0.15)] z-50">
+<nav class="bg-[#0F172A]/80 backdrop-blur-xl font-['Manrope'] text-sm tracking-wide font-medium w-full top-0 sticky border-b border-white/10 shadow-[0_30px_30px_rgba(19,19,20,0.15)] z-50">
 <div class="flex justify-center items-center w-full px-8 py-4 max-w-7xl mx-auto">
-<div class="flex items-center gap-2 text-2xl font-bold tracking-tighter text-[#FF6B35]">
+<div class="flex items-center gap-2 text-2xl font-bold tracking-tighter text-[#ff9100]">
                 <img src="<?php echo BASE_URL; ?>/assets/images/logo.png" alt="Logo" class="h-8 w-auto opacity-90" width="32" height="32">
                 <?php echo APP_NAME; ?>
             </div>
@@ -265,10 +265,10 @@ if (Auth::check()) { header('Location: ' . BASE_URL . '/dashboard'); exit; }
                 <?php echo APP_NAME; ?>
             </div>
 <div class="flex flex-wrap items-center justify-center gap-6">
-<a class="text-slate-500 hover:text-slate-300 hover:underline decoration-[#FF6B35] underline-offset-4 opacity-80 hover:opacity-100 transition-opacity" href="#">Kullanım Koşulları</a>
-<a class="text-slate-500 hover:text-slate-300 hover:underline decoration-[#FF6B35] underline-offset-4 opacity-80 hover:opacity-100 transition-opacity" href="#">Gizlilik Politikası</a>
-<a class="text-slate-500 hover:text-slate-300 hover:underline decoration-[#FF6B35] underline-offset-4 opacity-80 hover:opacity-100 transition-opacity" href="#">Çerez Ayarları</a>
-<a class="text-slate-500 hover:text-slate-300 hover:underline decoration-[#FF6B35] underline-offset-4 opacity-80 hover:opacity-100 transition-opacity" href="#">İletişim</a>
+<a class="text-slate-500 hover:text-slate-300 hover:underline decoration-[#ff9100] underline-offset-4 opacity-80 hover:opacity-100 transition-opacity" href="#">Kullanım Koşulları</a>
+<a class="text-slate-500 hover:text-slate-300 hover:underline decoration-[#ff9100] underline-offset-4 opacity-80 hover:opacity-100 transition-opacity" href="#">Gizlilik Politikası</a>
+<a class="text-slate-500 hover:text-slate-300 hover:underline decoration-[#ff9100] underline-offset-4 opacity-80 hover:opacity-100 transition-opacity" href="#">Çerez Ayarları</a>
+<a class="text-slate-500 hover:text-slate-300 hover:underline decoration-[#ff9100] underline-offset-4 opacity-80 hover:opacity-100 transition-opacity" href="#">İletişim</a>
 </div>
 <div class="text-center md:text-right">
                 © <?php echo date('Y'); ?> <?php echo APP_NAME; ?>. Nexus | Dijital Ajans.

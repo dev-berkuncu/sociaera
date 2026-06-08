@@ -83,7 +83,7 @@ require_once __DIR__ . '/partials/app_header.php';
 <style>
 /* Modal CSS since it is a floating overlay */
 .topup-overlay {
-    position: fixed; inset: 0; background: rgba(11, 19, 38, 0.85); backdrop-filter: blur(8px);
+    position: fixed; inset: 0; background: rgba(19, 19, 20, 0.85); backdrop-filter: blur(8px);
     z-index: 9999; display: flex; align-items: center; justify-content: center;
     opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
 }
@@ -103,7 +103,7 @@ require_once __DIR__ . '/partials/app_header.php';
     <?php endif; ?>
 
     <!-- Balance Card -->
-    <div class="bg-gradient-to-br from-primary-container to-[#ff9e7d] rounded-2xl p-8 shadow-[0_20px_40px_-15px_rgba(255,107,53,0.4)] text-white relative overflow-hidden">
+    <div class="bg-gradient-to-br from-primary-container to-[#ff9e7d] rounded-2xl p-8 shadow-[0_20px_40px_-15px_rgba(255,145,0,0.4)] text-white relative overflow-hidden">
         <div class="absolute -right-10 -top-10 text-[150px] opacity-10 leading-none select-none">
             <span class="material-symbols-outlined" style="font-size:inherit;">account_balance_wallet</span>
         </div>
@@ -123,7 +123,7 @@ require_once __DIR__ . '/partials/app_header.php';
 
     <h2 class="text-xl font-bold text-on-surface mt-6 flex items-center gap-2"><span class="material-symbols-outlined text-primary-container">receipt_long</span> İşlem Geçmişi</h2>
     
-    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl overflow-hidden shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)]">
+    <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl overflow-hidden shadow-[0_15px_30px_-15px_rgba(19,19,20,0.3)]">
         <?php if (empty($transactions)): ?>
             <div class="p-8 text-center text-slate-400">
                 <span class="material-symbols-outlined text-[48px] mb-2 opacity-50">receipt</span>
@@ -162,7 +162,7 @@ require_once __DIR__ . '/partials/app_header.php';
 
 <!-- Bakiye Yükle Modal -->
 <div class="topup-overlay" id="topupOverlay" onclick="closeTopupModal(event)">
-    <div class="bg-[#1E293B] border border-white/10 rounded-2xl w-[90%] max-w-md overflow-hidden shadow-2xl relative" onclick="event.stopPropagation()">
+    <div class="bg-[#2a2a2b] border border-white/10 rounded-2xl w-[90%] max-w-md overflow-hidden shadow-2xl relative" onclick="event.stopPropagation()">
         <button onclick="closeTopupModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white"><span class="material-symbols-outlined">close</span></button>
         
         <div class="p-8 text-center">
@@ -198,7 +198,7 @@ require_once __DIR__ . '/partials/app_header.php';
 
 <!-- Para Çek Modal -->
 <div class="topup-overlay" id="withdrawOverlay" onclick="closeWithdrawModal(event)">
-    <div class="bg-[#1E293B] border border-white/10 rounded-2xl w-[90%] max-w-md overflow-hidden shadow-2xl relative" onclick="event.stopPropagation()">
+    <div class="bg-[#2a2a2b] border border-white/10 rounded-2xl w-[90%] max-w-md overflow-hidden shadow-2xl relative" onclick="event.stopPropagation()">
         <button onclick="closeWithdrawModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white"><span class="material-symbols-outlined">close</span></button>
         
         <form method="POST" class="p-8 text-center m-0">
@@ -223,7 +223,7 @@ require_once __DIR__ . '/partials/app_header.php';
             
             <div class="flex gap-3">
                 <button type="button" onclick="closeWithdrawModal()" class="flex-1 bg-white/10 hover:bg-white/20 text-white py-3 rounded-xl font-bold transition-colors border border-white/10">VAZGEÇ</button>
-                <button id="withdrawBtn" type="submit" disabled class="flex-1 bg-primary-container text-white py-3 rounded-xl font-bold shadow-[0_0_15px_rgba(255,107,53,0.3)] hover:bg-primary-container/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                <button id="withdrawBtn" type="submit" disabled class="flex-1 bg-primary-container text-white py-3 rounded-xl font-bold shadow-[0_0_15px_rgba(255,145,0,0.3)] hover:bg-primary-container/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
                     <span class="material-symbols-outlined text-[18px]">outbox</span> ÇEK
                 </button>
             </div>

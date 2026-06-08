@@ -13,14 +13,14 @@ $hideSidebar = $hideSidebar ?? false;
             <div class="bg-surface-container-low p-5 rounded-xl border border-outline-variant/10 shadow-md">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Popüler Mekanlar</h3>
-                    <a href="<?php echo BASE_URL; ?>/venues" class="text-[#FF6B35] text-[10px] font-bold hover:underline">Tümünü Gör</a>
+                    <a href="<?php echo BASE_URL; ?>/venues" class="text-[#ff9100] text-[10px] font-bold hover:underline">Tümünü Gör</a>
                 </div>
                 <div class="space-y-4">
                     <?php foreach ($trendVenues as $i => $tv): ?>
                     <div class="flex items-center gap-3 group cursor-pointer" onclick="window.location.href='<?php echo BASE_URL; ?>/venue-detail?id=<?php echo $tv['id']; ?>'">
                         <div class="text-xs font-black text-slate-600 w-4"><?php echo $i + 1; ?></div>
                         
-                        <div class="w-12 h-12 rounded-lg overflow-hidden bg-surface-container flex items-center justify-center text-[#FF6B35] border border-white/5 group-hover:border-[#FF6B35]/40 transition-colors flex-shrink-0 relative">
+                        <div class="w-12 h-12 rounded-lg overflow-hidden bg-surface-container flex items-center justify-center text-[#ff9100] border border-white/5 group-hover:border-[#ff9100]/40 transition-colors flex-shrink-0 relative">
                             <?php if (!empty($tv['cover_image'])): ?>
                                 <img src="<?php echo BASE_URL . '/uploads/venues/' . escape($tv['cover_image']); ?>" class="w-full h-full object-cover" width="48" height="48" loading="lazy">
                             <?php elseif (!empty($tv['image'])): ?>
@@ -34,17 +34,17 @@ $hideSidebar = $hideSidebar ?? false;
                         </div>
                         
                         <div class="flex-grow min-w-0">
-                            <div class="font-bold text-xs text-on-surface group-hover:text-[#FF6B35] transition-colors truncate"><?php echo escape($tv['name']); ?></div>
+                            <div class="font-bold text-xs text-on-surface group-hover:text-[#ff9100] transition-colors truncate"><?php echo escape($tv['name']); ?></div>
                             <div class="text-[10px] text-slate-500 mt-0.5 truncate flex items-center gap-1.5">
                                 <?php if (!empty($tv['category'])): ?>
-                                    <span class="text-[#FF6B35] font-semibold"><?php echo escape(VenueModel::categories()[$tv['category']] ?? $tv['category']); ?></span>
+                                    <span class="text-[#ff9100] font-semibold"><?php echo escape(VenueModel::categories()[$tv['category']] ?? $tv['category']); ?></span>
                                 <?php endif; ?>
                                 <span>• <?php echo $tv['weekly_checkins']; ?></span>
                             </div>
                         </div>
                         
                         <!-- Rating score badge -->
-                        <div class="bg-[#FF6B35]/15 text-[#FF6B35] text-[10px] font-bold px-1.5 py-0.5 rounded flex-shrink-0 border border-[#FF6B35]/25">
+                        <div class="bg-[#ff9100]/15 text-[#ff9100] text-[10px] font-bold px-1.5 py-0.5 rounded flex-shrink-0 border border-[#ff9100]/25">
                             <?php echo number_format(9.5 - ($i * 0.2), 1); ?>
                         </div>
                     </div>
@@ -57,12 +57,12 @@ $hideSidebar = $hideSidebar ?? false;
             <div class="bg-surface-container-low rounded-xl border border-outline-variant/10 overflow-hidden shadow-md flex flex-col relative">
                 <div class="p-4 flex justify-between items-center">
                     <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 font-mono">Keşif Radarı</h3>
-                    <a href="<?php echo BASE_URL; ?>/venues" class="text-[#FF6B35] text-[10px] font-bold hover:underline">Genişlet</a>
+                    <a href="<?php echo BASE_URL; ?>/venues" class="text-[#ff9100] text-[10px] font-bold hover:underline">Genişlet</a>
                 </div>
                 <div class="h-32 relative bg-surface-container-highest/60 cursor-pointer overflow-hidden group" onclick="window.location.href='<?php echo BASE_URL; ?>/venues'">
                     <img class="w-full h-full object-cover opacity-35 grayscale-[0.2] invert-[0.9] group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida/AP1WRLudjIkYlGBmWTPYJUvLFzH2Tw0cGp8ikU9WEO9mqsjg7gsgTevDFlnp2dkPXUro1NNq4mTrbxUvyIxDMPZBe60dHROByG9EheR2Gbi3nAH-wyKDQsdWm1yunx-ZqK9Sz-a_FPJJp29JteU3WWba1-_UkQtdFpYlWjgRj5k6m2Ibqu3P4VbGVL-xL6pheN38RhYZyrEtz-en_Au81D2NNMcT0IbPxd9hXc-JIRF6xlDNhqwX3kxs7Kns6v4" alt="City Map" loading="lazy">
                     <div class="absolute inset-0 pointer-events-none">
-                        <div class="absolute top-1/4 left-1/3 p-1 bg-[#FF6B35] rounded-full border border-white shadow-lg animate-pulse">
+                        <div class="absolute top-1/4 left-1/3 p-1 bg-[#ff9100] rounded-full border border-white shadow-lg animate-pulse">
                             <span class="material-symbols-outlined text-[10px] text-white" style="display:block;">restaurant</span>
                         </div>
                         <div class="absolute top-1/2 left-1/2 p-1 bg-purple-500 rounded-full border border-white shadow-lg">
@@ -84,7 +84,7 @@ $hideSidebar = $hideSidebar ?? false;
             <div class="bg-surface-container-low p-5 rounded-xl border border-outline-variant/10 shadow-md">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Haftalık Liderler</h3>
-                    <a href="<?php echo BASE_URL; ?>/leaderboard" class="text-[#FF6B35] text-[10px] font-bold hover:underline">Tümünü Gör</a>
+                    <a href="<?php echo BASE_URL; ?>/leaderboard" class="text-[#ff9100] text-[10px] font-bold hover:underline">Tümünü Gör</a>
                 </div>
                 <div class="space-y-4">
                     <?php foreach ($miniLeaderboard as $i => $lb): ?>
@@ -93,17 +93,17 @@ $hideSidebar = $hideSidebar ?? false;
                         
                         <div class="relative flex-shrink-0">
                             <?php $lbAvatar = safeAvatarUrl($lb['avatar'] ?? null, $lb['username']); ?>
-                            <img alt="Leader avatar" class="w-10 h-10 rounded-full object-cover border border-white/10 group-hover:border-[#FF6B35]/40 transition-colors" src="<?php echo $lbAvatar; ?>" width="40" height="40" loading="lazy"/>
+                            <img alt="Leader avatar" class="w-10 h-10 rounded-full object-cover border border-white/10 group-hover:border-[#ff9100]/40 transition-colors" src="<?php echo $lbAvatar; ?>" width="40" height="40" loading="lazy"/>
                         </div>
                         
                         <div class="flex-grow min-w-0">
-                            <div class="font-bold text-xs text-on-surface group-hover:text-[#FF6B35] transition-colors truncate"><?php echo escape($lb['username']); ?></div>
+                            <div class="font-bold text-xs text-on-surface group-hover:text-[#ff9100] transition-colors truncate"><?php echo escape($lb['username']); ?></div>
                             <div class="text-[10px] text-slate-500 mt-0.5 truncate">
                                 @<?php echo escape($lb['tag'] ?: $lb['username']); ?>
                             </div>
                         </div>
                         
-                        <div class="bg-[#FF6B35]/10 text-[#FF6B35] text-[10px] font-bold px-2.5 py-0.5 rounded-full flex-shrink-0 border border-[#FF6B35]/20">
+                        <div class="bg-[#ff9100]/10 text-[#ff9100] text-[10px] font-bold px-2.5 py-0.5 rounded-full flex-shrink-0 border border-[#ff9100]/20">
                             <?php echo $lb['checkin_count']; ?> Puan
                         </div>
                     </div>
@@ -141,7 +141,7 @@ $hideSidebar = $hideSidebar ?? false;
             ?>
             <div class="bg-surface-container-low border border-outline-variant/10 rounded-xl p-5 shadow-lg overflow-hidden">
                 <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4 flex items-center gap-2">
-                    Sponsorlarımız <span class="material-symbols-outlined text-[#FF6B35] text-[16px]">campaign</span>
+                    Sponsorlarımız <span class="material-symbols-outlined text-[#ff9100] text-[16px]">campaign</span>
                 </h3>
                 <?php if (!empty($rightSidebarSponsors)): ?>
                 <div class="relative w-full h-24 rounded-xl overflow-hidden group bg-surface border border-white/5 shadow-inner">
@@ -158,9 +158,9 @@ $hideSidebar = $hideSidebar ?? false;
                         
                         <!-- Hover Overlay -->
                         <div class="absolute inset-0 bg-background/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center backdrop-blur-sm z-20">
-                            <span class="font-bold text-xs text-[#FF6B35] text-center mb-0.5"><?php echo escape($sp['name']); ?></span>
+                            <span class="font-bold text-xs text-[#ff9100] text-center mb-0.5"><?php echo escape($sp['name']); ?></span>
                             <span class="text-[9px] text-slate-400 mb-1.5 tracking-widest uppercase opacity-80">Resmi Sponsor</span>
-                            <div class="w-7 h-7 rounded-full bg-[#FF6B35] text-white flex items-center justify-center shadow-lg transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                            <div class="w-7 h-7 rounded-full bg-[#ff9100] text-white flex items-center justify-center shadow-lg transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
                                 <span class="material-symbols-outlined text-[14px]">arrow_outward</span>
                             </div>
                         </div>
@@ -194,29 +194,29 @@ $hideSidebar = $hideSidebar ?? false;
             <?php if (!empty($sidebarRightAds)): 
                 $activeShowcase = $sidebarRightAds[0];
             ?>
-            <div class="bg-surface-container-low border border-outline-variant/10 rounded-xl overflow-hidden shadow-lg flex flex-col relative w-full h-[500px] group hover:border-[#FF6B35]/30 transition-colors">
+            <div class="bg-surface-container-low border border-outline-variant/10 rounded-xl overflow-hidden shadow-lg flex flex-col relative w-full h-[500px] group hover:border-[#ff9100]/30 transition-colors">
                 <a href="<?php echo escape($activeShowcase['link_url'] ?? '#'); ?>" target="_blank" rel="noopener" class="block w-full h-full relative">
                     <img src="<?php echo BASE_URL . '/' . escape($activeShowcase['logo'] ?? $activeShowcase['image_url']); ?>" alt="<?php echo escape($activeShowcase['title']); ?>" class="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500" loading="lazy">
                     <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-[2px]">
-                        <div class="w-10 h-10 rounded-full bg-[#FF6B35] text-white flex items-center justify-center shadow-lg transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                        <div class="w-10 h-10 rounded-full bg-[#ff9100] text-white flex items-center justify-center shadow-lg transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
                             <span class="material-symbols-outlined text-[18px]">arrow_outward</span>
                         </div>
                     </div>
                 </a>
             </div>
             <?php else: ?>
-            <div class="bg-surface-container-low border border-dashed border-white/10 rounded-xl overflow-hidden shadow-lg flex flex-col relative w-full h-[500px] group hover:border-[#FF6B35]/30 transition-colors">
+            <div class="bg-surface-container-low border border-dashed border-white/10 rounded-xl overflow-hidden shadow-lg flex flex-col relative w-full h-[500px] group hover:border-[#ff9100]/30 transition-colors">
                 <a href="mailto:info@sociaera.online" class="absolute inset-0 flex flex-col items-center justify-center p-4 text-center cursor-pointer z-10">
-                    <span class="material-symbols-outlined text-slate-600 text-[36px] mb-3 group-hover:scale-110 group-hover:text-[#FF6B35] transition-all duration-300">view_carousel</span>
+                    <span class="material-symbols-outlined text-slate-600 text-[36px] mb-3 group-hover:scale-110 group-hover:text-[#ff9100] transition-all duration-300">view_carousel</span>
                     <span class="font-black text-sm text-slate-500 group-hover:text-white transition-colors tracking-wide">REKLAM ALANI</span>
                     <span class="text-[10px] text-slate-400 mt-2 font-mono bg-black/40 px-3 py-1 rounded-full border border-white/5 shadow-inner">300 x 500</span>
                     
-                    <div class="absolute bottom-6 w-9 h-9 rounded-full bg-[#FF6B35] text-white flex items-center justify-center opacity-0 group-hover:opacity-100 group-hover:-translate-y-1 transition-all duration-300 shadow-md">
+                    <div class="absolute bottom-6 w-9 h-9 rounded-full bg-[#ff9100] text-white flex items-center justify-center opacity-0 group-hover:opacity-100 group-hover:-translate-y-1 transition-all duration-300 shadow-md">
                         <span class="material-symbols-outlined text-[18px]">ads_click</span>
                     </div>
                 </a>
                 <div class="absolute inset-0 overflow-hidden pointer-events-none">
-                    <div class="absolute -top-10 -right-10 w-32 h-32 bg-[#FF6B35]/5 rounded-full blur-3xl group-hover:bg-[#FF6B35]/10 transition-colors"></div>
+                    <div class="absolute -top-10 -right-10 w-32 h-32 bg-[#ff9100]/5 rounded-full blur-3xl group-hover:bg-[#ff9100]/10 transition-colors"></div>
                     <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-blue-500/5 rounded-full blur-3xl group-hover:bg-blue-500/10 transition-colors"></div>
                 </div>
             </div>

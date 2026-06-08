@@ -46,33 +46,33 @@ require_once __DIR__ . '/partials/app_header.php';
 <section class="flex-1 flex flex-col gap-stack-md max-w-4xl w-full mx-auto lg:mx-0">
     <div class="flex items-center justify-between flex-wrap gap-3 mb-4">
         <h1 class="text-2xl font-bold flex items-center gap-2"><span class="material-symbols-outlined text-primary-container text-[28px]">location_on</span> Mekanlar</h1>
-        <a href="<?php echo BASE_URL; ?>/add-venue" class="bg-primary-container text-white px-4 py-2 rounded-lg font-label-md text-label-md shadow-[0_0_10px_rgba(255,107,53,0.2)] hover:bg-primary-container/90 transition-all flex items-center gap-2 active:scale-95"><span class="material-symbols-outlined text-[18px]">add</span> Mekan Ekle</a>
+        <a href="<?php echo BASE_URL; ?>/add-venue" class="bg-primary-container text-white px-4 py-2 rounded-lg font-label-md text-label-md shadow-[0_0_10px_rgba(255,145,0,0.2)] hover:bg-primary-container/90 transition-all flex items-center gap-2 active:scale-95"><span class="material-symbols-outlined text-[18px]">add</span> Mekan Ekle</a>
     </div>
 
     <!-- Filters -->
     <div class="flex flex-col sm:flex-row gap-4 mb-2">
         <form method="GET" class="flex-1 relative group">
             <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary-container transition-colors">search</span>
-            <input type="text" name="q" placeholder="Mekan ara..." value="<?php echo escape($search); ?>" class="w-full bg-[#1E293B]/80 border border-white/10 rounded-lg pl-10 pr-4 py-2 text-on-surface focus:border-primary-container focus:outline-none transition-colors shadow-sm">
+            <input type="text" name="q" placeholder="Mekan ara..." value="<?php echo escape($search); ?>" class="w-full bg-[#2a2a2b]/80 border border-white/10 rounded-lg pl-10 pr-4 py-2 text-on-surface focus:border-primary-container focus:outline-none transition-colors shadow-sm">
             <?php if ($category): ?><input type="hidden" name="cat" value="<?php echo escape($category); ?>"><?php endif; ?>
         </form>
         <div class="flex gap-2 flex-wrap items-center">
-            <a href="?cat=&q=<?php echo urlencode($search); ?>" class="px-4 py-2 rounded-lg font-label-sm text-label-sm transition-colors border border-white/10 <?php echo !$category ? 'bg-primary-container/20 text-primary-container border-primary-container/50' : 'bg-[#1E293B]/80 text-slate-300 hover:bg-white/5'; ?>">Tümü</a>
+            <a href="?cat=&q=<?php echo urlencode($search); ?>" class="px-4 py-2 rounded-lg font-label-sm text-label-sm transition-colors border border-white/10 <?php echo !$category ? 'bg-primary-container/20 text-primary-container border-primary-container/50' : 'bg-[#2a2a2b]/80 text-slate-300 hover:bg-white/5'; ?>">Tümü</a>
             <?php foreach ($categories as $key => $label): ?>
-                <a href="?cat=<?php echo urlencode($key); ?>&q=<?php echo urlencode($search); ?>" class="px-4 py-2 rounded-lg font-label-sm text-label-sm transition-colors border border-white/10 <?php echo $category === $key ? 'bg-primary-container/20 text-primary-container border-primary-container/50' : 'bg-[#1E293B]/80 text-slate-300 hover:bg-white/5'; ?>"><?php echo escape($label); ?></a>
+                <a href="?cat=<?php echo urlencode($key); ?>&q=<?php echo urlencode($search); ?>" class="px-4 py-2 rounded-lg font-label-sm text-label-sm transition-colors border border-white/10 <?php echo $category === $key ? 'bg-primary-container/20 text-primary-container border-primary-container/50' : 'bg-[#2a2a2b]/80 text-slate-300 hover:bg-white/5'; ?>"><?php echo escape($label); ?></a>
             <?php endforeach; ?>
         </div>
     </div>
 
     <?php if (empty($venues)): ?>
-        <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-8 text-center text-slate-400 mt-4">
+        <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-8 text-center text-slate-400 mt-4">
             <span class="material-symbols-outlined text-[48px] mb-2 opacity-50">location_off</span>
             <p>Mekan bulunamadı.</p>
         </div>
     <?php else: ?>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6 mt-4">
             <?php foreach ($venues as $v): ?>
-            <a href="<?php echo BASE_URL; ?>/venue-detail?id=<?php echo $v['id']; ?>" class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl overflow-hidden hover:border-primary-container/50 hover:shadow-[0_10px_30px_-10px_rgba(255,107,53,0.15)] transition-all group">
+            <a href="<?php echo BASE_URL; ?>/venue-detail?id=<?php echo $v['id']; ?>" class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl overflow-hidden hover:border-primary-container/50 hover:shadow-[0_10px_30px_-10px_rgba(255,145,0,0.15)] transition-all group">
                 <div class="h-48 bg-surface-container relative overflow-hidden">
                     <?php if (!empty($v['cover_image'])): ?>
                         <div class="absolute inset-0 bg-cover bg-center blur-2xl opacity-40 scale-110" style="background-image: url('<?php echo BASE_URL . '/uploads/venues/' . escape($v['cover_image']); ?>')"></div>
@@ -127,20 +127,20 @@ require_once __DIR__ . '/partials/app_header.php';
         <!-- Pagination -->
         <div class="mt-8 flex justify-center items-center gap-2">
             <?php if ($page > 1): ?>
-                <a href="?page=<?php echo $page - 1; ?>&cat=<?php echo urlencode($category); ?>&q=<?php echo urlencode($search); ?>" class="w-10 h-10 flex items-center justify-center rounded-lg bg-[#1E293B]/80 text-slate-400 hover:bg-white/10 hover:text-white border border-white/10 transition-all">
+                <a href="?page=<?php echo $page - 1; ?>&cat=<?php echo urlencode($category); ?>&q=<?php echo urlencode($search); ?>" class="w-10 h-10 flex items-center justify-center rounded-lg bg-[#2a2a2b]/80 text-slate-400 hover:bg-white/10 hover:text-white border border-white/10 transition-all">
                     <span class="material-symbols-outlined text-[18px]">chevron_left</span>
                 </a>
             <?php endif; ?>
             
             <?php for ($i = max(1, $page - 2); $i <= min($totalPages, $page + 2); $i++): ?>
                 <a href="?page=<?php echo $i; ?>&cat=<?php echo urlencode($category); ?>&q=<?php echo urlencode($search); ?>" 
-                   class="w-10 h-10 flex items-center justify-center rounded-lg font-bold text-sm transition-all <?php echo $i === $page ? 'bg-primary-container text-white shadow-[0_0_15px_rgba(255,107,53,0.3)]' : 'bg-[#1E293B]/80 text-slate-400 hover:bg-white/10 hover:text-white border border-white/10'; ?>">
+                   class="w-10 h-10 flex items-center justify-center rounded-lg font-bold text-sm transition-all <?php echo $i === $page ? 'bg-primary-container text-white shadow-[0_0_15px_rgba(255,145,0,0.3)]' : 'bg-[#2a2a2b]/80 text-slate-400 hover:bg-white/10 hover:text-white border border-white/10'; ?>">
                     <?php echo $i; ?>
                 </a>
             <?php endfor; ?>
             
             <?php if ($page < $totalPages): ?>
-                <a href="?page=<?php echo $page + 1; ?>&cat=<?php echo urlencode($category); ?>&q=<?php echo urlencode($search); ?>" class="w-10 h-10 flex items-center justify-center rounded-lg bg-[#1E293B]/80 text-slate-400 hover:bg-white/10 hover:text-white border border-white/10 transition-all">
+                <a href="?page=<?php echo $page + 1; ?>&cat=<?php echo urlencode($category); ?>&q=<?php echo urlencode($search); ?>" class="w-10 h-10 flex items-center justify-center rounded-lg bg-[#2a2a2b]/80 text-slate-400 hover:bg-white/10 hover:text-white border border-white/10 transition-all">
                     <span class="material-symbols-outlined text-[18px]">chevron_right</span>
                 </a>
             <?php endif; ?>

@@ -62,7 +62,7 @@ if (!empty($post['is_mystery_shopper'])) {
     <div class="flex-1 flex flex-col gap-3 min-w-0">
         
         <?php if (!empty($post['reposted_by'])): ?>
-        <div class="flex items-center gap-2 text-[#ffb59d]/80 font-mono text-[10px] mb-[-4px] tracking-widest uppercase">
+        <div class="flex items-center gap-2 text-[#ffb97c]/80 font-mono text-[10px] mb-[-4px] tracking-widest uppercase">
             <span class="material-symbols-outlined text-[14px]">settings_input_antenna</span>
             <a href="<?php echo BASE_URL; ?>/profile?u=<?php echo escape($post['reposted_by_tag'] ?: $post['reposted_by']); ?>" class="hover:text-white transition-colors">@<?php echo escape($post['reposted_by_tag'] ?: $post['reposted_by']); ?></a> TELSİZ YAYINI
         </div>
@@ -186,9 +186,9 @@ if (!empty($post['is_mystery_shopper'])) {
             </div>
             <?php if (Auth::check()): ?>
             <form class="flex gap-2 items-center" onsubmit="App.submitInlineComment(this, <?php echo $post['id']; ?>); return false;">
-                <span class="text-[#ff6b35] font-mono text-xs flex-shrink-0">&gt;</span>
+                <span class="text-[#ff9100] font-mono text-xs flex-shrink-0">&gt;</span>
                 <input type="text" class="comment-input-inline radio-input-line w-full text-xs focus:outline-none" placeholder="Telsiz anonsu geç..." maxlength="500" required>
-                <button type="submit" class="comment-send-btn flex items-center justify-center w-8 h-8 rounded-full bg-[#ff6b35]/20 text-[#ff6b35] hover:bg-[#ff6b35] hover:text-white transition-all flex-shrink-0">
+                <button type="submit" class="comment-send-btn flex items-center justify-center w-8 h-8 rounded-full bg-[#ff9100]/20 text-[#ff9100] hover:bg-[#ff9100] hover:text-white transition-all flex-shrink-0">
                     <span class="material-symbols-outlined text-[14px]">send</span>
                 </button>
             </form>

@@ -22,16 +22,16 @@ require_once __DIR__ . '/partials/flash.php';
     </div>
     
     <div class="w-full max-w-md relative z-10">
-        <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl p-8 md:p-10 shadow-[0_20px_40px_-15px_rgba(15,23,42,0.5)]">
+        <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl p-8 md:p-10 shadow-[0_20px_40px_-15px_rgba(19,19,20,0.5)]">
             <div class="text-center mb-8">
-                <div class="w-16 h-16 mx-auto bg-primary-container text-white rounded-2xl flex items-center justify-center mb-4 shadow-[0_10px_20px_-5px_rgba(255,107,53,0.4)] transform -rotate-6">
+                <div class="w-16 h-16 mx-auto bg-primary-container text-white rounded-2xl flex items-center justify-center mb-4 shadow-[0_10px_20px_-5px_rgba(255,145,0,0.4)] transform -rotate-6">
                     <span class="material-symbols-outlined text-[32px]">location_on</span>
                 </div>
                 <h1 class="text-3xl font-black text-on-surface mb-2"><?php echo APP_NAME; ?>'ya Hoş Geldin</h1>
                 <p class="text-slate-400 text-sm">GTA World hesabınla giriş yap ve keşfe başla</p>
             </div>
 
-            <a href="<?php echo BASE_URL; ?>/oauth-login" class="w-full bg-[#1E293B] hover:bg-[#2e3e58] text-white border border-white/10 py-4 px-6 rounded-xl font-bold transition-all flex items-center justify-center gap-3 shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 active:scale-95 group">
+            <a href="<?php echo BASE_URL; ?>/oauth-login" class="w-full bg-[#2a2a2b] hover:bg-[#3a3a3b] text-white border border-white/10 py-4 px-6 rounded-xl font-bold transition-all flex items-center justify-center gap-3 shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 active:scale-95 group">
                 <span class="material-symbols-outlined text-primary-container group-hover:scale-110 transition-transform">sports_esports</span>
                 GTA World ile Giriş Yap
             </a>

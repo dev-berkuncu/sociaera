@@ -49,7 +49,7 @@ require_once __DIR__ . '/partials/app_header.php';
     </div>
 
     <!-- Yorum Formu -->
-    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-6 shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)] mb-4">
+    <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-6 shadow-[0_15px_30px_-15px_rgba(19,19,20,0.3)] mb-4">
         <h3 class="font-bold text-lg mb-4 text-on-surface">Yorum Yap</h3>
         <form onsubmit="App.submitComment(this, <?php echo $post['id']; ?>); return false;" class="flex items-start gap-4">
             <?php $myAvatarUrl = safeAvatarUrl($_SESSION['avatar'] ?? null, Auth::username()); ?>
@@ -57,7 +57,7 @@ require_once __DIR__ . '/partials/app_header.php';
             <div class="flex-grow">
                 <textarea class="w-full bg-background border border-white/10 rounded-xl px-4 py-3 text-on-surface focus:border-primary-container focus:outline-none transition-colors resize-y min-h-[80px]" placeholder="Yorumunu yaz..." maxlength="500"></textarea>
                 <div class="flex justify-end mt-3">
-                    <button type="submit" class="bg-primary-container text-white px-6 py-2 rounded-lg font-bold shadow-[0_0_10px_rgba(255,107,53,0.2)] hover:bg-primary-container/90 transition-all active:scale-95 flex items-center gap-2">
+                    <button type="submit" class="bg-primary-container text-white px-6 py-2 rounded-lg font-bold shadow-[0_0_10px_rgba(255,145,0,0.2)] hover:bg-primary-container/90 transition-all active:scale-95 flex items-center gap-2">
                         <span class="material-symbols-outlined text-[18px]">send</span> Gönder
                     </button>
                 </div>
@@ -66,8 +66,8 @@ require_once __DIR__ . '/partials/app_header.php';
     </div>
 
     <!-- Yorumlar Listesi -->
-    <h2 class="text-xl font-bold flex items-center gap-2 text-on-surface mb-2 font-mono"><span class="material-symbols-outlined text-[#ff6b35]">terminal</span> Telsiz Anonsları</h2>
-    <div class="radio-log-container shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)]">
+    <h2 class="text-xl font-bold flex items-center gap-2 text-on-surface mb-2 font-mono"><span class="material-symbols-outlined text-[#ff9100]">terminal</span> Telsiz Anonsları</h2>
+    <div class="radio-log-container shadow-[0_15px_30px_-15px_rgba(19,19,20,0.3)]">
         <?php if (empty($comments)): ?>
             <div class="p-8 text-center text-slate-500 font-mono text-xs">
                 [TELSİZ KAYDI] Henüz telsiz anonsu alınmadı.

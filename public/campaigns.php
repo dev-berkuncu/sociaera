@@ -155,7 +155,7 @@ require_once __DIR__ . '/partials/app_header.php';
     </div>
 
     <!-- ── Kampanya Oluştur / Düzenle Form ── -->
-    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl overflow-hidden">
+    <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl overflow-hidden">
         <div class="px-6 py-4 border-b border-white/5 flex items-center gap-2">
             <span class="material-symbols-outlined text-primary-container text-[20px]"><?php echo $editCamp ? 'edit' : 'add_circle'; ?></span>
             <h2 class="text-base font-bold text-on-surface"><?php echo $editCamp ? 'Kampanyayı Düzenle' : 'Yeni Kampanya Oluştur'; ?></h2>
@@ -273,7 +273,7 @@ require_once __DIR__ . '/partials/app_header.php';
 
             <div class="flex gap-3">
                 <button type="submit"
-                        class="flex-grow bg-primary-container text-white py-3 rounded-xl text-label-md font-semibold hover:bg-primary-container/90 transition-colors shadow-[0_0_15px_rgba(255,107,53,0.2)] flex items-center justify-center gap-2">
+                        class="flex-grow bg-primary-container text-white py-3 rounded-xl text-label-md font-semibold hover:bg-primary-container/90 transition-colors shadow-[0_0_15px_rgba(255,145,0,0.2)] flex items-center justify-center gap-2">
                     <span class="material-symbols-outlined text-[20px]"><?php echo $editCamp ? 'save' : 'add_circle'; ?></span>
                     <?php echo $editCamp ? 'Güncelle' : 'Kampanya Oluştur'; ?>
                 </button>
@@ -289,7 +289,7 @@ require_once __DIR__ . '/partials/app_header.php';
 
     <!-- ── Mevcut Kampanyalar ── -->
     <?php if (empty($campaigns)): ?>
-        <div class="bg-[#1E293B]/80 border border-white/10 rounded-xl p-10 text-center text-slate-400">
+        <div class="bg-[#2a2a2b]/80 border border-white/10 rounded-xl p-10 text-center text-slate-400">
             <span class="material-symbols-outlined text-[48px] mb-3 opacity-40 block">campaign</span>
             <p class="font-semibold">Henüz kampanya yok.</p>
             <p class="text-sm mt-1">İlk kampanyanı yukarıdan oluştur!</p>
@@ -301,7 +301,7 @@ require_once __DIR__ . '/partials/app_header.php';
             Kampanyalar (<?php echo count($campaigns); ?>)
         </h2>
         <?php foreach ($campaigns as $c): ?>
-        <div class="bg-[#1E293B]/80 border <?php echo $c['is_active'] ? 'border-white/10' : 'border-white/5 opacity-60'; ?> rounded-xl p-5 flex gap-4 flex-wrap md:flex-nowrap">
+        <div class="bg-[#2a2a2b]/80 border <?php echo $c['is_active'] ? 'border-white/10' : 'border-white/5 opacity-60'; ?> rounded-xl p-5 flex gap-4 flex-wrap md:flex-nowrap">
             <!-- İkon -->
             <div class="w-12 h-12 rounded-xl <?php echo $c['is_active'] ? 'bg-primary-container/15' : 'bg-white/5'; ?> flex items-center justify-center flex-shrink-0">
                 <span class="material-symbols-outlined <?php echo $c['is_active'] ? 'text-primary-container' : 'text-slate-500'; ?> text-[24px]">

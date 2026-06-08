@@ -121,7 +121,7 @@ require_once __DIR__ . '/partials/app_header.php';
     <?php endif; ?>
 
     <!-- Hızlı Rapor Formu -->
-    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl p-6 md:p-8 shadow-[0_15px_30px_-15px_rgba(15,23,42,0.5)]">
+    <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl p-6 md:p-8 shadow-[0_15px_30px_-15px_rgba(19,19,20,0.5)]">
         <h2 class="text-xl font-bold flex items-center gap-2 mb-2 text-on-surface">
             <span class="material-symbols-outlined text-primary-container text-[24px]">edit_note</span> Rapor Gönder
         </h2>
@@ -171,7 +171,7 @@ require_once __DIR__ . '/partials/app_header.php';
     </div>
 
     <!-- Raporlarım -->
-    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl shadow-[0_15px_30px_-15px_rgba(15,23,42,0.5)] overflow-hidden">
+    <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl shadow-[0_15px_30px_-15px_rgba(19,19,20,0.5)] overflow-hidden">
         <div class="px-6 py-5 border-b border-white/5">
             <h2 class="text-xl font-bold flex items-center gap-2 text-on-surface">
                 <span class="material-symbols-outlined text-primary-container text-[24px]">history</span> Gönderdiğim Raporlar

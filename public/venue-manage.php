@@ -122,15 +122,15 @@ require_once __DIR__ . '/partials/app_header.php';
 
     <!-- Stats -->
     <div class="grid grid-cols-3 gap-4">
-        <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-4 text-center">
+        <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-4 text-center">
             <div class="text-2xl font-black text-on-surface"><?php echo $checkinCount; ?></div>
             <div class="text-label-sm text-slate-400 mt-1">Check-in</div>
         </div>
-        <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-4 text-center">
+        <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-4 text-center">
             <div class="text-2xl font-black text-on-surface"><?php echo escape($categories[$venue['category']] ?? '-'); ?></div>
             <div class="text-label-sm text-slate-400 mt-1">Kategori</div>
         </div>
-        <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-4 text-center">
+        <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-4 text-center">
             <?php
             $statusBadge = match($venue['status']) {
                 'approved' => ['text' => 'Onaylı', 'class' => 'text-emerald-400'],
@@ -149,7 +149,7 @@ require_once __DIR__ . '/partials/app_header.php';
         <input type="hidden" name="action" value="update">
 
         <!-- Kapak Görseli -->
-        <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl overflow-hidden">
+        <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl overflow-hidden">
             <div class="h-48 bg-surface-container relative group">
                 <?php if (!empty($venue['cover_image'])): ?>
                     <img src="<?php echo BASE_URL . '/uploads/venues/' . escape($venue['cover_image']); ?>" class="w-full h-full object-cover">
@@ -195,7 +195,7 @@ require_once __DIR__ . '/partials/app_header.php';
         </div>
 
         <!-- Konum & İletişim -->
-        <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-6 space-y-5">
+        <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-6 space-y-5">
             <h2 class="text-lg font-bold text-on-surface flex items-center gap-2">
                 <span class="material-symbols-outlined text-primary-container text-[20px]">pin_drop</span> Konum & İletişim
             </h2>
@@ -221,7 +221,7 @@ require_once __DIR__ . '/partials/app_header.php';
         </div>
 
         <!-- Çalışma Saatleri -->
-        <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-6 space-y-5">
+        <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-6 space-y-5">
             <h2 class="text-lg font-bold text-on-surface flex items-center gap-2">
                 <span class="material-symbols-outlined text-primary-container text-[20px]">schedule</span> Çalışma Saatleri
             </h2>
@@ -243,7 +243,7 @@ require_once __DIR__ . '/partials/app_header.php';
         </div>
 
         <!-- Kaydet -->
-        <button type="submit" class="w-full bg-primary-container text-white py-3.5 rounded-xl text-label-md font-semibold hover:bg-primary-container/90 transition-colors shadow-[0_0_15px_rgba(255,107,53,0.3)] flex items-center justify-center gap-2">
+        <button type="submit" class="w-full bg-primary-container text-white py-3.5 rounded-xl text-label-md font-semibold hover:bg-primary-container/90 transition-colors shadow-[0_0_15px_rgba(255,145,0,0.3)] flex items-center justify-center gap-2">
             <span class="material-symbols-outlined text-[20px]">save</span> Değişiklikleri Kaydet
         </button>
     </form>

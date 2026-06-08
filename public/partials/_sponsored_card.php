@@ -5,7 +5,7 @@
  */
 if (empty($sponsoredAd)) return;
 ?>
-<div class="post-card bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)] overflow-hidden">
+<div class="post-card bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl shadow-[0_15px_30px_-15px_rgba(19,19,20,0.3)] overflow-hidden">
     <!-- Sponsored Badge -->
     <div class="px-5 pt-4 pb-2 flex items-center justify-between">
         <span class="inline-flex items-center gap-1.5 bg-primary-container/10 text-primary-container text-label-sm font-semibold px-3 py-1 rounded-full border border-primary-container/20">

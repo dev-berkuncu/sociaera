@@ -70,8 +70,8 @@ require_once __DIR__ . '/partials/app_header.php';
 <section class="flex-1 flex flex-col gap-6 max-w-3xl">
     <!-- Feed Filter Tabs -->
     <div class="flex items-center gap-6 border-b border-white/5 pb-2">
-        <a href="?filter=all" class="<?php echo $feedFilter === 'all' ? 'text-[#FF6B35] font-bold text-sm border-b-2 border-[#FF6B35] pb-2 px-1 -mb-[10px]' : 'text-slate-400 hover:text-white text-sm pb-2 px-1 transition-colors'; ?>">Herkes</a>
-        <a href="?filter=following" class="<?php echo $feedFilter === 'following' ? 'text-[#FF6B35] font-bold text-sm border-b-2 border-[#FF6B35] pb-2 px-1 -mb-[10px]' : 'text-slate-400 hover:text-white text-sm pb-2 px-1 transition-colors'; ?>">Takip Ettiklerim</a>
+        <a href="?filter=all" class="<?php echo $feedFilter === 'all' ? 'text-[#ff9100] font-bold text-sm border-b-2 border-[#ff9100] pb-2 px-1 -mb-[10px]' : 'text-slate-400 hover:text-white text-sm pb-2 px-1 transition-colors'; ?>">Herkes</a>
+        <a href="?filter=following" class="<?php echo $feedFilter === 'following' ? 'text-[#ff9100] font-bold text-sm border-b-2 border-[#ff9100] pb-2 px-1 -mb-[10px]' : 'text-slate-400 hover:text-white text-sm pb-2 px-1 transition-colors'; ?>">Takip Ettiklerim</a>
     </div>
 
     <!-- Compose Box -->
@@ -83,8 +83,8 @@ require_once __DIR__ . '/partials/app_header.php';
                 <?php $avatarUrl = safeAvatarUrl($currentUser['avatar'] ?? null, $currentUser['username']); ?>
                 <img alt="User avatar" class="w-10 h-10 rounded-full object-cover border border-white/10 flex-shrink-0" src="<?php echo $avatarUrl; ?>" width="40" height="40"/>
                 <div class="flex-grow relative">
-                    <div id="selectedVenueDisplay" class="flex items-center gap-2 mb-2 bg-[#FF6B35]/10 w-fit px-3 py-1 rounded-full border border-[#FF6B35]/20" style="display:none;">
-                        <span class="material-symbols-outlined text-[14px] text-[#FF6B35]" style="font-variation-settings: 'FILL' 1;">location_on</span>
+                    <div id="selectedVenueDisplay" class="flex items-center gap-2 mb-2 bg-[#ff9100]/10 w-fit px-3 py-1 rounded-full border border-[#ff9100]/20" style="display:none;">
+                        <span class="material-symbols-outlined text-[14px] text-[#ff9100]" style="font-variation-settings: 'FILL' 1;">location_on</span>
                         <span id="selectedVenueName" class="text-xs font-bold text-slate-300"></span>
                         <button type="button" onclick="removeVenue()" class="text-slate-500 hover:text-red-400 transition-colors"><span class="material-symbols-outlined text-[14px]">close</span></button>
                     </div>
@@ -106,21 +106,21 @@ require_once __DIR__ . '/partials/app_header.php';
                     </button>
                 </div>
 
-                <button type="submit" id="composeSubmitBtn" disabled class="bg-[#FF6B35] text-white px-5 py-2 rounded-lg font-bold text-xs shadow-md hover:brightness-110 transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed">Paylaş</button>
+                <button type="submit" id="composeSubmitBtn" disabled class="bg-[#ff9100] text-white px-5 py-2 rounded-lg font-bold text-xs shadow-md hover:brightness-110 transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed">Paylaş</button>
             </div>
         </form>
     </div>
 
     <!-- Venue Search Dropdown (outside compose card to avoid backdrop-blur clipping) -->
     <div id="venueSearchWrap" style="display:none;" class="fixed w-72 bg-[#1c1b1c] border border-white/5 rounded-xl shadow-2xl p-3 z-[9999]">
-        <input type="text" id="venueSearchInput" class="w-full bg-surface-container border border-white/10 rounded-lg px-3 py-2 text-on-surface text-sm focus:outline-none focus:border-[#FF6B35]/40 mb-2" placeholder="Mekan ara..." autocomplete="off">
+        <input type="text" id="venueSearchInput" class="w-full bg-surface-container border border-white/10 rounded-lg px-3 py-2 text-on-surface text-sm focus:outline-none focus:border-[#ff9100]/40 mb-2" placeholder="Mekan ara..." autocomplete="off">
         <div id="venueDropdown" class="max-h-48 overflow-y-auto"></div>
     </div>
 
     <!-- Feed Cards -->
     <div class="flex flex-col gap-stack-md pb-container-padding">
         <?php if (empty($posts)): ?>
-            <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-6 text-center text-slate-400">
+            <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-6 text-center text-slate-400">
                 <span class="material-symbols-outlined text-[48px] mb-2 opacity-50">campaign</span>
                 <p><?php echo $feedFilter === 'following' ? 'Takip ettiğin kullanıcıların henüz bir gönderi yok.' : 'Henüz hiç gönderi yok. İlk check-in\'ini yap!'; ?></p>
             </div>
@@ -328,7 +328,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }).join('');
 
         overlay.innerHTML = `
-            <div style="background:#1e293b;border:1px solid rgba(139,92,246,0.3);border-radius:24px;max-width:420px;width:100%;padding:2rem;position:relative;animation:slideUp .4s ease;box-shadow:0 25px 60px rgba(0,0,0,0.5),0 0 40px rgba(139,92,246,0.15);">
+            <div style="background:#2a2a2b;border:1px solid rgba(139,92,246,0.3);border-radius:24px;max-width:420px;width:100%;padding:2rem;position:relative;animation:slideUp .4s ease;box-shadow:0 25px 60px rgba(0,0,0,0.5),0 0 40px rgba(139,92,246,0.15);">
                 <!-- Confetti emoji header -->
                 <div style="text-align:center;font-size:3rem;margin-bottom:0.5rem;animation:bounce 0.6s ease;">🎉</div>
                 <h2 style="text-align:center;font-size:1.5rem;font-weight:800;color:#f1f5f9;margin:0 0 0.25rem;">Kampanya Kazandın!</h2>

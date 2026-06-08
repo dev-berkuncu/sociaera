@@ -57,11 +57,11 @@ require_once __DIR__ . '/partials/app_header.php';
         <h2 class="text-lg font-bold text-on-surface flex items-center gap-2 mb-3"><span class="material-symbols-outlined text-emerald-400">verified</span> Kazanılan Rozetler</h2>
         <div class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-3">
             <?php foreach ($earnedBadges as $b): ?>
-            <div class="relative flex flex-col items-center gap-1.5 p-3 bg-[#1E293B]/80 border border-white/10 rounded-xl hover:border-white/20 transition-colors group" title="<?php echo escape($b['name'] . ' — ' . $b['desc']); ?>">
+            <div class="relative flex flex-col items-center gap-1.5 p-3 bg-[#2a2a2b]/80 border border-white/10 rounded-xl hover:border-white/20 transition-colors group" title="<?php echo escape($b['name'] . ' — ' . $b['desc']); ?>">
                 <div class="relative w-12 h-12 rounded-full flex items-center justify-center shadow-[0_0_15px_rgba(0,0,0,0.3)]" style="background: <?php echo $b['color']; ?>20; border: 2px solid <?php echo $b['color']; ?>50;">
                     <span class="material-symbols-outlined text-[24px] group-hover:scale-110 transition-transform" style="color: <?php echo $b['color']; ?>"><?php echo $b['icon']; ?></span>
                     <?php if ($b['total_count'] > 1): ?>
-                    <span class="absolute -top-1 -right-1 min-w-[16px] h-4 flex items-center justify-center bg-primary-container text-white text-[9px] font-black rounded-full px-1 shadow-[0_2px_6px_rgba(255,107,53,0.4)]"><?php echo $b['total_count']; ?></span>
+                    <span class="absolute -top-1 -right-1 min-w-[16px] h-4 flex items-center justify-center bg-primary-container text-white text-[9px] font-black rounded-full px-1 shadow-[0_2px_6px_rgba(255,145,0,0.4)]"><?php echo $b['total_count']; ?></span>
                     <?php endif; ?>
                 </div>
                 <span class="text-[10px] text-slate-400 font-semibold text-center leading-tight"><?php echo escape($b['name']); ?></span>
@@ -78,7 +78,7 @@ require_once __DIR__ . '/partials/app_header.php';
     </div>
 
     <!-- İlerleme Barı -->
-    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-5 shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)]">
+    <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-5 shadow-[0_15px_30px_-15px_rgba(19,19,20,0.3)]">
         <div class="flex items-center justify-between mb-2">
             <span class="text-slate-400 text-sm font-semibold">Genel İlerleme</span>
             <span class="text-on-surface font-black text-lg"><?php echo round(($earnedCount / max(1, $totalCount)) * 100); ?>%</span>
@@ -93,7 +93,7 @@ require_once __DIR__ . '/partials/app_header.php';
         <h2 class="text-lg font-bold text-on-surface flex items-center gap-2 mb-3"><span class="material-symbols-outlined text-primary-container">flag</span> Tüm Görevler</h2>
         <div class="flex flex-col gap-3">
             <?php foreach ($progress as $b): ?>
-            <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border rounded-xl p-5 shadow-[0_10px_25px_-15px_rgba(15,23,42,0.3)] flex items-center gap-4 transition-all <?php echo $b['earned'] ? 'border-emerald-500/20 bg-emerald-500/5' : 'border-white/10 hover:border-white/20'; ?>">
+            <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border rounded-xl p-5 shadow-[0_10px_25px_-15px_rgba(19,19,20,0.3)] flex items-center gap-4 transition-all <?php echo $b['earned'] ? 'border-emerald-500/20 bg-emerald-500/5' : 'border-white/10 hover:border-white/20'; ?>">
                 <!-- İkon -->
                 <div class="w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 relative <?php echo $b['earned'] ? 'shadow-[0_0_20px_rgba(0,0,0,0.3)]' : 'opacity-60'; ?>" style="background: <?php echo $b['color']; ?><?php echo $b['earned'] ? '30' : '15'; ?>; border: 2px solid <?php echo $b['color']; ?><?php echo $b['earned'] ? '60' : '20'; ?>;">
                     <span class="material-symbols-outlined text-[28px]" style="color: <?php echo $b['color']; ?>"><?php echo $b['icon']; ?></span>

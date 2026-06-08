@@ -41,8 +41,8 @@ require_once __DIR__ . '/partials/app_header.php';
     </div>
 
     <?php if ($myRank): ?>
-    <div class="bg-gradient-to-r from-primary-container/20 to-[#1E293B]/80 backdrop-blur-[20px] border border-primary-container/30 rounded-xl p-6 shadow-[0_15px_30px_-15px_rgba(255,107,53,0.15)] flex items-center gap-5 mb-4">
-        <div class="w-14 h-14 rounded-full bg-primary-container text-white flex items-center justify-center font-bold text-xl shadow-[0_0_15px_rgba(255,107,53,0.5)] flex-shrink-0">
+    <div class="bg-gradient-to-r from-primary-container/20 to-[#2a2a2b]/80 backdrop-blur-[20px] border border-primary-container/30 rounded-xl p-6 shadow-[0_15px_30px_-15px_rgba(255,145,0,0.15)] flex items-center gap-5 mb-4">
+        <div class="w-14 h-14 rounded-full bg-primary-container text-white flex items-center justify-center font-bold text-xl shadow-[0_0_15px_rgba(255,145,0,0.5)] flex-shrink-0">
             #<?php echo $myRank; ?>
         </div>
         <div>
@@ -54,7 +54,7 @@ require_once __DIR__ . '/partials/app_header.php';
 
     <!-- Top Kullanıcılar -->
     <h2 class="text-xl font-bold flex items-center gap-2 text-on-surface mt-2 mb-2"><span class="material-symbols-outlined text-primary-container">groups</span> En Aktif Kullanıcılar</h2>
-    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl overflow-hidden shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)] mb-8">
+    <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl overflow-hidden shadow-[0_15px_30px_-15px_rgba(19,19,20,0.3)] mb-8">
         <?php if (empty($topUsers)): ?>
             <div class="p-8 text-center text-slate-400">
                 <span class="material-symbols-outlined text-[48px] mb-2 opacity-50">emoji_events</span>
@@ -121,7 +121,7 @@ require_once __DIR__ . '/partials/app_header.php';
 
     <!-- Top Mekanlar -->
     <h2 class="text-xl font-bold flex items-center gap-2 text-on-surface mb-2"><span class="material-symbols-outlined text-primary-container">store</span> En Popüler Mekanlar</h2>
-    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl overflow-hidden shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)] mb-8">
+    <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl overflow-hidden shadow-[0_15px_30px_-15px_rgba(19,19,20,0.3)] mb-8">
         <?php if (empty($topVenues)): ?>
             <div class="p-8 text-center text-slate-400">
                 <span class="material-symbols-outlined text-[48px] mb-2 opacity-50">location_off</span>

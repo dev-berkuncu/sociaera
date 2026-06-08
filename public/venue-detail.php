@@ -86,10 +86,10 @@ require_once __DIR__ . '/partials/app_header.php';
         <span class="material-symbols-outlined text-[20px]">arrow_back</span> Mekanlar
     </a>
 
-    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl overflow-hidden shadow-[0_20px_40px_-15px_rgba(15,23,42,0.5)] mb-6 relative">
+    <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl overflow-hidden shadow-[0_20px_40px_-15px_rgba(19,19,20,0.5)] mb-6 relative">
         <!-- Banner Image -->
         <div class="h-64 md:h-80 w-full bg-surface-container relative">
-            <div class="absolute inset-0 bg-gradient-to-t from-[#1E293B]/90 via-[#1E293B]/40 to-transparent z-10"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-[#2a2a2b]/90 via-[#2a2a2b]/40 to-transparent z-10"></div>
             <?php if (!empty($venue['cover_image'])): ?>
                 <div class="absolute inset-0 bg-cover bg-center blur-2xl opacity-40 scale-110" style="background-image: url('<?php echo BASE_URL . '/uploads/venues/' . escape($venue['cover_image']); ?>')"></div>
                 <img src="<?php echo BASE_URL . '/uploads/venues/' . escape($venue['cover_image']); ?>" class="w-full h-full object-contain p-4 relative z-10" width="800" height="320">
@@ -126,7 +126,7 @@ require_once __DIR__ . '/partials/app_header.php';
                 </div>
                 <!-- Call to action button -->
                 <div class="flex items-center gap-3">
-                    <a href="<?php echo BASE_URL; ?>/dashboard?venue_id=<?php echo $venue['id']; ?>" class="flex items-center justify-center gap-2 bg-primary-container text-white px-6 py-3 rounded-xl font-bold hover:bg-primary-container/90 transition-all shadow-[0_0_20px_rgba(255,107,53,0.3)] active:scale-95 group shrink-0">
+                    <a href="<?php echo BASE_URL; ?>/dashboard?venue_id=<?php echo $venue['id']; ?>" class="flex items-center justify-center gap-2 bg-primary-container text-white px-6 py-3 rounded-xl font-bold hover:bg-primary-container/90 transition-all shadow-[0_0_20px_rgba(255,145,0,0.3)] active:scale-95 group shrink-0">
                         <span class="material-symbols-outlined text-[20px] group-hover:scale-110 transition-transform">pin_drop</span>
                         Burada Check-in Yap
                     </a>
@@ -194,7 +194,7 @@ require_once __DIR__ . '/partials/app_header.php';
     </div>
 
     <!-- Rating Section -->
-    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl p-6 md:p-8 shadow-[0_20px_40px_-15px_rgba(15,23,42,0.5)] mb-6" id="venueRatingSection">
+    <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl p-6 md:p-8 shadow-[0_20px_40px_-15px_rgba(19,19,20,0.5)] mb-6" id="venueRatingSection">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <!-- Left: Average Rating Display -->
             <div class="flex items-center gap-5">
@@ -267,7 +267,7 @@ require_once __DIR__ . '/partials/app_header.php';
 
     <!-- ── Aktif Kampanyalar ── -->
     <?php if (!empty($activeCampaigns)): ?>
-    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-purple-500/20 rounded-xl overflow-hidden mb-2">
+    <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-purple-500/20 rounded-xl overflow-hidden mb-2">
         <div class="px-6 py-4 border-b border-white/5 flex items-center gap-2">
             <span class="material-symbols-outlined text-purple-400 text-[20px]">campaign</span>
             <h2 class="text-base font-bold text-on-surface">Aktif Kampanyalar</h2>
@@ -335,7 +335,7 @@ require_once __DIR__ . '/partials/app_header.php';
 
     <div class="flex flex-col gap-stack-md pb-container-padding">
         <?php if (empty($posts)): ?>
-            <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-8 text-center text-slate-400">
+            <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-8 text-center text-slate-400">
                 <span class="material-symbols-outlined text-[48px] mb-2 opacity-50">pin_drop</span>
                 <p>Bu mekanda henüz check-in yok.</p>
             </div>

@@ -33,7 +33,7 @@ require_once __DIR__ . '/partials/app_header.php';
 
     <!-- Page Header -->
     <div class="flex items-center gap-4 mb-2">
-        <div class="w-12 h-12 bg-gradient-to-br from-primary-container to-[#ff9e7d] rounded-xl flex items-center justify-center text-white shadow-[0_8px_20px_-5px_rgba(255,107,53,0.4)] transform -rotate-3">
+        <div class="w-12 h-12 bg-gradient-to-br from-primary-container to-[#ff9e7d] rounded-xl flex items-center justify-center text-white shadow-[0_8px_20px_-5px_rgba(255,145,0,0.4)] transform -rotate-3">
             <span class="material-symbols-outlined text-[28px]">campaign</span>
         </div>
         <div>
@@ -47,7 +47,7 @@ require_once __DIR__ . '/partials/app_header.php';
     <div class="grid grid-cols-2 sm:grid-cols-3 gap-5">
         <?php foreach ($sponsors as $sp): ?>
         <a href="<?php echo escape($sp['url'] ?? '#'); ?>" target="_blank" rel="noopener"
-           class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl overflow-hidden hover:border-primary-container/40 hover:bg-white/[0.06] transition-all duration-300 group shadow-[0_10px_20px_-10px_rgba(15,23,42,0.3)] aspect-square relative">
+           class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl overflow-hidden hover:border-primary-container/40 hover:bg-white/[0.06] transition-all duration-300 group shadow-[0_10px_20px_-10px_rgba(19,19,20,0.3)] aspect-square relative">
             <?php if (!empty($sp['logo'])): ?>
                 <img src="<?php echo BASE_URL . '/' . escape($sp['logo']); ?>" alt="<?php echo escape($sp['name']); ?>" class="absolute inset-0 w-full h-full object-contain p-4" width="300" height="300" loading="lazy">
             <?php else: ?>
@@ -61,7 +61,7 @@ require_once __DIR__ . '/partials/app_header.php';
     </div>
     <?php else: ?>
     <!-- Empty State -->
-    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl p-10 text-center shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)]">
+    <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl p-10 text-center shadow-[0_15px_30px_-15px_rgba(19,19,20,0.3)]">
         <div class="w-20 h-20 mx-auto rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-5">
             <span class="material-symbols-outlined text-slate-500 text-[40px]">storefront</span>
         </div>
@@ -71,18 +71,18 @@ require_once __DIR__ . '/partials/app_header.php';
     <?php endif; ?>
 
     <!-- CTA: Sponsor Ol -->
-    <div class="bg-gradient-to-br from-[#1E293B]/80 to-surface-container border border-primary-container/20 rounded-2xl p-8 md:p-10 text-center shadow-[0_20px_40px_-15px_rgba(255,107,53,0.15)] relative overflow-hidden">
+    <div class="bg-gradient-to-br from-[#2a2a2b]/80 to-surface-container border border-primary-container/20 rounded-2xl p-8 md:p-10 text-center shadow-[0_20px_40px_-15px_rgba(255,145,0,0.15)] relative overflow-hidden">
         <div class="absolute -right-8 -top-8 text-[120px] opacity-5 text-primary-container leading-none select-none">
             <span class="material-symbols-outlined" style="font-size:inherit;">handshake</span>
         </div>
         <div class="relative z-10">
-            <div class="w-16 h-16 mx-auto bg-gradient-to-br from-primary-container to-[#ff9e7d] rounded-2xl flex items-center justify-center text-white mb-5 shadow-[0_10px_25px_-5px_rgba(255,107,53,0.5)] transform rotate-3">
+            <div class="w-16 h-16 mx-auto bg-gradient-to-br from-primary-container to-[#ff9e7d] rounded-2xl flex items-center justify-center text-white mb-5 shadow-[0_10px_25px_-5px_rgba(255,145,0,0.5)] transform rotate-3">
                 <span class="material-symbols-outlined text-[32px]">rocket_launch</span>
             </div>
             <h2 class="text-2xl md:text-3xl font-black text-on-surface mb-2">Sponsor Olmak İster Misin?</h2>
             <p class="text-slate-400 mb-8 max-w-md mx-auto">Markanı binlerce oyuncuya tanıt. Reklam alanlarımız hakkında bilgi almak için bizimle iletişime geç.</p>
             <div class="flex flex-col sm:flex-row gap-3 justify-center items-center max-w-md mx-auto">
-                <a href="mailto:info@sociaera.online" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-primary-container hover:bg-primary-container/90 text-white px-8 py-3.5 rounded-xl font-bold shadow-[0_0_20px_rgba(255,107,53,0.3)] hover:shadow-[0_0_30px_rgba(255,107,53,0.4)] transition-all active:scale-[0.98]">
+                <a href="mailto:info@sociaera.online" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-primary-container hover:bg-primary-container/90 text-white px-8 py-3.5 rounded-xl font-bold shadow-[0_0_20px_rgba(255,145,0,0.3)] hover:shadow-[0_0_30px_rgba(255,145,0,0.4)] transition-all active:scale-[0.98]">
                     <span class="material-symbols-outlined text-[20px]">mail</span>
                     İletişime Geç
                 </a>

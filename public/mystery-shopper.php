@@ -49,9 +49,9 @@ require_once __DIR__ . '/partials/app_header.php';
 <section class="flex-1 flex flex-col gap-6 max-w-2xl w-full mx-auto lg:mx-0">
 
     <!-- Hero -->
-    <div class="relative bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl overflow-hidden">
+    <div class="relative bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl overflow-hidden">
         <!-- Gradient BG -->
-        <div class="absolute inset-0 bg-gradient-to-br from-slate-800/50 via-[#1E293B] to-indigo-900/30 pointer-events-none"></div>
+        <div class="absolute inset-0 bg-gradient-to-br from-slate-800/50 via-[#2a2a2b] to-indigo-900/30 pointer-events-none"></div>
         <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-indigo-400 to-transparent"></div>
 
         <div class="relative z-10 p-8 md:p-10">
@@ -95,7 +95,7 @@ require_once __DIR__ . '/partials/app_header.php';
         ];
         $s = $statusMap[$application['status']] ?? $statusMap['pending'];
     ?>
-    <div class="bg-[#1E293B]/80 border border-<?php echo $s['color']; ?>-500/20 rounded-xl p-6">
+    <div class="bg-[#2a2a2b]/80 border border-<?php echo $s['color']; ?>-500/20 rounded-xl p-6">
         <div class="flex items-center gap-3 mb-3">
             <span class="material-symbols-outlined text-<?php echo $s['color']; ?>-400 text-[24px]"><?php echo $s['icon']; ?></span>
             <span class="font-bold text-on-surface">Başvuru Durumu: <span class="text-<?php echo $s['color']; ?>-400"><?php echo $s['label']; ?></span></span>
@@ -132,7 +132,7 @@ require_once __DIR__ . '/partials/app_header.php';
     <?php endif; // $application ?>
 
     <!-- ── Başvuru Formu ── -->
-    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl overflow-hidden">
+    <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl overflow-hidden">
         <div class="px-6 py-4 border-b border-white/5 flex items-center gap-2">
             <span class="material-symbols-outlined text-indigo-400 text-[20px]">edit_note</span>
             <h2 class="text-base font-bold text-on-surface">

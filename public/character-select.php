@@ -84,7 +84,7 @@ require_once __DIR__ . '/partials/flash.php';
     </div>
     
     <div class="w-full max-w-3xl relative z-10">
-        <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl p-8 md:p-12 shadow-[0_20px_40px_-15px_rgba(15,23,42,0.5)]">
+        <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl p-8 md:p-12 shadow-[0_20px_40px_-15px_rgba(19,19,20,0.5)]">
             <div class="text-center mb-10">
                 <h1 class="text-3xl font-light text-on-surface mb-2">Karakter Seçimi</h1>
                 <p class="text-slate-400 text-sm">Hangi karakter ile devam etmek istiyorsun?</p>
@@ -108,7 +108,7 @@ require_once __DIR__ . '/partials/flash.php';
                         <label class="relative cursor-pointer group">
                             <input type="radio" name="character_id" value="<?php echo $cid; ?>" required class="peer sr-only">
                             <div class="bg-background border border-white/10 rounded-xl p-8 flex flex-col items-center justify-center gap-1 hover:bg-white/5 hover:border-primary-container/30 peer-checked:border-primary-container peer-checked:bg-primary-container/5 transition-all">
-                                <div class="w-16 h-16 rounded-full bg-primary-container/20 text-primary-container flex items-center justify-center mb-3 group-hover:scale-110 transition-transform peer-checked:bg-primary-container peer-checked:text-white shadow-[0_0_15px_rgba(255,107,53,0.1)]">
+                                <div class="w-16 h-16 rounded-full bg-primary-container/20 text-primary-container flex items-center justify-center mb-3 group-hover:scale-110 transition-transform peer-checked:bg-primary-container peer-checked:text-white shadow-[0_0_15px_rgba(255,145,0,0.1)]">
                                     <span class="material-symbols-outlined text-[32px] font-light">account_circle</span>
                                 </div>
                                 
@@ -120,7 +120,7 @@ require_once __DIR__ . '/partials/flash.php';
                     </div>
                     
                     <div class="flex justify-center">
-                        <button type="submit" class="bg-primary-container text-white px-8 py-4 rounded-xl font-bold shadow-[0_0_15px_rgba(255,107,53,0.3)] hover:bg-primary-container/90 transition-all flex items-center justify-center gap-3 active:scale-95 text-sm uppercase tracking-wider">
+                        <button type="submit" class="bg-primary-container text-white px-8 py-4 rounded-xl font-bold shadow-[0_0_15px_rgba(255,145,0,0.3)] hover:bg-primary-container/90 transition-all flex items-center justify-center gap-3 active:scale-95 text-sm uppercase tracking-wider">
                             <span class="material-symbols-outlined text-[20px]">login</span> Seçili Karakterle Devam Et
                         </button>
                     </div>

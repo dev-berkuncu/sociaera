@@ -40,7 +40,7 @@ require_once __DIR__ . '/partials/app_header.php';
         <?php endif; ?>
     </div>
 
-    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl overflow-hidden shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)]">
+    <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl overflow-hidden shadow-[0_15px_30px_-15px_rgba(19,19,20,0.3)]">
         <?php if (empty($notifications)): ?>
             <div class="p-12 text-center text-slate-400">
                 <span class="material-symbols-outlined text-[64px] mb-4 opacity-50">notifications_off</span>
@@ -87,7 +87,7 @@ require_once __DIR__ . '/partials/app_header.php';
                     </div>
                     
                     <?php if (!$n['is_read']): ?>
-                        <div class="w-2.5 h-2.5 rounded-full bg-primary-container flex-shrink-0 shadow-[0_0_8px_rgba(255,107,53,0.8)]"></div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-primary-container flex-shrink-0 shadow-[0_0_8px_rgba(255,145,0,0.8)]"></div>
                     <?php endif; ?>
                 </a>
                 <?php endforeach; ?>
