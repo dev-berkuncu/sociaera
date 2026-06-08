@@ -5,102 +5,130 @@
  */
 if (!isset($post)) return;
 ?>
-<article class="post-card bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-6 shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)] flex flex-col gap-4" id="post-<?php echo $post['id']; ?>">
-    <?php if (!empty($post['reposted_by'])): ?>
-    <div class="flex items-center gap-2 text-slate-400 font-label-sm text-label-sm mb-[-8px]">
-        <span class="material-symbols-outlined text-[16px]">repeat</span>
-        <a href="<?php echo BASE_URL; ?>/profile?u=<?php echo escape($post['reposted_by_tag'] ?: $post['reposted_by']); ?>" class="hover:text-white transition-colors"><?php echo escape($post['reposted_by']); ?></a> paylaştı
-    </div>
-    <?php endif; ?>
-
-    <div class="flex items-center justify-between">
-        <div class="flex items-center gap-3">
-            <?php $pAvatar = safeAvatarUrl($post['avatar'] ?? null, $post['username']); ?>
-            <a href="<?php echo BASE_URL; ?>/profile?u=<?php echo escape($post['tag'] ?: $post['username']); ?>">
-                <img alt="User avatar" class="w-10 h-10 rounded-full object-cover border border-white/10" src="<?php echo $pAvatar; ?>" width="40" height="40" loading="lazy"/>
-            </a>
-            <div>
-                <div class="font-label-md text-label-md text-on-surface flex items-center gap-2">
-                    <?php if (!empty($post['is_mystery_shopper'])): ?>
-                        <span class="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full font-bold bg-indigo-500/15 text-indigo-300 border border-indigo-500/20" title="Bu yorum bir Gizli Müşteri tarafından yapıldı">
-                            <span class="material-symbols-outlined text-[11px]">visibility_off</span>
-                            Gizli Müşteri
-                        </span>
-                    <?php else: ?>
-                        <a href="<?php echo BASE_URL; ?>/profile?u=<?php echo escape($post['tag'] ?: $post['username']); ?>" class="hover:text-primary-container transition-colors font-bold"><?php echo escape($post['username']); ?></a>
-                        <?php if (!empty($post['is_premium'])): ?>
-                            <?php
-                            $userBadge = $post['badge'] ?? null;
-                            $badges = UserModel::availableBadges();
-                            if ($userBadge && isset($badges[$userBadge])):
-                                $b = $badges[$userBadge];
-                            ?>
-                            <span class="material-symbols-outlined text-[16px]" style="color: <?php echo $b['color']; ?>" title="Premium — <?php echo $b['label']; ?>" data-weight="fill"><?php echo $b['icon']; ?></span>
-                            <?php else: ?>
-                            <span class="material-symbols-outlined text-[14px] text-[#7bd0ff]" title="Premium" data-weight="fill">diamond</span>
-                            <?php endif; ?>
-                        <?php endif; ?>
-                        <?php if (!empty($post['tag'])): ?>
-                            <span class="text-slate-500 font-normal">@<?php echo escape($post['tag']); ?></span>
-                        <?php endif; ?>
-                    <?php endif; ?>
-                </div>
-                <div class="font-label-sm text-label-sm text-slate-400"><?php echo timeAgo($post['created_at']); ?></div>
-            </div>
-        </div>
-        <?php if (!empty($post['is_own'])): ?>
-        <button onclick="App.deletePost(this, <?php echo $post['id']; ?>)" class="text-slate-400 hover:text-error transition-colors"><span class="material-symbols-outlined">delete</span></button>
+<article class="post-card receipt-card p-6 flex flex-col gap-4" id="post-<?php echo $post['id']; ?>">
+    <!-- Visual RP Stamp -->
+    <div class="ticket-stamp-wrapper">
+        <?php if (!empty($post['is_mystery_shopper'])): ?>
+            <div class="ticket-stamp stamp-mystery">GİZLİ MÜŞTERİ</div>
+        <?php elseif (!empty($post['is_premium'])): ?>
+            <div class="ticket-stamp stamp-vip">VIP GEÇİŞİ</div>
+        <?php else: ?>
+            <div class="ticket-stamp stamp-approved">KABUL EDİLDİ</div>
         <?php endif; ?>
     </div>
 
-    <a href="<?php echo BASE_URL; ?>/venue-detail?id=<?php echo $post['venue_id']; ?>" class="flex items-center gap-2 w-fit bg-white/5 hover:bg-white/10 transition-colors border border-white/10 px-3 py-1.5 rounded-full">
-        <span class="material-symbols-outlined text-[16px] text-primary-container">location_on</span>
-        <span class="font-label-sm text-label-sm text-slate-300"><?php echo escape($post['venue_name']); ?></span>
-    </a>
-
-    <?php if (!empty($post['note'])): ?>
-    <p class="font-body-md text-body-md text-on-surface"><?php echo linkify(parseMentions($post['note'])); ?></p>
+    <?php if (!empty($post['reposted_by'])): ?>
+    <div class="flex items-center gap-2 text-[#ffb59d]/80 font-mono text-[10px] mb-[-6px] tracking-widest uppercase">
+        <span class="material-symbols-outlined text-[14px]">settings_input_antenna</span>
+        <a href="<?php echo BASE_URL; ?>/profile?u=<?php echo escape($post['reposted_by_tag'] ?: $post['reposted_by']); ?>" class="hover:text-white transition-colors">@<?php echo escape($post['reposted_by_tag'] ?: $post['reposted_by']); ?></a> TELSİZ YAYINI
+    </div>
     <?php endif; ?>
 
+    <!-- Header: Venue Details -->
+    <div class="flex flex-col gap-1 border-b border-dashed border-white/10 pb-3 mt-1">
+        <div class="flex items-center justify-between">
+            <a href="<?php echo BASE_URL; ?>/venue-detail?id=<?php echo $post['venue_id']; ?>" class="flex items-center gap-2 text-[#ff6b35] hover:text-[#ffb59d] transition-colors">
+                <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">location_on</span>
+                <span class="font-black text-lg tracking-wider uppercase font-['Manrope']"><?php echo escape($post['venue_name']); ?></span>
+            </a>
+            <?php if (!empty($post['is_own'])): ?>
+            <button onclick="App.deletePost(this, <?php echo $post['id']; ?>)" class="text-slate-500 hover:text-red-400 transition-colors z-30" title="Sil"><span class="material-symbols-outlined text-[20px]">delete</span></button>
+            <?php endif; ?>
+        </div>
+        <span class="text-[9px] font-mono text-slate-500 uppercase tracking-widest"><?php echo escape(VenueModel::categories()[$post['venue_category']] ?? ($post['venue_category'] ?? 'KEŞİF NOKTASI')); ?></span>
+    </div>
+
+    <!-- Ticket Metadata Stub -->
+    <div class="ticket-meta-grid">
+        <div>
+            <span class="text-slate-500 block text-[8px] uppercase tracking-wider font-mono">MÜŞTERİ</span>
+            <?php if (!empty($post['is_mystery_shopper'])): ?>
+                <span class="text-purple-300 font-bold">ANONİM G.M.</span>
+            <?php else: ?>
+                <a href="<?php echo BASE_URL; ?>/profile?u=<?php echo escape($post['tag'] ?: $post['username']); ?>" class="text-slate-200 hover:text-[#ffb59d] font-bold">@<?php echo escape($post['tag'] ?: $post['username']); ?></a>
+            <?php endif; ?>
+        </div>
+        <div>
+            <span class="text-slate-500 block text-[8px] uppercase tracking-wider font-mono">GEÇİŞ NO</span>
+            <span class="text-slate-300 font-bold">#TKT-<?php echo str_pad($post['id'], 5, '0', STR_PAD_LEFT); ?></span>
+        </div>
+        <div>
+            <span class="text-slate-500 block text-[8px] uppercase tracking-wider font-mono">ZAMAN</span>
+            <span class="text-slate-300 font-bold"><?php echo strtoupper(timeAgo($post['created_at'])); ?></span>
+        </div>
+        <div>
+            <span class="text-slate-500 block text-[8px] uppercase tracking-wider font-mono">KARAKTER</span>
+            <span class="text-slate-300 font-bold truncate block max-w-[120px]" title="<?php echo escape($post['username']); ?>">
+                <?php echo !empty($post['is_mystery_shopper']) ? 'GİZLİ MÜŞTERİ' : escape($post['username']); ?>
+            </span>
+        </div>
+    </div>
+
+    <!-- Review / Note -->
+    <?php if (!empty($post['note'])): ?>
+    <div class="my-1 py-1">
+        <p class="font-body-md text-body-md text-slate-200 leading-relaxed font-sans"><?php echo linkify(parseMentions($post['note'])); ?></p>
+    </div>
+    <?php endif; ?>
+
+    <!-- Attached Image -->
     <?php if (!empty($post['image'])): ?>
-    <div class="rounded-xl overflow-hidden border border-white/10 shadow-lg mt-2 max-h-[500px] bg-black/10">
+    <div class="rounded-xl overflow-hidden border border-white/10 shadow-lg bg-black/10 mt-1 max-h-[500px]">
         <img alt="Venue photo" class="block w-full max-w-full h-auto max-h-[500px] object-contain" src="<?php echo uploadUrl('posts', $post['image']); ?>" width="640" height="400" loading="lazy"/>
     </div>
     <?php endif; ?>
 
-    <div class="flex items-center gap-6 mt-2 pt-4 border-t border-white/5 text-slate-400">
-        <button onclick="App.toggleLike(this, <?php echo $post['id']; ?>)" class="flex items-center gap-2 hover:text-primary-container transition-colors <?php echo !empty($post['viewer_liked']) ? 'liked text-primary-container' : ''; ?>">
-            <span class="material-symbols-outlined"><?php echo !empty($post['viewer_liked']) ? 'favorite' : 'favorite'; ?></span> 
-            <span class="font-label-sm text-label-sm action-count"><?php echo (int)($post['like_count'] ?? 0); ?></span>
-        </button>
-        <button onclick="App.toggleRepost(this, <?php echo $post['id']; ?>)" class="flex items-center gap-2 hover:text-primary-container transition-colors <?php echo !empty($post['viewer_reposted']) ? 'reposted text-primary-container' : ''; ?>">
-            <span class="material-symbols-outlined">repeat</span> 
-            <span class="font-label-sm text-label-sm action-count"><?php echo (int)($post['repost_count'] ?? 0); ?></span>
-        </button>
-        <button onclick="App.toggleComments(this, <?php echo $post['id']; ?>)" class="flex items-center gap-2 hover:text-on-surface transition-colors">
-            <span class="material-symbols-outlined">chat_bubble</span> 
-            <span class="font-label-sm text-label-sm action-count" data-comment-count="<?php echo $post['id']; ?>"><?php echo (int)($post['comment_count'] ?? 0); ?></span>
-        </button>
-        <button onclick="navigator.clipboard.writeText('<?php echo BASE_URL; ?>/post?id=<?php echo $post['id']; ?>'); App.flash('Link kopyalandı!', 'success');" class="flex items-center gap-2 hover:text-on-surface transition-colors ml-auto">
-            <span class="material-symbols-outlined">share</span>
-        </button>
-        <?php if (Auth::check() && empty($post['is_own'])): ?>
-        <button onclick="App.openReportModal('checkin', <?php echo $post['id']; ?>)" class="flex items-center gap-2 hover:text-red-400 transition-colors" title="Raporla">
-            <span class="material-symbols-outlined text-[20px]">flag</span>
-        </button>
-        <?php endif; ?>
+    <!-- Actions Footer -->
+    <div class="flex items-center justify-between gap-4 mt-2 pt-3 border-t border-dashed border-white/10 text-slate-400">
+        <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
+            <!-- Saygı (Like) -->
+            <button onclick="App.toggleLike(this, <?php echo $post['id']; ?>)" class="flex items-center gap-1.5 hover:text-[#ff6b35] transition-colors <?php echo !empty($post['viewer_liked']) ? 'liked text-[#ff6b35]' : ''; ?>">
+                <span class="material-symbols-outlined text-[18px]">shield</span> 
+                <span class="text-[10px] font-mono tracking-wider">SAYGI (<span class="action-count"><?php echo (int)($post['like_count'] ?? 0); ?></span>)</span>
+            </button>
+            
+            <!-- Telsizle (Repost) -->
+            <button onclick="App.toggleRepost(this, <?php echo $post['id']; ?>)" class="flex items-center gap-1.5 hover:text-[#ff6b35] transition-colors <?php echo !empty($post['viewer_reposted']) ? 'reposted text-[#ff6b35]' : ''; ?>">
+                <span class="material-symbols-outlined text-[18px]">settings_input_antenna</span> 
+                <span class="text-[10px] font-mono tracking-wider">TELSİZLE (<span class="action-count"><?php echo (int)($post['repost_count'] ?? 0); ?></span>)</span>
+            </button>
+            
+            <!-- Telsiz Logu (Comments) -->
+            <button onclick="App.toggleComments(this, <?php echo $post['id']; ?>)" class="flex items-center gap-1.5 hover:text-white transition-colors">
+                <span class="material-symbols-outlined text-[18px]">terminal</span> 
+                <span class="text-[10px] font-mono tracking-wider">LOG (<span class="action-count" data-comment-count="<?php echo $post['id']; ?>"><?php echo (int)($post['comment_count'] ?? 0); ?></span>)</span>
+            </button>
+
+            <!-- Bahşiş (Tip) -->
+            <button onclick="App.flash('Bahşiş özelliği yakında aktif edilecek! 💸', 'info')" class="flex items-center gap-1.5 hover:text-emerald-400 transition-colors text-slate-500">
+                <span class="material-symbols-outlined text-[18px]">payments</span> 
+                <span class="text-[10px] font-mono tracking-wider">BAHŞİŞ</span>
+            </button>
+        </div>
+
+        <div class="flex items-center gap-3 shrink-0">
+            <button onclick="navigator.clipboard.writeText('<?php echo BASE_URL; ?>/post?id=<?php echo $post['id']; ?>'); App.flash('Link kopyalandı!', 'success');" class="flex items-center gap-1.5 hover:text-white transition-colors" title="Paylaş">
+                <span class="material-symbols-outlined text-[18px]">share</span>
+            </button>
+            <?php if (Auth::check() && empty($post['is_own'])): ?>
+            <button onclick="App.openReportModal('checkin', <?php echo $post['id']; ?>)" class="flex items-center gap-1.5 hover:text-red-400 transition-colors" title="Raporla">
+                <span class="material-symbols-outlined text-[18px]">flag</span>
+            </button>
+            <?php endif; ?>
+        </div>
     </div>
     
-    <!-- Inline Comments Section -->
-    <div class="post-comments-section mt-4 pt-4 border-t border-white/5" id="comments-section-<?php echo $post['id']; ?>" style="display:none;">
-        <div class="post-comments-list space-y-3 mb-3 max-h-64 overflow-y-auto pr-2" id="comments-list-<?php echo $post['id']; ?>">
-            <div class="text-center text-slate-500 text-sm">Yorumlar yükleniyor...</div>
+    <!-- Inline Comments Section (Radio log) -->
+    <div class="post-comments-section mt-4 pt-3 border-t border-dashed border-white/10" id="comments-section-<?php echo $post['id']; ?>" style="display:none;">
+        <div class="radio-log-container mb-3 max-h-64 overflow-y-auto pr-2" id="comments-list-<?php echo $post['id']; ?>">
+            <div class="text-center text-slate-500 text-xs py-2 font-mono">Telsiz kayıtları alınıyor...</div>
         </div>
         <?php if (Auth::check()): ?>
         <form class="flex gap-2 items-center" onsubmit="App.submitInlineComment(this, <?php echo $post['id']; ?>); return false;">
-            <input type="text" class="comment-input-inline w-full bg-background border border-white/10 rounded-full px-4 py-2 text-on-surface text-sm focus:outline-none focus:border-primary-container" placeholder="Yorumunu yaz..." maxlength="500" required>
-            <button type="submit" class="comment-send-btn flex items-center justify-center w-10 h-10 rounded-full bg-primary-container text-white hover:bg-primary-container/90 transition-colors flex-shrink-0">
-                <span class="material-symbols-outlined text-[18px]">send</span>
+            <span class="text-[#ff6b35] font-mono text-xs flex-shrink-0">&gt;</span>
+            <input type="text" class="comment-input-inline radio-input-line w-full text-xs focus:outline-none" placeholder="Telsiz anonsu geç..." maxlength="500" required>
+            <button type="submit" class="comment-send-btn flex items-center justify-center w-8 h-8 rounded-full bg-[#ff6b35]/20 text-[#ff6b35] hover:bg-[#ff6b35] hover:text-white transition-all flex-shrink-0">
+                <span class="material-symbols-outlined text-[14px]">send</span>
             </button>
         </form>
         <?php endif; ?>

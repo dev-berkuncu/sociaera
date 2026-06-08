@@ -197,6 +197,145 @@ if (!isset($currentUser) && Auth::check()) {
         white-space: nowrap;
         word-wrap: normal;
     }
+
+    /* ── CUSTOM EXPLORER HUD & EXPERIENCE TICKET SYSTEM ── */
+    
+    /* Receipt Card Base */
+    .receipt-card {
+        background: rgba(23, 31, 51, 0.85);
+        border: 1px solid rgba(255, 107, 53, 0.15);
+        border-radius: 12px;
+        position: relative;
+        overflow: visible !important; /* Allow stamps to float outside if needed */
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .receipt-card:hover {
+        border-color: rgba(255, 107, 53, 0.3);
+        transform: translateY(-2px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), 0 0 15px rgba(255, 107, 53, 0.05);
+    }
+    
+    /* Jagged Edge effect for tickets */
+    .receipt-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(135deg, transparent 50%, #ff6b35 50%), linear-gradient(225deg, transparent 50%, #ff6b35 50%);
+        background-size: 8px 8px;
+        background-repeat: repeat-x;
+        opacity: 0.9;
+        z-index: 10;
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+    }
+
+    /* Ticket Metadata Grid */
+    .ticket-meta-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px dashed rgba(255, 255, 255, 0.08);
+        border-radius: 8px;
+        padding: 10px 14px;
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 0.75rem;
+        color: #94a3b8;
+    }
+
+    /* Ticket Stamp (Damga) */
+    .ticket-stamp-wrapper {
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        z-index: 20;
+        pointer-events: none;
+    }
+    
+    .ticket-stamp {
+        font-family: 'Courier New', Courier, monospace;
+        font-weight: 900;
+        text-transform: uppercase;
+        border: 3px double currentColor;
+        padding: 4px 10px;
+        border-radius: 6px;
+        display: inline-block;
+        transform: rotate(-12deg);
+        letter-spacing: 0.12em;
+        font-size: 0.7rem;
+        box-shadow: 0 0 10px currentColor;
+        opacity: 0.85;
+        background: rgba(15, 23, 42, 0.9);
+        backdrop-filter: blur(2px);
+    }
+    .stamp-mystery {
+        color: #c084fc; /* purple-400 */
+        text-shadow: 0 0 5px rgba(192, 132, 252, 0.5);
+    }
+    .stamp-vip {
+        color: #fbbf24; /* yellow-400 */
+        text-shadow: 0 0 5px rgba(251, 191, 36, 0.5);
+    }
+    .stamp-approved {
+        color: #34d399; /* emerald-400 */
+        text-shadow: 0 0 5px rgba(52, 211, 153, 0.5);
+    }
+
+    /* monospaced radio chatter / logs */
+    .radio-log-container {
+        font-family: 'Courier New', Courier, monospace;
+        background-color: rgba(6, 14, 32, 0.5) !important;
+        border: 1px solid rgba(255, 255, 255, 0.05) !important;
+        border-radius: 8px;
+        padding: 12px;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+    }
+    .radio-log-item {
+        font-size: 0.8rem;
+        line-height: 1.4;
+        color: #94a3b8;
+        border-bottom: 1px dashed rgba(255, 255, 255, 0.03);
+        padding: 6px 0;
+        display: flex;
+        align-items: flex-start;
+        gap: 6px;
+    }
+    .radio-log-item:last-child {
+        border-bottom: none;
+    }
+    .radio-tag {
+        color: #ffb59d;
+        font-weight: bold;
+        flex-shrink: 0;
+    }
+    .radio-msg {
+        color: #e2e8f0;
+        word-break: break-word;
+    }
+    .radio-time {
+        color: #64748b;
+        margin-left: auto;
+        font-size: 0.7rem;
+        flex-shrink: 0;
+    }
+    .radio-input-line {
+        font-family: 'Courier New', Courier, monospace;
+        background: transparent !important;
+        border: none !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
+        border-radius: 0 !important;
+        padding: 8px 4px !important;
+        color: #e2e8f0 !important;
+        font-size: 0.85rem !important;
+    }
+    .radio-input-line:focus {
+        border-color: #ff6b35 !important;
+        box-shadow: none !important;
+    }
 </style>
 <script>
 (function(){

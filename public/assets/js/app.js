@@ -365,22 +365,18 @@ const App = {
     },
 
     renderComment(c) {
-        const safeAvatar = escapeHtml(c.avatar);
         const safeUsername = escapeHtml(c.username || 'U');
         const safeTag = escapeHtml(c.tag || c.username);
         const safeComment = escapeHtml(c.comment);
         const safeTimeAgo = escapeHtml(c.time_ago || '');
-        const avatar = c.avatar
-            ? `<img src="${this.baseUrl}/uploads/avatars/${safeAvatar}" class="avatar-img" width="28" height="28" style="border-radius:50%; object-fit:cover;">`
-            : `<div class="avatar-default" style="width:28px; height:28px; font-size:0.7rem;">${safeUsername[0].toUpperCase()}</div>`;
+        
         return `
-            <div class="comment-item">
-                <a href="${this.baseUrl}/profile?u=${encodeURIComponent(safeTag)}">${avatar}</a>
-                <div class="comment-body">
-                    <a href="${this.baseUrl}/profile?u=${encodeURIComponent(safeTag)}" class="comment-author">${safeUsername}</a>
-                    <span class="comment-text">${safeComment}</span>
-                    <span class="comment-time">${safeTimeAgo}</span>
-                </div>
+            <div class="radio-log-item">
+                <span class="text-slate-600 flex-shrink-0">[RADIO]</span>
+                <a href="${this.baseUrl}/profile?u=${encodeURIComponent(safeTag)}" class="radio-tag hover:underline">@${safeTag}</a>
+                <span class="text-slate-500 font-bold flex-shrink-0">:</span>
+                <span class="radio-msg">${safeComment}</span>
+                <span class="radio-time">${safeTimeAgo.toUpperCase()}</span>
             </div>
         `;
     },

@@ -66,36 +66,29 @@ require_once __DIR__ . '/partials/app_header.php';
     </div>
 
     <!-- Yorumlar Listesi -->
-    <h2 class="text-xl font-bold flex items-center gap-2 text-on-surface mb-2"><span class="material-symbols-outlined text-primary-container">forum</span> Yorumlar</h2>
-    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl overflow-hidden shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)]">
+    <h2 class="text-xl font-bold flex items-center gap-2 text-on-surface mb-2 font-mono"><span class="material-symbols-outlined text-[#ff6b35]">terminal</span> Telsiz Anonsları</h2>
+    <div class="radio-log-container shadow-[0_15px_30px_-15px_rgba(15,23,42,0.3)]">
         <?php if (empty($comments)): ?>
-            <div class="p-10 text-center text-slate-400">
-                <span class="material-symbols-outlined text-[48px] mb-2 opacity-50">chat_bubble_outline</span>
-                <p>Henüz yorum yok. İlk yorumu sen yaz!</p>
+            <div class="p-8 text-center text-slate-500 font-mono text-xs">
+                [TELSİZ KAYDI] Henüz telsiz anonsu alınmadı.
             </div>
         <?php else: ?>
             <div class="flex flex-col">
                 <?php foreach ($comments as $c): ?>
-                <div class="flex gap-4 p-5 border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors">
-                    <a href="<?php echo BASE_URL; ?>/profile?u=<?php echo escape($c['tag'] ?: $c['username']); ?>" class="flex-shrink-0 mt-1">
-                        <?php $cAvatar = safeAvatarUrl($c['avatar'] ?? null, $c['username']); ?>
-                        <img src="<?php echo $cAvatar; ?>" class="w-10 h-10 rounded-full object-cover border border-white/10" width="40" height="40" loading="lazy">
-                    </a>
-                    
+                <div class="radio-log-item py-3">
+                    <span class="text-slate-600 flex-shrink-0">[RADIO]</span>
+                    <a href="<?php echo BASE_URL; ?>/profile?u=<?php echo escape($c['tag'] ?: $c['username']); ?>" class="radio-tag hover:underline">@<?php echo escape($c['tag'] ?: $c['username']); ?></a>
+                    <span class="text-slate-500 font-bold flex-shrink-0">:</span>
                     <div class="flex-grow min-w-0">
-                        <div class="flex items-center flex-wrap gap-2 mb-1">
-                            <a href="<?php echo BASE_URL; ?>/profile?u=<?php echo escape($c['tag'] ?: $c['username']); ?>" class="font-bold text-on-surface hover:text-primary-container transition-colors"><?php echo escape($c['username']); ?></a>
-                            <span class="text-xs text-slate-500">• <?php echo timeAgo($c['created_at']); ?></span>
-                        </div>
-                        
-                        <p class="text-slate-300 leading-relaxed text-[15px]"><?php echo linkify(parseMentions($c['comment'])); ?></p>
+                        <span class="radio-msg"><?php echo linkify(parseMentions($c['comment'])); ?></span>
                         
                         <?php if (!empty($c['image'])): ?>
                             <div class="mt-3 rounded-lg overflow-hidden border border-white/10 max-w-sm bg-black/10">
-                                <img src="<?php echo uploadUrl('posts', $c['image']); ?>" loading="lazy" class="block w-full max-w-full h-auto max-h-[300px] object-contain" width="400" height="300">
+                                <img src="<?php echo uploadUrl('posts', $c['image']); ?>" loading="lazy" class="block w-full max-w-full h-auto max-h-[250px] object-contain" width="400" height="250">
                             </div>
                         <?php endif; ?>
                     </div>
+                    <span class="radio-time text-[10px]"><?php echo strtoupper(timeAgo($c['created_at'])); ?></span>
                 </div>
                 <?php endforeach; ?>
             </div>
