@@ -297,7 +297,10 @@ const App = {
     clearImagePreview(inputId, previewId) {
         const input = document.getElementById(inputId);
         const preview = document.getElementById(previewId);
-        if (input) input.value = '';
+        if (input) {
+            input.value = '';
+            input.dispatchEvent(new Event('change'));
+        }
         if (preview) { preview.innerHTML = ''; preview.style.display = 'none'; }
     },
 

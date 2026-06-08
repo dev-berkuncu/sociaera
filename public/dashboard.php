@@ -224,14 +224,22 @@ document.addEventListener('DOMContentLoaded', function() {
     const composeNote = document.getElementById('composeNote');
     const composeBtn = document.getElementById('composeSubmitBtn');
     const venueIdInput = document.getElementById('selectedVenueId');
+    const composeImage = document.getElementById('composeImage');
     const mentionDropdown = document.getElementById('mentionDropdown');
 
     if (!composeForm || !composeNote) return;
 
     function checkCompose() {
-        composeBtn.disabled = !(venueIdInput.value && composeNote.value.trim());
+        const hasNote = composeNote.value.trim().length > 0;
+        const hasImage = composeImage && composeImage.files && composeImage.files.length > 0;
+        const hasVenue = venueIdInput.value.length > 0;
+        composeBtn.disabled = !(hasVenue && (hasNote || hasImage));
     }
     composeNote.addEventListener('input', checkCompose);
+    if (composeImage) {
+        composeImage.addEventListener('change', checkCompose);
+    }
+    checkCompose();
 
     // ── @ Mention Autocomplete ───────────────────────────
     let mentionTimer = null;
