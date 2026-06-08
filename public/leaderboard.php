@@ -93,7 +93,7 @@ require_once __DIR__ . '/partials/app_header.php';
                         <?php $uAvatar = safeAvatarUrl($u['avatar'] ?? null, $u['username']); ?>
                         <img alt="User avatar" class="w-12 h-12 rounded-full object-cover border-2 <?php echo $uIsPremium ? 'border-[#7bd0ff]/50 shadow-[0_0_12px_rgba(123,208,255,0.3)]' : 'border-white/10'; ?> group-hover:border-primary-container/50 transition-all" src="<?php echo $uAvatar; ?>"/>
                         <?php if ($uIsPremium): ?>
-                        <div class="absolute -bottom-0.5 -right-0.5 w-5 h-5 bg-[#0f172a] rounded-full flex items-center justify-center border border-[#7bd0ff]/40">
+                        <div class="absolute -bottom-0.5 -right-0.5 w-5 h-5 bg-surface-container-high rounded-full flex items-center justify-center border border-[#7bd0ff]/40">
                             <span class="material-symbols-outlined text-[12px] text-[#7bd0ff]">diamond</span>
                         </div>
                         <?php endif; ?>

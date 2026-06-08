@@ -149,7 +149,7 @@ if (Auth::check()) { header('Location: ' . BASE_URL . '/dashboard'); exit; }
 <div class="fixed inset-0 z-[-2] bg-cover bg-center bg-no-repeat" style="background-image: url('<?php echo BASE_URL; ?>/assets/images/hero-bg.jpg');"></div>
 <div class="fixed inset-0 z-[-1] bg-background/85 backdrop-blur-sm"></div>
 <!-- TopNavBar -->
-<nav class="bg-[#0F172A]/80 backdrop-blur-xl font-['Manrope'] text-sm tracking-wide font-medium w-full top-0 sticky border-b border-white/10 shadow-[0_30px_30px_rgba(19,19,20,0.15)] z-50">
+<nav class="bg-surface-container/85 backdrop-blur-xl font-['Manrope'] text-sm tracking-wide font-medium w-full top-0 sticky border-b border-outline-variant/30 shadow-[0_30px_30px_rgba(19,19,20,0.15)] z-50">
 <div class="flex justify-center items-center w-full px-8 py-4 max-w-7xl mx-auto">
 <div class="flex items-center gap-2 text-2xl font-bold tracking-tighter text-[#ff9100]">
                 <img src="<?php echo BASE_URL; ?>/assets/images/logo.png" alt="Logo" class="h-8 w-auto opacity-90" width="32" height="32">
@@ -258,7 +258,7 @@ if (Auth::check()) { header('Location: ' . BASE_URL . '/dashboard'); exit; }
 </section>
 </main>
 <!-- Footer -->
-<footer class="bg-[#0F172A] w-full py-12 border-t border-slate-800 mt-24">
+<footer class="bg-surface-container-low w-full py-12 border-t border-outline-variant/30 mt-24">
 <div class="flex flex-col md:flex-row justify-between items-center w-full px-8 max-w-7xl mx-auto gap-6 font-['Manrope'] text-xs uppercase tracking-widest text-slate-500">
 <div class="flex items-center gap-2 text-lg font-bold text-slate-200">
                 <img src="<?php echo BASE_URL; ?>/assets/images/logo.png" alt="Logo" class="h-6 w-auto opacity-70" width="24" height="24">

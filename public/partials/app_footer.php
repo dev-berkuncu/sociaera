@@ -227,7 +227,7 @@ $hideSidebar = $hideSidebar ?? false;
 
 <!-- Mobile Bottom Navigation -->
 <?php if (Auth::check() && isset($currentUser)): ?>
-<nav class="fixed bottom-0 left-0 right-0 z-50 bg-[#0F172A]/95 backdrop-blur-xl border-t border-white/10 md:hidden safe-area-bottom">
+<nav class="fixed bottom-0 left-0 right-0 z-50 bg-surface-container/95 backdrop-blur-xl border-t border-outline-variant/30 md:hidden safe-area-bottom">
     <div class="flex items-center justify-around h-16">
         <?php
         $mobileNavItems = [
@@ -248,7 +248,7 @@ $hideSidebar = $hideSidebar ?? false;
             $mActive = ($activeNav ?? '') === $mKey;
             $mClass  = $mActive
                 ? 'flex flex-col items-center justify-center gap-0.5 text-primary-container transition-colors relative'
-                : 'flex flex-col items-center justify-center gap-0.5 text-slate-500 hover:text-slate-300 transition-colors relative';
+                : 'flex flex-col items-center justify-center gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors relative';
         ?>
         <a href="<?php echo BASE_URL . ($mobileUrls[$mKey] ?? ''); ?>" class="<?php echo $mClass; ?>">
             <?php if ($mActive): ?>

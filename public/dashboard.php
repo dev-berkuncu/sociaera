@@ -112,8 +112,8 @@ require_once __DIR__ . '/partials/app_header.php';
     </div>
 
     <!-- Venue Search Dropdown (outside compose card to avoid backdrop-blur clipping) -->
-    <div id="venueSearchWrap" style="display:none;" class="fixed w-72 bg-[#1c1b1c] border border-white/5 rounded-xl shadow-2xl p-3 z-[9999]">
-        <input type="text" id="venueSearchInput" class="w-full bg-surface-container border border-white/10 rounded-lg px-3 py-2 text-on-surface text-sm focus:outline-none focus:border-[#ff9100]/40 mb-2" placeholder="Mekan ara..." autocomplete="off">
+    <div id="venueSearchWrap" style="display:none;" class="fixed w-72 bg-surface-container-high border border-outline-variant/30 rounded-xl shadow-2xl p-3 z-[9999]">
+        <input type="text" id="venueSearchInput" class="w-full bg-surface-container border border-outline-variant/30 rounded-lg px-3 py-2 text-on-surface text-sm focus:outline-none focus:border-[#ff9100]/40 mb-2" placeholder="Mekan ara..." autocomplete="off">
         <div id="venueDropdown" class="max-h-48 overflow-y-auto"></div>
     </div>
 
