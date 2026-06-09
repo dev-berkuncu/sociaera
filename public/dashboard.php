@@ -346,8 +346,4 @@ require_once __DIR__ . '/partials/app_header.php';
 }
 </style>
 
-<?php require_once __DIR__ . '/partials/app_footer.php'; ?>e2e3;
-}
-</style>
-
 <?php require_once __DIR__ . '/partials/app_footer.php'; ?>
