@@ -75,7 +75,7 @@ require_once __DIR__ . '/partials/app_header.php';
     </div>
 
     <!-- Story/Friends Ribbon -->
-    <div class="bg-surface-container-low p-md rounded-xl border border-outline-variant/10 overflow-x-auto custom-scrollbar">
+    <div class="swarm-glass-card p-md rounded-xl border border-outline-variant/10 overflow-x-auto custom-scrollbar">
         <div class="flex items-center justify-between mb-md">
             <h3 class="text-headline-sm font-headline-sm">Yakındaki Arkadaşlar</h3>
             <a href="<?php echo BASE_URL; ?>/members" class="text-on-surface-variant text-label-sm hover:text-primary transition-colors">Tümünü Gör</a>
@@ -83,7 +83,7 @@ require_once __DIR__ . '/partials/app_header.php';
         <div class="flex gap-lg pb-2">
             <!-- Add Story -->
             <div onclick="triggerCheckin()" class="flex flex-col items-center gap-xs cursor-pointer group shrink-0">
-                <div class="w-16 h-16 rounded-full border-2 border-dashed border-outline-variant/60 flex items-center justify-center group-hover:border-primary transition-colors">
+                <div class="w-16 h-16 rounded-full border-2 border-dashed border-[#ff9100]/40 flex items-center justify-center group-hover:border-primary transition-colors">
                     <span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">add</span>
                 </div>
                 <span class="text-label-sm text-on-surface-variant">Hikaye Ekle</span>
@@ -93,12 +93,12 @@ require_once __DIR__ . '/partials/app_header.php';
             <div class="flex flex-col items-center gap-xs cursor-pointer shrink-0" onclick="window.location.href='<?php echo BASE_URL; ?>/profile?u=<?php echo escape($fu['tag'] ?: $fu['username']); ?>'">
                 <div class="relative">
                     <?php $fuAvatar = safeAvatarUrl($fu['avatar'] ?? null, $fu['username']); ?>
-                    <img alt="<?php echo escape($fu['username']); ?>" class="w-16 h-16 rounded-full border-2 border-primary-container p-0.5 object-cover" src="<?php echo $fuAvatar; ?>" width="64" height="64" />
+                    <img alt="<?php echo escape($fu['username']); ?>" class="w-16 h-16 rounded-full border-2 border-[#ffb778]/40 p-0.5 object-cover" src="<?php echo $fuAvatar; ?>" width="64" height="64" />
                     <?php if ($fu['is_active']): ?>
-                    <div class="absolute bottom-0 right-0 w-4 h-4 bg-green-500 rounded-full border-2 border-surface-container-low animate-pulse"></div>
+                    <div class="absolute bottom-0 right-0 w-4 h-4 bg-green-500 rounded-full border-2 border-[#131314] cybermap-marker-pulse"></div>
                     <?php endif; ?>
                 </div>
-                <span class="text-label-sm max-w-[70px] truncate"><?php echo escape($fu['username']); ?></span>
+                <span class="text-label-sm max-w-[70px] truncate text-slate-300"><?php echo escape($fu['username']); ?></span>
             </div>
             <?php endforeach; ?>
         </div>
@@ -122,7 +122,7 @@ require_once __DIR__ . '/partials/app_header.php';
         <div class="absolute inset-0 bg-black/70 backdrop-blur-md" onclick="document.getElementById('composeModal').classList.add('hidden')"></div>
         <!-- Modal Content Container -->
         <div class="absolute inset-0 flex items-center justify-center p-4">
-            <div class="bg-[#2a2a2b] border border-white/10 rounded-2xl w-full max-w-lg shadow-2xl relative p-6 animate-[modalIn_0.25s_ease-out]">
+            <div class="bg-[#1c1b1c]/90 backdrop-blur-xl border border-white/10 rounded-2xl w-full max-w-lg shadow-2xl relative p-6 animate-[modalIn_0.25s_ease-out]">
                 <!-- Modal Header -->
                 <div class="flex items-center justify-between pb-4 border-b border-white/5 mb-4">
                     <h3 class="text-lg font-bold text-on-surface flex items-center gap-2">
@@ -149,7 +149,7 @@ require_once __DIR__ . '/partials/app_header.php';
                         <img alt="User avatar" class="w-12 h-12 rounded-full object-cover border border-white/10 flex-shrink-0" src="<?php echo $avatarUrl; ?>" width="48" height="48"/>
                         <div class="flex-grow relative">
                             <!-- Textarea styled nicely as input -->
-                            <textarea class="w-full bg-surface-container border border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface placeholder:text-slate-500 text-sm focus:outline-none focus:border-[#ff9100]/40 transition-colors resize-none outline-none" name="note" id="composeNote" placeholder="Neredesin? Ne yapıyorsun?" rows="3"></textarea>
+                            <textarea class="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-on-surface placeholder:text-slate-500 text-sm focus:outline-none focus:border-[#ff9100]/40 transition-colors resize-none outline-none" name="note" id="composeNote" placeholder="Neredesin? Ne yapıyorsun?" rows="3"></textarea>
                             <div id="composePreview" class="mt-2 rounded-xl overflow-hidden border border-white/10 relative" style="display:none;"></div>
                             
                             <!-- @ Mention Dropdown -->
@@ -159,11 +159,11 @@ require_once __DIR__ . '/partials/app_header.php';
                     
                     <div class="mt-5 flex items-center justify-between pt-4 border-t border-white/5">
                         <div class="flex items-center gap-2">
-                            <label class="flex items-center justify-center w-10 h-10 rounded-xl bg-surface-container hover:bg-surface-variant text-slate-400 hover:text-white transition-colors cursor-pointer border border-outline-variant/30" title="Fotoğraf ekle">
+                            <label class="flex items-center justify-center w-10 h-10 rounded-xl bg-white/5 border border-white/5 text-slate-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer" title="Fotoğraf ekle">
                                 <span class="material-symbols-outlined text-[20px]">image</span>
                                 <input type="file" name="image" id="composeImage" accept="image/*" class="hidden">
                             </label>
-                            <button type="button" id="venueToggleBtn" class="flex items-center justify-center w-10 h-10 rounded-xl bg-surface-container hover:bg-surface-variant text-slate-400 hover:text-white transition-colors border border-outline-variant/30" title="Mekan seç">
+                            <button type="button" id="venueToggleBtn" class="flex items-center justify-center w-10 h-10 rounded-xl bg-white/5 border border-white/5 text-slate-400 hover:text-white hover:bg-white/10 transition-colors" title="Mekan seç">
                                 <span class="material-symbols-outlined text-[20px]">location_on</span>
                             </button>
                         </div>
@@ -176,8 +176,8 @@ require_once __DIR__ . '/partials/app_header.php';
     </div>
 
     <!-- Venue Search Dropdown (outside compose card to avoid backdrop-blur clipping) -->
-    <div id="venueSearchWrap" style="display:none;" class="fixed w-72 bg-surface-container-high border border-outline-variant/30 rounded-xl shadow-2xl p-3 z-[10000]">
-        <input type="text" id="venueSearchInput" class="w-full bg-surface-container border border-outline-variant/30 rounded-lg px-3 py-2 text-on-surface text-sm focus:outline-none focus:border-[#ff9100]/40 mb-2" placeholder="Mekan ara..." autocomplete="off">
+    <div id="venueSearchWrap" style="display:none;" class="fixed w-72 bg-[#1c1b1c]/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl p-3 z-[10000]">
+        <input type="text" id="venueSearchInput" class="w-full bg-black/40 border border-white/5 rounded-lg px-3 py-2 text-on-surface text-sm focus:outline-none focus:border-[#ff9100]/40 mb-2" placeholder="Mekan ara..." autocomplete="off">
         <div id="venueDropdown" class="max-h-48 overflow-y-auto"></div>
     </div>
 

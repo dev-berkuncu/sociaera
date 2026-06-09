@@ -86,10 +86,10 @@ require_once __DIR__ . '/partials/app_header.php';
         <span class="material-symbols-outlined text-[20px]">arrow_back</span> Mekanlar
     </a>
 
-    <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl overflow-hidden shadow-[0_20px_40px_-15px_rgba(19,19,20,0.5)] mb-6 relative">
+    <div class="swarm-glass-card rounded-2xl overflow-hidden shadow-[0_20px_40px_-15px_rgba(19,19,20,0.5)] mb-6 relative">
         <!-- Banner Image -->
         <div class="h-64 md:h-80 w-full bg-surface-container relative">
-            <div class="absolute inset-0 bg-gradient-to-t from-[#2a2a2b]/90 via-[#2a2a2b]/40 to-transparent z-10"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-[#131314]/95 via-transparent to-transparent z-10"></div>
             <?php if (!empty($venue['cover_image'])): ?>
                 <div class="absolute inset-0 bg-cover bg-center blur-2xl opacity-40 scale-110" style="background-image: url('<?php echo BASE_URL . '/uploads/venues/' . escape($venue['cover_image']); ?>')"></div>
                 <img src="<?php echo BASE_URL . '/uploads/venues/' . escape($venue['cover_image']); ?>" class="w-full h-full object-contain p-4 relative z-10" width="800" height="320">

@@ -41,17 +41,28 @@ if (!empty($post['is_mystery_shopper'])) {
     }
 }
 ?>
-<article class="post-card bg-surface-container-low rounded-xl border border-outline-variant/10 p-md hover:bg-surface-container transition-colors group" id="post-<?php echo $post['id']; ?>">
+<article class="receipt-card p-5 group relative overflow-visible mb-6 flex flex-col gap-3" id="post-<?php echo $post['id']; ?>">
     
+    <!-- Stamp Indicator -->
+    <div class="ticket-stamp-wrapper">
+        <?php if (!empty($post['is_mystery_shopper'])): ?>
+            <div class="ticket-stamp stamp-mystery">DENETLENDİ</div>
+        <?php elseif (!empty($post['is_premium'])): ?>
+            <div class="ticket-stamp stamp-vip">GOLD VIP</div>
+        <?php else: ?>
+            <div class="ticket-stamp stamp-approved">VERIFIED</div>
+        <?php endif; ?>
+    </div>
+
     <?php if (!empty($post['reposted_by'])): ?>
-    <div class="flex items-center gap-2 text-[#ffb97c]/80 font-mono text-[10px] mb-3 tracking-widest uppercase">
+    <div class="flex items-center gap-2 text-[#ffb97c]/80 font-mono text-[10px] mb-1 tracking-widest uppercase">
         <span class="material-symbols-outlined text-[14px]">settings_input_antenna</span>
         <a href="<?php echo BASE_URL; ?>/profile?u=<?php echo escape($post['reposted_by_tag'] ?: $post['reposted_by']); ?>" class="hover:text-white transition-colors">@<?php echo escape($post['reposted_by_tag'] ?: $post['reposted_by']); ?></a> TELSİZ YAYINI
     </div>
     <?php endif; ?>
 
     <!-- Header Row: User Info & Tagline -->
-    <div class="flex justify-between items-start mb-md">
+    <div class="flex justify-between items-start mb-1 z-10">
         <div class="flex gap-md min-w-0">
             <!-- Avatar -->
             <div class="relative flex-shrink-0">
@@ -60,7 +71,7 @@ if (!empty($post['is_mystery_shopper'])) {
                     ? 'https://ui-avatars.com/api/?name=GM&background=6900b3&color=ffffff' 
                     : safeAvatarUrl($post['avatar'] ?? null, $post['username'] ?? 'User');
                 ?>
-                <img alt="<?php echo escape($post['username']); ?>" class="w-10 h-10 rounded-full" src="<?php echo $avatarUrl; ?>" />
+                <img alt="<?php echo escape($post['username']); ?>" class="w-10 h-10 rounded-full border border-white/5 object-cover" src="<?php echo $avatarUrl; ?>" />
                 <?php if (empty($post['is_mystery_shopper']) && !empty($post['is_premium'])): ?>
                     <div class="absolute -bottom-1 -right-1 bg-primary text-[8px] font-bold px-1 rounded-full text-on-primary">VIP</div>
                 <?php endif; ?>
@@ -73,7 +84,7 @@ if (!empty($post['is_mystery_shopper'])) {
                         <span class="font-bold">Gizli Müşteri</span>
                         <span class="material-symbols-outlined text-purple-400 text-sm" style="font-variation-settings: 'FILL' 1;" title="Gizli Müşteri">visibility_off</span>
                     <?php else: ?>
-                        <span class="font-bold"><?php echo escape($post['username']); ?></span>
+                        <span class="font-bold text-[#ffb778]"><?php echo escape($post['username']); ?></span>
                         <?php if (!empty($post['is_premium'])): ?>
                             <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;" title="Premium Üye">workspace_premium</span>
                         <?php endif; ?>
@@ -83,23 +94,30 @@ if (!empty($post['is_mystery_shopper'])) {
 
                 <!-- Tagline -->
                 <p class="text-body-md mt-1">
-                    <span class="text-primary font-bold"><?php echo escape($post['venue_name']); ?></span><?php echo $actionText; ?>
+                    <span class="text-white font-bold"><?php echo escape($post['venue_name']); ?></span><?php echo $actionText; ?>
                 </p>
 
                 <!-- Review / Note -->
                 <?php if (!empty($post['note'])): ?>
-                <p class="text-on-surface-variant italic mt-2">
+                <p class="text-on-surface-variant italic mt-2 text-sm">
                     “<?php echo linkify(parseMentions($post['note'])); ?>”
                 </p>
                 <?php endif; ?>
 
+                <!-- Monospace Ticket Grid -->
+                <div class="ticket-meta-grid mt-3 mb-2">
+                    <div>ZİYARETÇİ: @<?php echo escape($post['tag'] ?: $post['username']); ?></div>
+                    <div>YAYIN: #CK-<?php echo sprintf('%05d', $post['id']); ?></div>
+                    <div class="col-span-2">KONUM: <?php echo escape($post['venue_address'] ?: 'Los Santos'); ?></div>
+                </div>
+
                 <!-- Category & Location Pills -->
-                <div class="flex gap-xs mt-3">
+                <div class="flex flex-wrap gap-xs mt-3">
                     <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-container-highest text-[10px] text-on-surface-variant border border-outline-variant/30">
                         <span class="material-symbols-outlined text-xs">location_on</span> 
                         <?php echo escape($post['venue_address'] ?: 'Los Santos'); ?>
                     </span>
-                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-container-highest text-[10px] text-on-surface-variant border border-outline-variant/30">
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-container-highest text-[10px] text-on-surface-variant border border-[#ff9100]/25 text-[#ffb778]">
                         <span class="material-symbols-outlined text-xs"><?php echo $categoryIcon; ?></span>
                         <?php echo escape(VenueModel::categories()[$post['venue_category']] ?? ($post['venue_category'] ?? 'KEŞİF NOKTASI')); ?>
                     </span>
@@ -120,8 +138,8 @@ if (!empty($post['is_mystery_shopper'])) {
 
     <!-- Attached Image -->
     <?php if (!empty($post['image'])): ?>
-    <div class="relative rounded-xl overflow-hidden aspect-video bg-surface-container-highest">
-        <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="<?php echo uploadUrl('posts', $post['image']); ?>" loading="lazy"/>
+    <div class="relative rounded-xl overflow-hidden aspect-video bg-surface-container-highest border border-white/5">
+        <img class="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500" src="<?php echo uploadUrl('posts', $post['image']); ?>" loading="lazy"/>
     </div>
     <?php endif; ?>
 

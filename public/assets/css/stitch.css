@@ -206,3 +206,59 @@ body {
     border-color: #ff9100 !important;
     box-shadow: none !important;
 }
+
+/* ── PREMIUM SWARM-STYLE GRAPHICS ── */
+.swarm-glass-card {
+    background: rgba(22, 22, 25, 0.7) !important;
+    backdrop-filter: blur(16px) saturate(180%) !important;
+    border: 1px solid rgba(255, 145, 0, 0.08) !important;
+    box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.03) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+.swarm-glass-card:hover {
+    border-color: rgba(255, 145, 0, 0.2) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 20px 40px -10px rgba(255, 145, 0, 0.05), 0 0 15px rgba(255, 145, 0, 0.02) !important;
+}
+
+/* Flame streak dynamic pulse */
+.streak-pulse {
+    animation: flameGlow 2s ease-in-out infinite alternate;
+}
+@keyframes flameGlow {
+    0% {
+        text-shadow: 0 0 5px rgba(255, 145, 0, 0.2), 0 0 10px rgba(255, 145, 0, 0.1);
+        filter: drop-shadow(0 0 2px rgba(255, 145, 0, 0.3));
+    }
+    100% {
+        text-shadow: 0 0 15px rgba(255, 145, 0, 0.6), 0 0 25px rgba(255, 145, 0, 0.3);
+        filter: drop-shadow(0 0 6px rgba(255, 145, 0, 0.7));
+    }
+}
+
+/* Cybermap neon nodes */
+.cybermap-marker-pulse {
+    animation: markerPulse 1.5s ease-in-out infinite;
+}
+@keyframes markerPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 145, 0, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(255, 145, 0, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 145, 0, 0);
+    }
+}
+
+/* Custom Level Ring */
+.level-ring-gold {
+    background: conic-gradient(#ff9100 0%, #ffdb78 70%, transparent 70%);
+}
+.level-ring-purple {
+    background: conic-gradient(#8b5cf6 0%, #cb95ff 50%, transparent 50%);
+}
+.level-ring-bronze {
+    background: conic-gradient(#a48c7a 0%, #ffdcc1 30%, transparent 30%);
+}

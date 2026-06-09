@@ -72,7 +72,7 @@ require_once __DIR__ . '/partials/app_header.php';
     <?php else: ?>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6 mt-4">
             <?php foreach ($venues as $v): ?>
-            <a href="<?php echo BASE_URL; ?>/venue-detail?id=<?php echo $v['id']; ?>" class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl overflow-hidden hover:border-primary-container/50 hover:shadow-[0_10px_30px_-10px_rgba(255,145,0,0.15)] transition-all group">
+            <a href="<?php echo BASE_URL; ?>/venue-detail?id=<?php echo $v['id']; ?>" class="swarm-glass-card rounded-xl overflow-hidden hover:border-primary-container/50 hover:shadow-[0_10px_30px_-10px_rgba(255,145,0,0.15)] transition-all group">
                 <div class="h-48 bg-surface-container relative overflow-hidden">
                     <?php if (!empty($v['cover_image'])): ?>
                         <div class="absolute inset-0 bg-cover bg-center blur-2xl opacity-40 scale-110" style="background-image: url('<?php echo BASE_URL . '/uploads/venues/' . escape($v['cover_image']); ?>')"></div>

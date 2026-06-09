@@ -16,7 +16,7 @@ $hideSidebar = $hideSidebar ?? false;
             } catch (Exception $e) {}
             if (!empty($nearbyVenues)):
             ?>
-            <div class="bg-surface-container-low p-4 rounded-xl border border-outline-variant/20 shadow-md">
+            <div class="swarm-glass-card p-4 rounded-xl border border-outline-variant/20 shadow-md">
                 <div class="flex justify-between items-center mb-3">
                     <h3 class="text-[9px] text-on-surface-variant font-bold uppercase tracking-wider font-mono">Yakındaki Mekanlar</h3>
                     <a href="<?php echo BASE_URL; ?>/venues" class="text-primary text-[9px] font-bold hover:underline">Tümünü Gör</a>
@@ -62,21 +62,21 @@ $hideSidebar = $hideSidebar ?? false;
             <?php endif; ?>
 
             <!-- Map View Bento Widget (Yakında) -->
-            <div class="bg-surface-container-low rounded-xl border border-outline-variant/20 overflow-hidden shadow-md flex flex-col relative">
+            <div class="swarm-glass-card rounded-xl border border-outline-variant/20 overflow-hidden shadow-md flex flex-col relative">
                 <div class="p-4 flex justify-between items-center">
                     <h3 class="text-[9px] text-on-surface-variant font-bold uppercase tracking-wider font-mono">Yakında</h3>
                     <a href="<?php echo BASE_URL; ?>/venues" class="text-primary text-[9px] font-bold hover:underline">Tümünü Gör</a>
                 </div>
-                <div class="h-48 relative bg-surface-container-highest cursor-pointer group overflow-hidden" onclick="window.location.href='<?php echo BASE_URL; ?>/venues'">
-                    <img class="w-full h-full object-cover opacity-60 grayscale-[0.5] invert-[0.9] group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida/AP1WRLudjIkYlGBmWTPYJUvLFzH2Tw0cGp8ikU9WEO9mqsjg7gsgTevDFlnp2dkPXUro1NNq4mTrbxUvyIxDMPZBe60dHROByG9EheR2Gbi3nAH-wyKDQsdWm1yunx-ZqK9Sz-a_FPJJp29JteU3WWba1-_UkQtdFpYlWjgRj5k6m2Ibqu3P4VbGVL-xL6pheN38RhYZyrEtz-en_Au81D2NNMcT0IbPxd9hXc-JIRF6xlDNhqwX3kxs7Kns6v4" alt="City Map" loading="lazy">
+                <div class="h-48 relative bg-[#131314] cursor-pointer group overflow-hidden" onclick="window.location.href='<?php echo BASE_URL; ?>/venues'">
+                    <img class="w-full h-full object-cover opacity-40 grayscale-[0.8] invert-[0.9] group-hover:scale-105 group-hover:opacity-50 transition-all duration-700" src="https://lh3.googleusercontent.com/aida/AP1WRLudjIkYlGBmWTPYJUvLFzH2Tw0cGp8ikU9WEO9mqsjg7gsgTevDFlnp2dkPXUro1NNq4mTrbxUvyIxDMPZBe60dHROByG9EheR2Gbi3nAH-wyKDQsdWm1yunx-ZqK9Sz-a_FPJJp29JteU3WWba1-_UkQtdFpYlWjgRj5k6m2Ibqu3P4VbGVL-xL6pheN38RhYZyrEtz-en_Au81D2NNMcT0IbPxd9hXc-JIRF6xlDNhqwX3kxs7Kns6v4" alt="City Map" loading="lazy">
                     <div class="absolute inset-0 pointer-events-none">
-                        <div class="absolute top-1/4 left-1/3 p-1.5 bg-primary rounded-full border-2 border-white shadow-lg animate-pulse">
+                        <div class="absolute top-1/4 left-1/3 p-1.5 bg-[#ff9100] rounded-full border border-white/20 shadow-[0_0_10px_#ff9100] cybermap-marker-pulse">
                             <span class="material-symbols-outlined text-[12px] text-white" style="display:block;">restaurant</span>
                         </div>
-                        <div class="absolute top-1/2 left-1/2 p-1.5 bg-secondary rounded-full border-2 border-white shadow-lg">
+                        <div class="absolute top-1/2 left-1/2 p-1.5 bg-[#deb9ff] rounded-full border border-white/20 shadow-[0_0_10px_#deb9ff]">
                             <span class="material-symbols-outlined text-[12px] text-white" style="display:block;">local_cafe</span>
                         </div>
-                        <div class="absolute bottom-1/4 right-1/4 p-1.5 bg-primary-container rounded-full border-2 border-white shadow-lg">
+                        <div class="absolute bottom-1/4 right-1/4 p-1.5 bg-[#ffb778] rounded-full border border-white/20 shadow-[0_0_10px_#ffb778]">
                             <span class="material-symbols-outlined text-[12px] text-on-primary-container" style="display:block;">shopping_bag</span>
                         </div>
                     </div>
@@ -102,7 +102,7 @@ $hideSidebar = $hideSidebar ?? false;
             $footerTrendVenues = array_slice($footerTrendVenues, 0, 3);
             if (!empty($footerTrendVenues)):
             ?>
-            <div class="bg-surface-container-low p-4 rounded-xl border border-outline-variant/20 shadow-md">
+            <div class="swarm-glass-card p-4 rounded-xl border border-outline-variant/20 shadow-md">
                 <div class="flex justify-between items-center mb-3">
                     <h3 class="text-[9px] text-on-surface-variant font-bold uppercase tracking-wider font-mono">Trend Olan Mekanlar</h3>
                     <a href="<?php echo BASE_URL; ?>/venues" class="text-primary text-[9px] font-bold hover:underline">Tümünü Gör</a>
@@ -181,7 +181,7 @@ $hideSidebar = $hideSidebar ?? false;
                 ];
             }
             ?>
-            <div class="bg-surface-container-low border border-outline-variant/10 rounded-xl p-5 shadow-lg overflow-hidden">
+            <div class="swarm-glass-card border border-outline-variant/10 rounded-xl p-5 shadow-lg overflow-hidden">
                 <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4 flex items-center gap-2">
                     Sponsorlarımız <span class="material-symbols-outlined text-[#ff9100] text-[16px]">campaign</span>
                 </h3>
@@ -236,7 +236,7 @@ $hideSidebar = $hideSidebar ?? false;
             <?php if (!empty($sidebarRightAds)): 
                 $activeShowcase = $sidebarRightAds[0];
             ?>
-            <div class="bg-surface-container-low border border-outline-variant/10 rounded-xl overflow-hidden shadow-lg flex flex-col relative w-full h-[500px] group hover:border-[#ff9100]/30 transition-colors">
+            <div class="swarm-glass-card border border-outline-variant/10 rounded-xl overflow-hidden shadow-lg flex flex-col relative w-full h-[500px] group hover:border-[#ff9100]/30 transition-colors">
                 <a href="<?php echo escape($activeShowcase['link_url'] ?? '#'); ?>" target="_blank" rel="noopener" class="block w-full h-full relative">
                     <img src="<?php echo BASE_URL . '/' . escape($activeShowcase['logo'] ?? $activeShowcase['image_url']); ?>" alt="<?php echo escape($activeShowcase['title']); ?>" class="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500" loading="lazy">
                     <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-[2px]">
@@ -247,7 +247,7 @@ $hideSidebar = $hideSidebar ?? false;
                 </a>
             </div>
             <?php else: ?>
-            <div class="bg-surface-container-low border border-dashed border-white/10 rounded-xl overflow-hidden shadow-lg flex flex-col relative w-full h-[500px] group hover:border-[#ff9100]/30 transition-colors">
+            <div class="swarm-glass-card border border-dashed border-white/10 rounded-xl overflow-hidden shadow-lg flex flex-col relative w-full h-[500px] group hover:border-[#ff9100]/30 transition-colors">
                 <a href="mailto:info@sociaera.online" class="absolute inset-0 flex flex-col items-center justify-center p-4 text-center cursor-pointer z-10">
                     <span class="material-symbols-outlined text-slate-600 text-[36px] mb-3 group-hover:scale-110 group-hover:text-[#ff9100] transition-all duration-300">view_carousel</span>
                     <span class="font-black text-sm text-slate-500 group-hover:text-white transition-colors tracking-wide">REKLAM ALANI</span>
