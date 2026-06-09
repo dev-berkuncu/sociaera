@@ -340,9 +340,9 @@ nav.swarm-topnav{
   position:sticky;top:0;z-index:9000;
   background:#ffffff;
   border-bottom:2px solid #E8E7E3;
-  box-shadow:0 2px 12px rgba(0,0,0,0.08);
-  display:flex;align-items:center;gap:16px;
-  padding:8px 20px;min-height:58px;
+  box-shadow:0 2px 12px rgba(0,0,0,0.07);
+  display:flex;align-items:center;gap:0;
+  padding:0 20px;min-height:58px;
   font-family:'Plus Jakarta Sans','Inter',sans-serif;
 ">
 
@@ -350,90 +350,108 @@ nav.swarm-topnav{
     <a href="<?php echo BASE_URL; ?>/dashboard" style="
       font-weight:800;font-size:18px;color:#F06D1F;
       text-decoration:none;display:flex;align-items:center;gap:6px;
-      flex-shrink:0;letter-spacing:-0.3px;white-space:nowrap;">
+      flex-shrink:0;letter-spacing:-0.3px;white-space:nowrap;
+      padding-right:20px;margin-right:4px;border-right:1.5px solid #F2F1EE;">
         <span class="material-symbols-outlined" style="font-size:22px;color:#F06D1F;font-variation-settings:'FILL' 1;">hive</span>
         Sociaera
     </a>
 
+    <!-- Ana Menü Linkleri (desktop) -->
+    <?php
+    $navLinks = [
+        'dashboard'   => ['icon'=>'home',       'label'=>'Ana Sayfa', 'url'=>'/dashboard'],
+        'activity'    => ['icon'=>'explore',     'label'=>'Keşfet',    'url'=>'/activity'],
+        'venues'      => ['icon'=>'place',       'label'=>'Mekanlar',  'url'=>'/venues'],
+        'leaderboard' => ['icon'=>'leaderboard', 'label'=>'Sıralama',  'url'=>'/leaderboard'],
+    ];
+    $currentNav = $activeNav ?? '';
+    foreach ($navLinks as $key => $nl):
+        $isActive = ($currentNav === $key);
+    ?>
+    <a href="<?php echo BASE_URL . $nl['url']; ?>"
+       style="display:flex;align-items:center;gap:6px;padding:0 14px;height:58px;
+              font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap;
+              border-bottom:3px solid <?php echo $isActive ? '#F06D1F' : 'transparent'; ?>;
+              color:<?php echo $isActive ? '#F06D1F' : '#5C5C5C'; ?>;
+              transition:color .15s,border-color .15s;"
+       onmouseover="if(!this.style.borderBottomColor.includes('F06D1F')){this.style.color='#F06D1F';}"
+       onmouseout="<?php echo $isActive ? '' : "this.style.color='#5C5C5C';"; ?>">
+        <span class="material-symbols-outlined" style="font-size:18px;"><?php echo $nl['icon']; ?></span>
+        <span class="nav-label"><?php echo $nl['label']; ?></span>
+    </a>
+    <?php endforeach; ?>
+
+    <!-- Spacer -->
+    <div style="flex:1;"></div>
+
     <!-- Arama -->
-    <div style="position:relative;flex:1;max-width:380px;">
-        <span class="material-symbols-outlined" style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:#A0A0A0;font-size:18px;pointer-events:none;">search</span>
+    <div style="position:relative;max-width:240px;width:100%;margin-right:8px;">
+        <span class="material-symbols-outlined" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#A0A0A0;font-size:17px;pointer-events:none;">search</span>
         <input type="text" placeholder="Mekan ara…"
                onkeydown="if(event.key==='Enter')window.location.href='<?php echo BASE_URL; ?>/venues?q='+encodeURIComponent(this.value)"
-               style="width:100%;background:#F2F1EE;border:1.5px solid transparent;border-radius:12px;
-                      padding:8px 14px 8px 36px;font-size:14px;font-family:inherit;
+               style="width:100%;background:#F2F1EE;border:1.5px solid transparent;border-radius:10px;
+                      padding:7px 12px 7px 32px;font-size:13px;font-family:inherit;
                       outline:none;color:#1A1A1A;box-sizing:border-box;"
                onfocus="this.style.borderColor='#F06D1F';this.style.background='#fff'"
                onblur="this.style.borderColor='transparent';this.style.background='#F2F1EE'"/>
     </div>
 
-    <!-- Aksiyonlar -->
-    <div style="display:flex;align-items:center;gap:4px;margin-left:auto;flex-shrink:0;">
+    <!-- Bildirimler -->
+    <a href="<?php echo BASE_URL; ?>/notifications" aria-label="Bildirimler" style="
+      width:38px;height:38px;border-radius:50%;flex-shrink:0;
+      display:flex;align-items:center;justify-content:center;
+      color:#5C5C5C;text-decoration:none;position:relative;margin-right:2px;">
+        <span class="material-symbols-outlined" style="font-size:22px;<?php echo $notifCount > 0 ? "color:#F06D1F;font-variation-settings:'FILL' 1;" : ''; ?>">notifications</span>
+        <?php if ($notifCount > 0): ?>
+        <span style="position:absolute;top:6px;right:6px;width:8px;height:8px;background:#F06D1F;border-radius:50%;border:2px solid #fff;"></span>
+        <?php endif; ?>
+    </a>
 
-        <!-- Bildirimler -->
-        <a href="<?php echo BASE_URL; ?>/notifications" aria-label="Bildirimler" style="
-          width:38px;height:38px;border-radius:50%;
-          display:flex;align-items:center;justify-content:center;
-          color:#5C5C5C;text-decoration:none;position:relative;">
-            <span class="material-symbols-outlined" style="font-size:22px;<?php echo $notifCount > 0 ? "color:#F06D1F;font-variation-settings:'FILL' 1;" : ''; ?>">notifications</span>
-            <?php if ($notifCount > 0): ?>
-            <span style="position:absolute;top:6px;right:6px;width:8px;height:8px;background:#F06D1F;border-radius:50%;border:2px solid #fff;"></span>
-            <?php endif; ?>
-        </a>
+    <!-- Avatar + Dropdown -->
+    <div style="position:relative;margin-left:4px;">
+        <button id="nav-avatar-btn" onclick="
+          var dd=document.getElementById('nav-dropdown');
+          dd.style.display=(dd.style.display==='block')?'none':'block';"
+          style="width:36px;height:36px;border-radius:50%;overflow:hidden;cursor:pointer;
+                 border:2px solid #E8E7E3;padding:0;background:none;flex-shrink:0;">
+            <img src="<?php echo $avatarUrl; ?>" alt="Profil" width="36" height="36"
+                 style="width:100%;height:100%;object-fit:cover;display:block;"/>
+        </button>
 
-        <!-- Ayarlar -->
-        <a href="<?php echo BASE_URL; ?>/settings" aria-label="Ayarlar" style="
-          width:38px;height:38px;border-radius:50%;
-          display:flex;align-items:center;justify-content:center;
-          color:#5C5C5C;text-decoration:none;">
-            <span class="material-symbols-outlined" style="font-size:20px;">settings</span>
-        </a>
-
-        <!-- Avatar + Dropdown -->
-        <div style="position:relative;">
-            <button id="nav-avatar-btn" onclick="
-              var dd=document.getElementById('nav-dropdown');
-              dd.style.display=(dd.style.display==='block')?'none':'block';"
-              style="width:36px;height:36px;border-radius:50%;overflow:hidden;cursor:pointer;
-                     border:2px solid #E8E7E3;padding:0;background:none;">
-                <img src="<?php echo $avatarUrl; ?>" alt="Profil" width="36" height="36"
-                     style="width:100%;height:100%;object-fit:cover;display:block;"/>
-            </button>
-
-            <div id="nav-dropdown" style="display:none;position:absolute;right:0;top:calc(100% + 8px);
-              width:210px;background:#fff;border:1.5px solid #E8E7E3;border-radius:14px;
-              box-shadow:0 8px 24px rgba(0,0,0,0.12);padding:6px;z-index:9999;">
-                <?php
-                $ddLinks = [
-                    ['url'=>'/profile',          'icon'=>'person',                 'label'=>'Profilim',          'color'=>'#F06D1F'],
-                    ['url'=>'/wallet',            'icon'=>'account_balance_wallet', 'label'=>'Cüzdanım',          'color'=>'#F06D1F'],
-                    ['url'=>'/missions',          'icon'=>'military_tech',          'label'=>'Görevler',          'color'=>'#F06D1F'],
-                    ['url'=>'/kampanyalar',       'icon'=>'campaign',               'label'=>'Kampanyalar',       'color'=>'#F06D1F'],
-                    ['url'=>'/premium',           'icon'=>'diamond',                'label'=>'Premium',           'color'=>'#4F46E5'],
-                    ['url'=>'/mystery-shopper',   'icon'=>'visibility_off',         'label'=>'Gizli Müşteri',     'color'=>'#A0A0A0'],
-                    ['url'=>'/character-select',  'icon'=>'switch_account',         'label'=>'Karakter Değiştir', 'color'=>'#A0A0A0'],
-                ];
-                foreach($ddLinks as $dl): ?>
-                <a href="<?php echo BASE_URL.$dl['url']; ?>"
-                   style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;
-                          text-decoration:none;color:#1A1A1A;font-size:13px;font-weight:600;"
-                   onmouseover="this.style.background='#F8F7F5'" onmouseout="this.style.background=''">
-                    <span class="material-symbols-outlined" style="font-size:18px;color:<?php echo $dl['color']; ?>;"><?php echo $dl['icon']; ?></span>
-                    <?php echo $dl['label']; ?>
-                </a>
-                <?php endforeach; ?>
-                <hr style="border:none;border-top:1px solid #F2F1EE;margin:4px 0;"/>
-                <a href="<?php echo BASE_URL; ?>/logout"
-                   style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;
-                          text-decoration:none;color:#EF4444;font-size:13px;font-weight:600;"
-                   onmouseover="this.style.background='#FEF2F2'" onmouseout="this.style.background=''">
-                    <span class="material-symbols-outlined" style="font-size:18px;">logout</span>
-                    Çıkış Yap
-                </a>
-            </div>
+        <div id="nav-dropdown" style="display:none;position:absolute;right:0;top:calc(100% + 8px);
+          width:210px;background:#fff;border:1.5px solid #E8E7E3;border-radius:14px;
+          box-shadow:0 8px 24px rgba(0,0,0,0.12);padding:6px;z-index:9999;">
+            <?php
+            $ddLinks = [
+                ['url'=>'/profile',         'icon'=>'person',                 'label'=>'Profilim',          'color'=>'#F06D1F'],
+                ['url'=>'/wallet',           'icon'=>'account_balance_wallet', 'label'=>'Cüzdanım',          'color'=>'#F06D1F'],
+                ['url'=>'/missions',         'icon'=>'military_tech',          'label'=>'Görevler',          'color'=>'#F06D1F'],
+                ['url'=>'/kampanyalar',      'icon'=>'campaign',               'label'=>'Kampanyalar',       'color'=>'#F06D1F'],
+                ['url'=>'/premium',          'icon'=>'diamond',                'label'=>'Premium',           'color'=>'#4F46E5'],
+                ['url'=>'/mystery-shopper',  'icon'=>'visibility_off',         'label'=>'Gizli Müşteri',     'color'=>'#A0A0A0'],
+                ['url'=>'/character-select', 'icon'=>'switch_account',         'label'=>'Karakter Değiştir', 'color'=>'#A0A0A0'],
+                ['url'=>'/settings',         'icon'=>'settings',               'label'=>'Ayarlar',           'color'=>'#A0A0A0'],
+            ];
+            foreach($ddLinks as $dl): ?>
+            <a href="<?php echo BASE_URL.$dl['url']; ?>"
+               style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;
+                      text-decoration:none;color:#1A1A1A;font-size:13px;font-weight:600;"
+               onmouseover="this.style.background='#F8F7F5'" onmouseout="this.style.background=''">
+                <span class="material-symbols-outlined" style="font-size:18px;color:<?php echo $dl['color']; ?>;"><?php echo $dl['icon']; ?></span>
+                <?php echo $dl['label']; ?>
+            </a>
+            <?php endforeach; ?>
+            <hr style="border:none;border-top:1px solid #F2F1EE;margin:4px 0;"/>
+            <a href="<?php echo BASE_URL; ?>/logout"
+               style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;
+                      text-decoration:none;color:#EF4444;font-size:13px;font-weight:600;"
+               onmouseover="this.style.background='#FEF2F2'" onmouseout="this.style.background=''">
+                <span class="material-symbols-outlined" style="font-size:18px;">logout</span>
+                Çıkış Yap
+            </a>
         </div>
-
     </div>
+
 </nav>
 
 <!-- ── MAIN LAYOUT ────────────────────────────────────────── -->
