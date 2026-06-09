@@ -511,20 +511,18 @@ nav.swarm-topnav{
                 <?php 
                     endforeach;
                 else:
-                    // Premium Mock Sponsors (Foursquare/Swarm style local sponsors)
+                    // Gerçek Sponsorlarımız (Colosseum & Paradise Group)
                     $mockSponsors = [
-                        ['name' => 'Burger House', 'logo' => 'https://img.icons8.com/color/96/hamburger.png', 'desc' => '%15 İndirim', 'url' => '#'],
-                        ['name' => 'Coffee Lab', 'logo' => 'https://img.icons8.com/color/96/coffee-to-go.png', 'desc' => '1 Alana 1', 'url' => '#'],
-                        ['name' => 'Fitness Club', 'logo' => 'https://img.icons8.com/color/96/dumbbell.png', 'desc' => 'Ücretsiz Gün', 'url' => '#'],
-                        ['name' => 'Pizzeria Bella', 'logo' => 'https://img.icons8.com/color/96/pizza.png', 'desc' => 'Özel Menü', 'url' => '#'],
+                        ['name' => 'COLOSSEUM', 'logo' => BASE_URL . '/assets/img/sponsors/colosseum.png', 'desc' => 'Resmi Sponsor', 'url' => 'https://face-tr.gta.world/page/colosseum'],
+                        ['name' => 'Paradise Group', 'logo' => BASE_URL . '/assets/img/sponsors/paradise-group.png', 'desc' => 'Resmi Sponsor', 'url' => 'https://face-tr.gta.world/page/paradise'],
                     ];
                     foreach ($mockSponsors as $mock):
                 ?>
-                    <a href="<?php echo $mock['url']; ?>" 
-                       style="display:flex; flex-direction:column; background:var(--bg-section); border:1.5px solid var(--border); border-radius:12px; overflow:hidden; text-decoration:none; color:inherit; transition:all 0.15s; padding:10px 6px; align-items:center; justify-content:center; text-align:center;"
+                    <a href="<?php echo $mock['url']; ?>" target="_blank" rel="noopener"
+                       style="display:flex; flex-direction:column; background:var(--bg-section); border:1.5px solid var(--border); border-radius:12px; overflow:hidden; text-decoration:none; color:inherit; transition:all 0.15s; padding:10px 6px; align-items:center; justify-content:center; text-align:center; min-height:80px;"
                        onmouseover="this.style.borderColor='var(--color-primary)'; this.style.transform='translateY(-2px)'"
                        onmouseout="this.style.borderColor='var(--border)'; this.style.transform='translateY(0)'">
-                        <img src="<?php echo $mock['logo']; ?>" alt="<?php echo $mock['name']; ?>" style="width:32px; height:32px; object-fit:contain; margin-bottom:4px;" loading="lazy">
+                        <img src="<?php echo $mock['logo']; ?>" alt="<?php echo $mock['name']; ?>" style="width:40px; height:40px; object-fit:contain; margin-bottom:4px;" loading="lazy">
                         <div style="font-size:10px; font-weight:800; color:var(--text-1); line-height:1.2; white-space:nowrap; overflow:hidden; width:100%; text-overflow:ellipsis;"><?php echo $mock['name']; ?></div>
                         <div style="font-size:9px; font-weight:700; color:var(--color-primary); margin-top:2px;"><?php echo $mock['desc']; ?></div>
                     </a>
