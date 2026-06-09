@@ -115,9 +115,9 @@ $activeNav = 'settings';
 require_once __DIR__ . '/partials/app_header.php';
 ?>
 
-<section class="flex-1 flex flex-col gap-stack-md max-w-2xl w-full mx-auto lg:mx-0">
+<div style="min-width:0;" class="flex-1 flex flex-col gap-stack-md max-w-2xl w-full mx-auto lg:mx-0">
     <div class="mb-4">
-        <h1 class="text-3xl font-bold flex items-center gap-2 text-on-surface"><span class="material-symbols-outlined text-primary-container text-[32px]">settings</span> Ayarlar</h1>
+        <h1 class="text-3xl font-bold flex items-center gap-2" style="color:var(--text-1);"><span class="material-symbols-outlined text-[32px]" style="color:var(--color-primary);">settings</span> Ayarlar</h1>
     </div>
 
     <?php if ($error): ?>
@@ -134,12 +134,12 @@ require_once __DIR__ . '/partials/app_header.php';
     <?php endif; ?>
 
     <!-- Avatar -->
-    <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl p-6 md:p-8 shadow-[0_15px_30px_-15px_rgba(19,19,20,0.5)]">
-        <h2 class="text-xl font-bold flex items-center gap-2 mb-6 text-on-surface"><span class="material-symbols-outlined text-primary-container text-[24px]">account_circle</span> Avatar</h2>
+    <div class="rounded-2xl p-6 md:p-8" style="background:#fff;border:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.08);">
+        <h2 class="text-xl font-bold flex items-center gap-2 mb-6" style="color:var(--text-1);"><span class="material-symbols-outlined text-[24px]" style="color:var(--color-primary);">account_circle</span> Avatar</h2>
         <div class="flex flex-col sm:flex-row items-center gap-6">
             <?php $pAvatar = safeAvatarUrl($user['avatar'] ?? null, $user['username']); ?>
             <div class="relative group">
-                <img src="<?php echo $pAvatar; ?>" class="w-32 h-32 rounded-full object-cover border-4 border-[#2a2a2b] shadow-xl flex-shrink-0 relative z-10 bg-[#2a2a2b]">
+                <img src="<?php echo $pAvatar; ?>" class="w-32 h-32 rounded-full object-cover shadow-xl flex-shrink-0 relative z-10" style="border:4px solid #fff;">
                 <div class="absolute inset-0 rounded-full bg-primary-container blur-md -z-10 opacity-20 group-hover:opacity-40 transition-opacity"></div>
             </div>
             
@@ -147,11 +147,11 @@ require_once __DIR__ . '/partials/app_header.php';
                 <?php echo csrfField(); ?>
                 <input type="hidden" name="action" value="update_avatar">
                 
-                <label class="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-white/20 rounded-xl cursor-pointer bg-white/5 hover:bg-white/10 hover:border-primary-container/50 transition-colors">
+                <label class="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed rounded-xl cursor-pointer transition-colors" style="border-color:var(--border);background:var(--bg-section);">
                     <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                        <span class="material-symbols-outlined text-slate-400 mb-1">upload</span>
-                        <p class="text-sm text-slate-400"><span class="font-bold text-primary-container">Tıkla</span> veya sürükle</p>
-                        <p class="text-xs text-slate-500 mt-1">Maks. 10MB, JPEG / PNG / WebP</p>
+                        <span class="material-symbols-outlined mb-1" style="color:var(--text-3);">upload</span>
+                        <p class="text-sm" style="color:var(--text-3);"><span class="font-bold" style="color:var(--color-primary);">Tıkla</span> veya sürükle</p>
+                        <p class="text-xs mt-1" style="color:var(--text-3);">Maks. 10MB, JPEG / PNG / WebP</p>
                     </div>
                     <input type="file" name="avatar" accept="image/*" required class="hidden" onchange="this.form.submit()">
                 </label>
@@ -160,9 +160,9 @@ require_once __DIR__ . '/partials/app_header.php';
     </div>
 
     <!-- Banner -->
-    <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl p-6 md:p-8 shadow-[0_15px_30px_-15px_rgba(19,19,20,0.5)]">
-        <h2 class="text-xl font-bold flex items-center gap-2 mb-6 text-on-surface"><span class="material-symbols-outlined text-primary-container text-[24px]">image</span> Banner</h2>
-        <div class="h-40 rounded-xl overflow-hidden bg-surface-container relative mb-5 border border-white/10 shadow-inner group">
+    <div class="rounded-2xl p-6 md:p-8" style="background:#fff;border:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.08);">
+        <h2 class="text-xl font-bold flex items-center gap-2 mb-6" style="color:var(--text-1);"><span class="material-symbols-outlined text-[24px]" style="color:var(--color-primary);">image</span> Banner</h2>
+        <div class="h-40 rounded-xl overflow-hidden relative mb-5 shadow-inner group" style="background:var(--bg-section);border:1px solid var(--border);">
             <?php if (bannerUrl($user['banner'])): ?>
                 <img src="<?php echo bannerUrl($user['banner']); ?>" class="w-full h-full object-cover">
             <?php else: ?>
@@ -177,9 +177,9 @@ require_once __DIR__ . '/partials/app_header.php';
             <input type="hidden" name="action" value="update_banner">
             
             <div class="flex flex-col sm:flex-row items-center gap-4">
-                <label class="flex-1 w-full flex items-center justify-center gap-3 h-12 border border-white/20 rounded-xl cursor-pointer bg-white/5 hover:bg-white/10 hover:border-primary-container/50 transition-colors px-4">
-                    <span class="material-symbols-outlined text-slate-400 text-[20px]">upload</span>
-                    <span class="text-sm text-slate-300 font-medium whitespace-nowrap overflow-hidden text-ellipsis">Yeni Banner Seç...</span>
+                <label class="flex-1 w-full flex items-center justify-center gap-3 h-12 rounded-xl cursor-pointer transition-colors px-4" style="border:1px solid var(--border);background:var(--bg-section);">
+                    <span class="material-symbols-outlined text-[20px]" style="color:var(--text-3);">upload</span>
+                    <span class="text-sm font-medium whitespace-nowrap overflow-hidden text-ellipsis" style="color:var(--text-2);">Yeni Banner Seç...</span>
                     <input type="file" name="banner" accept="image/*" required class="hidden" onchange="this.nextElementSibling.innerText = this.files[0].name">
                     <span class="hidden"></span>
                 </label>
@@ -187,21 +187,21 @@ require_once __DIR__ . '/partials/app_header.php';
                     <span class="material-symbols-outlined text-[18px]">cloud_upload</span> Yükle
                 </button>
             </div>
-            <div class="text-xs text-slate-500 mt-3 text-center sm:text-left">Maks. 10MB, önerilen 1500x500px</div>
+            <div class="text-xs mt-3 text-center sm:text-left" style="color:var(--text-3);">Maks. 10MB, önerilen 1500x500px</div>
         </form>
     </div>
 
     <!-- Rozet Seçimi (Premium) -->
     <?php if (UserModel::isPremiumActive($user)): ?>
-    <div class="bg-[#2a2a2b]/90 backdrop-blur-[20px] border border-[#7bd0ff]/40 rounded-2xl p-6 md:p-8 shadow-[0_0_30px_-5px_rgba(123,208,255,0.2)] relative overflow-hidden">
+    <div class="rounded-2xl p-6 md:p-8 relative overflow-hidden" style="background:#fff;border:1px solid rgba(123,208,255,0.4);box-shadow:0 0 30px -5px rgba(123,208,255,0.15);">
         <div class="absolute inset-0 bg-gradient-to-r from-transparent via-[#7bd0ff]/5 to-transparent pointer-events-none"></div>
         <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-30 mix-blend-overlay pointer-events-none"></div>
         
-        <h2 class="text-2xl font-black flex items-center gap-2 mb-2 text-white drop-shadow-md relative z-10">
+        <h2 class="text-2xl font-black flex items-center gap-2 mb-2 relative z-10" style="color:var(--text-1);">
             <span class="material-symbols-outlined text-[#7bd0ff] text-[28px]">workspace_premium</span> Profil Rozeti
             <span class="bg-[#7bd0ff]/20 text-[#7bd0ff] text-[10px] font-black px-2 py-0.5 rounded border border-[#7bd0ff]/30 uppercase tracking-widest ml-2 shadow-[0_0_10px_rgba(123,208,255,0.3)]">Premium</span>
         </h2>
-        <p class="text-slate-300 text-sm mb-6 relative z-10 font-medium">Profilinde adının yanında görünecek özel premium rozetini seç.</p>
+        <p class="text-sm mb-6 relative z-10 font-medium" style="color:var(--text-2);">Profilinde adının yanında görünecek özel premium rozetini seç.</p>
         <form method="POST" class="relative z-10">
             <?php echo csrfField(); ?>
             <input type="hidden" name="action" value="update_badge">
@@ -209,17 +209,17 @@ require_once __DIR__ . '/partials/app_header.php';
                 <!-- Rozet yok seçeneği -->
                 <label class="cursor-pointer">
                     <input type="radio" name="badge" value="" <?php echo empty($user['badge']) ? 'checked' : ''; ?> class="sr-only peer">
-                    <div class="flex flex-col items-center justify-center gap-1.5 p-3 rounded-xl border border-white/10 bg-white/5 peer-checked:border-[#7bd0ff]/60 peer-checked:bg-[#7bd0ff]/15 peer-checked:shadow-[0_0_15px_rgba(123,208,255,0.3)] hover:bg-white/10 transition-all h-20">
-                        <span class="material-symbols-outlined text-[24px] text-slate-500">block</span>
-                        <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Yok</span>
+                    <div class="flex flex-col items-center justify-center gap-1.5 p-3 rounded-xl border transition-all h-20" style="border-color:var(--border);background:var(--bg-section);">
+                        <span class="material-symbols-outlined text-[24px]" style="color:var(--text-3);">block</span>
+                        <span class="text-[9px] font-bold uppercase tracking-wider" style="color:var(--text-3);">Yok</span>
                     </div>
                 </label>
                 <?php foreach (UserModel::availableBadges() as $key => $badge): ?>
                 <label class="cursor-pointer">
                     <input type="radio" name="badge" value="<?php echo $key; ?>" <?php echo ($user['badge'] ?? '') === $key ? 'checked' : ''; ?> class="sr-only peer">
-                    <div class="flex flex-col items-center justify-center gap-1.5 p-3 rounded-xl border border-white/10 bg-white/5 peer-checked:border-[#7bd0ff]/60 peer-checked:bg-[#7bd0ff]/15 peer-checked:shadow-[0_0_15px_rgba(123,208,255,0.3)] hover:bg-white/10 transition-all h-20">
+                    <div class="flex flex-col items-center justify-center gap-1.5 p-3 rounded-xl border transition-all h-20" style="border-color:var(--border);background:var(--bg-section);">
                         <span class="material-symbols-outlined text-[28px]" style="color: <?php echo $badge['color']; ?>; text-shadow: 0 0 10px <?php echo $badge['color']; ?>80;"><?php echo $badge['icon']; ?></span>
-                        <span class="text-[9px] text-slate-300 font-bold tracking-wide truncate w-full text-center"><?php echo $badge['label']; ?></span>
+                        <span class="text-[9px] font-bold tracking-wide truncate w-full text-center" style="color:var(--text-2);"><?php echo $badge['label']; ?></span>
                     </div>
                 </label>
                 <?php endforeach; ?>
@@ -230,12 +230,12 @@ require_once __DIR__ . '/partials/app_header.php';
         </form>
     </div>
     <?php else: ?>
-    <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl p-6 md:p-8 shadow-[0_15px_30px_-15px_rgba(19,19,20,0.3)] relative overflow-hidden group">
+    <div class="rounded-2xl p-6 md:p-8 relative overflow-hidden" style="background:#fff;border:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.08);">
         <div class="absolute inset-0 bg-gradient-to-br from-transparent via-[#7bd0ff]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-        <h2 class="text-xl font-bold flex items-center gap-2 mb-4 text-on-surface">
-            <span class="material-symbols-outlined text-slate-500 text-[24px]">workspace_premium</span> Profil Rozeti
+        <h2 class="text-xl font-bold flex items-center gap-2 mb-4" style="color:var(--text-1);">
+            <span class="material-symbols-outlined text-[24px]" style="color:var(--text-3);">workspace_premium</span> Profil Rozeti
         </h2>
-        <p class="text-slate-400 text-sm mb-6 leading-relaxed">Profil rozeti seçmek ve adının yanında havalı bir ikonla görünmek için Premium üye olman gerekir.</p>
+        <p class="text-sm mb-6 leading-relaxed" style="color:var(--text-3);">Profil rozeti seçmek ve adının yanında havalı bir ikonla görünmek için Premium üye olman gerekir.</p>
         <a href="<?php echo BASE_URL; ?>/premium" class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#7bd0ff]/20 to-[#7bd0ff]/10 text-[#7bd0ff] px-6 py-3 rounded-xl font-black text-sm border border-[#7bd0ff]/30 hover:bg-[#7bd0ff]/30 transition-all hover:shadow-[0_0_20px_rgba(123,208,255,0.2)]">
             <span class="material-symbols-outlined text-[18px]">diamond</span> Premium'a Geç
         </a>
@@ -255,15 +255,15 @@ require_once __DIR__ . '/partials/app_header.php';
     $currentTheme = $user['profile_theme'] ?? 'default';
     ?>
     <?php if (UserModel::isPremiumActive($user)): ?>
-    <div class="bg-[#2a2a2b]/90 backdrop-blur-[20px] border border-[#7bd0ff]/40 rounded-2xl p-6 md:p-8 shadow-[0_0_30px_-5px_rgba(123,208,255,0.2)] relative overflow-hidden">
+    <div class="rounded-2xl p-6 md:p-8 relative overflow-hidden" style="background:#fff;border:1px solid rgba(123,208,255,0.4);box-shadow:0 0 30px -5px rgba(123,208,255,0.15);">
         <div class="absolute inset-0 bg-gradient-to-r from-transparent via-[#7bd0ff]/5 to-transparent pointer-events-none"></div>
         <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-30 mix-blend-overlay pointer-events-none"></div>
         
-        <h2 class="text-2xl font-black flex items-center gap-2 mb-2 text-white drop-shadow-md relative z-10">
+        <h2 class="text-2xl font-black flex items-center gap-2 mb-2 relative z-10" style="color:var(--text-1);">
             <span class="material-symbols-outlined text-[#7bd0ff] text-[28px]">palette</span> Profil Teması
             <span class="bg-[#7bd0ff]/20 text-[#7bd0ff] text-[10px] font-black px-2 py-0.5 rounded border border-[#7bd0ff]/30 uppercase tracking-widest ml-2 shadow-[0_0_10px_rgba(123,208,255,0.3)]">Premium</span>
         </h2>
-        <p class="text-slate-300 text-sm mb-6 relative z-10 font-medium">Profilinin renk temasını seç. Seçtiğin tema profil sayfanda görünecek.</p>
+        <p class="text-sm mb-6 relative z-10 font-medium" style="color:var(--text-2);">Profilinin renk temasını seç. Seçtiğin tema profil sayfanda görünecek.</p>
         <form method="POST" class="relative z-10">
             <?php echo csrfField(); ?>
             <input type="hidden" name="action" value="update_theme">
@@ -271,9 +271,9 @@ require_once __DIR__ . '/partials/app_header.php';
             <div class="grid grid-cols-3 sm:grid-cols-6 gap-3 mb-6">
                 <?php foreach ($themes as $key => $theme): ?>
                 <button type="button" onclick="document.getElementById('theme_input').value='<?php echo $key; ?>';document.querySelectorAll('[data-theme-card]').forEach(c=>c.classList.remove('ring-2','ring-[#7bd0ff]','shadow-[0_0_15px_rgba(123,208,255,0.3)]'));this.querySelector('[data-theme-card]').classList.add('ring-2','ring-[#7bd0ff]','shadow-[0_0_15px_rgba(123,208,255,0.3)]')" class="group">
-                    <div data-theme-card class="flex flex-col items-center gap-2 p-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition-all <?php echo $currentTheme === $key ? 'ring-2 ring-[#7bd0ff] shadow-[0_0_15px_rgba(123,208,255,0.3)]' : ''; ?>">
+                    <div data-theme-card class="flex flex-col items-center gap-2 p-3 rounded-xl border transition-all <?php echo $currentTheme === $key ? 'ring-2 ring-[#7bd0ff] shadow-[0_0_15px_rgba(123,208,255,0.3)]' : ''; ?>" style="border-color:var(--border);background:var(--bg-section);">
                         <div class="w-10 h-10 rounded-full bg-gradient-to-br <?php echo $theme['gradient']; ?> shadow-lg"></div>
-                        <span class="text-[10px] text-slate-300 font-bold tracking-wide"><?php echo $theme['label']; ?></span>
+                        <span class="text-[10px] font-bold tracking-wide" style="color:var(--text-2);"><?php echo $theme['label']; ?></span>
                     </div>
                 </button>
                 <?php endforeach; ?>
@@ -284,12 +284,12 @@ require_once __DIR__ . '/partials/app_header.php';
         </form>
     </div>
     <?php else: ?>
-    <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl p-6 md:p-8 shadow-[0_15px_30px_-15px_rgba(19,19,20,0.3)] relative overflow-hidden group">
+    <div class="rounded-2xl p-6 md:p-8 relative overflow-hidden" style="background:#fff;border:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.08);">
         <div class="absolute inset-0 bg-gradient-to-br from-transparent via-[#7bd0ff]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-        <h2 class="text-xl font-bold flex items-center gap-2 mb-4 text-on-surface">
-            <span class="material-symbols-outlined text-slate-500 text-[24px]">palette</span> Profil Teması
+        <h2 class="text-xl font-bold flex items-center gap-2 mb-4" style="color:var(--text-1);">
+            <span class="material-symbols-outlined text-[24px]" style="color:var(--text-3);">palette</span> Profil Teması
         </h2>
-        <p class="text-slate-400 text-sm mb-6 leading-relaxed">Profil temanı değiştirmek ve sayfanı kişiselleştirmek için Premium üye olman gerekir.</p>
+        <p class="text-sm mb-6 leading-relaxed" style="color:var(--text-3);">Profil temanı değiştirmek ve sayfanı kişiselleştirmek için Premium üye olman gerekir.</p>
         <a href="<?php echo BASE_URL; ?>/premium" class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#7bd0ff]/20 to-[#7bd0ff]/10 text-[#7bd0ff] px-6 py-3 rounded-xl font-black text-sm border border-[#7bd0ff]/30 hover:bg-[#7bd0ff]/30 transition-all hover:shadow-[0_0_20px_rgba(123,208,255,0.2)]">
             <span class="material-symbols-outlined text-[18px]">diamond</span> Premium'a Geç
         </a>
@@ -297,49 +297,49 @@ require_once __DIR__ . '/partials/app_header.php';
     <?php endif; ?>
 
     <!-- Profil Bilgileri -->
-    <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl p-6 md:p-8 shadow-[0_15px_30px_-15px_rgba(19,19,20,0.5)]">
-        <h2 class="text-xl font-bold flex items-center gap-2 mb-6 text-on-surface"><span class="material-symbols-outlined text-primary-container text-[24px]">contact_mail</span> Profil Bilgileri</h2>
+    <div class="rounded-2xl p-6 md:p-8" style="background:#fff;border:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.08);">
+        <h2 class="text-xl font-bold flex items-center gap-2 mb-6" style="color:var(--text-1);"><span class="material-symbols-outlined text-[24px]" style="color:var(--color-primary);">contact_mail</span> Profil Bilgileri</h2>
         <form method="POST" class="flex flex-col gap-5">
             <?php echo csrfField(); ?>
             <input type="hidden" name="action" value="update_profile">
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div class="flex flex-col gap-2">
-                    <label class="text-sm font-bold text-slate-300 ml-1">Kullanıcı Adı</label>
-                    <input type="text" name="username" value="<?php echo escape($user['username']); ?>" required class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-on-surface focus:border-primary-container focus:bg-white/10 outline-none transition-all shadow-inner">
+                    <label class="text-sm font-bold ml-1" style="color:var(--text-2);">Kullanıcı Adı</label>
+                    <input type="text" name="username" value="<?php echo escape($user['username']); ?>" required class="w-full rounded-xl px-4 py-3 focus:outline-none transition-all shadow-inner" style="background:var(--bg-section);border:1px solid var(--border);color:var(--text-1);">
                 </div>
                 
                 <div class="flex flex-col gap-2">
-                    <label class="text-sm font-bold text-slate-300 ml-1">Etiket (@tag)</label>
+                    <label class="text-sm font-bold ml-1" style="color:var(--text-2);">Etiket (@tag)</label>
                     <div class="relative">
                         <span class="absolute left-4 top-1/2 -translate-y-1/2 text-primary-container font-black">@</span>
-                        <input type="text" name="tag" value="<?php echo escape($user['tag'] ?? ''); ?>" pattern="[a-zA-Z0-9_]{3,30}" class="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-on-surface focus:border-primary-container focus:bg-white/10 outline-none transition-all shadow-inner">
+                        <input type="text" name="tag" value="<?php echo escape($user['tag'] ?? ''); ?>" pattern="[a-zA-Z0-9_]{3,30}" class="w-full rounded-xl pl-10 pr-4 py-3 focus:outline-none transition-all shadow-inner" style="background:var(--bg-section);border:1px solid var(--border);color:var(--text-1);">
                     </div>
                 </div>
             </div>
             
             <div class="flex flex-col gap-2">
-                <label class="text-sm font-bold text-slate-300 ml-1">E-posta</label>
+                <label class="text-sm font-bold ml-1" style="color:var(--text-2);">E-posta</label>
                 <div class="relative">
-                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 material-symbols-outlined text-[18px]">mail</span>
-                    <input type="email" name="email" value="<?php echo escape($user['email']); ?>" required class="w-full bg-white/5 border border-white/10 rounded-xl pl-12 pr-4 py-3 text-on-surface focus:border-primary-container focus:bg-white/10 outline-none transition-all shadow-inner">
+                    <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-[18px]" style="color:var(--text-3);">mail</span>
+                    <input type="email" name="email" value="<?php echo escape($user['email']); ?>" required class="w-full rounded-xl pl-12 pr-4 py-3 focus:outline-none transition-all shadow-inner" style="background:var(--bg-section);border:1px solid var(--border);color:var(--text-1);">
                 </div>
             </div>
 
             <div class="flex flex-col gap-2">
-                <label class="text-sm font-bold text-slate-300 ml-1">Banka Hesap Numarası <span class="text-error">*</span></label>
+                <label class="text-sm font-bold ml-1" style="color:var(--text-2);">Banka Hesap Numarası <span class="text-error">*</span></label>
                 <div class="relative">
-                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 material-symbols-outlined text-[18px]">account_balance</span>
-                    <input type="text" name="bank_account" value="<?php echo escape($user['bank_account'] ?? ''); ?>" required placeholder="0300 8108 7" pattern="\d{4} \d{4} \d{1}" class="w-full bg-white/5 border border-white/10 rounded-xl pl-12 pr-4 py-3 text-on-surface focus:border-primary-container focus:bg-white/10 outline-none transition-all shadow-inner font-mono" title="Format: #### #### # (Örn: 0300 8108 7)">
+                    <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-[18px]" style="color:var(--text-3);">account_balance</span>
+                    <input type="text" name="bank_account" value="<?php echo escape($user['bank_account'] ?? ''); ?>" required placeholder="0300 8108 7" pattern="\d{4} \d{4} \d{1}" class="w-full rounded-xl pl-12 pr-4 py-3 focus:outline-none transition-all shadow-inner font-mono" style="background:var(--bg-section);border:1px solid var(--border);color:var(--text-1);" title="Format: #### #### # (Örn: 0300 8108 7)">
                 </div>
-                <p class="text-[11px] text-slate-500 ml-1">Bakiye çekim işlemlerinizin gönderileceği banka hesap numarası (Zorunlu).</p>
+                <p class="text-[11px] ml-1" style="color:var(--text-3);">Bakiye çekim işlemlerinizin gönderileceği banka hesap numarası (Zorunlu).</p>
             </div>
             
             <div class="flex flex-col gap-2">
-                <label class="text-sm font-bold text-slate-300 ml-1">Biyografi</label>
+                <label class="text-sm font-bold ml-1" style="color:var(--text-2);">Biyografi</label>
                 <?php $maxBio = UserModel::isPremiumActive($user) ? 500 : 280; ?>
-                <textarea name="bio" rows="3" maxlength="<?php echo $maxBio; ?>" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-on-surface focus:border-primary-container focus:bg-white/10 outline-none transition-all shadow-inner resize-y"><?php echo escape($user['bio'] ?? ''); ?></textarea>
-                <div class="text-xs text-slate-500 font-medium ml-1 flex items-center justify-between">
+                <textarea name="bio" rows="3" maxlength="<?php echo $maxBio; ?>" class="w-full rounded-xl px-4 py-3 focus:outline-none transition-all shadow-inner resize-y" style="background:var(--bg-section);border:1px solid var(--border);color:var(--text-1);"><?php echo escape($user['bio'] ?? ''); ?></textarea>
+                <div class="text-xs font-medium ml-1 flex items-center justify-between" style="color:var(--text-3);">
                     <span>Kendinizden kısaca bahsedin.</span>
                     <span><?php echo $maxBio === 500 ? 'Maks 500 karakter (Premium 💎)' : 'Maks 280 karakter'; ?></span>
                 </div>
@@ -352,35 +352,35 @@ require_once __DIR__ . '/partials/app_header.php';
     </div>
 
     <!-- Şifre Değiştir -->
-    <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl p-6 md:p-8 shadow-[0_15px_30px_-15px_rgba(19,19,20,0.5)]">
-        <h2 class="text-xl font-bold flex items-center gap-2 mb-6 text-on-surface"><span class="material-symbols-outlined text-primary-container text-[24px]">lock</span> Şifre Değiştir</h2>
+    <div class="rounded-2xl p-6 md:p-8" style="background:#fff;border:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.08);">
+        <h2 class="text-xl font-bold flex items-center gap-2 mb-6" style="color:var(--text-1);"><span class="material-symbols-outlined text-[24px]" style="color:var(--color-primary);">lock</span> Şifre Değiştir</h2>
         <form method="POST" class="flex flex-col gap-5">
             <?php echo csrfField(); ?>
             <input type="hidden" name="action" value="change_password">
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div class="flex flex-col gap-2">
-                    <label class="text-sm font-bold text-slate-300 ml-1">Mevcut Şifre</label>
+                    <label class="text-sm font-bold ml-1" style="color:var(--text-2);">Mevcut Şifre</label>
                     <div class="relative">
-                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 material-symbols-outlined text-[18px]">key</span>
-                        <input type="password" name="current_password" required class="w-full bg-white/5 border border-white/10 rounded-xl pl-12 pr-4 py-3 text-on-surface focus:border-primary-container focus:bg-white/10 outline-none transition-all shadow-inner">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-[18px]" style="color:var(--text-3);">key</span>
+                        <input type="password" name="current_password" required class="w-full rounded-xl pl-12 pr-4 py-3 focus:outline-none transition-all shadow-inner" style="background:var(--bg-section);border:1px solid var(--border);color:var(--text-1);">
                     </div>
                 </div>
                 
                 <div class="flex flex-col gap-2">
-                    <label class="text-sm font-bold text-slate-300 ml-1">Yeni Şifre</label>
+                    <label class="text-sm font-bold ml-1" style="color:var(--text-2);">Yeni Şifre</label>
                     <div class="relative">
-                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 material-symbols-outlined text-[18px]">lock_reset</span>
-                        <input type="password" name="new_password" required minlength="6" class="w-full bg-white/5 border border-white/10 rounded-xl pl-12 pr-4 py-3 text-on-surface focus:border-primary-container focus:bg-white/10 outline-none transition-all shadow-inner">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-[18px]" style="color:var(--text-3);">lock_reset</span>
+                        <input type="password" name="new_password" required minlength="6" class="w-full rounded-xl pl-12 pr-4 py-3 focus:outline-none transition-all shadow-inner" style="background:var(--bg-section);border:1px solid var(--border);color:var(--text-1);">
                     </div>
                 </div>
             </div>
             
-            <button type="submit" class="mt-2 bg-white/5 hover:bg-white/10 text-white border border-white/10 px-8 py-3 rounded-xl font-bold transition-all active:scale-95 w-full sm:w-auto flex justify-center items-center gap-2">
+            <button type="submit" class="mt-2 border px-8 py-3 rounded-xl font-bold transition-all active:scale-95 w-full sm:w-auto flex justify-center items-center gap-2" style="background:var(--bg-section);color:var(--text-1);border-color:var(--border);">
                 <span class="material-symbols-outlined text-[20px]">update</span> Şifreyi Güncelle
             </button>
         </form>
     </div>
-</section>
+</div>
 
 <?php require_once __DIR__ . '/partials/app_footer.php'; ?>

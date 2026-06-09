@@ -81,15 +81,15 @@ $activeNav = 'venues';
 require_once __DIR__ . '/partials/app_header.php';
 ?>
 
-<section class="flex-1 flex flex-col gap-stack-md max-w-3xl w-full mx-auto lg:mx-0">
-    <a href="<?php echo BASE_URL; ?>/venues" class="flex items-center gap-2 text-slate-400 hover:text-white transition-colors w-fit mb-2">
+<div style="min-width:0;" class="flex-1 flex flex-col gap-stack-md max-w-3xl w-full mx-auto lg:mx-0">
+    <a href="<?php echo BASE_URL; ?>/venues" class="flex items-center gap-2 hover:opacity-70 transition-opacity w-fit mb-2" style="color:var(--text-3);text-decoration:none;">
         <span class="material-symbols-outlined text-[20px]">arrow_back</span> Mekanlar
     </a>
 
     <div class="swarm-glass-card rounded-2xl overflow-hidden shadow-[0_20px_40px_-15px_rgba(19,19,20,0.5)] mb-6 relative">
         <!-- Banner Image -->
-        <div class="h-64 md:h-80 w-full bg-surface-container relative">
-            <div class="absolute inset-0 bg-gradient-to-t from-[#131314]/95 via-transparent to-transparent z-10"></div>
+        <div class="h-64 md:h-80 w-full relative" style="background:var(--bg-section);">
+            <div class="absolute inset-0 z-10" style="background:linear-gradient(to top,rgba(255,255,255,0.85) 0%,transparent 60%);"></div>
             <?php if (!empty($venue['cover_image'])): ?>
                 <div class="absolute inset-0 bg-cover bg-center blur-2xl opacity-40 scale-110" style="background-image: url('<?php echo BASE_URL . '/uploads/venues/' . escape($venue['cover_image']); ?>')"></div>
                 <img src="<?php echo BASE_URL . '/uploads/venues/' . escape($venue['cover_image']); ?>" class="w-full h-full object-contain p-4 relative z-10" width="800" height="320">
@@ -97,13 +97,13 @@ require_once __DIR__ . '/partials/app_header.php';
                 <div class="absolute inset-0 bg-cover bg-center blur-2xl opacity-40 scale-110" style="background-image: url('<?php echo uploadUrl('posts', $venue['image']); ?>')"></div>
                 <img src="<?php echo uploadUrl('posts', $venue['image']); ?>" class="w-full h-full object-contain p-4 relative z-10" width="800" height="320">
             <?php else: ?>
-                <div class="w-full h-full flex items-center justify-center text-slate-600 bg-surface-container-high relative z-10"><span class="material-symbols-outlined text-[64px]">store</span></div>
+                <div class="w-full h-full flex items-center justify-center relative z-10" style="background:var(--bg-section);color:var(--text-3);"><span class="material-symbols-outlined text-[64px]">store</span></div>
             <?php endif; ?>
             
             <!-- Category Badge overlaying banner -->
             <?php if ($venue['category']): ?>
             <div class="absolute top-4 left-4 z-20">
-                <span class="bg-black/60 backdrop-blur text-white text-xs font-bold px-3 py-1.5 rounded-full border border-white/20 uppercase tracking-wider shadow-lg">
+                <span class="text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider shadow-lg" style="background:rgba(26,26,26,0.75);color:#fff;border:1px solid rgba(255,255,255,0.25);">
                     <?php echo escape(VenueModel::categories()[$venue['category']] ?? $venue['category']); ?>
                 </span>
             </div>
@@ -111,7 +111,7 @@ require_once __DIR__ . '/partials/app_header.php';
             
             <!-- Open/Close Badge -->
             <?php if (isset($venue['is_open'])): ?>
-            <div class="absolute top-4 right-4 z-20 flex items-center gap-2 bg-black/60 backdrop-blur text-[12px] font-bold px-3 py-1.5 rounded-full border border-white/20 shadow-lg <?php echo $venue['is_open'] ? 'text-emerald-400' : 'text-red-400'; ?>">
+            <div class="absolute top-4 right-4 z-20 flex items-center gap-2 text-[12px] font-bold px-3 py-1.5 rounded-full shadow-lg" style="background:rgba(26,26,26,0.75);border:1px solid rgba(255,255,255,0.25);color:<?php echo $venue['is_open'] ? '#10b981' : '#ef4444'; ?>;">
                 <span class="w-2 h-2 rounded-full animate-pulse <?php echo $venue['is_open'] ? 'bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.8)]' : 'bg-red-400 shadow-[0_0_8px_rgba(239,68,68,0.8)]'; ?>"></span>
                 <?php echo $venue['is_open'] ? 'Şu An Açık' : 'Şu An Kapalı'; ?>
             </div>
@@ -122,7 +122,7 @@ require_once __DIR__ . '/partials/app_header.php';
         <div class="p-6 md:p-8 relative z-20 -mt-20">
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
                 <div>
-                    <h1 class="text-4xl md:text-5xl font-black text-white drop-shadow-md tracking-tight"><?php echo escape($venue['name']); ?></h1>
+                    <h1 class="text-4xl md:text-5xl font-black tracking-tight" style="color:var(--text-1);"><?php echo escape($venue['name']); ?></h1>
                 </div>
                 <!-- Call to action button -->
                 <div class="flex items-center gap-3">
@@ -134,7 +134,7 @@ require_once __DIR__ . '/partials/app_header.php';
                     <form method="POST" class="inline">
                         <input type="hidden" name="csrf_token" value="<?php echo csrfToken(); ?>">
                         <input type="hidden" name="action" value="toggle_favorite">
-                        <button type="submit" class="flex items-center justify-center gap-1.5 <?php echo $isFavorited ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' : ($isPremiumUser ? 'bg-white/5 text-slate-400 border-white/10 hover:text-amber-400 hover:border-amber-500/30' : 'bg-white/5 text-slate-600 border-white/5 cursor-not-allowed'); ?> border px-4 py-3 rounded-xl font-bold transition-all active:scale-95 shrink-0" <?php echo !$isPremiumUser ? 'title="Premium özellik 💎"' : ''; ?>>
+                        <button type="submit" class="flex items-center justify-center gap-1.5 border px-4 py-3 rounded-xl font-bold transition-all active:scale-95 shrink-0" style="<?php echo $isFavorited ? 'background:rgba(245,158,11,0.15);color:#f59e0b;border-color:rgba(245,158,11,0.35);' : ($isPremiumUser ? 'background:var(--bg-section);color:var(--text-3);border-color:var(--border);' : 'background:var(--bg-section);color:var(--text-3);border-color:var(--border);cursor:not-allowed;'); ?>" <?php echo !$isPremiumUser ? 'title="Premium özellik 💎"' : ''; ?>>
                             <span class="material-symbols-outlined text-[20px]" <?php echo $isFavorited ? 'data-weight="fill"' : ''; ?>>star</span>
                             <span class="text-xs"><?php echo $favoriteCount; ?></span>
                         </button>
@@ -143,50 +143,50 @@ require_once __DIR__ . '/partials/app_header.php';
             </div>
 
             <?php if ($venue['description']): ?>
-                <p class="text-slate-300 mb-8 leading-relaxed font-body-md text-lg max-w-2xl"><?php echo nl2brSafe($venue['description']); ?></p>
+                <p class="mb-8 leading-relaxed text-lg max-w-2xl" style="color:var(--text-2);"><?php echo nl2brSafe($venue['description']); ?></p>
             <?php endif; ?>
             
             <!-- Information Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-                <div class="flex flex-col gap-4 bg-white/5 border border-white/10 rounded-xl p-5">
+                <div class="flex flex-col gap-4 rounded-xl p-5" style="background:var(--bg-section);border:1px solid var(--border);">
                     <?php if ($venue['address']): ?>
                         <div class="flex items-start gap-3">
-                            <span class="material-symbols-outlined text-[24px] text-primary-container shrink-0 mt-0.5">map</span> 
-                            <span class="text-slate-300"><?php echo escape($venue['address']); ?></span>
+                            <span class="material-symbols-outlined text-[24px] shrink-0 mt-0.5" style="color:var(--color-primary);">map</span> 
+                            <span style="color:var(--text-2);"><?php echo escape($venue['address']); ?></span>
                         </div>
                     <?php endif; ?>
                     <?php if (!empty($venue['hours'])): ?>
                         <div class="flex items-start gap-3">
-                            <span class="material-symbols-outlined text-[24px] text-primary-container shrink-0">schedule</span> 
-                            <span class="text-slate-300"><?php echo escape($venue['hours']); ?></span>
+                            <span class="material-symbols-outlined text-[24px] shrink-0" style="color:var(--color-primary);">schedule</span> 
+                            <span style="color:var(--text-2);"><?php echo escape($venue['hours']); ?></span>
                         </div>
                     <?php endif; ?>
                     <?php if (!empty($venue['phone'])): ?>
                         <div class="flex items-center gap-3">
-                            <span class="material-symbols-outlined text-[24px] text-primary-container shrink-0">call</span> 
-                            <span class="text-slate-300"><?php echo escape($venue['phone']); ?></span>
+                            <span class="material-symbols-outlined text-[24px] shrink-0" style="color:var(--color-primary);">call</span> 
+                            <span style="color:var(--text-2);"><?php echo escape($venue['phone']); ?></span>
                         </div>
                     <?php endif; ?>
                 </div>
 
-                <div class="flex flex-col gap-4 bg-white/5 border border-white/10 rounded-xl p-5">
+                <div class="flex flex-col gap-4 rounded-xl p-5" style="background:var(--bg-section);border:1px solid var(--border);">
                     <?php if ($venue['website']): ?>
                         <div class="flex items-center gap-3">
                             <span class="material-symbols-outlined text-[24px] text-[#3b82f6]">language</span> 
-                            <a href="<?php echo safeHref($venue['website']); ?>" target="_blank" rel="noopener noreferrer" class="text-slate-300 hover:text-[#3b82f6] transition-colors truncate">Resmi Web Sitesi</a>
+                            <a href="<?php echo safeHref($venue['website']); ?>" target="_blank" rel="noopener noreferrer" class="hover:underline truncate" style="color:var(--text-2);">Resmi Web Sitesi</a>
                         </div>
                     <?php endif; ?>
                     <?php if ($venue['facebrowser_url']): ?>
                         <div class="flex items-center gap-3">
                             <span class="material-symbols-outlined text-[24px] text-[#3b5998]">link</span> 
-                            <a href="<?php echo safeHref($venue['facebrowser_url']); ?>" target="_blank" rel="noopener noreferrer" class="text-slate-300 hover:text-[#3b5998] transition-colors truncate">Facebrowser Sayfası</a>
+                            <a href="<?php echo safeHref($venue['facebrowser_url']); ?>" target="_blank" rel="noopener noreferrer" class="hover:underline truncate" style="color:var(--text-2);">Facebrowser Sayfası</a>
                         </div>
                     <?php endif; ?>
                     
                     <!-- Stats in the grid -->
                     <div class="flex items-center gap-3 mt-auto pt-2">
                         <span class="material-symbols-outlined text-[24px] text-emerald-400">verified_user</span> 
-                        <span class="text-slate-300"><strong class="text-white text-lg"><?php echo $checkinCount; ?></strong> Toplam Check-in</span>
+                        <span style="color:var(--text-2);"><strong style="color:var(--text-1);font-size:1.125rem;"><?php echo $checkinCount; ?></strong> Toplam Check-in</span>
                     </div>
                 </div>
             </div>
@@ -194,7 +194,7 @@ require_once __DIR__ . '/partials/app_header.php';
     </div>
 
     <!-- Rating Section -->
-    <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl p-6 md:p-8 shadow-[0_20px_40px_-15px_rgba(19,19,20,0.5)] mb-6" id="venueRatingSection">
+    <div class="rounded-2xl p-6 md:p-8 mb-6" id="venueRatingSection" style="background:#fff;border:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.08);">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <!-- Left: Average Rating Display -->
             <div class="flex items-center gap-5">
@@ -203,11 +203,11 @@ require_once __DIR__ . '/partials/app_header.php';
                     <span class="text-[10px] text-amber-400/70 font-semibold uppercase tracking-wider mt-0.5">/ 5</span>
                 </div>
                 <div class="flex flex-col gap-1">
-                    <h3 class="text-lg font-bold text-on-surface flex items-center gap-2">
+                    <h3 class="text-lg font-bold flex items-center gap-2" style="color:var(--text-1);">
                         <span class="material-symbols-outlined text-amber-400" style="font-variation-settings: 'FILL' 1;">star</span>
                         Mekan Puanı
                     </h3>
-                    <p class="text-sm text-slate-400">
+                    <p class="text-sm" style="color:var(--text-3);">
                         <span id="ratingCountDisplay"><?php echo $ratingCount; ?></span> kişi puan verdi
                     </p>
                     <!-- Average Stars (read-only) -->
@@ -232,7 +232,7 @@ require_once __DIR__ . '/partials/app_header.php';
             <!-- Right: User Rating Interactive Stars -->
             <div class="flex flex-col items-center md:items-end gap-2">
                 <?php if (Auth::check()): ?>
-                    <span class="text-xs text-slate-500 font-medium uppercase tracking-wider">
+                    <span class="text-xs font-medium uppercase tracking-wider" style="color:var(--text-3);">
                         <?php echo $userRating > 0 ? 'Puanını güncelle' : 'Puan ver'; ?>
                     </span>
                     <div class="flex items-center gap-1" id="userStarRating" data-venue-id="<?php echo $venueId; ?>" data-current="<?php echo $userRating; ?>">
@@ -251,28 +251,28 @@ require_once __DIR__ . '/partials/app_header.php';
                     <?php if ($userRating > 0): ?>
                         <span class="text-xs text-amber-400/70" id="userRatingLabel">Senin puanın: <strong><?php echo $userRating; ?>/5</strong></span>
                     <?php else: ?>
-                        <span class="text-xs text-slate-500" id="userRatingLabel">Henüz puan vermedin</span>
+                        <span class="text-xs" id="userRatingLabel" style="color:var(--text-3);">Henüz puan vermedin</span>
                     <?php endif; ?>
                 <?php else: ?>
-                    <div class="flex flex-col items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-6 py-4">
-                        <span class="material-symbols-outlined text-[24px] text-slate-500">lock</span>
-                        <p class="text-sm text-slate-400 text-center">Puan vermek için <a href="<?php echo BASE_URL; ?>/login" class="text-primary-container hover:underline font-semibold">giriş yapın</a></p>
+                    <div class="flex flex-col items-center gap-2 rounded-xl px-6 py-4" style="background:var(--bg-section);border:1px solid var(--border);">
+                        <span class="material-symbols-outlined text-[24px]" style="color:var(--text-3);">lock</span>
+                        <p class="text-sm text-center" style="color:var(--text-2);">Puan vermek için <a href="<?php echo BASE_URL; ?>/login" class="hover:underline font-semibold" style="color:var(--color-primary);">giriş yapın</a></p>
                     </div>
                 <?php endif; ?>
             </div>
         </div>
     </div>
 
-    <h2 class="text-xl font-bold text-on-surface mb-2 mt-4 flex items-center gap-2"><span class="material-symbols-outlined text-primary-container">history</span> Son Check-in'ler</h2>
+    <h2 class="text-xl font-bold mb-2 mt-4 flex items-center gap-2" style="color:var(--text-1);"><span class="material-symbols-outlined" style="color:var(--color-primary);">history</span> Son Check-in'ler</h2>
 
     <!-- ── Aktif Kampanyalar ── -->
     <?php if (!empty($activeCampaigns)): ?>
-    <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-purple-500/20 rounded-xl overflow-hidden mb-2">
-        <div class="px-6 py-4 border-b border-white/5 flex items-center gap-2">
+    <div class="rounded-xl overflow-hidden mb-2" style="background:#fff;border:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.08);">
+        <div class="px-6 py-4 flex items-center gap-2" style="border-bottom:1px solid var(--border);">
             <span class="material-symbols-outlined text-purple-400 text-[20px]">campaign</span>
-            <h2 class="text-base font-bold text-on-surface">Aktif Kampanyalar</h2>
+            <h2 class="text-base font-bold" style="color:var(--text-1);">Aktif Kampanyalar</h2>
         </div>
-        <div class="divide-y divide-white/5">
+        <div class="divide-y" style="--tw-divide-opacity:1;border-color:var(--border);">
             <?php foreach ($activeCampaigns as $c):
                 $hasEarned = Auth::check() && $campaignModel->hasEarned($c['id'], Auth::id());
                 $myCode    = null;
@@ -297,22 +297,22 @@ require_once __DIR__ . '/partials/app_header.php';
                     </span>
                 </div>
                 <div class="flex-grow min-w-0">
-                    <div class="font-semibold text-on-surface"><?php echo escape($c['title']); ?></div>
-                    <div class="text-sm text-slate-400 mt-0.5">
+                    <div class="font-semibold" style="color:var(--text-1);"><?php echo escape($c['title']); ?></div>
+                    <div class="text-sm mt-0.5" style="color:var(--text-3);">
                         <?php echo escape(CampaignModel::formatTrigger($c)); ?> →
                         <span class="text-purple-400 font-semibold"><?php echo escape(CampaignModel::formatReward($c)); ?></span>
                     </div>
                     <?php if ($c['description']): ?>
-                        <p class="text-xs text-slate-500 mt-1"><?php echo escape($c['description']); ?></p>
+                        <p class="text-xs mt-1" style="color:var(--text-3);"><?php echo escape($c['description']); ?></p>
                     <?php endif; ?>
 
                     <?php if (!$hasEarned && $c['trigger_type'] !== 'first_checkin'): ?>
                     <div class="mt-2">
-                        <div class="flex justify-between text-xs text-slate-500 mb-1">
+                        <div class="flex justify-between text-xs mb-1" style="color:var(--text-3);">
                             <span><?php echo $userCheckinHere; ?> / <?php echo $target; ?> check-in</span>
                             <span><?php echo $progress; ?>%</span>
                         </div>
-                        <div class="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                        <div class="h-1.5 rounded-full overflow-hidden" style="background:var(--bg-section);">
                             <div class="h-full bg-purple-500/70 rounded-full transition-all duration-700" style="width:<?php echo $progress; ?>%"></div>
                         </div>
                     </div>
@@ -321,9 +321,9 @@ require_once __DIR__ . '/partials/app_header.php';
                     <?php if ($hasEarned): ?>
                     <div class="mt-2 flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 rounded-lg px-3 py-2 flex-wrap">
                         <span class="material-symbols-outlined text-emerald-400 text-[16px]">confirmation_number</span>
-                        <span class="text-xs text-slate-400">Kodun:</span>
+                        <span class="text-xs" style="color:var(--text-3);">Kodun:</span>
                         <code class="font-mono font-bold text-emerald-400 tracking-widest"><?php echo escape($myCode ?? '——'); ?></code>
-                        <span class="text-xs text-slate-500">— kasaya göster</span>
+                        <span class="text-xs" style="color:var(--text-3);">— kasaya göster</span>
                     </div>
                     <?php endif; ?>
                 </div>
@@ -334,9 +334,9 @@ require_once __DIR__ . '/partials/app_header.php';
     <?php endif; ?>
 
     <!-- Check-in Listesi (sade) -->
-    <div class="swarm-glass-card rounded-xl border border-outline-variant/20 overflow-hidden mb-4">
+    <div class="rounded-xl overflow-hidden mb-4" style="background:#fff;border:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.08);">
         <?php if (empty($posts)): ?>
-            <div class="p-8 text-center text-slate-400">
+            <div class="p-8 text-center" style="color:var(--text-3);">
                 <span class="material-symbols-outlined text-[40px] mb-2 block opacity-40">pin_drop</span>
                 <p class="text-sm">Bu mekanda henüz check-in yok. İlk check-in'i sen yap!</p>
                 <button onclick="openVenueCheckinModal()" class="mt-4 inline-flex items-center gap-2 bg-primary-container text-white px-5 py-2.5 rounded-lg font-bold text-sm hover:brightness-110 transition-all active:scale-95">
@@ -345,30 +345,30 @@ require_once __DIR__ . '/partials/app_header.php';
                 </button>
             </div>
         <?php else: ?>
-            <div class="divide-y divide-white/5">
+            <div class="divide-y" style="border-color:var(--border);">
                 <?php foreach ($posts as $ci): ?>
                     <?php include __DIR__ . '/partials/_checkin_row.php'; ?>
                 <?php endforeach; ?>
             </div>
         <?php endif; ?>
     </div>
-</section>
+</div>
 
 <!-- ── Inline Check-in Modal ── -->
 <div id="venueCheckinModal" class="fixed inset-0 z-[9999] hidden">
-    <div class="absolute inset-0 bg-black/70 backdrop-blur-md" onclick="closeVenueCheckinModal()"></div>
+    <div class="absolute inset-0" style="background:rgba(0,0,0,0.6);" onclick="closeVenueCheckinModal()"></div>
     <div class="absolute inset-0 flex items-center justify-center p-4">
-        <div class="bg-[#1c1b1c]/95 backdrop-blur-xl border border-white/10 rounded-2xl w-full max-w-md shadow-2xl relative p-6 animate-[modalIn_0.25s_ease-out]">
+        <div class="rounded-2xl w-full max-w-md shadow-2xl relative p-6 animate-[modalIn_0.25s_ease-out]" style="background:#fff;border:1px solid var(--border);">
 
-            <div class="flex items-center justify-between pb-4 border-b border-white/5 mb-4">
+            <div class="flex items-center justify-between pb-4 mb-4" style="border-bottom:1px solid var(--border);">
                 <div>
-                    <h3 class="text-base font-bold text-on-surface flex items-center gap-2">
+                    <h3 class="text-base font-bold flex items-center gap-2" style="color:var(--text-1);">
                         <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">add_location_alt</span>
                         Check-in Yap
                     </h3>
                     <p class="text-xs text-on-surface-variant mt-0.5"><?php echo escape($venue['name']); ?></p>
                 </div>
-                <button onclick="closeVenueCheckinModal()" class="text-slate-400 hover:text-white transition-colors p-1">
+                <button onclick="closeVenueCheckinModal()" class="transition-colors p-1" style="color:var(--text-3);">
                     <span class="material-symbols-outlined">close</span>
                 </button>
             </div>
@@ -379,14 +379,14 @@ require_once __DIR__ . '/partials/app_header.php';
 
                 <?php $ciAvatarUrl = safeAvatarUrl($currentUserData['avatar'] ?? null, $currentUserData['username'] ?? 'U'); ?>
                 <div class="flex gap-3 mb-4">
-                    <img src="<?php echo $ciAvatarUrl; ?>" alt="" class="w-10 h-10 rounded-full object-cover border border-white/10 flex-shrink-0" width="40" height="40">
+                    <img src="<?php echo $ciAvatarUrl; ?>" alt="" class="w-10 h-10 rounded-full object-cover flex-shrink-0" style="border:1px solid var(--border);" width="40" height="40">
                     <textarea id="venueCheckinNote" name="note"
-                        class="flex-grow bg-black/40 border border-white/5 rounded-xl px-3 py-2.5 text-on-surface placeholder:text-slate-500 text-sm focus:outline-none focus:border-primary/40 transition-colors resize-none"
+                        class="flex-grow rounded-xl px-3 py-2.5 text-sm focus:outline-none transition-colors resize-none" style="background:var(--bg-section);border:1px solid var(--border);color:var(--text-1);"
                         placeholder="Bu mekanda ne yaptın? (opsiyonel)" rows="3" maxlength="500"></textarea>
                 </div>
 
                 <div class="flex items-center justify-between">
-                    <label class="flex items-center gap-2 cursor-pointer text-slate-400 hover:text-white transition-colors" title="Fotoğraf ekle">
+                    <label class="flex items-center gap-2 cursor-pointer transition-colors" style="color:var(--text-3);" title="Fotoğraf ekle">
                         <span class="material-symbols-outlined text-xl">add_a_photo</span>
                         <span class="text-xs">Fotoğraf</span>
                         <input type="file" name="image" id="venueCheckinImage" accept="image/*" class="hidden">

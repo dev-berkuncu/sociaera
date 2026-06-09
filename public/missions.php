@@ -38,10 +38,10 @@ $activeNav = 'missions';
 require_once __DIR__ . '/partials/app_header.php';
 ?>
 
-<section class="flex-1 flex flex-col gap-stack-md max-w-3xl w-full mx-auto lg:mx-0">
+<div style="min-width:0;" class="flex-1 flex flex-col gap-stack-md max-w-3xl w-full mx-auto lg:mx-0">
     <div class="flex items-center justify-between flex-wrap gap-3 mb-2">
-        <h1 class="text-3xl font-bold flex items-center gap-2 text-on-surface"><span class="material-symbols-outlined text-primary-container text-[32px]">emoji_events</span> Görevler & Rozetler</h1>
-        <div class="bg-gradient-to-r from-primary-container/20 to-surface-container text-primary-container px-4 py-1.5 rounded-full font-label-md text-label-md border border-primary-container/30 flex items-center gap-2">
+        <h1 class="text-3xl font-bold flex items-center gap-2" style="color:var(--text-1);"><span class="material-symbols-outlined text-[32px]" style="color:var(--color-primary);">emoji_events</span> Görevler &amp; Rozetler</h1>
+        <div class="px-4 py-1.5 rounded-full font-label-md text-label-md flex items-center gap-2" style="background:rgba(240,109,31,0.12);color:var(--color-primary);border:1px solid rgba(240,109,31,0.25);">
             <span class="material-symbols-outlined text-[18px]">military_tech</span>
             <?php echo $earnedCount; ?>/<?php echo $totalCount; ?> kazanıldı
             <?php if ($thisWeekCount > 0): ?>
@@ -54,17 +54,17 @@ require_once __DIR__ . '/partials/app_header.php';
     <?php $earnedBadges = array_filter($progress, fn($b) => $b['earned']); ?>
     <?php if (!empty($earnedBadges)): ?>
     <div>
-        <h2 class="text-lg font-bold text-on-surface flex items-center gap-2 mb-3"><span class="material-symbols-outlined text-emerald-400">verified</span> Kazanılan Rozetler</h2>
+        <h2 class="text-lg font-bold flex items-center gap-2 mb-3" style="color:var(--text-1);"><span class="material-symbols-outlined text-emerald-400">verified</span> Kazanılan Rozetler</h2>
         <div class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-3">
             <?php foreach ($earnedBadges as $b): ?>
-            <div class="relative flex flex-col items-center gap-1.5 p-3 bg-[#2a2a2b]/80 border border-white/10 rounded-xl hover:border-white/20 transition-colors group" title="<?php echo escape($b['name'] . ' — ' . $b['desc']); ?>">
+            <div class="relative flex flex-col items-center gap-1.5 p-3 rounded-xl hover:border-opacity-60 transition-colors group" style="background:#fff;border:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.06);" title="<?php echo escape($b['name'] . ' — ' . $b['desc']); ?>">
                 <div class="relative w-12 h-12 rounded-full flex items-center justify-center shadow-[0_0_15px_rgba(0,0,0,0.3)]" style="background: <?php echo $b['color']; ?>20; border: 2px solid <?php echo $b['color']; ?>50;">
                     <span class="material-symbols-outlined text-[24px] group-hover:scale-110 transition-transform" style="color: <?php echo $b['color']; ?>"><?php echo $b['icon']; ?></span>
                     <?php if ($b['total_count'] > 1): ?>
                     <span class="absolute -top-1 -right-1 min-w-[16px] h-4 flex items-center justify-center bg-primary-container text-white text-[9px] font-black rounded-full px-1 shadow-[0_2px_6px_rgba(255,145,0,0.4)]"><?php echo $b['total_count']; ?></span>
                     <?php endif; ?>
                 </div>
-                <span class="text-[10px] text-slate-400 font-semibold text-center leading-tight"><?php echo escape($b['name']); ?></span>
+                <span class="text-[10px] font-semibold text-center leading-tight" style="color:var(--text-3);"><?php echo escape($b['name']); ?></span>
             </div>
             <?php endforeach; ?>
         </div>
@@ -72,28 +72,28 @@ require_once __DIR__ . '/partials/app_header.php';
     <?php endif; ?>
 
     <!-- Haftalık Bilgi -->
-    <div class="bg-[#7bd0ff]/5 border border-[#7bd0ff]/20 rounded-xl p-4 flex items-center gap-3">
+    <div class="rounded-xl p-4 flex items-center gap-3" style="background:rgba(123,208,255,0.06);border:1px solid rgba(123,208,255,0.2);">
         <span class="material-symbols-outlined text-[#7bd0ff]">info</span>
-        <p class="text-sm text-slate-300">Rozetler <span class="text-[#7bd0ff] font-bold">her hafta sıfırlanır</span>. Aynı rozeti birden fazla hafta kazandığında profilinde sayı olarak görünür.</p>
+        <p class="text-sm" style="color:var(--text-2);">Rozetler <span class="font-bold" style="color:#5BAFD6;">her hafta sıfırlanır</span>. Aynı rozeti birden fazla hafta kazandığında profilinde sayı olarak görünür.</p>
     </div>
 
     <!-- İlerleme Barı -->
-    <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-5 shadow-[0_15px_30px_-15px_rgba(19,19,20,0.3)]">
+    <div class="rounded-xl p-5" style="background:#fff;border:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.08);">
         <div class="flex items-center justify-between mb-2">
-            <span class="text-slate-400 text-sm font-semibold">Genel İlerleme</span>
-            <span class="text-on-surface font-black text-lg"><?php echo round(($earnedCount / max(1, $totalCount)) * 100); ?>%</span>
+            <span class="text-sm font-semibold" style="color:var(--text-3);">Genel İlerleme</span>
+            <span class="font-black text-lg" style="color:var(--text-1);"><?php echo round(($earnedCount / max(1, $totalCount)) * 100); ?>%</span>
         </div>
-        <div class="w-full bg-white/5 rounded-full h-3 overflow-hidden">
-            <div class="h-full bg-gradient-to-r from-primary-container to-[#ff9e7d] rounded-full transition-all duration-700" style="width: <?php echo round(($earnedCount / max(1, $totalCount)) * 100); ?>%"></div>
+        <div class="w-full rounded-full h-3 overflow-hidden" style="background:var(--bg-section);">
+            <div class="h-full rounded-full transition-all duration-700" style="width: <?php echo round(($earnedCount / max(1, $totalCount)) * 100); ?>%; background: var(--color-primary);"></div>
         </div>
     </div>
 
     <!-- Tüm Görevler -->
     <div>
-        <h2 class="text-lg font-bold text-on-surface flex items-center gap-2 mb-3"><span class="material-symbols-outlined text-primary-container">flag</span> Tüm Görevler</h2>
+        <h2 class="text-lg font-bold flex items-center gap-2 mb-3" style="color:var(--text-1);"><span class="material-symbols-outlined" style="color:var(--color-primary);">flag</span> Tüm Görevler</h2>
         <div class="flex flex-col gap-3">
             <?php foreach ($progress as $b): ?>
-            <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border rounded-xl p-5 shadow-[0_10px_25px_-15px_rgba(19,19,20,0.3)] flex items-center gap-4 transition-all <?php echo $b['earned'] ? 'border-emerald-500/20 bg-emerald-500/5' : 'border-white/10 hover:border-white/20'; ?>">
+            <div class="rounded-xl p-5 flex items-center gap-4 transition-all" style="background:<?php echo $b['earned'] ? 'rgba(16,185,129,0.06)' : '#fff'; ?>;border:1px solid <?php echo $b['earned'] ? 'rgba(16,185,129,0.2)' : 'var(--border)'; ?>;box-shadow:0 1px 3px rgba(0,0,0,.06);">
                 <!-- İkon -->
                 <div class="w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 relative <?php echo $b['earned'] ? 'shadow-[0_0_20px_rgba(0,0,0,0.3)]' : 'opacity-60'; ?>" style="background: <?php echo $b['color']; ?><?php echo $b['earned'] ? '30' : '15'; ?>; border: 2px solid <?php echo $b['color']; ?><?php echo $b['earned'] ? '60' : '20'; ?>;">
                     <span class="material-symbols-outlined text-[28px]" style="color: <?php echo $b['color']; ?>"><?php echo $b['icon']; ?></span>
@@ -107,33 +107,33 @@ require_once __DIR__ . '/partials/app_header.php';
                 <!-- İçerik -->
                 <div class="flex-grow min-w-0">
                     <div class="flex items-center gap-2 mb-1">
-                        <span class="font-bold text-on-surface <?php echo $b['earned'] ? '' : 'text-slate-300'; ?>"><?php echo escape($b['name']); ?></span>
+                        <span class="font-bold <?php echo $b['earned'] ? '' : 'opacity-70'; ?>" style="color:var(--text-1);"><?php echo escape($b['name']); ?></span>
                         <?php if (!empty($b['premium_only'])): ?>
-                        <span class="bg-blue-500/15 text-blue-400 text-[9px] font-black px-1.5 py-0.5 rounded border border-blue-500/25">💎 Premium</span>
+                        <span style="background:rgba(59,130,246,0.15);color:#60a5fa;border:1px solid rgba(59,130,246,0.25);" class="text-[9px] font-black px-1.5 py-0.5 rounded">💎 Premium</span>
                         <?php endif; ?>
                         <?php if ($b['total_count'] > 0): ?>
-                        <span class="bg-[#7bd0ff]/15 text-[#7bd0ff] text-[9px] font-black px-1.5 py-0.5 rounded border border-[#7bd0ff]/25">x<?php echo $b['total_count']; ?></span>
+                        <span style="background:rgba(123,208,255,0.15);color:#7bd0ff;border:1px solid rgba(123,208,255,0.25);" class="text-[9px] font-black px-1.5 py-0.5 rounded">x<?php echo $b['total_count']; ?></span>
                         <?php endif; ?>
                         <?php if ($b['this_week']): ?>
-                        <span class="bg-emerald-500/20 text-emerald-400 text-[9px] font-black px-1.5 py-0.5 rounded border border-emerald-500/30 uppercase tracking-wider">Bu Hafta ✓</span>
+                        <span style="background:rgba(16,185,129,0.2);color:#34d399;border:1px solid rgba(16,185,129,0.3);" class="text-[9px] font-black px-1.5 py-0.5 rounded uppercase tracking-wider">Bu Hafta ✓</span>
                         <?php elseif ($b['earned']): ?>
-                        <span class="bg-white/5 text-slate-400 text-[9px] font-black px-1.5 py-0.5 rounded border border-white/10 uppercase tracking-wider">Kazanıldı</span>
+                        <span class="text-[9px] font-black px-1.5 py-0.5 rounded uppercase tracking-wider" style="background:var(--bg-section);color:var(--text-3);border:1px solid var(--border);">Kazanıldı</span>
                         <?php endif; ?>
                     </div>
-                    <p class="text-sm text-slate-400 mb-2"><?php echo escape($b['desc']); ?></p>
+                    <p class="text-sm mb-2" style="color:var(--text-3);"><?php echo escape($b['desc']); ?></p>
                     
                     <!-- Progress Bar -->
                     <div class="flex items-center gap-3">
-                        <div class="flex-grow bg-white/5 rounded-full h-2 overflow-hidden">
+                        <div class="flex-grow rounded-full h-2 overflow-hidden" style="background:var(--bg-section);">
                             <div class="h-full rounded-full transition-all duration-500" style="width: <?php echo $b['percent']; ?>%; background: <?php echo $b['earned'] ? '#10b981' : $b['color']; ?>;"></div>
                         </div>
-                        <span class="text-xs font-bold <?php echo $b['earned'] ? 'text-emerald-400' : 'text-slate-500'; ?> flex-shrink-0 w-12 text-right"><?php echo $b['current']; ?>/<?php echo $b['goal']; ?></span>
+                        <span class="text-xs font-bold flex-shrink-0 w-12 text-right" style="color:<?php echo $b['earned'] ? '#10b981' : 'var(--text-3)'; ?>"><?php echo $b['current']; ?>/<?php echo $b['goal']; ?></span>
                     </div>
                 </div>
             </div>
             <?php endforeach; ?>
         </div>
     </div>
-</section>
+</div>
 
 <?php require_once __DIR__ . '/partials/app_footer.php'; ?>

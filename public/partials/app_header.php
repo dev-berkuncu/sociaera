@@ -336,54 +336,100 @@ nav.swarm-topnav{
 <?php if (Auth::check() && isset($currentUser)): ?>
 
 <!-- ── TOP NAV ── -->
-<nav class="swarm-topnav" id="swarm-topnav">
+<nav id="swarm-topnav" style="
+  position:sticky;top:0;z-index:9000;
+  background:#ffffff;
+  border-bottom:2px solid #E8E7E3;
+  box-shadow:0 2px 12px rgba(0,0,0,0.08);
+  display:flex;align-items:center;gap:16px;
+  padding:8px 20px;min-height:58px;
+  font-family:'Plus Jakarta Sans','Inter',sans-serif;
+">
 
-    <a href="<?php echo BASE_URL; ?>/dashboard" class="swarm-topnav-logo">
-        <span class="material-symbols-outlined" style="font-size:22px;font-variation-settings:'FILL' 1;">hive</span>
+    <!-- Logo -->
+    <a href="<?php echo BASE_URL; ?>/dashboard" style="
+      font-weight:800;font-size:18px;color:#F06D1F;
+      text-decoration:none;display:flex;align-items:center;gap:6px;
+      flex-shrink:0;letter-spacing:-0.3px;white-space:nowrap;">
+        <span class="material-symbols-outlined" style="font-size:22px;color:#F06D1F;font-variation-settings:'FILL' 1;">hive</span>
         Sociaera
     </a>
 
-    <div class="swarm-topnav-search-wrap">
-        <span class="material-symbols-outlined search-icon">search</span>
+    <!-- Arama -->
+    <div style="position:relative;flex:1;max-width:380px;">
+        <span class="material-symbols-outlined" style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:#A0A0A0;font-size:18px;pointer-events:none;">search</span>
         <input type="text" placeholder="Mekan ara…"
-               onkeydown="if(event.key==='Enter')window.location.href='<?php echo BASE_URL; ?>/venues?q='+encodeURIComponent(this.value)"/>
+               onkeydown="if(event.key==='Enter')window.location.href='<?php echo BASE_URL; ?>/venues?q='+encodeURIComponent(this.value)"
+               style="width:100%;background:#F2F1EE;border:1.5px solid transparent;border-radius:12px;
+                      padding:8px 14px 8px 36px;font-size:14px;font-family:inherit;
+                      outline:none;color:#1A1A1A;box-sizing:border-box;"
+               onfocus="this.style.borderColor='#F06D1F';this.style.background='#fff'"
+               onblur="this.style.borderColor='transparent';this.style.background='#F2F1EE'"/>
     </div>
 
-    <div class="swarm-topnav-actions">
-        <a href="<?php echo BASE_URL; ?>/notifications" class="swarm-icon-btn" aria-label="Bildirimler">
+    <!-- Aksiyonlar -->
+    <div style="display:flex;align-items:center;gap:4px;margin-left:auto;flex-shrink:0;">
+
+        <!-- Bildirimler -->
+        <a href="<?php echo BASE_URL; ?>/notifications" aria-label="Bildirimler" style="
+          width:38px;height:38px;border-radius:50%;
+          display:flex;align-items:center;justify-content:center;
+          color:#5C5C5C;text-decoration:none;position:relative;">
             <span class="material-symbols-outlined" style="font-size:22px;<?php echo $notifCount > 0 ? "color:#F06D1F;font-variation-settings:'FILL' 1;" : ''; ?>">notifications</span>
             <?php if ($notifCount > 0): ?>
             <span style="position:absolute;top:6px;right:6px;width:8px;height:8px;background:#F06D1F;border-radius:50%;border:2px solid #fff;"></span>
             <?php endif; ?>
         </a>
 
-        <a href="<?php echo BASE_URL; ?>/settings" class="swarm-icon-btn" aria-label="Ayarlar">
+        <!-- Ayarlar -->
+        <a href="<?php echo BASE_URL; ?>/settings" aria-label="Ayarlar" style="
+          width:38px;height:38px;border-radius:50%;
+          display:flex;align-items:center;justify-content:center;
+          color:#5C5C5C;text-decoration:none;">
             <span class="material-symbols-outlined" style="font-size:20px;">settings</span>
         </a>
 
-        <!-- Avatar + dropdown -->
+        <!-- Avatar + Dropdown -->
         <div style="position:relative;">
-            <button class="swarm-avatar-btn" onclick="document.getElementById('nav-dropdown').classList.toggle('nav-dropdown-open')" style="border:none;padding:0;cursor:pointer;">
-                <img src="<?php echo $avatarUrl; ?>" alt="Profil" width="34" height="34"/>
-                <a href="<?php echo BASE_URL; ?>/missions" style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;text-decoration:none;color:var(--text-1);font-size:13px;font-weight:600;transition:background .12s;" onmouseover="this.style.background='var(--bg-section)'" onmouseout="this.style.background=''"><?php
-                ?><span class="material-symbols-outlined" style="font-size:18px;color:var(--color-primary);">military_tech</span> Görevler<?php
-                ?></a>
-                <a href="<?php echo BASE_URL; ?>/kampanyalar" style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;text-decoration:none;color:var(--text-1);font-size:13px;font-weight:600;transition:background .12s;" onmouseover="this.style.background='var(--bg-section)'" onmouseout="this.style.background=''"><?php
-                ?><span class="material-symbols-outlined" style="font-size:18px;color:var(--color-primary);">campaign</span> Kampanyalar<?php
-                ?></a>
-                <a href="<?php echo BASE_URL; ?>/premium" style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;text-decoration:none;color:var(--text-1);font-size:13px;font-weight:600;transition:background .12s;" onmouseover="this.style.background='var(--bg-section)'" onmouseout="this.style.background=''"><?php
-                ?><span class="material-symbols-outlined" style="font-size:18px;color:#4F46E5;">diamond</span> Premium<?php
-                ?></a>
-                <a href="<?php echo BASE_URL; ?>/mystery-shopper" style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;text-decoration:none;color:var(--text-1);font-size:13px;font-weight:600;transition:background .12s;" onmouseover="this.style.background='var(--bg-section)'" onmouseout="this.style.background=''"><?php
-                ?><span class="material-symbols-outlined" style="font-size:18px;color:var(--text-3);">visibility_off</span> Gizli Müşteri<?php
-                ?></a>
-                <hr style="border:none;border-top:1px solid var(--border-light);margin:4px 0;"/>
-                <a href="<?php echo BASE_URL; ?>/character-select" style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;text-decoration:none;color:var(--text-1);font-size:13px;font-weight:600;transition:background .12s;" onmouseover="this.style.background='var(--bg-section)'" onmouseout="this.style.background=''"><?php
-                ?><span class="material-symbols-outlined" style="font-size:18px;color:var(--text-3);">switch_account</span> Karakter Değiştir<?php
-                ?></a>
-                <a href="<?php echo BASE_URL; ?>/logout" style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;text-decoration:none;color:var(--color-danger);font-size:13px;font-weight:600;transition:background .12s;" onmouseover="this.style.background='#FEF2F2'" onmouseout="this.style.background=''"><?php
-                ?><span class="material-symbols-outlined" style="font-size:18px;">logout</span> Çıkış Yap<?php
-                ?></a>
+            <button id="nav-avatar-btn" onclick="
+              var dd=document.getElementById('nav-dropdown');
+              dd.style.display=(dd.style.display==='block')?'none':'block';"
+              style="width:36px;height:36px;border-radius:50%;overflow:hidden;cursor:pointer;
+                     border:2px solid #E8E7E3;padding:0;background:none;">
+                <img src="<?php echo $avatarUrl; ?>" alt="Profil" width="36" height="36"
+                     style="width:100%;height:100%;object-fit:cover;display:block;"/>
+            </button>
+
+            <div id="nav-dropdown" style="display:none;position:absolute;right:0;top:calc(100% + 8px);
+              width:210px;background:#fff;border:1.5px solid #E8E7E3;border-radius:14px;
+              box-shadow:0 8px 24px rgba(0,0,0,0.12);padding:6px;z-index:9999;">
+                <?php
+                $ddLinks = [
+                    ['url'=>'/profile',          'icon'=>'person',                 'label'=>'Profilim',          'color'=>'#F06D1F'],
+                    ['url'=>'/wallet',            'icon'=>'account_balance_wallet', 'label'=>'Cüzdanım',          'color'=>'#F06D1F'],
+                    ['url'=>'/missions',          'icon'=>'military_tech',          'label'=>'Görevler',          'color'=>'#F06D1F'],
+                    ['url'=>'/kampanyalar',       'icon'=>'campaign',               'label'=>'Kampanyalar',       'color'=>'#F06D1F'],
+                    ['url'=>'/premium',           'icon'=>'diamond',                'label'=>'Premium',           'color'=>'#4F46E5'],
+                    ['url'=>'/mystery-shopper',   'icon'=>'visibility_off',         'label'=>'Gizli Müşteri',     'color'=>'#A0A0A0'],
+                    ['url'=>'/character-select',  'icon'=>'switch_account',         'label'=>'Karakter Değiştir', 'color'=>'#A0A0A0'],
+                ];
+                foreach($ddLinks as $dl): ?>
+                <a href="<?php echo BASE_URL.$dl['url']; ?>"
+                   style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;
+                          text-decoration:none;color:#1A1A1A;font-size:13px;font-weight:600;"
+                   onmouseover="this.style.background='#F8F7F5'" onmouseout="this.style.background=''">
+                    <span class="material-symbols-outlined" style="font-size:18px;color:<?php echo $dl['color']; ?>;"><?php echo $dl['icon']; ?></span>
+                    <?php echo $dl['label']; ?>
+                </a>
+                <?php endforeach; ?>
+                <hr style="border:none;border-top:1px solid #F2F1EE;margin:4px 0;"/>
+                <a href="<?php echo BASE_URL; ?>/logout"
+                   style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;
+                          text-decoration:none;color:#EF4444;font-size:13px;font-weight:600;"
+                   onmouseover="this.style.background='#FEF2F2'" onmouseout="this.style.background=''">
+                    <span class="material-symbols-outlined" style="font-size:18px;">logout</span>
+                    Çıkış Yap
+                </a>
             </div>
         </div>
 
