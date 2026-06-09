@@ -91,8 +91,10 @@ $activeNav = 'dashboard';
 require_once __DIR__ . '/partials/app_header.php';
 ?>
 
+<div style="min-width:0; display:flex; flex-direction:column; gap:20px;">
+
 <!-- ── HERO: Karşılama + Streak ────────────────────────────── -->
-<div class="swarm-card" style="background:linear-gradient(135deg,#fff8f4 0%,#fff 100%);border-top:3px solid var(--color-primary);">
+<div class="swarm-card" style="background:linear-gradient(135deg,#fff8f4 0%,#fff 100%);border-top:3px solid var(--color-primary); margin-bottom:0;">
     <div class="swarm-card-body" style="display:flex;flex-direction:column;gap:16px;">
 
         <div style="display:flex;align-items:center;gap:12px;">
@@ -101,7 +103,7 @@ require_once __DIR__ . '/partials/app_header.php';
             <div>
                 <div style="font-size:13px;color:var(--text-3);font-weight:600;">Hoş geldin,</div>
                 <h1 style="font-size:20px;font-weight:800;color:var(--text-1);line-height:1.2;">
-                    <?php echo escape($currentUser['username']); ?>
+                     <?php echo escape($currentUser['username']); ?>
                 </h1>
             </div>
         </div>
@@ -202,67 +204,6 @@ require_once __DIR__ . '/partials/app_header.php';
 </div>
 <?php endif; ?>
 
-<!-- ── POPÜLER MEKANLAR ─────────────────────────────────────── -->
-<?php if (!empty($trendVenues)): ?>
-<div>
-    <div class="swarm-section-label">
-        <span class="material-symbols-outlined" style="font-size:14px;color:var(--color-primary);font-variation-settings:'FILL' 1;">trending_up</span>
-        Bu Hafta Popüler
-        <a href="<?php echo BASE_URL; ?>/venues" style="margin-left:auto;font-size:11px;font-weight:700;color:var(--color-primary);text-decoration:none;">Tümü →</a>
-    </div>
-
-    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;">
-        <?php foreach ($trendVenues as $idx => $v):
-            $meta        = $catMeta[$v['category'] ?? 'diger'] ?? $catMeta['diger'];
-            $checkinCount = (int)($v['weekly_checkins'] ?? $v['checkin_count'] ?? 0);
-        ?>
-        <a href="<?php echo BASE_URL; ?>/venue-detail?id=<?php echo $v['id']; ?>" class="venue-card" <?php echo $idx === 0 ? 'style="grid-column:span 2;"' : ''; ?>>
-            <div class="venue-card-img" style="<?php echo $idx === 0 ? 'aspect-ratio:21/9;' : ''; ?>">
-                <?php if (!empty($v['cover_image'])): ?>
-                    <img src="<?php echo BASE_URL . '/uploads/venues/' . escape($v['cover_image']); ?>" alt="" loading="lazy">
-                <?php elseif (!empty($v['image'])): ?>
-                    <img src="<?php echo uploadUrl('posts', $v['image']); ?>" alt="" loading="lazy">
-                <?php else: ?>
-                    <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:<?php echo $meta['color']; ?>18;">
-                        <span class="material-symbols-outlined" style="font-size:40px;color:<?php echo $meta['color']; ?>;font-variation-settings:'FILL' 1;opacity:.5;"><?php echo $meta['icon']; ?></span>
-                    </div>
-                <?php endif; ?>
-
-                <!-- Kategori badge -->
-                <div class="venue-card-cat-badge" style="background:<?php echo $meta['color']; ?>;">
-                    <span class="material-symbols-outlined" style="font-size:16px;color:#fff;font-variation-settings:'FILL' 1;"><?php echo $meta['icon']; ?></span>
-                </div>
-
-                <!-- Check-in sayısı -->
-                <div class="venue-card-checkin-count">
-                    <span class="material-symbols-outlined" style="font-size:11px;color:var(--color-primary);font-variation-settings:'FILL' 1;">location_on</span>
-                    <?php echo $checkinCount; ?>
-                </div>
-
-                <!-- Açık/Kapalı -->
-                <?php if (isset($v['is_open'])): ?>
-                <div class="venue-card-status <?php echo $v['is_open'] ? 'open' : 'closed'; ?>">
-                    <span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:currentColor;margin-right:3px;"></span>
-                    <?php echo $v['is_open'] ? 'Açık' : 'Kapalı'; ?>
-                </div>
-                <?php endif; ?>
-            </div>
-            <div class="venue-card-info">
-                <div class="venue-card-name"><?php echo escape($v['name']); ?></div>
-                <div class="venue-card-cat-label" style="color:<?php echo $meta['color']; ?>;">
-                    <?php echo escape($categories[$v['category'] ?? 'diger'] ?? 'Mekan'); ?>
-                </div>
-                <?php if (!empty($v['address'])): ?>
-                <div class="venue-card-address">
-                    <span class="material-symbols-outlined" style="font-size:11px;">pin_drop</span>
-                    <?php echo escape(truncate($v['address'], 40)); ?>
-                </div>
-                <?php endif; ?>
-            </div>
-        </a>
-        <?php endforeach; ?>
-    </div>
 </div>
-<?php endif; ?>
 
 <?php require_once __DIR__ . '/partials/app_footer.php'; ?>
