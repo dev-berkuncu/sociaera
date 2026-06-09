@@ -181,68 +181,54 @@ $hideSidebar = $hideSidebar ?? false;
                 ];
             }
             ?>
-            <div class="swarm-glass-card border border-outline-variant/10 rounded-xl p-4 shadow-lg overflow-hidden">
-                <h3 class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-3 flex items-center gap-1.5">
-                    <span class="material-symbols-outlined text-[#ff9100] text-[14px]" style="font-variation-settings:'FILL' 1;">campaign</span>
-                    Sponsorlarımız
+            <div class="swarm-glass-card border border-outline-variant/10 rounded-xl p-5 shadow-lg overflow-hidden">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4 flex items-center gap-2">
+                    Sponsorlarımız <span class="material-symbols-outlined text-[#ff9100] text-[16px]">campaign</span>
                 </h3>
                 <?php if (!empty($rightSidebarSponsors)): ?>
-                <div class="relative w-full rounded-xl overflow-hidden" style="height:120px;">
+                <div class="relative w-full h-24 rounded-xl overflow-hidden group bg-surface border border-white/5 shadow-inner">
                     <?php foreach ($rightSidebarSponsors as $index => $sp): ?>
-                    <a href="<?php echo escape($sp['url'] ?? '#'); ?>" target="_blank" rel="noopener"
-                       class="sponsor-slide absolute inset-0 flex flex-col items-center justify-center gap-2 transition-opacity duration-700 ease-in-out <?php echo $index === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'; ?>"
+                    <a href="<?php echo escape($sp['url'] ?? '#'); ?>" target="_blank" rel="noopener" 
+                       class="sponsor-slide absolute inset-0 flex flex-col items-center justify-center p-4 transition-opacity duration-1000 ease-in-out <?php echo $index === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'; ?>"
                        data-index="<?php echo $index; ?>">
-
-                        <!-- Logo — beyaz pill üzerinde -->
-                        <div class="bg-white rounded-xl px-5 py-3 flex items-center justify-center shadow-md hover:shadow-lg transition-shadow" style="max-width:85%;height:72px;">
-                            <?php if (!empty($sp['logo'])): ?>
-                                <img src="<?php echo BASE_URL . '/' . escape($sp['logo']); ?>"
-                                     alt="<?php echo escape($sp['name']); ?>"
-                                     class="max-w-full max-h-full object-contain"
-                                     width="200" height="60" loading="lazy">
-                            <?php else: ?>
-                                <span class="font-black text-base text-gray-800 tracking-wide"><?php echo escape($sp['name']); ?></span>
-                            <?php endif; ?>
+                        
+                        <?php if (!empty($sp['logo'])): ?>
+                            <img src="<?php echo BASE_URL . '/' . escape($sp['logo']); ?>" alt="<?php echo escape($sp['name']); ?>" class="w-full h-full object-contain filter drop-shadow-md transition-transform duration-500 group-hover:scale-105" width="280" height="96" loading="lazy">
+                        <?php else: ?>
+                            <span class="material-symbols-outlined text-slate-500 text-[32px] transition-transform duration-500 group-hover:scale-110">store</span>
+                        <?php endif; ?>
+                        
+                        <!-- Hover Overlay -->
+                        <div class="absolute inset-0 bg-background/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center backdrop-blur-sm z-20">
+                            <span class="font-bold text-xs text-[#ff9100] text-center mb-0.5"><?php echo escape($sp['name']); ?></span>
+                            <span class="text-[9px] text-slate-400 mb-1.5 tracking-widest uppercase opacity-80">Resmi Sponsor</span>
+                            <div class="w-7 h-7 rounded-full bg-[#ff9100] text-white flex items-center justify-center shadow-lg transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                                <span class="material-symbols-outlined text-[14px]">arrow_outward</span>
+                            </div>
                         </div>
-
-                        <!-- Sponsor adı -->
-                        <span class="text-[10px] font-semibold text-on-surface-variant tracking-wider uppercase"><?php echo escape($sp['name']); ?></span>
-
                     </a>
                     <?php endforeach; ?>
-
-                    <!-- Dot göstergeler (birden fazla varsa) -->
-                    <?php if (count($rightSidebarSponsors) > 1): ?>
-                    <div class="absolute bottom-1 left-0 right-0 flex justify-center gap-1 z-20">
-                        <?php foreach ($rightSidebarSponsors as $di => $_): ?>
-                        <div class="sponsor-dot w-1.5 h-1.5 rounded-full transition-all <?php echo $di === 0 ? 'bg-primary w-3' : 'bg-white/20'; ?>"></div>
-                        <?php endforeach; ?>
-                    </div>
-                    <?php endif; ?>
                 </div>
 
                 <script>
                 document.addEventListener('DOMContentLoaded', () => {
                     const slides = document.querySelectorAll('.sponsor-slide');
-                    const dots   = document.querySelectorAll('.sponsor-dot');
                     if (slides.length <= 1) return;
-
-                    let cur = 0;
+                    
+                    let currentIndex = 0;
                     setInterval(() => {
-                        slides[cur].classList.remove('opacity-100', 'z-10');
-                        slides[cur].classList.add('opacity-0', 'z-0', 'pointer-events-none');
-                        if (dots[cur]) { dots[cur].classList.remove('bg-primary', 'w-3'); dots[cur].classList.add('bg-white/20'); }
-
-                        cur = (cur + 1) % slides.length;
-
-                        slides[cur].classList.remove('opacity-0', 'z-0', 'pointer-events-none');
-                        slides[cur].classList.add('opacity-100', 'z-10');
-                        if (dots[cur]) { dots[cur].classList.remove('bg-white/20'); dots[cur].classList.add('bg-primary', 'w-3'); }
-                    }, 4000);
+                        slides[currentIndex].classList.remove('opacity-100', 'z-10');
+                        slides[currentIndex].classList.add('opacity-0', 'z-0', 'pointer-events-none');
+                        
+                        currentIndex = (currentIndex + 1) % slides.length;
+                        
+                        slides[currentIndex].classList.remove('opacity-0', 'z-0', 'pointer-events-none');
+                        slides[currentIndex].classList.add('opacity-100', 'z-10');
+                    }, 5000);
                 });
                 </script>
                 <?php else: ?>
-                <p class="text-slate-500 text-xs text-center py-4">Henüz sponsor yok</p>
+                <p class="text-slate-500 text-xs text-center py-2">Henüz sponsor yok</p>
                 <?php endif; ?>
             </div>
 
