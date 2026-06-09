@@ -374,12 +374,15 @@ const App = {
         const safeTimeAgo = escapeHtml(c.time_ago || '');
         
         return `
-            <div class="radio-log-item">
-                <span class="text-slate-600 flex-shrink-0">[RADIO]</span>
-                <a href="${this.baseUrl}/profile?u=${encodeURIComponent(safeTag)}" class="radio-tag hover:underline">@${safeTag}</a>
-                <span class="text-slate-500 font-bold flex-shrink-0">:</span>
-                <span class="radio-msg">${safeComment}</span>
-                <span class="radio-time">${safeTimeAgo.toUpperCase()}</span>
+            <div class="flex gap-sm items-start py-2 border-b border-white/5 last:border-b-0">
+                <div class="flex-grow">
+                    <div class="flex items-center gap-xs">
+                        <span class="font-bold text-sm text-on-surface">${safeUsername}</span>
+                        <span class="text-xs text-on-surface-variant">• @${safeTag}</span>
+                        <span class="text-[10px] text-on-surface-variant ml-auto">${safeTimeAgo}</span>
+                    </div>
+                    <p class="text-xs text-on-surface/90 mt-1">${safeComment}</p>
+                </div>
             </div>
         `;
     },
