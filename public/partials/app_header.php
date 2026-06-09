@@ -372,17 +372,21 @@ nav.swarm-topnav{
     <!-- Ana Menü Linkleri (desktop) -->
     <?php
     $navLinks = [
-        'dashboard'   => ['icon'=>'home',       'label'=>'Ana Sayfa', 'url'=>'/dashboard'],
-        'activity'    => ['icon'=>'explore',     'label'=>'Keşfet',    'url'=>'/activity'],
-        'venues'      => ['icon'=>'place',       'label'=>'Mekanlar',  'url'=>'/venues'],
-        'leaderboard' => ['icon'=>'leaderboard', 'label'=>'Sıralama',  'url'=>'/leaderboard'],
+        'dashboard'   => ['icon'=>'home',            'label'=>'Ana Sayfa',  'url'=>'/dashboard'],
+        'activity'    => ['icon'=>'explore',          'label'=>'Keşfet',     'url'=>'/activity'],
+        'venues'      => ['icon'=>'place',            'label'=>'Mekanlar',   'url'=>'/venues'],
+        'leaderboard' => ['icon'=>'leaderboard',      'label'=>'Sıralama',   'url'=>'/leaderboard'],
+        'members'     => ['icon'=>'group',            'label'=>'Üyeler',     'url'=>'/members'],
+        'missions'    => ['icon'=>'military_tech',    'label'=>'Görevler',   'url'=>'/missions'],
+        'kampanyalar' => ['icon'=>'campaign',         'label'=>'Kampanyalar','url'=>'/kampanyalar'],
+        'wallet'      => ['icon'=>'account_balance_wallet', 'label'=>'Cüzdan', 'url'=>'/wallet'],
     ];
     $currentNav = $activeNav ?? '';
     foreach ($navLinks as $key => $nl):
         $isActive = ($currentNav === $key);
     ?>
     <a href="<?php echo BASE_URL . $nl['url']; ?>"
-       style="display:flex;align-items:center;gap:6px;padding:0 14px;height:58px;
+       style="display:flex;align-items:center;gap:6px;padding:0 11px;height:58px;
               font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap;
               border-bottom:3px solid <?php echo $isActive ? '#F06D1F' : 'transparent'; ?>;
               color:<?php echo $isActive ? '#F06D1F' : '#5C5C5C'; ?>;
@@ -390,9 +394,12 @@ nav.swarm-topnav{
        onmouseover="if(!this.style.borderBottomColor.includes('F06D1F')){this.style.color='#F06D1F';}"
        onmouseout="<?php echo $isActive ? '' : "this.style.color='#5C5C5C';"; ?>">
         <span class="material-symbols-outlined" style="font-size:18px;"><?php echo $nl['icon']; ?></span>
-        <span class="nav-label"><?php echo $nl['label']; ?></span>
+        <span class="nav-label" style="display:none;"><?php echo $nl['label']; ?></span>
     </a>
     <?php endforeach; ?>
+    <style>
+    @media(min-width:1100px){ nav.swarm-topnav .nav-label, #swarm-topnav .nav-label { display:inline!important; } }
+    </style>
 
     <!-- Spacer -->
     <div style="flex:1;"></div>
