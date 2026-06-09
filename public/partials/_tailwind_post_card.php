@@ -132,7 +132,7 @@ if (!empty($post['is_mystery_shopper'])) {
                     <span class="material-symbols-outlined text-[20px]">delete</span>
                 </button>
             <?php endif; ?>
-            <button class="text-on-surface-variant hover:text-on-surface"><span class="material-symbols-outlined">more_horiz</span></button>
+            <button onclick="App.openReportModal('checkin', <?php echo $post['id']; ?>)" class="text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest p-1 rounded-lg transition-colors" title="Raporla"><span class="material-symbols-outlined">more_horiz</span></button>
         </div>
     </div>
 

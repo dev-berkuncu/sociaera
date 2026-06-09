@@ -145,7 +145,7 @@ if (!isset($currentUser) && Auth::check()) {
         </a>
         <div class="hidden md:flex relative group">
             <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-body-lg">search</span>
-            <input class="stitch-search-input bg-surface-container/60 border border-white/5 rounded-lg pl-10 pr-12 py-2 text-body-md w-[400px] focus:ring-1 focus:ring-primary focus:bg-surface-container transition-all" placeholder="Mekan, kategori veya arkadaş ara..." type="text" onkeyup="if(event.key === 'Enter') window.location.href='<?php echo BASE_URL; ?>/venues?search=' + encodeURIComponent(this.value)"/>
+            <input class="stitch-search-input bg-surface-container/60 border border-white/5 rounded-lg pl-10 pr-12 py-2 text-body-md w-[400px] focus:ring-1 focus:ring-primary focus:bg-surface-container transition-all" placeholder="Mekan, kategori veya arkadaş ara..." type="text" onkeyup="if(event.key === 'Enter') window.location.href='<?php echo BASE_URL; ?>/venues?q=' + encodeURIComponent(this.value)"/>
             <div class="absolute right-3 top-1/2 -translate-y-1/2 text-label-sm text-on-surface-variant border border-outline-variant px-1.5 rounded-md font-mono">⌘ K</div>
         </div>
     </div>

@@ -18,6 +18,7 @@ require_once __DIR__ . '/../../app/Models/Settings.php';
 
 require_once __DIR__ . '/../../app/Models/Badge.php';
 require_once __DIR__ . '/../../app/Models/Campaign.php';
+require_once __DIR__ . '/../../app/Models/Wallet.php';
 
 Response::requirePost();
 Response::requireAuthApi();

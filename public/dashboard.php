@@ -370,7 +370,7 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             App.flash(res.error || 'Hata oluştu.', 'error');
             composeBtn.disabled = false;
-            composeBtn.innerHTML = 'Post';
+            composeBtn.innerHTML = 'Paylaş';
         }
     });
 

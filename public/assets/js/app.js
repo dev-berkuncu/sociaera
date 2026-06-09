@@ -55,17 +55,17 @@ const App = {
         const existing = document.querySelector('.flash-message');
         if (existing) existing.remove();
 
-        const iconMap = { success: 'check-circle-fill', error: 'exclamation-circle-fill', info: 'info-circle-fill' };
+        const iconMap = { success: 'check_circle', error: 'error', info: 'info' };
         const div = document.createElement('div');
         div.className = `flash-message flash-${type}`;
         div.id = 'flashMessage';
         div.innerHTML = `
             <div class="flash-content">
-                <i class="bi bi-${escapeHtml(iconMap[type] || 'info-circle-fill')}"></i>
+                <span class="material-symbols-outlined" style="font-size:18px;">${escapeHtml(iconMap[type] || 'info')}</span>
                 <span>${escapeHtml(message)}</span>
             </div>
             <button class="flash-close" onclick="this.closest('.flash-message').remove()">
-                <i class="bi bi-x-lg"></i>
+                <span class="material-symbols-outlined" style="font-size:16px;">close</span>
             </button>
         `;
         document.body.appendChild(div);
@@ -314,7 +314,7 @@ const App = {
         const res = await this.post(this.baseUrl + '/api/notifications', formData);
         if (res.ok) {
             const list = document.querySelector('.notif-list');
-            if (list) list.innerHTML = '<div class="empty-state"><i class="bi bi-bell-slash"></i><p>Bildirim yok</p></div>';
+            if (list) list.innerHTML = '<div class="empty-state" style="text-align:center;padding:2rem;color:#64748b;"><span class="material-symbols-outlined" style="font-size:2rem;">notifications_off</span><p style="margin-top:8px;">Bildirim yok</p></div>';
             this.flash('Bildirimler temizlendi.', 'success');
         }
         btn.disabled = false;

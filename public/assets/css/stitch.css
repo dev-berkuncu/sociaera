@@ -65,11 +65,27 @@ body {
 }
 .flash-message.flash-success { border-color: #10b981; }
 .flash-message.flash-error { border-color: #ef4444; }
+.flash-message .flash-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+}
 .flash-message .flash-close {
     background: transparent;
     border: none;
     color: #94a3b8;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 0;
+}
+.flash-hide {
+    animation: slideOutRight 0.4s ease forwards !important;
+}
+@keyframes slideOutRight {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(110%); opacity: 0; }
 }
 @keyframes slideInRight {
     from { transform: translateX(100%); opacity: 0; }
