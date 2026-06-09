@@ -320,7 +320,13 @@ if (!isset($currentUser) && Auth::check()) {
                 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add_location_alt</span>
                 Mekan Seç & Check-in
             </a>
-            <a href="<?php echo BASE_URL; ?>/venues" class="w-full bg-surface-container/60 border border-white/5 text-on-surface font-semibold py-3.5 rounded-lg flex items-center justify-start px-md gap-md hover:bg-surface-container transition-colors group">
+            <a href="<?php echo BASE_URL; ?>/activity"
+               class="w-full border text-on-surface font-semibold py-3.5 rounded-lg flex items-center justify-start px-md gap-md transition-colors group <?php echo ($activeNav ?? '') === 'activity' ? 'bg-primary/10 border-primary/20 text-primary' : 'bg-surface-container/60 border-white/5 hover:bg-surface-container'; ?>">
+                <span class="material-symbols-outlined transition-colors <?php echo ($activeNav ?? '') === 'activity' ? 'text-primary' : 'text-on-surface-variant group-hover:text-primary'; ?>" style="<?php echo ($activeNav ?? '') === 'activity' ? "font-variation-settings:'FILL' 1;" : ''; ?>">explore</span>
+                Aktivite Akışı
+            </a>
+            <a href="<?php echo BASE_URL; ?>/venues"
+               class="w-full bg-surface-container/60 border border-white/5 text-on-surface font-semibold py-3.5 rounded-lg flex items-center justify-start px-md gap-md hover:bg-surface-container transition-colors group">
                 <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">search</span>
                 Mekan Ara
             </a>
