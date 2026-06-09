@@ -3,6 +3,24 @@
  * Sociaera — App Header (Tailwind Design)
  */
 
+// Load essential models if they aren't loaded yet
+$baseDir = dirname(__DIR__, 2);
+if (!class_exists('UserModel')) {
+    require_once $baseDir . '/app/Models/User.php';
+}
+if (!class_exists('VenueModel')) {
+    require_once $baseDir . '/app/Models/Venue.php';
+}
+if (!class_exists('CheckinModel')) {
+    require_once $baseDir . '/app/Models/Checkin.php';
+}
+if (!class_exists('NotificationModel')) {
+    require_once $baseDir . '/app/Models/Notification.php';
+}
+if (!class_exists('WalletModel')) {
+    require_once $baseDir . '/app/Models/Wallet.php';
+}
+
 if (!isset($currentUser) && Auth::check()) {
     $currentUser = (new UserModel())->getById(Auth::id());
 }
