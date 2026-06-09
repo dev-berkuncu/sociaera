@@ -267,7 +267,7 @@ if (!isset($currentUser) && Auth::check()) {
     
     <?php if (Auth::check() && $currentUser): ?>
     <!-- Sol Sidebar: Identity Rail -->
-    <aside class="hidden lg:flex flex-col col-span-12 lg:col-span-3 xl:col-span-2 space-y-lg sticky top-20 h-[calc(100vh-100px)] overflow-y-auto custom-scrollbar pr-2 pb-6">
+    <aside class="hidden lg:flex flex-col col-span-12 lg:col-span-3 xl:col-span-3 space-y-lg sticky top-20 h-[calc(100vh-100px)] overflow-y-auto custom-scrollbar pr-2 pb-6">
         
         <!-- Profile Card -->
         <div class="swarm-glass-card rounded-xl overflow-hidden relative border border-outline-variant/30">
@@ -467,6 +467,6 @@ if (!isset($currentUser) && Auth::check()) {
     <?php endif; ?>
 
     <!-- Center Content Panel (Feed) -->
-    <?php $feedCols = !empty($hideSidebar) ? 'col-span-12 lg:col-span-9 xl:col-span-9' : 'col-span-12 lg:col-span-6 xl:col-span-7'; ?>
+    <?php $feedCols = !empty($hideSidebar) ? 'col-span-12 lg:col-span-9 xl:col-span-9' : 'col-span-12 lg:col-span-5 xl:col-span-6'; ?>
     <section class="<?php echo Auth::check() ? $feedCols : 'col-span-12'; ?> flex flex-col gap-6 pb-6">
         <!-- Page Content Starts Here -->

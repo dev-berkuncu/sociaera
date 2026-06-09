@@ -7,7 +7,7 @@ $hideSidebar = $hideSidebar ?? false;
         </section>
         <?php if (!$hideSidebar): ?>
         <!-- Right Sidebar: Discovery Rail -->
-        <aside class="hidden lg:flex flex-col col-span-12 lg:col-span-3 xl:col-span-3 space-y-lg sticky top-20 h-[calc(100vh-100px)] overflow-y-auto custom-scrollbar pl-2 pb-6">
+        <aside class="hidden lg:flex flex-col col-span-12 lg:col-span-4 xl:col-span-3 space-y-lg sticky top-20 h-[calc(100vh-100px)] overflow-y-auto custom-scrollbar pl-2 pb-6">
             <!-- Yakındaki Mekanlar (Nearby Places) -->
             <?php
             $nearbyVenues = [];
