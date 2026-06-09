@@ -1,177 +1,155 @@
 <?php
 /**
- * Post Card Partial — Swarm Bento Design (Two-Column Layout)
+ * Post Card Partial — Swarm Edition (Check-in odaklı kart)
  * $post dizisi dışarıdan gelir
  */
 if (!isset($post)) return;
 
-// Dynamic category icons mapping
-$categoryIcons = [
-    'restoran'  => 'restaurant',
-    'kafe'      => 'coffee',
-    'bar'       => 'local_bar',
-    'otel'      => 'hotel',
-    'alisveris' => 'shopping_bag',
-    'eglence'   => 'theater_comedy',
-    'spor'      => 'fitness_center',
-    'saglik'    => 'spa',
-    'kultur'    => 'museum',
-    'diger'     => 'explore',
+$catIcons = [
+    'restoran'  => 'restaurant',   'kafe'      => 'local_cafe',
+    'bar'       => 'sports_bar',   'otel'      => 'hotel',
+    'alisveris' => 'shopping_bag', 'eglence'   => 'theaters',
+    'spor'      => 'fitness_center','saglik'   => 'spa',
+    'kultur'    => 'museum',       'diger'     => 'place',
 ];
-$categoryIcon = $categoryIcons[$post['venue_category']] ?? 'explore';
+$catColors = [
+    'restoran'  => '#F06D1F', 'kafe'      => '#92400E',
+    'bar'       => '#7C3AED', 'otel'      => '#4F46E5',
+    'alisveris' => '#2563EB', 'eglence'   => '#D97706',
+    'spor'      => '#DC2626', 'saglik'    => '#DB2777',
+    'kultur'    => '#0D9488', 'diger'     => '#6B7280',
+];
+$catKey   = $post['venue_category'] ?? 'diger';
+$catIcon  = $catIcons[$catKey]  ?? 'place';
+$catColor = $catColors[$catKey] ?? '#6B7280';
+$catLabel = VenueModel::categories()[$catKey] ?? ucfirst($catKey);
 
-// Dynamic action taglines mapping
-$actionText = "'da check-in yaptı";
-if (!empty($post['is_mystery_shopper'])) {
-    $actionText = " mekanını denetledi";
-} elseif (!empty($post['image'])) {
-    $actionText = " için bir fotoğraf paylaştı";
-} elseif (!empty($post['note'])) {
-    $noteLower = mb_strtolower($post['note']);
-    $recommendKeywords = ['öner', 'tavsiye', 'harika', 'mükemmel', 'tavsiye ederim', 'on numara', '10/10', 'muazzam', 'enfes', '10 numara', 'harikaydı', 'öneririm'];
-    $isRecommendation = false;
-    foreach ($recommendKeywords as $keyword) {
-        if (strpos($noteLower, $keyword) !== false) {
-            $isRecommendation = true;
-            break;
-        }
-    }
-    if ($isRecommendation) {
-        $actionText = " mekanını önerdi";
-    }
-}
+$cardAvatar = !empty($post['is_mystery_shopper'])
+    ? 'https://ui-avatars.com/api/?name=GM&background=7a1d47&color=ffffff'
+    : safeAvatarUrl($post['avatar'] ?? null, $post['username'] ?? 'User');
 ?>
-<article class="receipt-card p-5 group relative overflow-visible mb-6 flex flex-col gap-3" id="post-<?php echo $post['id']; ?>">
-    
-    <!-- Stamp Indicator -->
-    <div class="ticket-stamp-wrapper">
-        <?php if (!empty($post['is_mystery_shopper'])): ?>
-            <div class="ticket-stamp stamp-mystery">DENETLENDİ</div>
-        <?php elseif (!empty($post['is_premium'])): ?>
-            <div class="ticket-stamp stamp-vip">GOLD VIP</div>
-        <?php else: ?>
-            <div class="ticket-stamp stamp-approved">VERIFIED</div>
-        <?php endif; ?>
-    </div>
+<article class="checkin-card" id="post-<?php echo $post['id']; ?>">
 
     <?php if (!empty($post['reposted_by'])): ?>
-    <div class="flex items-center gap-2 text-[#ffb97c]/80 font-mono text-[10px] mb-1 tracking-widest uppercase">
-        <span class="material-symbols-outlined text-[14px]">settings_input_antenna</span>
-        <a href="<?php echo BASE_URL; ?>/profile?u=<?php echo escape($post['reposted_by_tag'] ?: $post['reposted_by']); ?>" class="hover:text-white transition-colors">@<?php echo escape($post['reposted_by_tag'] ?: $post['reposted_by']); ?></a> TELSİZ YAYINI
+    <div style="padding:8px 14px 0;font-size:11px;font-weight:700;color:var(--text-3);display:flex;align-items:center;gap:5px;">
+        <span class="material-symbols-outlined" style="font-size:14px;">repeat</span>
+        <a href="<?php echo BASE_URL; ?>/profile?u=<?php echo escape($post['reposted_by_tag'] ?: $post['reposted_by']); ?>"
+           style="color:var(--color-primary);text-decoration:none;">@<?php echo escape($post['reposted_by_tag'] ?: $post['reposted_by']); ?></a>
+        yeniden paylaştı
     </div>
     <?php endif; ?>
 
-    <!-- Header Row: User Info & Tagline -->
-    <div class="flex justify-between items-start mb-1 z-10">
-        <div class="flex gap-md min-w-0">
-            <!-- Avatar -->
-            <div class="relative flex-shrink-0">
-                <?php 
-                $avatarUrl = !empty($post['is_mystery_shopper']) 
-                    ? 'https://ui-avatars.com/api/?name=GM&background=6900b3&color=ffffff' 
-                    : safeAvatarUrl($post['avatar'] ?? null, $post['username'] ?? 'User');
-                ?>
-                <img alt="<?php echo escape($post['username']); ?>" class="w-10 h-10 rounded-full border border-white/5 object-cover" src="<?php echo $avatarUrl; ?>" />
-                <?php if (empty($post['is_mystery_shopper']) && !empty($post['is_premium'])): ?>
-                    <div class="absolute -bottom-1 -right-1 bg-primary text-[8px] font-bold px-1 rounded-full text-on-primary">VIP</div>
-                <?php endif; ?>
+    <!-- Header: Avatar + Kim nereye gitti -->
+    <div class="checkin-card-header">
+        <!-- Avatar -->
+        <div class="checkin-card-avatar">
+            <img src="<?php echo $cardAvatar; ?>" alt="<?php echo escape($post['username']); ?>" width="38" height="38">
+            <div class="checkin-card-cat-dot" style="background:<?php echo $catColor; ?>;">
+                <span class="material-symbols-outlined" style="font-size:7px;color:#fff;font-variation-settings:'FILL' 1;"><?php echo $catIcon; ?></span>
             </div>
-            
-            <div class="min-w-0">
-                <!-- User Meta Row -->
-                <div class="flex items-center gap-xs">
-                    <?php if (!empty($post['is_mystery_shopper'])): ?>
-                        <span class="font-bold">Gizli Müşteri</span>
-                        <span class="material-symbols-outlined text-purple-400 text-sm" style="font-variation-settings: 'FILL' 1;" title="Gizli Müşteri">visibility_off</span>
-                    <?php else: ?>
-                        <span class="font-bold text-[#ffb778]"><?php echo escape($post['username']); ?></span>
-                        <?php if (!empty($post['is_premium'])): ?>
-                            <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;" title="Premium Üye">workspace_premium</span>
-                        <?php endif; ?>
+        </div>
+
+        <!-- Metin -->
+        <div class="checkin-card-meta">
+            <div class="checkin-card-who">
+                <?php if (!empty($post['is_mystery_shopper'])): ?>
+                    <strong>Gizli Müşteri</strong>
+                    <span class="material-symbols-outlined" style="font-size:13px;color:#7A1D47;vertical-align:middle;font-variation-settings:'FILL' 1;">visibility_off</span>
+                <?php else: ?>
+                    <a href="<?php echo BASE_URL; ?>/profile?u=<?php echo urlencode($post['tag'] ?: $post['username']); ?>"
+                       style="font-weight:700;color:var(--text-1);text-decoration:none;"><?php echo escape($post['username']); ?></a>
+                    <?php if (!empty($post['is_premium'])): ?>
+                    <span class="material-symbols-outlined" style="font-size:13px;color:#4F46E5;vertical-align:middle;font-variation-settings:'FILL' 1;">verified</span>
                     <?php endif; ?>
-                    <span class="text-on-surface-variant text-label-md">• <?php echo timeAgo($post['created_at']); ?></span>
-                </div>
-
-                <!-- Tagline -->
-                <p class="text-body-md mt-1">
-                    <span class="text-white font-bold"><?php echo escape($post['venue_name']); ?></span><?php echo $actionText; ?>
-                </p>
-
-                <!-- Review / Note -->
-                <?php if (!empty($post['note'])): ?>
-                <p class="text-on-surface-variant italic mt-2 text-sm">
-                    “<?php echo linkify(parseMentions($post['note'])); ?>”
-                </p>
+                    <span style="color:var(--text-3);"> check-in yaptı</span>
                 <?php endif; ?>
-
-                <!-- Monospace Ticket Grid -->
-                <div class="ticket-meta-grid mt-3 mb-2">
-                    <div>ZİYARETÇİ: @<?php echo escape($post['tag'] ?: $post['username']); ?></div>
-                    <div>YAYIN: #CK-<?php echo sprintf('%05d', $post['id']); ?></div>
-                    <div class="col-span-2">KONUM: <?php echo escape($post['venue_address'] ?: 'Los Santos'); ?></div>
-                </div>
-
-                <!-- Category & Location Pills -->
-                <div class="flex flex-wrap gap-xs mt-3">
-                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-container-highest text-[10px] text-on-surface-variant border border-outline-variant/30">
-                        <span class="material-symbols-outlined text-xs">location_on</span> 
-                        <?php echo escape($post['venue_address'] ?: 'Los Santos'); ?>
-                    </span>
-                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-container-highest text-[10px] text-on-surface-variant border border-[#ff9100]/25 text-[#ffb778]">
-                        <span class="material-symbols-outlined text-xs"><?php echo $categoryIcon; ?></span>
-                        <?php echo escape(VenueModel::categories()[$post['venue_category']] ?? ($post['venue_category'] ?? 'KEŞİF NOKTASI')); ?>
-                    </span>
-                </div>
             </div>
+            <a href="<?php echo BASE_URL; ?>/venue-detail?id=<?php echo (int)$post['venue_id']; ?>"
+               class="checkin-card-venue" style="color:<?php echo $catColor; ?>;text-decoration:none;">
+                <?php echo escape($post['venue_name']); ?>
+            </a>
         </div>
 
-        <!-- Options / Delete -->
-        <div class="flex items-center gap-1 shrink-0">
-            <?php if (!empty($post['is_own'])): ?>
-                <button onclick="App.deletePost(this, <?php echo $post['id']; ?>)" class="text-on-surface-variant hover:text-red-400 transition-colors p-1 rounded-lg hover:bg-surface-container-highest" title="Sil">
-                    <span class="material-symbols-outlined text-[20px]">delete</span>
+        <!-- Zaman + aksiyonlar -->
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;">
+            <div class="checkin-card-time"><?php echo timeAgo($post['created_at']); ?></div>
+            <div style="display:flex;gap:2px;">
+                <?php if (!empty($post['is_own'])): ?>
+                <button onclick="App.deletePost(this, <?php echo $post['id']; ?>)"
+                        style="background:none;border:none;cursor:pointer;padding:4px;border-radius:6px;color:var(--text-3);"
+                        title="Sil" onmouseover="this.style.color='var(--color-danger)'" onmouseout="this.style.color='var(--text-3)'">
+                    <span class="material-symbols-outlined" style="font-size:16px;">delete</span>
                 </button>
-            <?php endif; ?>
-            <button onclick="App.openReportModal('checkin', <?php echo $post['id']; ?>)" class="text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest p-1 rounded-lg transition-colors" title="Raporla"><span class="material-symbols-outlined">more_horiz</span></button>
+                <?php endif; ?>
+                <button onclick="App.openReportModal('checkin', <?php echo $post['id']; ?>)"
+                        style="background:none;border:none;cursor:pointer;padding:4px;border-radius:6px;color:var(--text-3);"
+                        onmouseover="this.style.color='var(--text-2)'" onmouseout="this.style.color='var(--text-3)'">
+                    <span class="material-symbols-outlined" style="font-size:16px;">more_horiz</span>
+                </button>
+            </div>
         </div>
     </div>
 
-    <!-- Attached Image -->
-    <?php if (!empty($post['image'])): ?>
-    <div class="relative rounded-xl overflow-hidden aspect-video bg-surface-container-highest border border-white/5">
-        <img class="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500" src="<?php echo uploadUrl('posts', $post['image']); ?>" loading="lazy"/>
+    <!-- Not -->
+    <?php if (!empty($post['note'])): ?>
+    <div class="checkin-card-note">
+        "<?php echo linkify(parseMentions($post['note'])); ?>"
     </div>
     <?php endif; ?>
 
-    <div class="flex justify-between items-center mt-md">
-        <div class="flex gap-lg">
-            <button onclick="App.toggleLike(this, <?php echo $post['id']; ?>)" class="flex items-center gap-xs text-on-surface-variant hover:text-secondary transition-colors <?php echo !empty($post['viewer_liked']) ? 'liked text-secondary' : ''; ?>">
-                <span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' <?php echo !empty($post['viewer_liked']) ? '1' : '0'; ?>;">favorite</span>
-                <span class="text-label-md font-bold action-count"><?php echo (int)($post['like_count'] ?? 0); ?></span>
+    <!-- Fotoğraf -->
+    <?php if (!empty($post['image'])): ?>
+    <img src="<?php echo uploadUrl('posts', $post['image']); ?>"
+         class="checkin-card-photo" loading="lazy" alt="">
+    <?php endif; ?>
+
+    <!-- Alt: Venue link + Beğeni/Yorum -->
+    <div class="checkin-card-footer">
+        <a href="<?php echo BASE_URL; ?>/venue-detail?id=<?php echo (int)$post['venue_id']; ?>"
+           class="checkin-card-venue-link">
+            <span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 1;color:<?php echo $catColor; ?>;"><?php echo $catIcon; ?></span>
+            <span><?php echo escape($catLabel); ?></span>
+            <?php if (!empty($post['venue_address'])): ?>
+            <span style="color:var(--text-3);">· <?php echo escape(truncate($post['venue_address'], 28)); ?></span>
+            <?php endif; ?>
+        </a>
+
+        <div class="checkin-card-actions">
+            <button onclick="App.toggleLike(this, <?php echo $post['id']; ?>)"
+                    class="checkin-action-btn <?php echo !empty($post['viewer_liked']) ? 'liked' : ''; ?>">
+                <span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:'FILL' <?php echo !empty($post['viewer_liked']) ? '1' : '0'; ?>;">favorite</span>
+                <span class="action-count"><?php echo (int)($post['like_count'] ?? 0); ?></span>
             </button>
-            <button onclick="App.toggleComments(this, <?php echo $post['id']; ?>)" class="flex items-center gap-xs text-on-surface-variant hover:text-primary transition-colors">
-                <span class="material-symbols-outlined text-xl">chat_bubble</span>
-                <span class="text-label-md font-bold action-count" data-comment-count="<?php echo $post['id']; ?>"><?php echo (int)($post['comment_count'] ?? 0); ?></span>
+            <button onclick="App.toggleComments(this, <?php echo $post['id']; ?>)"
+                    class="checkin-action-btn" style="color:var(--text-3);" onmouseover="this.style.color='var(--color-primary)'" onmouseout="this.style.color='var(--text-3)'">
+                <span class="material-symbols-outlined" style="font-size:18px;">chat_bubble</span>
+                <span class="action-count" data-comment-count="<?php echo $post['id']; ?>"><?php echo (int)($post['comment_count'] ?? 0); ?></span>
+            </button>
+            <button onclick="navigator.clipboard.writeText('<?php echo BASE_URL; ?>/post?id=<?php echo $post['id']; ?>');App.flash('Link kopyalandı!','success')"
+                    class="checkin-action-btn" style="color:var(--text-3);" onmouseover="this.style.color='var(--text-2)'" onmouseout="this.style.color='var(--text-3)'">
+                <span class="material-symbols-outlined" style="font-size:18px;">share</span>
             </button>
         </div>
-        <button onclick="navigator.clipboard.writeText('<?php echo BASE_URL; ?>/post?id=<?php echo $post['id']; ?>'); App.flash('Link kopyalandı!', 'success');" class="flex items-center gap-xs text-on-surface-variant hover:text-primary transition-colors">
-            <span class="material-symbols-outlined text-xl">bookmark</span>
-            <span class="text-label-md font-bold">Kaydet</span>
-        </button>
     </div>
 
-    <!-- Inline Comments Section -->
-    <div class="post-comments-section mt-3 pt-3 border-t border-dashed border-white/10" id="comments-section-<?php echo $post['id']; ?>" style="display:none;">
-        <div class="radio-log-container mb-3 max-h-64 overflow-y-auto pr-2" id="comments-list-<?php echo $post['id']; ?>">
-            <div class="text-center text-slate-500 text-xs py-2 font-mono">Yükleniyor...</div>
+    <!-- Yorumlar (gizli, toggle ile açılır) -->
+    <div class="post-comments-section" id="comments-section-<?php echo $post['id']; ?>"
+         style="display:none;border-top:1px solid var(--border-light);padding:10px 14px 12px;">
+        <div id="comments-list-<?php echo $post['id']; ?>" style="display:flex;flex-direction:column;gap:6px;max-height:240px;overflow-y:auto;margin-bottom:10px;">
+            <div style="text-align:center;font-size:12px;color:var(--text-3);padding:8px;">Yükleniyor...</div>
         </div>
         <?php if (Auth::check()): ?>
-        <form class="flex gap-2 items-center" onsubmit="App.submitInlineComment(this, <?php echo $post['id']; ?>); return false;">
-            <input type="text" class="comment-input-inline bg-surface-container border-none rounded-lg pl-3 pr-10 py-1.5 text-body-md w-full focus:ring-1 focus:ring-primary transition-all" placeholder="Yorum yaz..." maxlength="500" required>
-            <button type="submit" class="comment-send-btn flex items-center justify-center w-8 h-8 rounded-lg bg-primary/20 text-primary hover:bg-primary hover:text-white transition-all flex-shrink-0">
-                <span class="material-symbols-outlined text-[16px]">send</span>
+        <form style="display:flex;gap:8px;align-items:center;"
+              onsubmit="App.submitInlineComment(this, <?php echo $post['id']; ?>); return false;">
+            <input type="text" placeholder="Yorum yaz…" maxlength="500" required
+                   style="flex:1;background:var(--bg-input);border:1.5px solid transparent;border-radius:20px;padding:7px 14px;font-size:13px;font-family:var(--font);outline:none;color:var(--text-1);"
+                   onfocus="this.style.borderColor='var(--color-primary)'" onblur="this.style.borderColor='transparent'">
+            <button type="submit"
+                    style="width:32px;height:32px;border-radius:50%;background:var(--color-primary);border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <span class="material-symbols-outlined" style="font-size:15px;font-variation-settings:'FILL' 1;">send</span>
             </button>
         </form>
         <?php endif; ?>
     </div>
+
 </article>

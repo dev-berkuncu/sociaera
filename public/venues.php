@@ -58,126 +58,144 @@ $activeNav = 'venues';
 require_once __DIR__ . '/partials/app_header.php';
 ?>
 
-<section class="flex-1 flex flex-col gap-6 pb-8 min-w-0">
+<div style="display:flex;flex-direction:column;gap:20px;padding-bottom:32px;">
 
     <!-- ── BAŞLIK ── -->
-    <div class="flex items-center justify-between">
-        <h1 class="text-xl font-black text-on-surface">Mekanlar</h1>
-        <a href="<?php echo BASE_URL; ?>/add-venue"
-           class="flex items-center gap-2 bg-primary-container text-white px-4 py-2 rounded-xl font-bold text-sm hover:brightness-110 transition-all active:scale-95 shadow-[0_0_15px_rgba(255,145,0,0.2)]">
-            <span class="material-symbols-outlined text-base" style="font-variation-settings:'FILL' 1;">add_location_alt</span>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+        <h1 style="font-size:1.375rem;font-weight:800;color:var(--text-1);margin:0;letter-spacing:-0.3px;">Mekanlar</h1>
+        <a href="<?php echo BASE_URL; ?>/add-venue" class="btn btn-primary btn-sm" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;white-space:nowrap;">
+            <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 1;">add_location_alt</span>
             Mekan Ekle
         </a>
     </div>
 
     <!-- ── ARAMA ── -->
-    <form method="GET" class="relative">
-        <?php if ($category): ?>
-        <input type="hidden" name="cat" value="<?php echo escape($category); ?>">
-        <?php endif; ?>
-        <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-lg pointer-events-none">search</span>
-        <input type="text" name="q" value="<?php echo escape($search); ?>"
-               placeholder="Mekan ara…"
-               class="w-full bg-surface-container border border-white/8 rounded-2xl pl-12 pr-4 py-3.5 text-on-surface placeholder:text-on-surface-variant text-sm focus:outline-none focus:border-primary/40 transition-colors shadow-sm">
-    </form>
+    <div class="swarm-search-wrap">
+        <form method="GET" style="position:relative;">
+            <?php if ($category): ?>
+            <input type="hidden" name="cat" value="<?php echo escape($category); ?>">
+            <?php endif; ?>
+            <span class="material-symbols-outlined" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-3);font-size:18px;pointer-events:none;">search</span>
+            <input type="text" name="q" value="<?php echo escape($search); ?>"
+                   placeholder="Mekan ara…"
+                   style="width:100%;box-sizing:border-box;background:#fff;border:1.5px solid #E8E6E1;border-radius:14px;padding:12px 16px 12px 44px;color:var(--text-1);font-size:0.875rem;outline:none;transition:border-color 0.2s;font-family:inherit;"
+                   onfocus="this.style.borderColor='var(--color-primary)'" onblur="this.style.borderColor='#E8E6E1'">
+        </form>
+    </div>
 
     <!-- ── KATEGORİ PİLLERİ ── -->
-    <div class="flex gap-2 overflow-x-auto pb-1" style="-ms-overflow-style:none;scrollbar-width:none;">
+    <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;-ms-overflow-style:none;scrollbar-width:none;">
         <a href="?q=<?php echo urlencode($search); ?>"
-           class="flex items-center gap-1.5 px-4 py-2 rounded-full whitespace-nowrap font-semibold text-sm border transition-all flex-shrink-0
-                  <?php echo !$category ? 'bg-primary-container text-white border-transparent shadow-[0_0_12px_rgba(255,145,0,0.3)]' : 'bg-surface-container border-white/8 text-on-surface-variant hover:border-white/20'; ?>">
-            <span class="material-symbols-outlined text-sm" style="font-variation-settings:'FILL' 1;">apps</span>
+           style="display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:999px;white-space:nowrap;font-weight:600;font-size:0.8125rem;text-decoration:none;flex-shrink:0;transition:all 0.18s;
+                  <?php echo !$category
+                      ? 'background:var(--color-primary);color:#fff;border:1.5px solid var(--color-primary);box-shadow:0 2px 10px rgba(240,109,31,0.25);'
+                      : 'background:#fff;border:1.5px solid #E8E6E1;color:var(--text-3);'; ?>">
+            <span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 1;">apps</span>
             Tümü
         </a>
         <?php foreach ($categoryMeta as $key => $meta): ?>
         <?php if (!isset($categories[$key])) continue; ?>
         <a href="?cat=<?php echo urlencode($key); ?>&q=<?php echo urlencode($search); ?>"
-           class="flex items-center gap-1.5 px-4 py-2 rounded-full whitespace-nowrap font-semibold text-sm border transition-all flex-shrink-0"
-           style="<?php echo $category === $key
-               ? "background:{$meta['bg']};border-color:{$meta['color']}40;color:{$meta['color']}"
-               : 'background:rgba(255,255,255,0.04);border-color:rgba(255,255,255,0.08);color:#a0a0a0'; ?>">
-            <span class="material-symbols-outlined text-sm" style="font-variation-settings:'FILL' 1;"><?php echo $meta['icon']; ?></span>
+           style="display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:999px;white-space:nowrap;font-weight:600;font-size:0.8125rem;text-decoration:none;flex-shrink:0;transition:all 0.18s;
+                  <?php echo $category === $key
+                      ? "background:{$meta['color']};color:#fff;border:1.5px solid {$meta['color']};box-shadow:0 2px 10px {$meta['color']}40;"
+                      : 'background:#fff;border:1.5px solid #E8E6E1;color:var(--text-3);'; ?>">
+            <span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 1;"><?php echo $meta['icon']; ?></span>
             <?php echo escape($categories[$key]); ?>
         </a>
         <?php endforeach; ?>
     </div>
 
     <!-- ── SONUÇ SAYISI ── -->
-    <p class="text-xs text-on-surface-variant font-mono">
-        <?php echo $totalVenues; ?> mekan<?php if ($search || $category): ?> bulundu<?php endif; ?>
-        <?php if ($search): ?> · "<span class="text-on-surface"><?php echo escape($search); ?></span>" araması<?php endif; ?>
+    <p style="font-size:0.75rem;color:var(--text-3);margin:0;font-weight:500;">
+        <strong style="color:var(--text-1);"><?php echo $totalVenues; ?></strong> mekan<?php if ($search || $category): ?> bulundu<?php endif; ?>
+        <?php if ($search): ?>&nbsp;· "<span style="color:var(--text-1);"><?php echo escape($search); ?></span>" araması<?php endif; ?>
     </p>
 
     <!-- ── MEKAN GRID ── -->
     <?php if (empty($venues)): ?>
-    <div class="flex flex-col items-center justify-center py-16 text-center">
-        <span class="material-symbols-outlined text-5xl text-on-surface-variant opacity-30 mb-3">location_off</span>
-        <p class="text-on-surface-variant text-sm">Mekan bulunamadı.</p>
-        <?php if ($search || $category): ?>
-        <a href="<?php echo BASE_URL; ?>/venues" class="mt-3 text-primary text-sm font-semibold hover:underline">Filtreleri temizle</a>
-        <?php endif; ?>
+
+    <div class="empty-state">
+        <span class="empty-state-icon material-symbols-outlined">location_off</span>
+        <p class="empty-state-title">Mekan bulunamadı</p>
+        <p style="font-size:0.875rem;color:var(--text-3);margin:4px 0 0;">
+            <?php if ($search || $category): ?>
+            <a href="<?php echo BASE_URL; ?>/venues" style="color:var(--color-primary);font-weight:600;text-decoration:none;">Filtreleri temizle</a>
+            <?php else: ?>
+            Henüz mekan eklenmemiş.
+            <?php endif; ?>
+        </p>
     </div>
+
     <?php else: ?>
 
-    <div class="grid grid-cols-2 lg:grid-cols-3 gap-4">
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;">
+        <style>
+            @media(min-width:900px){.venues-grid{grid-template-columns:repeat(3,1fr)!important;}}
+        </style>
         <?php foreach ($venues as $v):
             $meta = $categoryMeta[$v['category'] ?? 'diger'] ?? $categoryMeta['diger'];
             $checkinCount = (int)($v['checkin_count'] ?? 0);
         ?>
-        <a href="<?php echo BASE_URL; ?>/venue-detail?id=<?php echo $v['id']; ?>"
-           class="group rounded-2xl overflow-hidden border border-white/5 bg-surface-container hover:border-white/15 hover:shadow-[0_8px_40px_-12px_rgba(0,0,0,0.6)] transition-all active:scale-[0.98] flex flex-col">
 
-            <!-- Görsel -->
-            <div class="relative overflow-hidden bg-surface-container-high" style="height:160px;">
+        <a href="<?php echo BASE_URL; ?>/venue-detail?id=<?php echo $v['id']; ?>"
+           class="venue-card"
+           style="text-decoration:none;display:flex;flex-direction:column;overflow:hidden;transition:box-shadow 0.2s,transform 0.15s;"
+           onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 28px rgba(0,0,0,0.10)'"
+           onmouseout="this.style.transform='';this.style.boxShadow=''">
+
+            <!-- Görsel / Image Area -->
+            <div class="venue-card-img" style="position:relative;height:150px;overflow:hidden;background:<?php echo $meta['bg']; ?>;">
 
                 <?php if (!empty($v['cover_image'])): ?>
                     <img src="<?php echo BASE_URL . '/uploads/venues/' . escape($v['cover_image']); ?>"
-                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                         style="width:100%;height:100%;object-fit:cover;transition:transform 0.4s;" loading="lazy"
+                         onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform=''">
                 <?php elseif (!empty($v['image'])): ?>
                     <img src="<?php echo uploadUrl('posts', $v['image']); ?>"
-                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                         style="width:100%;height:100%;object-fit:cover;transition:transform 0.4s;" loading="lazy"
+                         onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform=''">
                 <?php else: ?>
-                    <div class="w-full h-full flex items-center justify-center" style="background:<?php echo $meta['bg']; ?>">
-                        <span class="material-symbols-outlined text-5xl" style="color:<?php echo $meta['color']; ?>;font-variation-settings:'FILL' 1;"><?php echo $meta['icon']; ?></span>
+                    <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;">
+                        <span class="material-symbols-outlined" style="font-size:48px;color:<?php echo $meta['color']; ?>;opacity:0.5;font-variation-settings:'FILL' 1;"><?php echo $meta['icon']; ?></span>
                     </div>
                 <?php endif; ?>
 
                 <!-- Gradient overlay -->
-                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+                <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.42) 0%,transparent 55%);pointer-events:none;"></div>
 
-                <!-- Kategori ikonu (Swarm signature) -->
-                <div class="absolute bottom-3 left-3 w-9 h-9 rounded-xl flex items-center justify-center border border-white/20 shadow-lg"
-                     style="background:<?php echo $meta['color']; ?>ee;backdrop-filter:blur(8px);">
-                    <span class="material-symbols-outlined text-white text-[18px]" style="font-variation-settings:'FILL' 1;"><?php echo $meta['icon']; ?></span>
+                <!-- Kategori badge (bottom-left) -->
+                <div style="position:absolute;bottom:10px;left:10px;width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:<?php echo $meta['color']; ?>;box-shadow:0 2px 8px rgba(0,0,0,0.18);">
+                    <span class="material-symbols-outlined" style="font-size:16px;color:#fff;font-variation-settings:'FILL' 1;"><?php echo $meta['icon']; ?></span>
                 </div>
 
-                <!-- Check-in sayısı (sağ alt) -->
-                <div class="absolute bottom-3 right-3 flex items-center gap-1 bg-black/60 backdrop-blur text-white text-[11px] font-bold px-2 py-1 rounded-lg border border-white/10">
-                    <span class="material-symbols-outlined text-[11px] text-primary" style="font-variation-settings:'FILL' 1;">location_on</span>
+                <!-- Check-in count (bottom-right) -->
+                <div style="position:absolute;bottom:10px;right:10px;display:flex;align-items:center;gap:4px;background:rgba(255,255,255,0.92);border-radius:8px;padding:3px 8px;font-size:11px;font-weight:700;color:var(--text-1);">
+                    <span class="material-symbols-outlined" style="font-size:11px;color:var(--color-primary);font-variation-settings:'FILL' 1;">location_on</span>
                     <?php echo $checkinCount; ?>
                 </div>
 
-                <!-- Açık/Kapalı -->
+                <!-- Açık/Kapalı (top-right) -->
                 <?php if (isset($v['is_open'])): ?>
-                <div class="absolute top-3 right-3 flex items-center gap-1 bg-black/60 backdrop-blur text-[10px] font-bold px-2 py-1 rounded-lg border border-white/10 <?php echo $v['is_open'] ? 'text-emerald-400' : 'text-red-400'; ?>">
-                    <span class="w-1.5 h-1.5 rounded-full <?php echo $v['is_open'] ? 'bg-emerald-400' : 'bg-red-400'; ?>"></span>
+                <div style="position:absolute;top:10px;right:10px;display:flex;align-items:center;gap:4px;background:rgba(255,255,255,0.92);border-radius:8px;padding:3px 8px;font-size:10px;font-weight:700;color:<?php echo $v['is_open'] ? '#16a34a' : '#dc2626'; ?>;">
+                    <span style="width:6px;height:6px;border-radius:50%;background:<?php echo $v['is_open'] ? '#16a34a' : '#dc2626'; ?>;display:inline-block;"></span>
                     <?php echo $v['is_open'] ? 'Açık' : 'Kapalı'; ?>
                 </div>
                 <?php endif; ?>
 
             </div>
 
-            <!-- Bilgi -->
-            <div class="p-4 flex-grow flex flex-col gap-1">
-                <div class="font-bold text-sm text-on-surface group-hover:text-primary transition-colors truncate leading-snug">
+            <!-- Bilgi / Info -->
+            <div class="venue-card-info" style="padding:12px 14px;display:flex;flex-direction:column;gap:3px;flex:1;">
+                <div style="font-weight:700;font-size:0.875rem;color:var(--text-1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3;">
                     <?php echo escape($v['name']); ?>
                 </div>
-                <div class="text-[11px] text-on-surface-variant" style="color:<?php echo $meta['color']; ?>;opacity:0.8;">
+                <div style="font-size:0.6875rem;font-weight:600;color:<?php echo $meta['color']; ?>;">
                     <?php echo escape($categories[$v['category'] ?? 'diger'] ?? 'Mekan'); ?>
                 </div>
                 <?php if (!empty($v['address'])): ?>
-                <div class="text-[11px] text-on-surface-variant truncate mt-0.5 flex items-center gap-1">
-                    <span class="material-symbols-outlined text-[11px]">pin_drop</span>
+                <div style="font-size:0.6875rem;color:var(--text-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:3px;margin-top:2px;">
+                    <span class="material-symbols-outlined" style="font-size:11px;">pin_drop</span>
                     <?php echo escape(truncate($v['address'], 45)); ?>
                 </div>
                 <?php endif; ?>
@@ -187,25 +205,33 @@ require_once __DIR__ . '/partials/app_header.php';
         <?php endforeach; ?>
     </div>
 
+    <script>
+    (function(){
+        var g = document.querySelector('[style*="grid-template-columns:repeat(2"]');
+        if(g) g.classList.add('venues-grid');
+        function resize(){if(g)g.style.gridTemplateColumns=window.innerWidth>=900?'repeat(3,1fr)':'repeat(2,1fr)';}
+        resize(); window.addEventListener('resize',resize);
+    })();
+    </script>
+
     <!-- ── SAYFALAMA ── -->
     <?php if ($totalPages > 1): ?>
-    <div class="flex justify-center items-center gap-2 pt-4">
+    <div class="swarm-pagination">
         <?php if ($page > 1): ?>
         <a href="?page=<?php echo $page - 1; ?>&cat=<?php echo urlencode($category); ?>&q=<?php echo urlencode($search); ?>"
-           class="w-9 h-9 flex items-center justify-center rounded-xl bg-surface-container border border-white/8 text-on-surface-variant hover:border-white/20 hover:text-on-surface transition-all">
-            <span class="material-symbols-outlined text-lg">chevron_left</span>
+           class="swarm-page-btn" style="text-decoration:none;">
+            <span class="material-symbols-outlined" style="font-size:18px;line-height:1;">chevron_left</span>
         </a>
         <?php endif; ?>
         <?php for ($i = max(1, $page - 2); $i <= min($totalPages, $page + 2); $i++): ?>
         <a href="?page=<?php echo $i; ?>&cat=<?php echo urlencode($category); ?>&q=<?php echo urlencode($search); ?>"
-           class="w-9 h-9 flex items-center justify-center rounded-xl font-bold text-sm transition-all <?php echo $i === $page ? 'bg-primary-container text-white shadow-[0_0_12px_rgba(255,145,0,0.3)]' : 'bg-surface-container border border-white/8 text-on-surface-variant hover:border-white/20'; ?>">
-            <?php echo $i; ?>
-        </a>
+           class="swarm-page-btn <?php echo $i === $page ? 'active' : ''; ?>"
+           style="text-decoration:none;"><?php echo $i; ?></a>
         <?php endfor; ?>
         <?php if ($page < $totalPages): ?>
         <a href="?page=<?php echo $page + 1; ?>&cat=<?php echo urlencode($category); ?>&q=<?php echo urlencode($search); ?>"
-           class="w-9 h-9 flex items-center justify-center rounded-xl bg-surface-container border border-white/8 text-on-surface-variant hover:border-white/20 hover:text-on-surface transition-all">
-            <span class="material-symbols-outlined text-lg">chevron_right</span>
+           class="swarm-page-btn" style="text-decoration:none;">
+            <span class="material-symbols-outlined" style="font-size:18px;line-height:1;">chevron_right</span>
         </a>
         <?php endif; ?>
     </div>
@@ -213,6 +239,6 @@ require_once __DIR__ . '/partials/app_header.php';
 
     <?php endif; ?>
 
-</section>
+</div>
 
 <?php require_once __DIR__ . '/partials/app_footer.php'; ?>

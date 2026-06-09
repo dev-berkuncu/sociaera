@@ -181,215 +181,686 @@ $activeNav = 'profile';
 require_once __DIR__ . '/partials/app_header.php';
 ?>
 
-<section class="flex-1 flex flex-col gap-stack-md max-w-3xl w-full mx-auto lg:mx-0">
-    <?php 
-        $isPremium = !empty($profileUser['is_premium']); 
-        $premiumBorder = $isPremium ? 'border-[#7bd0ff]/40 shadow-[0_0_30px_-5px_rgba(123,208,255,0.25)]' : 'border-white/10 shadow-[0_20px_40px_-15px_rgba(19,19,20,0.5)]';
-        $premiumBg = $isPremium ? 'bg-[#2a2a2b]/90' : 'bg-[#2a2a2b]/80';
-    ?>
-    <!-- Profile Header -->
-    <div class="<?php echo $premiumBg; ?> backdrop-blur-[20px] border <?php echo $premiumBorder; ?> rounded-2xl overflow-hidden relative mb-4">
-        
-        <?php if ($isPremium): ?>
-        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#7bd0ff] to-transparent z-30"></div>
+<style>
+/* ── Profile page-local styles ───────────────────────────── */
+
+/* Profile Header Card */
+.profile-header {
+    background: #fff;
+    border-radius: 20px;
+    border: 1.5px solid var(--border-light);
+    overflow: hidden;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+}
+.profile-header.is-premium {
+    border-color: rgba(79, 70, 229, 0.3);
+    box-shadow: 0 4px 24px rgba(79, 70, 229, 0.08);
+}
+.profile-premium-stripe {
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #4F46E5, #7C3AED, transparent);
+}
+
+/* Banner */
+.profile-banner {
+    height: 180px;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+}
+.profile-banner img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Info section */
+.profile-info {
+    padding: 0 20px 20px;
+    position: relative;
+}
+
+/* Avatar wrap */
+.profile-avatar-wrap {
+    position: relative;
+    display: inline-block;
+    margin-top: -40px;
+    margin-bottom: 12px;
+}
+.profile-avatar {
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #fff;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    display: block;
+}
+.profile-premium-ring {
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    background: conic-gradient(#4F46E5, #7C3AED, #4F46E5);
+    z-index: -1;
+    opacity: 0.6;
+}
+.profile-premium-badge {
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #4F46E5, #7C3AED);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 20px;
+    border: 2px solid #fff;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    box-shadow: 0 2px 8px rgba(79,70,229,0.35);
+}
+.profile-premium-badge .material-symbols-outlined { font-size: 11px; font-variation-settings: 'FILL' 1; }
+
+/* Name / tag */
+.profile-name {
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: var(--text-1);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    line-height: 1.2;
+}
+.profile-tag {
+    font-size: 14px;
+    font-weight: 600;
+    margin-top: 2px;
+}
+.profile-bio {
+    font-size: 14px;
+    color: var(--text-2);
+    margin-top: 10px;
+    line-height: 1.6;
+    max-width: 520px;
+}
+
+/* Stats row */
+.profile-stats {
+    display: flex;
+    gap: 0;
+    margin-top: 16px;
+    border: 1.5px solid var(--border-light);
+    border-radius: 14px;
+    overflow: hidden;
+    width: fit-content;
+}
+.profile-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px 20px;
+    border-right: 1.5px solid var(--border-light);
+    min-width: 72px;
+    cursor: default;
+    transition: background .14s;
+}
+.profile-stat:last-child { border-right: none; }
+.profile-stat:hover { background: #faf8f5; }
+.profile-stat-value {
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: var(--text-1);
+}
+.profile-stat-label {
+    font-size: 10px;
+    color: var(--text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 700;
+    margin-top: 2px;
+}
+
+/* Action buttons row */
+.profile-actions { display: flex; gap: 10px; margin-top: 16px; }
+
+/* Gamification bar */
+.profile-gamification {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 12px 20px 14px;
+    border-top: 1.5px solid var(--border-light);
+    background: #fafaf8;
+}
+.gamification-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1.5px solid;
+    white-space: nowrap;
+}
+.gamification-chip .material-symbols-outlined {
+    font-size: 15px;
+    font-variation-settings: 'FILL' 1;
+}
+.chip-streak  { color: #D97706; background: #FFF8EE; border-color: #FED7AA; }
+.chip-rank    { color: var(--color-primary); background: #FFF4EE; border-color: #FFD5BB; }
+.chip-badge   { border-color: var(--border-light); color: var(--text-2); background: #fff; }
+
+/* Meta info row */
+.profile-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 14px;
+    font-size: 13px;
+    color: var(--text-3);
+}
+.profile-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.profile-meta-item .material-symbols-outlined { font-size: 16px; }
+
+/* Badges card */
+.badge-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 16px 20px;
+}
+.badge-chip {
+    position: relative;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: default;
+    transition: transform .15s;
+}
+.badge-chip:hover { transform: scale(1.12); }
+.badge-chip .material-symbols-outlined { font-size: 22px; }
+.badge-chip-count {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    min-width: 18px;
+    height: 18px;
+    background: var(--color-primary);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 900;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 3px;
+    border: 2px solid #fff;
+}
+
+/* Journey stat cards */
+.journey-stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 14px; }
+@media (min-width: 600px) { .journey-stat-grid { grid-template-columns: repeat(4, 1fr); } }
+.journey-stat-card {
+    background: #fff;
+    border: 1.5px solid var(--border-light);
+    border-radius: 14px;
+    padding: 16px 12px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+.journey-stat-card .material-symbols-outlined { font-size: 26px; font-variation-settings: 'FILL' 1; }
+.journey-stat-value { font-size: 1.4rem; font-weight: 900; color: var(--text-1); }
+.journey-stat-label { font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; }
+
+/* Premium stat cards */
+.premium-stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 14px; }
+@media (min-width: 600px) { .premium-stat-grid { grid-template-columns: repeat(3, 1fr); } }
+.premium-stat-card {
+    border-radius: 14px;
+    padding: 16px 12px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    border: 1.5px solid;
+}
+.premium-badge-pill {
+    font-size: 10px;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 20px;
+    border: 1px solid;
+}
+
+/* Weekly trend chart */
+.trend-chart-wrap {
+    background: #fff;
+    border: 1.5px solid var(--border-light);
+    border-radius: 14px;
+    padding: 18px 16px;
+    margin-bottom: 14px;
+}
+.trend-chart-title {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--text-1);
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 14px;
+}
+.trend-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    height: 80px;
+}
+.trend-bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.trend-bar-count { font-size: 11px; font-weight: 700; color: var(--color-primary); }
+.trend-bar-bg { width: 100%; background: #FFF0E6; border-radius: 6px 6px 0 0; overflow: hidden; }
+.trend-bar-fill { width: 100%; background: linear-gradient(to top, var(--color-primary), #FFA040); border-radius: 6px 6px 0 0; }
+.trend-bar-label { font-size: 9px; color: var(--text-3); text-transform: uppercase; }
+
+/* Who viewed — list */
+.viewer-list-card {
+    background: #fff;
+    border: 1.5px solid var(--border-light);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 14px;
+}
+.viewer-list-header {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border-light);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.viewer-list-header h3 {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--text-1);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.viewer-list-header h3 .material-symbols-outlined { font-size: 18px; color: #4F46E5; }
+.viewer-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 18px;
+    border-bottom: 1px solid var(--border-light);
+    text-decoration: none;
+    transition: background .12s;
+}
+.viewer-row:last-child { border-bottom: none; }
+.viewer-row:hover { background: #faf8f5; }
+.viewer-row img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--border-light); flex-shrink: 0; }
+
+/* Category breakdown */
+.cat-breakdown-card {
+    background: #fff;
+    border: 1.5px solid var(--border-light);
+    border-radius: 14px;
+    padding: 18px 16px;
+    margin-bottom: 14px;
+}
+.cat-row { margin-bottom: 12px; }
+.cat-row:last-child { margin-bottom: 0; }
+.cat-row-header { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 13px; font-weight: 600; color: var(--text-1); }
+.cat-row-meta { font-size: 12px; color: var(--text-3); }
+.cat-bar-bg { height: 7px; background: #f0ede9; border-radius: 20px; overflow: hidden; }
+.cat-bar-fill { height: 100%; border-radius: 20px; transition: width .6s; }
+
+/* Venue list rows */
+.venue-list-card {
+    background: #fff;
+    border: 1.5px solid var(--border-light);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 14px;
+}
+.venue-list-header { padding: 14px 18px; border-bottom: 1px solid var(--border-light); font-size: 14px; font-weight: 800; color: var(--text-1); display: flex; align-items: center; gap: 6px; }
+.venue-list-header .material-symbols-outlined { font-size: 18px; color: var(--text-3); }
+.venue-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--border-light);
+    text-decoration: none;
+    transition: background .12s;
+}
+.venue-row:last-child { border-bottom: none; }
+.venue-row:hover { background: #faf8f5; }
+.venue-row-thumb {
+    width: 46px; height: 46px;
+    border-radius: 12px;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: #FFF4EE;
+    border: 1.5px solid #FFE0CC;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-primary);
+}
+.venue-row-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* Fav venue + top category cards */
+.highlight-card-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 14px; }
+@media (min-width: 600px) { .highlight-card-grid { grid-template-columns: 1fr 1fr; } }
+.highlight-card {
+    background: #fff;
+    border: 1.5px solid var(--border-light);
+    border-radius: 14px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: box-shadow .15s;
+}
+.highlight-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.07); }
+.highlight-icon {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.highlight-icon .material-symbols-outlined { font-size: 22px; font-variation-settings: 'FILL' 1; }
+
+/* Empty states */
+.profile-empty {
+    background: #fff;
+    border: 1.5px solid var(--border-light);
+    border-radius: 16px;
+    padding: 48px 24px;
+    text-align: center;
+    color: var(--text-3);
+}
+.profile-empty .material-symbols-outlined { font-size: 48px; opacity: 0.3; display: block; margin-bottom: 10px; }
+
+/* Load more */
+.load-more-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff;
+    border: 1.5px solid var(--border-light);
+    border-radius: 99px;
+    padding: 10px 22px;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--text-1);
+    text-decoration: none;
+    transition: box-shadow .15s, border-color .15s;
+    margin-top: 12px;
+}
+.load-more-btn:hover { border-color: var(--color-primary); box-shadow: 0 2px 12px rgba(240,109,31,0.12); }
+</style>
+
+<?php
+$isPremium = !empty($profileUser['is_premium']);
+$pAvatar   = safeAvatarUrl($profileUser['avatar'] ?? null, $profileUser['username']);
+
+// Banner background
+if (bannerUrl($profileUser['banner'] ?? null)) {
+    $bannerHtml = '<img src="' . bannerUrl($profileUser['banner']) . '" class="w-full h-full object-cover" width="800" height="180" alt="Banner">';
+} else {
+    $bannerStyle = 'background: linear-gradient(135deg, ' . $accentColor . '33, #fff8f4);';
+    $bannerHtml  = '<div style="width:100%;height:100%;' . $bannerStyle . '"></div>';
+}
+?>
+
+<!-- ── Profile Header Card ──────────────────────────────── -->
+<div class="profile-header <?php echo $isPremium ? 'is-premium' : ''; ?>">
+
+    <?php if ($isPremium): ?>
+    <div class="profile-premium-stripe"></div>
+    <?php endif; ?>
+
+    <!-- Banner -->
+    <div class="profile-banner">
+        <?php echo $bannerHtml; ?>
+    </div>
+
+    <!-- Info -->
+    <div class="profile-info">
+
+        <!-- Avatar + action buttons row -->
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+
+            <!-- Avatar -->
+            <div class="profile-avatar-wrap">
+                <?php if ($isPremium): ?>
+                <div class="profile-premium-ring"></div>
+                <?php endif; ?>
+                <img src="<?php echo $pAvatar; ?>" alt="<?php echo escape($profileUser['username']); ?>"
+                     class="profile-avatar" width="88" height="88">
+                <?php if ($isPremium): ?>
+                <div class="profile-premium-badge">
+                    <span class="material-symbols-outlined">diamond</span> Premium
+                </div>
+                <?php endif; ?>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="profile-actions" style="margin-top:0;margin-bottom:8px;">
+                <?php if (!$isOwn): ?>
+                <button class="btn <?php echo $isFollowing ? 'btn-ghost' : 'btn-primary'; ?> btn-sm"
+                        onclick="App.toggleFollow(this, <?php echo $profileUser['id']; ?>)">
+                    <span class="material-symbols-outlined" style="font-size:16px;">
+                        <?php echo $isFollowing ? 'person_check' : 'person_add'; ?>
+                    </span>
+                    <?php echo $isFollowing ? 'Takip Ediliyor' : 'Takip Et'; ?>
+                </button>
+                <?php else: ?>
+                <a href="<?php echo BASE_URL; ?>/settings" class="btn btn-ghost btn-sm">
+                    <span class="material-symbols-outlined" style="font-size:16px;">edit</span>
+                    Profili Düzenle
+                </a>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <!-- Name + tag -->
+        <h1 class="profile-name" style="<?php echo ($profileTheme !== 'default' && $isPremium) ? 'color:' . $accentColor . ';' : ''; ?>">
+            <?php echo escape($profileUser['username']); ?>
+            <?php if ($isPremium): ?>
+            <span class="material-symbols-outlined" style="font-size:22px;color:#4F46E5;font-variation-settings:'FILL' 1;" title="Premium">verified</span>
+            <?php endif; ?>
+        </h1>
+        <?php if (!empty($profileUser['tag'])): ?>
+        <div class="profile-tag" style="color:<?php echo $accentColor; ?>">@<?php echo escape($profileUser['tag']); ?></div>
         <?php endif; ?>
 
-        <!-- Banner -->
-        <div class="h-56 md:h-72 w-full bg-surface-container relative">
-            <div class="absolute inset-0 bg-gradient-to-t from-[#2a2a2b]/95 via-[#2a2a2b]/30 to-transparent z-10"></div>
-            <?php if ($isPremium): ?>
-                <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-30 mix-blend-overlay z-10 pointer-events-none"></div>
-            <?php endif; ?>
-            
-            <?php if (bannerUrl($profileUser['banner'] ?? null)): ?>
-                <img src="<?php echo bannerUrl($profileUser['banner']); ?>" class="w-full h-full object-cover" width="800" height="288">
-            <?php else: ?>
-                <div class="w-full h-full" style="background: linear-gradient(to right, <?php echo $accentColor; ?>66, #2a2a2b);"></div>
-            <?php endif; ?>
+        <!-- Bio -->
+        <?php if (!empty($profileUser['bio'])): ?>
+        <p class="profile-bio"><?php echo nl2brSafe($profileUser['bio']); ?></p>
+        <?php endif; ?>
+
+        <!-- Stats -->
+        <div class="profile-stats">
+            <div class="profile-stat">
+                <span class="profile-stat-value"><?php echo shortNumber($stats['checkins']); ?></span>
+                <span class="profile-stat-label">Check-in</span>
+            </div>
+            <div class="profile-stat">
+                <span class="profile-stat-value"><?php echo shortNumber($stats['venues']); ?></span>
+                <span class="profile-stat-label">Mekan</span>
+            </div>
+            <div class="profile-stat">
+                <span class="profile-stat-value"><?php echo shortNumber($stats['following']); ?></span>
+                <span class="profile-stat-label">Takip</span>
+            </div>
+            <div class="profile-stat">
+                <span class="profile-stat-value"><?php echo shortNumber($stats['followers']); ?></span>
+                <span class="profile-stat-label">Takipçi</span>
+            </div>
         </div>
-        
-        <!-- Profile Info -->
-        <div class="px-6 pb-8 relative z-20 md:px-10">
-            <div class="flex flex-col md:flex-row md:justify-between md:items-end gap-4 -mt-20 md:-mt-24 mb-6">
-                <!-- Avatar -->
-                <div class="relative inline-block">
-                    <?php $pAvatar = safeAvatarUrl($profileUser['avatar'] ?? null, $profileUser['username']); ?>
-                    <img src="<?php echo $pAvatar; ?>" class="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover border-4 <?php echo $isPremium ? 'border-[#2a2a2b] shadow-[0_0_20px_rgba(123,208,255,0.3)]' : 'border-[#2a2a2b] shadow-xl'; ?> bg-[#2a2a2b] relative z-10" width="160" height="160">
-                    
-                    <?php if ($isPremium): ?>
-                        <div class="absolute inset-0 rounded-full bg-[#7bd0ff] blur-md -z-10 opacity-40"></div>
-                        <div class="absolute -bottom-2 left-1/2 -translate-x-1/2 z-20 bg-[#7bd0ff]/20 text-[#7bd0ff] text-[10px] font-black px-3 py-0.5 rounded-full border border-[#7bd0ff]/30 uppercase tracking-widest whitespace-nowrap shadow-lg flex items-center gap-1">
-                            <span class="material-symbols-outlined text-[12px]">diamond</span> Premium
-                        </div>
-                    <?php endif; ?>
-                </div>
-                
-                <!-- Action Buttons -->
-                <div class="flex gap-3 w-full md:w-auto mt-2 md:mt-0">
-                    <?php if (!$isOwn): ?>
-                        <button class="flex-1 md:flex-none px-6 py-2.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 <?php echo $isFollowing ? 'bg-white/5 border border-primary-container text-primary-container hover:bg-white/10' : 'bg-primary-container text-white hover:bg-primary-container/90 shadow-[0_0_15px_rgba(255,145,0,0.3)] active:scale-95'; ?>"
-                                onclick="App.toggleFollow(this, <?php echo $profileUser['id']; ?>)">
-                            <span class="material-symbols-outlined text-[18px]"><?php echo $isFollowing ? 'person_check' : 'person_add'; ?></span>
-                            <?php echo $isFollowing ? 'Takip Ediliyor' : 'Takip Et'; ?>
-                        </button>
-                    <?php else: ?>
-                        <a href="<?php echo BASE_URL; ?>/settings" class="flex-1 md:flex-none px-6 py-2.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white border border-white/10 backdrop-blur">
-                            <span class="material-symbols-outlined text-[18px]">edit</span> Profili Düzenle
-                        </a>
-                    <?php endif; ?>
-                </div>
+
+        <!-- Meta info -->
+        <div class="profile-meta">
+            <?php if (!empty($profileUser['gta_character_name'])): ?>
+            <div class="profile-meta-item">
+                <span class="material-symbols-outlined" style="color:var(--text-3);">sports_esports</span>
+                <?php echo escape($profileUser['gta_character_name']); ?>
             </div>
-            
-            <div class="mt-2">
-                <h1 class="text-3xl md:text-4xl font-black <?php echo $isPremium ? 'drop-shadow-md' : ''; ?> tracking-tight flex items-center gap-2" style="color: <?php echo ($profileTheme !== 'default' && $isPremium) ? $accentColor : ''; ?>">
-                    <?php echo escape($profileUser['username']); ?>
-                    <?php if ($isPremium): ?>
-                        <span class="material-symbols-outlined text-[#7bd0ff] text-[24px]" title="Premium">verified</span>
-                    <?php endif; ?>
-                </h1>
-                <?php if (!empty($profileUser['tag'])): ?>
-                    <span class="font-medium text-lg block mt-1" style="color: <?php echo $accentColor; ?>">@<?php echo escape($profileUser['tag']); ?></span>
-                <?php endif; ?>
-            </div>
-            
-            <?php if (!empty($profileUser['bio'])): ?>
-                <p class="mt-5 text-slate-300 leading-relaxed font-body-md text-lg max-w-2xl"><?php echo nl2brSafe($profileUser['bio']); ?></p>
             <?php endif; ?>
-            
-            <div class="flex flex-wrap gap-y-3 gap-x-6 mt-6 text-sm text-slate-400 bg-white/5 border border-white/5 rounded-xl p-4 w-fit">
-                <?php if (!empty($profileUser['gta_character_name'])): ?>
-                    <div class="flex items-center gap-2">
-                        <span class="material-symbols-outlined text-[18px] text-slate-500">sports_esports</span>
-                        <span class="text-slate-300"><?php echo escape($profileUser['gta_character_name']); ?></span>
-                    </div>
-                <?php endif; ?>
-                <?php if ($favVenue): ?>
-                    <div class="flex items-center gap-2">
-                        <span class="material-symbols-outlined text-[18px] text-primary-container">star</span>
-                        <a href="<?php echo BASE_URL; ?>/venue-detail?id=<?php echo $favVenue['id']; ?>" class="hover:text-primary-container text-slate-300 transition-colors"><?php echo escape($favVenue['name']); ?></a>
-                    </div>
-                <?php endif; ?>
-                <div class="flex items-center gap-2">
-                    <span class="material-symbols-outlined text-[18px] text-slate-500">calendar_month</span>
-                    <span class="text-slate-300"><?php echo formatDate($profileUser['created_at']); ?> katıldı</span>
-                </div>
-                <?php if ($isOwn): ?>
-                    <?php
-                    if (!class_exists('WalletModel')) {
-                        require_once __DIR__ . '/../app/Models/Wallet.php';
-                    }
-                    $walletModel = new WalletModel();
-                    $walletModel->ensureWallet(Auth::id());
-                    $balance = $walletModel->getBalance(Auth::id());
-                    ?>
-                    <div class="flex items-center gap-2">
-                        <span class="material-symbols-outlined text-[18px] text-[#10b981]">account_balance_wallet</span>
-                        <span class="text-slate-300 font-medium">Bakiye:</span>
-                        <span class="text-[#10b981] font-black">$<?php echo number_format($balance, 2, ',', '.'); ?></span>
-                        <a href="<?php echo BASE_URL; ?>/wallet" class="ml-1 text-[11px] bg-[#10b981]/15 text-[#10b981] hover:bg-[#10b981]/25 border border-[#10b981]/20 px-2 py-0.5 rounded transition-all font-bold uppercase flex items-center gap-0.5">
-                            Cüzdan <span class="material-symbols-outlined text-[12px]">arrow_forward</span>
-                        </a>
-                    </div>
-                <?php endif; ?>
-            </div>
-            
-            <!-- Rozetler (logic bölümünden çekildi) -->
-            <?php if (!empty($profileBadges)): ?>
-            <div class="flex flex-wrap items-center gap-2 mt-6 pt-6 border-t border-white/10">
-                <span class="text-sm font-bold text-slate-400 mr-2">Kazanılan Rozetler:</span>
-                <?php foreach ($profileBadges as $pb):
-                    $def = $badgeDefs[$pb['badge_key']] ?? null;
-                    if (!$def) continue;
-                    $count = (int)($pb['total_count'] ?? 1);
-                ?>
-                <div class="relative flex items-center justify-center w-10 h-10 rounded-xl transition-transform hover:scale-110 cursor-default" style="background: <?php echo $def['color']; ?>15; border: 1.5px solid <?php echo $def['color']; ?>40;" title="<?php echo escape($def['name'] . ' — ' . $def['desc'] . ($count > 1 ? ' (x' . $count . ')' : '')); ?>">
-                    <span class="material-symbols-outlined text-[20px]" style="color: <?php echo $def['color']; ?>"><?php echo $def['icon']; ?></span>
-                    <?php if ($count > 1): ?>
-                    <span class="absolute -top-1.5 -right-1.5 min-w-[18px] h-5 flex items-center justify-center bg-primary-container text-white text-[10px] font-black rounded-full px-1 shadow-[0_2px_8px_rgba(255,145,0,0.5)]"><?php echo $count; ?></span>
-                    <?php endif; ?>
-                </div>
-                <?php endforeach; ?>
-                <a href="<?php echo BASE_URL; ?>/missions" class="flex items-center justify-center w-10 h-10 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors text-slate-500 hover:text-slate-300 ml-1" title="Tüm görevleri gör">
-                    <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+            <?php if ($favVenue): ?>
+            <div class="profile-meta-item">
+                <span class="material-symbols-outlined" style="color:var(--color-primary);font-variation-settings:'FILL' 1;">star</span>
+                <a href="<?php echo BASE_URL; ?>/venue-detail?id=<?php echo $favVenue['id']; ?>"
+                   style="color:var(--text-2);font-weight:600;text-decoration:none;" 
+                   onmouseover="this.style.color='var(--color-primary)'" onmouseout="this.style.color='var(--text-2)'">
+                    <?php echo escape($favVenue['name']); ?>
                 </a>
             </div>
             <?php endif; ?>
-
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 pt-6 border-t border-white/10">
-                <div class="flex flex-col items-center justify-center bg-surface-container/50 border border-white/5 rounded-xl py-3 hover:bg-white/5 transition-colors">
-                    <span class="text-2xl font-black text-on-surface"><?php echo shortNumber($stats['following']); ?></span>
-                    <span class="text-[10px] text-slate-400 uppercase tracking-widest font-semibold mt-1">Takip</span>
-                </div>
-                <div class="flex flex-col items-center justify-center bg-surface-container/50 border border-white/5 rounded-xl py-3 hover:bg-white/5 transition-colors">
-                    <span class="text-2xl font-black text-on-surface"><?php echo shortNumber($stats['followers']); ?></span>
-                    <span class="text-[10px] text-slate-400 uppercase tracking-widest font-semibold mt-1">Takipçi</span>
-                </div>
-                <div class="flex flex-col items-center justify-center bg-surface-container/50 border border-white/5 rounded-xl py-3 hover:bg-white/5 transition-colors">
-                    <span class="text-2xl font-black text-on-surface"><?php echo shortNumber($stats['checkins']); ?></span>
-                    <span class="text-[10px] text-slate-400 uppercase tracking-widest font-semibold mt-1">Check-in</span>
-                </div>
-                <div class="flex flex-col items-center justify-center bg-surface-container/50 border border-white/5 rounded-xl py-3 hover:bg-white/5 transition-colors">
-                    <span class="text-2xl font-black text-on-surface"><?php echo shortNumber($stats['venues']); ?></span>
-                    <span class="text-[10px] text-slate-400 uppercase tracking-widest font-semibold mt-1">Mekan</span>
-                </div>
+            <div class="profile-meta-item">
+                <span class="material-symbols-outlined" style="color:var(--text-3);">calendar_month</span>
+                <?php echo formatDate($profileUser['created_at']); ?> katıldı
             </div>
-        </div>
-    </div>
-
-
-    <div class="flex items-center border-b border-white/10 mb-2 mt-4 px-2 overflow-x-auto custom-scrollbar">
-        <a href="?u=<?php echo escape($profileUser['tag'] ?: $profileUser['username']); ?>&tab=posts" class="px-6 py-4 font-bold text-sm transition-all border-b-2 whitespace-nowrap <?php echo $tab === 'posts' ? 'text-primary-container border-primary-container' : 'text-slate-400 border-transparent hover:text-white hover:border-white/20'; ?>">Gönderiler</a>
-        <a href="?u=<?php echo escape($profileUser['tag'] ?: $profileUser['username']); ?>&tab=journey" class="px-6 py-4 font-bold text-sm transition-all border-b-2 whitespace-nowrap <?php echo $tab === 'journey' ? 'text-primary-container border-primary-container' : 'text-slate-400 border-transparent hover:text-white hover:border-white/20'; ?>">Günlüğüm</a>
-        <a href="?u=<?php echo escape($profileUser['tag'] ?: $profileUser['username']); ?>&tab=likes" class="px-6 py-4 font-bold text-sm transition-all border-b-2 whitespace-nowrap <?php echo $tab === 'likes' ? 'text-primary-container border-primary-container' : 'text-slate-400 border-transparent hover:text-white hover:border-white/20'; ?>">Beğeniler</a>
-        <a href="?u=<?php echo escape($profileUser['tag'] ?: $profileUser['username']); ?>&tab=reposts" class="px-6 py-4 font-bold text-sm transition-all border-b-2 whitespace-nowrap <?php echo $tab === 'reposts' ? 'text-primary-container border-primary-container' : 'text-slate-400 border-transparent hover:text-white hover:border-white/20'; ?>">Paylaşımlar</a>
-    </div>
-
-    <!-- Content -->
-    <div class="flex flex-col gap-stack-md pb-container-padding">
-
-        <?php if ($tab === 'journey'): ?>
-        <!-- ── Gezi Günlüğü ────────────────────────────── -->
-
-        <?php if ($stats['checkins'] === 0): ?>
-            <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-10 text-center text-slate-400 mt-4">
-                <span class="material-symbols-outlined text-[48px] mb-3 opacity-50 block">explore</span>
-                <p class="text-lg font-semibold mb-1">Henüz hiç check-in yok</p>
-                <p class="text-sm">Check-in yaparak kişisel gezi günlüğünü oluştur!</p>
+            <?php if ($isOwn): ?>
+            <?php
+                if (!class_exists('WalletModel')) {
+                    require_once __DIR__ . '/../app/Models/Wallet.php';
+                }
+                $walletModel = new WalletModel();
+                $walletModel->ensureWallet(Auth::id());
+                $balance = $walletModel->getBalance(Auth::id());
+            ?>
+            <div class="profile-meta-item">
+                <span class="material-symbols-outlined" style="color:#10b981;font-variation-settings:'FILL' 1;">account_balance_wallet</span>
+                <span style="color:var(--text-2);font-weight:600;">Bakiye:</span>
+                <span style="color:#10b981;font-weight:900;">$<?php echo number_format($balance, 2, ',', '.'); ?></span>
+                <a href="<?php echo BASE_URL; ?>/wallet"
+                   style="font-size:11px;background:rgba(16,185,129,.1);color:#10b981;border:1px solid rgba(16,185,129,.25);border-radius:20px;padding:2px 8px;font-weight:800;text-decoration:none;display:inline-flex;align-items:center;gap:2px;">
+                    Cüzdan <span class="material-symbols-outlined" style="font-size:12px;">arrow_forward</span>
+                </a>
             </div>
-        <?php else: ?>
-
-        <!-- İstatistik Kartları -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-5 flex flex-col items-center justify-center gap-1 hover:border-white/20 transition-colors">
-                <span class="material-symbols-outlined text-primary-container text-[28px]">edit_note</span>
-                <span class="text-2xl font-black text-on-surface"><?php echo shortNumber($stats['checkins']); ?></span>
-                <span class="text-[10px] text-slate-400 uppercase tracking-widest font-semibold">Toplam Check-in</span>
-            </div>
-            <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-5 flex flex-col items-center justify-center gap-1 hover:border-white/20 transition-colors">
-                <span class="material-symbols-outlined text-emerald-400 text-[28px]">location_on</span>
-                <span class="text-2xl font-black text-on-surface"><?php echo shortNumber($journey['unique_venues']); ?></span>
-                <span class="text-[10px] text-slate-400 uppercase tracking-widest font-semibold">Keşfedilen Mekan</span>
-            </div>
-            <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-5 flex flex-col items-center justify-center gap-1 hover:border-white/20 transition-colors">
-                <span class="material-symbols-outlined text-blue-400 text-[28px]">calendar_month</span>
-                <span class="text-2xl font-black text-on-surface"><?php echo $journey['this_month']; ?></span>
-                <span class="text-[10px] text-slate-400 uppercase tracking-widest font-semibold">Bu Ay</span>
-            </div>
-            <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-5 flex flex-col items-center justify-center gap-1 hover:border-white/20 transition-colors">
-                <span class="material-symbols-outlined text-amber-400 text-[28px]">local_fire_department</span>
-                <span class="text-2xl font-black text-on-surface"><?php echo $journey['last_7_days']; ?></span>
-                <span class="text-[10px] text-slate-400 uppercase tracking-widest font-semibold">Son 7 Gün</span>
-            </div>
+            <?php endif; ?>
         </div>
 
-        <!-- Premium İstatistikler 💎 -->
+    </div><!-- /profile-info -->
+
+    <!-- Gamification chips -->
+    <?php
+    $hasGamificationChips = !empty($premiumStats['streak']) || !empty($headerRank) || !empty($profileBadges);
+    // For non-owner we use locally computed streak if premium
+    $displayStreak = $premiumStats['streak'] ?? 0;
+    ?>
+    <?php if ($displayStreak > 0 || !empty($profileBadges)): ?>
+    <div class="profile-gamification">
+        <?php if ($displayStreak > 0): ?>
+        <div class="gamification-chip chip-streak">
+            <span class="material-symbols-outlined">local_fire_department</span>
+            <?php echo $displayStreak; ?> günlük seri
+        </div>
+        <?php endif; ?>
+
+        <?php if (!empty($profileBadges)): ?>
+            <?php foreach (array_slice($profileBadges, 0, 4) as $pb):
+                $def = $badgeDefs[$pb['badge_key']] ?? null;
+                if (!$def) continue;
+                $count = (int)($pb['total_count'] ?? 1);
+            ?>
+            <div class="gamification-chip chip-badge" title="<?php echo escape($def['name'] . ' — ' . $def['desc'] . ($count > 1 ? ' (x' . $count . ')' : '')); ?>"
+                 style="color:<?php echo $def['color']; ?>;background:<?php echo $def['color']; ?>10;border-color:<?php echo $def['color']; ?>40;">
+                <span class="material-symbols-outlined" style="font-size:14px;color:<?php echo $def['color']; ?>"><?php echo $def['icon']; ?></span>
+                <?php echo escape($def['name']); ?>
+                <?php if ($count > 1): ?><span style="font-size:10px;opacity:.7;">×<?php echo $count; ?></span><?php endif; ?>
+            </div>
+            <?php endforeach; ?>
+            <?php if (count($profileBadges) > 4): ?>
+            <a href="<?php echo BASE_URL; ?>/missions" class="gamification-chip chip-badge" style="color:var(--text-3);">
+                +<?php echo count($profileBadges) - 4; ?> daha
+            </a>
+            <?php endif; ?>
+        <?php endif; ?>
+    </div>
+    <?php endif; ?>
+
+</div><!-- /profile-header -->
+
+<!-- ── Tabs ─────────────────────────────────────────────── -->
+<?php $uParam = escape($profileUser['tag'] ?: $profileUser['username']); ?>
+<div class="swarm-tabs" style="margin-bottom:14px;">
+    <a href="?u=<?php echo $uParam; ?>&tab=posts"
+       class="swarm-tab <?php echo $tab === 'posts'   ? 'active' : ''; ?>">Gönderiler</a>
+    <a href="?u=<?php echo $uParam; ?>&tab=journey"
+       class="swarm-tab <?php echo $tab === 'journey' ? 'active' : ''; ?>">Günlüğüm</a>
+    <a href="?u=<?php echo $uParam; ?>&tab=likes"
+       class="swarm-tab <?php echo $tab === 'likes'   ? 'active' : ''; ?>">Beğeniler</a>
+    <a href="?u=<?php echo $uParam; ?>&tab=reposts"
+       class="swarm-tab <?php echo $tab === 'reposts' ? 'active' : ''; ?>">Paylaşımlar</a>
+</div>
+
+<!-- ── Tab Content ───────────────────────────────────────── -->
+<div style="display:flex;flex-direction:column;gap:10px;padding-bottom:40px;">
+
+<?php if ($tab === 'journey'): ?>
+    <!-- ── Gezi Günlüğü ──────────────────────────────── -->
+
+    <?php if ($stats['checkins'] === 0): ?>
+        <div class="profile-empty">
+            <span class="material-symbols-outlined">explore</span>
+            <p style="font-size:16px;font-weight:700;margin-bottom:4px;">Henüz hiç check-in yok</p>
+            <p style="font-size:13px;">Check-in yaparak kişisel gezi günlüğünü oluştur!</p>
+        </div>
+    <?php else: ?>
+
+        <!-- Journey stat cards -->
+        <div class="journey-stat-grid">
+            <div class="journey-stat-card">
+                <span class="material-symbols-outlined" style="color:var(--color-primary);">edit_note</span>
+                <div class="journey-stat-value"><?php echo shortNumber($stats['checkins']); ?></div>
+                <div class="journey-stat-label">Toplam Check-in</div>
+            </div>
+            <div class="journey-stat-card">
+                <span class="material-symbols-outlined" style="color:#10b981;">location_on</span>
+                <div class="journey-stat-value"><?php echo shortNumber($journey['unique_venues']); ?></div>
+                <div class="journey-stat-label">Keşfedilen Mekan</div>
+            </div>
+            <div class="journey-stat-card">
+                <span class="material-symbols-outlined" style="color:#3b82f6;">calendar_month</span>
+                <div class="journey-stat-value"><?php echo $journey['this_month']; ?></div>
+                <div class="journey-stat-label">Bu Ay</div>
+            </div>
+            <div class="journey-stat-card">
+                <span class="material-symbols-outlined" style="color:#f59e0b;">local_fire_department</span>
+                <div class="journey-stat-value"><?php echo $journey['last_7_days']; ?></div>
+                <div class="journey-stat-label">Son 7 Gün</div>
+            </div>
+        </div>
+
+        <!-- Premium stats -->
         <?php if (!empty($premiumStats)): ?>
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+        <div class="premium-stat-grid">
             <?php if (!empty($premiumStats['streak'])): ?>
-            <div class="bg-gradient-to-br from-amber-500/10 to-orange-500/5 border border-amber-500/20 rounded-xl p-5 flex flex-col items-center justify-center gap-1">
-                <span class="material-symbols-outlined text-amber-400 text-[28px]">local_fire_department</span>
-                <span class="text-2xl font-black text-amber-400"><?php echo $premiumStats['streak']; ?></span>
-                <span class="text-[10px] text-amber-400/70 uppercase tracking-widest font-semibold">Gün Streak 🔥</span>
+            <div class="premium-stat-card" style="background:#FFFBEB;border-color:#FDE68A;">
+                <span class="material-symbols-outlined" style="color:#D97706;font-size:26px;font-variation-settings:'FILL' 1;">local_fire_department</span>
+                <div class="journey-stat-value" style="color:#D97706;"><?php echo $premiumStats['streak']; ?></div>
+                <div class="journey-stat-label" style="color:#D97706;">Gün Streak 🔥</div>
             </div>
             <?php endif; ?>
 
@@ -398,226 +869,205 @@ require_once __DIR__ . '/partials/app_header.php';
                 $dayNames = ['Monday'=>'Pazartesi','Tuesday'=>'Salı','Wednesday'=>'Çarşamba','Thursday'=>'Perşembe','Friday'=>'Cuma','Saturday'=>'Cumartesi','Sunday'=>'Pazar'];
                 $dayTr = $dayNames[$premiumStats['most_active_day']['day_name']] ?? $premiumStats['most_active_day']['day_name'];
             ?>
-            <div class="bg-gradient-to-br from-purple-500/10 to-pink-500/5 border border-purple-500/20 rounded-xl p-5 flex flex-col items-center justify-center gap-1">
-                <span class="material-symbols-outlined text-purple-400 text-[28px]">today</span>
-                <span class="text-lg font-black text-purple-400"><?php echo $dayTr; ?></span>
-                <span class="text-[10px] text-purple-400/70 uppercase tracking-widest font-semibold">En Aktif Gün</span>
+            <div class="premium-stat-card" style="background:#FAF5FF;border-color:#DDD6FE;">
+                <span class="material-symbols-outlined" style="color:#7C3AED;font-size:26px;font-variation-settings:'FILL' 1;">today</span>
+                <div class="journey-stat-value" style="color:#7C3AED;font-size:1rem;"><?php echo $dayTr; ?></div>
+                <div class="journey-stat-label" style="color:#7C3AED;">En Aktif Gün</div>
             </div>
             <?php endif; ?>
 
             <?php if ($isOwn && $profileViewCount > 0): ?>
-            <div class="bg-gradient-to-br from-blue-500/10 to-cyan-500/5 border border-blue-500/20 rounded-xl p-5 flex flex-col items-center justify-center gap-1">
-                <span class="material-symbols-outlined text-blue-400 text-[28px]">visibility</span>
-                <span class="text-2xl font-black text-blue-400"><?php echo $profileViewCount; ?></span>
-                <span class="text-[10px] text-blue-400/70 uppercase tracking-widest font-semibold">Profil Ziyaretçi (7g)</span>
+            <div class="premium-stat-card" style="background:#EFF6FF;border-color:#BFDBFE;">
+                <span class="material-symbols-outlined" style="color:#2563EB;font-size:26px;font-variation-settings:'FILL' 1;">visibility</span>
+                <div class="journey-stat-value" style="color:#2563EB;"><?php echo $profileViewCount; ?></div>
+                <div class="journey-stat-label" style="color:#2563EB;">Profil Ziyaretçi (7g)</div>
             </div>
             <?php endif; ?>
         </div>
 
-        <!-- Haftalık Trend -->
+        <!-- Weekly trend chart -->
         <?php if (!empty($premiumStats['weekly_trend'])): ?>
-        <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-[#7bd0ff]/20 rounded-xl p-6">
-            <h3 class="text-base font-bold text-on-surface mb-4 flex items-center gap-2">
-                <span class="material-symbols-outlined text-[18px] text-[#7bd0ff]">trending_up</span>
+        <div class="trend-chart-wrap">
+            <div class="trend-chart-title">
+                <span class="material-symbols-outlined" style="font-size:18px;color:var(--color-primary);">trending_up</span>
                 Haftalık Trend
-                <span class="text-[10px] px-2 py-0.5 rounded-full bg-[#7bd0ff]/10 text-[#7bd0ff] font-bold border border-[#7bd0ff]/20">Premium 💎</span>
-            </h3>
-            <div class="flex items-end gap-2 h-24">
-                <?php 
+                <span class="premium-badge-pill" style="color:#4F46E5;background:#EEF2FF;border-color:#C7D2FE;">Premium 💎</span>
+            </div>
+            <div class="trend-bars">
+                <?php
                 $maxCnt = max(array_column($premiumStats['weekly_trend'], 'cnt'));
                 foreach ($premiumStats['weekly_trend'] as $wt):
                     $heightPct = $maxCnt > 0 ? round(($wt['cnt'] / $maxCnt) * 100) : 10;
                     $weekLabel = date('d M', strtotime($wt['week_start']));
                 ?>
-                <div class="flex-1 flex flex-col items-center gap-1">
-                    <span class="text-xs font-bold text-[#7bd0ff]"><?php echo $wt['cnt']; ?></span>
-                    <div class="w-full bg-[#7bd0ff]/20 rounded-t-lg transition-all" style="height: <?php echo max(8, $heightPct); ?>%">
-                        <div class="w-full h-full bg-gradient-to-t from-[#7bd0ff]/60 to-[#7bd0ff]/30 rounded-t-lg"></div>
+                <div class="trend-bar-col">
+                    <span class="trend-bar-count"><?php echo $wt['cnt']; ?></span>
+                    <div class="trend-bar-bg" style="flex:1;">
+                        <div class="trend-bar-fill" style="height:<?php echo max(8, $heightPct); ?>%;"></div>
                     </div>
-                    <span class="text-[9px] text-slate-500"><?php echo $weekLabel; ?></span>
+                    <span class="trend-bar-label"><?php echo $weekLabel; ?></span>
                 </div>
                 <?php endforeach; ?>
             </div>
         </div>
         <?php endif; ?>
-        <?php endif; ?>
+        <?php endif; /* premiumStats */ ?>
 
-        <!-- Kim Profilime Baktı (Premium) -->
+        <!-- Who viewed (Premium) -->
         <?php if ($isOwn && !empty($profileViewers)): ?>
-        <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-[#7bd0ff]/20 rounded-xl overflow-hidden">
-            <div class="px-6 py-4 border-b border-white/5 flex items-center justify-between">
-                <h3 class="text-base font-bold text-on-surface flex items-center gap-2">
-                    <span class="material-symbols-outlined text-[18px] text-[#7bd0ff]">visibility</span>
+        <div class="viewer-list-card">
+            <div class="viewer-list-header">
+                <h3>
+                    <span class="material-symbols-outlined">visibility</span>
                     Kim Profilime Baktı
-                    <span class="text-[10px] px-2 py-0.5 rounded-full bg-[#7bd0ff]/10 text-[#7bd0ff] font-bold border border-[#7bd0ff]/20">Premium 💎</span>
+                    <span class="premium-badge-pill" style="color:#4F46E5;background:#EEF2FF;border-color:#C7D2FE;">Premium 💎</span>
                 </h3>
-                <span class="text-xs text-slate-500">Son 7 gün</span>
+                <span style="font-size:12px;color:var(--text-3);">Son 7 gün</span>
             </div>
-            <div class="divide-y divide-white/5">
-                <?php foreach ($profileViewers as $pv): ?>
-                <a href="<?php echo BASE_URL; ?>/profile?u=<?php echo escape($pv['tag'] ?: $pv['username']); ?>" class="flex items-center gap-3 px-6 py-3 hover:bg-white/[0.03] transition-colors">
-                    <?php $pvAvatar = safeAvatarUrl($pv['avatar'] ?? null, $pv['username']); ?>
-                    <img src="<?php echo $pvAvatar; ?>" class="w-9 h-9 rounded-full object-cover border border-white/10" width="36" height="36" loading="lazy">
-                    <div class="flex-grow min-w-0">
-                        <span class="font-semibold text-on-surface text-sm truncate block"><?php echo escape($pv['username']); ?></span>
-                        <span class="text-xs text-slate-500">@<?php echo escape($pv['tag'] ?: $pv['username']); ?></span>
-                    </div>
-                    <span class="text-[10px] text-slate-600"><?php echo timeAgo($pv['viewed_at']); ?></span>
-                </a>
-                <?php endforeach; ?>
-            </div>
+            <?php foreach ($profileViewers as $pv):
+                $pvAvatar = safeAvatarUrl($pv['avatar'] ?? null, $pv['username']);
+            ?>
+            <a href="<?php echo BASE_URL; ?>/profile?u=<?php echo escape($pv['tag'] ?: $pv['username']); ?>" class="viewer-row">
+                <img src="<?php echo $pvAvatar; ?>" alt="<?php echo escape($pv['username']); ?>" width="36" height="36" loading="lazy">
+                <div style="flex:1;min-width:0;">
+                    <div style="font-size:13px;font-weight:700;color:var(--text-1);"><?php echo escape($pv['username']); ?></div>
+                    <div style="font-size:11px;color:var(--text-3);">@<?php echo escape($pv['tag'] ?: $pv['username']); ?></div>
+                </div>
+                <span style="font-size:11px;color:var(--text-3);"><?php echo timeAgo($pv['viewed_at']); ?></span>
+            </a>
+            <?php endforeach; ?>
         </div>
         <?php endif; ?>
 
-        <!-- En Çok Gidilen Mekan + Kategori -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-
+        <!-- Fav venue + top category -->
+        <div class="highlight-card-grid">
             <?php if ($favVenue): ?>
-            <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-primary-container/20 rounded-xl p-5 flex items-center gap-4 hover:border-primary-container/40 transition-colors">
-                <div class="w-12 h-12 rounded-xl bg-primary-container/15 flex items-center justify-center flex-shrink-0">
-                    <span class="material-symbols-outlined text-primary-container text-[24px]">star</span>
+            <div class="highlight-card">
+                <div class="highlight-icon" style="background:#FFF4EE;color:var(--color-primary);">
+                    <span class="material-symbols-outlined">star</span>
                 </div>
-                <div class="min-w-0">
-                    <div class="text-[10px] text-slate-500 uppercase tracking-widest font-semibold mb-1">En Çok Gidilen Mekan</div>
-                    <a href="<?php echo BASE_URL; ?>/venue-detail?id=<?php echo $favVenue['id']; ?>" class="font-black text-on-surface hover:text-primary-container transition-colors truncate block"><?php echo escape($favVenue['name']); ?></a>
-                    <span class="text-xs text-primary-container font-semibold"><?php echo (int)$favVenue['cnt']; ?> ziyaret</span>
+                <div style="min-width:0;">
+                    <div style="font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:.05em;font-weight:700;margin-bottom:3px;">En Çok Gidilen</div>
+                    <a href="<?php echo BASE_URL; ?>/venue-detail?id=<?php echo $favVenue['id']; ?>"
+                       style="font-weight:800;color:var(--text-1);text-decoration:none;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"
+                       onmouseover="this.style.color='var(--color-primary)'" onmouseout="this.style.color='var(--text-1)'">
+                        <?php echo escape($favVenue['name']); ?>
+                    </a>
+                    <div style="font-size:12px;color:var(--color-primary);font-weight:600;"><?php echo (int)$favVenue['cnt']; ?> ziyaret</div>
                 </div>
             </div>
             <?php endif; ?>
 
             <?php if ($journey['top_category']): ?>
             <?php
-                $catKey = $journey['top_category']['category'];
+                $catKey   = $journey['top_category']['category'];
                 $catLabel = $categoryLabels[$catKey] ?? ucfirst($catKey);
-                $catIcons = [
-                    'restoran'  => 'restaurant',
-                    'kafe'      => 'local_cafe',
-                    'bar'       => 'local_bar',
-                    'otel'      => 'hotel',
-                    'alisveris' => 'shopping_bag',
-                    'eglence'   => 'celebration',
-                    'spor'      => 'fitness_center',
-                    'saglik'    => 'spa',
-                    'kultur'    => 'museum',
-                    'diger'     => 'place',
-                ];
-                $catIcon = $catIcons[$catKey] ?? 'category';
+                $catIcons = ['restoran'=>'restaurant','kafe'=>'local_cafe','bar'=>'local_bar','otel'=>'hotel','alisveris'=>'shopping_bag','eglence'=>'celebration','spor'=>'fitness_center','saglik'=>'spa','kultur'=>'museum','diger'=>'place'];
+                $catIcon  = $catIcons[$catKey] ?? 'category';
             ?>
-            <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-purple-500/20 rounded-xl p-5 flex items-center gap-4 hover:border-purple-500/40 transition-colors">
-                <div class="w-12 h-12 rounded-xl bg-purple-500/15 flex items-center justify-center flex-shrink-0">
-                    <span class="material-symbols-outlined text-purple-400 text-[24px]"><?php echo $catIcon; ?></span>
+            <div class="highlight-card">
+                <div class="highlight-icon" style="background:#FAF5FF;color:#7C3AED;">
+                    <span class="material-symbols-outlined"><?php echo $catIcon; ?></span>
                 </div>
                 <div>
-                    <div class="text-[10px] text-slate-500 uppercase tracking-widest font-semibold mb-1">En Sevdiğin Tür</div>
-                    <div class="font-black text-on-surface"><?php echo escape($catLabel); ?></div>
-                    <span class="text-xs text-purple-400 font-semibold"><?php echo (int)$journey['top_category']['cnt']; ?> check-in</span>
+                    <div style="font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:.05em;font-weight:700;margin-bottom:3px;">En Sevdiğin Tür</div>
+                    <div style="font-weight:800;color:var(--text-1);"><?php echo escape($catLabel); ?></div>
+                    <div style="font-size:12px;color:#7C3AED;font-weight:600;"><?php echo (int)$journey['top_category']['cnt']; ?> check-in</div>
                 </div>
             </div>
             <?php endif; ?>
         </div>
 
-        <!-- Kategori Dağılımı -->
+        <!-- Category breakdown -->
         <?php if (!empty($journey['category_breakdown'])): ?>
-        <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-6">
-            <h3 class="text-base font-bold text-on-surface mb-4 flex items-center gap-2">
-                <span class="material-symbols-outlined text-[18px] text-slate-400">donut_large</span>
+        <div class="cat-breakdown-card">
+            <div style="font-size:14px;font-weight:800;color:var(--text-1);margin-bottom:14px;display:flex;align-items:center;gap:6px;">
+                <span class="material-symbols-outlined" style="font-size:18px;color:var(--text-3);">donut_large</span>
                 Mekan Türü Dağılımı
-            </h3>
+            </div>
             <?php
                 $totalCats = array_sum(array_column($journey['category_breakdown'], 'cnt'));
+                $barColorsHex = ['#F06D1F','#7C3AED','#3b82f6','#10b981','#f59e0b'];
             ?>
-            <div class="space-y-3">
-                <?php foreach ($journey['category_breakdown'] as $cat):
-                    $pct = $totalCats > 0 ? round(($cat['cnt'] / $totalCats) * 100) : 0;
-                    $label = $categoryLabels[$cat['category']] ?? ucfirst($cat['category']);
-                    $barColors = ['bg-primary-container','bg-purple-500','bg-blue-500','bg-emerald-500','bg-amber-500'];
-                    $colorIdx = array_search($cat, $journey['category_breakdown']);
-                    $barColor = $barColors[$colorIdx % count($barColors)];
-                ?>
-                <div>
-                    <div class="flex justify-between items-center mb-1">
-                        <span class="text-sm font-semibold text-on-surface"><?php echo escape($label); ?></span>
-                        <span class="text-xs text-slate-400"><?php echo $cat['cnt']; ?> ziyaret · %<?php echo $pct; ?></span>
-                    </div>
-                    <div class="h-2 bg-white/5 rounded-full overflow-hidden">
-                        <div class="h-full <?php echo $barColor; ?>/70 rounded-full transition-all duration-700" style="width: <?php echo $pct; ?>%"></div>
-                    </div>
+            <?php foreach ($journey['category_breakdown'] as $ci => $cat):
+                $pct   = $totalCats > 0 ? round(($cat['cnt'] / $totalCats) * 100) : 0;
+                $label = $categoryLabels[$cat['category']] ?? ucfirst($cat['category']);
+                $color = $barColorsHex[$ci % count($barColorsHex)];
+            ?>
+            <div class="cat-row">
+                <div class="cat-row-header">
+                    <span><?php echo escape($label); ?></span>
+                    <span class="cat-row-meta"><?php echo $cat['cnt']; ?> ziyaret · %<?php echo $pct; ?></span>
                 </div>
-                <?php endforeach; ?>
+                <div class="cat-bar-bg">
+                    <div class="cat-bar-fill" style="width:<?php echo $pct; ?>%;background:<?php echo $color; ?>;"></div>
+                </div>
             </div>
+            <?php endforeach; ?>
         </div>
         <?php endif; ?>
 
-        <!-- Son Ziyaretler -->
+        <!-- Recent venues -->
         <?php if (!empty($journey['recent_venues'])): ?>
-        <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl overflow-hidden">
-            <div class="px-6 py-4 border-b border-white/5">
-                <h3 class="text-base font-bold text-on-surface flex items-center gap-2">
-                    <span class="material-symbols-outlined text-[18px] text-slate-400">history</span>
-                    Son Ziyaretler
-                </h3>
+        <div class="venue-list-card">
+            <div class="venue-list-header">
+                <span class="material-symbols-outlined">history</span>
+                Son Ziyaretler
             </div>
-            <div class="divide-y divide-white/5">
-                <?php foreach ($journey['recent_venues'] as $rv):
-                    $rvCat = $categoryLabels[$rv['category']] ?? ucfirst($rv['category'] ?: 'Mekan');
-                ?>
-                <a href="<?php echo BASE_URL; ?>/venue-detail?id=<?php echo $rv['id']; ?>" class="flex items-center gap-4 px-6 py-4 hover:bg-white/[0.03] transition-colors group">
-                    <!-- Thumbnail -->
-                    <div class="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 bg-white/5">
-                        <?php if ($rv['image']): ?>
-                            <img src="<?php echo escapeUrl(uploadUrl('venues', $rv['image'])); ?>" alt="" class="w-full h-full object-cover" loading="lazy">
-                        <?php else: ?>
-                            <div class="w-full h-full flex items-center justify-center">
-                                <span class="material-symbols-outlined text-slate-600 text-[20px]">location_on</span>
-                            </div>
-                        <?php endif; ?>
+            <?php foreach ($journey['recent_venues'] as $rv):
+                $rvCat = $categoryLabels[$rv['category']] ?? ucfirst($rv['category'] ?: 'Mekan');
+            ?>
+            <a href="<?php echo BASE_URL; ?>/venue-detail?id=<?php echo $rv['id']; ?>" class="venue-row">
+                <div class="venue-row-thumb">
+                    <?php if ($rv['image']): ?>
+                    <img src="<?php echo escapeUrl(uploadUrl('venues', $rv['image'])); ?>" alt="" loading="lazy">
+                    <?php else: ?>
+                    <span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 1;">location_on</span>
+                    <?php endif; ?>
+                </div>
+                <div style="flex:1;min-width:0;">
+                    <div style="font-weight:700;font-size:14px;color:var(--text-1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><?php echo escape($rv['name']); ?></div>
+                    <div style="font-size:12px;color:var(--text-3);margin-top:2px;">
+                        <?php echo escape($rvCat); ?> · <?php echo (int)$rv['visit_count']; ?>× ziyaret
                     </div>
-                    <!-- Info -->
-                    <div class="flex-grow min-w-0">
-                        <div class="font-semibold text-on-surface group-hover:text-primary-container transition-colors truncate"><?php echo escape($rv['name']); ?></div>
-                        <div class="text-xs text-slate-500 flex items-center gap-2 mt-0.5">
-                            <span><?php echo escape($rvCat); ?></span>
-                            <span class="text-slate-700">·</span>
-                            <span><?php echo (int)$rv['visit_count']; ?>× ziyaret</span>
-                        </div>
-                    </div>
-                    <!-- Son Ziyaret -->
-                    <div class="text-xs text-slate-500 flex-shrink-0 text-right">
-                        <span class="material-symbols-outlined text-[14px] align-middle mr-0.5">schedule</span>
-                        <?php echo timeAgo($rv['last_visit']); ?>
-                    </div>
-                </a>
-                <?php endforeach; ?>
-            </div>
+                </div>
+                <div style="font-size:12px;color:var(--text-3);flex-shrink:0;text-align:right;">
+                    <span class="material-symbols-outlined" style="font-size:13px;vertical-align:middle;">schedule</span>
+                    <?php echo timeAgo($rv['last_visit']); ?>
+                </div>
+            </a>
+            <?php endforeach; ?>
         </div>
         <?php endif; ?>
 
-        <?php endif; // stats['checkins'] === 0 ?>
-        <!-- ── /Gezi Günlüğü ────────────────────────────── -->
+    <?php endif; /* checkins === 0 */ ?>
+    <!-- ── /Gezi Günlüğü ──────────────────────────────── -->
 
-        <?php else: /* posts, likes, reposts tabs */ ?>
+<?php else: /* posts, likes, reposts */ ?>
 
-            <?php if (empty($posts)): ?>
-                <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-10 text-center text-slate-400 mt-4 shadow-[0_15px_30px_-15px_rgba(19,19,20,0.3)]">
-                    <span class="material-symbols-outlined text-[48px] mb-3 opacity-50">post_add</span>
-                    <p class="text-lg">Henüz gönderi yok.</p>
-                </div>
-            <?php else: ?>
-                <?php foreach ($posts as $post): ?>
-                    <?php include __DIR__ . '/partials/_tailwind_post_card.php'; ?>
-                <?php endforeach; ?>
+    <?php if (empty($posts)): ?>
+        <div class="profile-empty">
+            <span class="material-symbols-outlined">post_add</span>
+            <p style="font-size:15px;font-weight:600;">Henüz gönderi yok.</p>
+        </div>
+    <?php else: ?>
+        <?php foreach ($posts as $post): ?>
+            <?php include __DIR__ . '/partials/_tailwind_post_card.php'; ?>
+        <?php endforeach; ?>
 
-                <?php if (count($posts) >= 20): ?>
-                    <div class="text-center mt-4">
-                        <a href="?u=<?php echo escape($profileUser['tag'] ?: $profileUser['username']); ?>&tab=<?php echo $tab; ?>&page=<?php echo $page + 1; ?>" class="inline-flex items-center gap-2 bg-white/5 hover:bg-white/10 text-on-surface px-6 py-3 rounded-full transition-colors border border-white/10 font-bold">
-                            <span class="material-symbols-outlined">arrow_downward</span> Daha Fazla Yükle
-                        </a>
-                    </div>
-                <?php endif; ?>
-            <?php endif; ?>
-
+        <?php if (count($posts) >= 20): ?>
+        <div style="text-align:center;margin-top:8px;">
+            <a href="?u=<?php echo $uParam; ?>&tab=<?php echo $tab; ?>&page=<?php echo $page + 1; ?>"
+               class="load-more-btn">
+                <span class="material-symbols-outlined">arrow_downward</span>
+                Daha Fazla Yükle
+            </a>
+        </div>
         <?php endif; ?>
-    </div>
-</section>
+    <?php endif; ?>
+
+<?php endif; ?>
+
+</div><!-- /tab content -->
 
 <?php require_once __DIR__ . '/partials/app_footer.php'; ?>

@@ -1,378 +1,309 @@
 <?php
 /**
- * Sociaera — App Footer (Tailwind Design)
+ * Sociaera — App Footer (Swarm Edition)
+ * Bottom nav + Right panel + FAB + Modals
  */
-$hideSidebar = $hideSidebar ?? false;
 ?>
-        </section>
-        <?php if (!$hideSidebar): ?>
-        <!-- Right Sidebar: Discovery Rail -->
-        <aside class="hidden lg:flex flex-col col-span-12 lg:col-span-4 xl:col-span-3 space-y-lg sticky top-20 h-[calc(100vh-100px)] overflow-y-auto custom-scrollbar pl-2 pb-6">
-            <!-- Yakındaki Mekanlar (Nearby Places) -->
-            <?php
-            $nearbyVenues = [];
-            try {
-                $nearbyVenues = (new VenueModel())->getApproved('', '', 3);
-            } catch (Exception $e) {}
-            if (!empty($nearbyVenues)):
-            ?>
-            <div class="swarm-glass-card p-4 rounded-xl border border-outline-variant/20 shadow-md">
-                <div class="flex justify-between items-center mb-3">
-                    <h3 class="text-[9px] text-on-surface-variant font-bold uppercase tracking-wider font-mono">Yakındaki Mekanlar</h3>
-                    <a href="<?php echo BASE_URL; ?>/venues" class="text-primary text-[9px] font-bold hover:underline">Tümünü Gör</a>
-                </div>
-                <div class="space-y-3">
-                    <?php foreach ($nearbyVenues as $index => $nv): ?>
-                    <div class="flex items-center gap-3 group cursor-pointer" onclick="window.location.href='<?php echo BASE_URL; ?>/venue-detail?id=<?php echo $nv['id']; ?>'">
-                        <div class="w-12 h-12 rounded-lg overflow-hidden bg-surface-container flex items-center justify-center text-primary border border-white/5 group-hover:border-primary/40 transition-colors flex-shrink-0 relative">
-                            <?php if (!empty($nv['cover_image'])): ?>
-                                <img src="<?php echo BASE_URL . '/uploads/venues/' . escape($nv['cover_image']); ?>" class="w-full h-full object-cover" width="48" height="48" loading="lazy">
-                            <?php elseif (!empty($nv['image'])): ?>
-                                <img src="<?php echo uploadUrl('posts', $nv['image']); ?>" class="w-full h-full object-cover" width="48" height="48" loading="lazy">
-                            <?php else: ?>
-                                <span class="material-symbols-outlined text-[20px]">store</span>
-                            <?php endif; ?>
-                        </div>
-                        
-                        <div class="flex-grow min-w-0">
-                            <div class="text-xs font-bold text-on-surface group-hover:text-primary transition-colors truncate"><?php echo escape($nv['name']); ?></div>
-                            <div class="text-[10px] text-on-surface-variant truncate mt-0.5">
-                                <?php echo escape(VenueModel::categories()[$nv['category']] ?? ($nv['category'] ?? 'Mekan')); ?> 
-                                • <?php echo (110 + ($index * 140)) . ' m'; ?>
-                            </div>
-                        </div>
-                        
-                        <!-- Rating score badge -->
-                        <div class="bg-green-600 text-white text-[11px] font-bold px-1.5 py-0.5 rounded flex-shrink-0">
-                            <?php 
-                            $nvRating = 9.2 - ($index * 0.2);
-                            try {
-                                $ratingData = (new VenueModel())->getVenueRating($nv['id']);
-                                if ($ratingData['average_rating'] > 0) {
-                                    $nvRating = $ratingData['average_rating'];
-                                }
-                            } catch (Exception $e) {}
-                            echo number_format($nvRating, 1); 
-                            ?>
-                        </div>
-                    </div>
-                    <?php endforeach; ?>
-                </div>
+    </div><!-- /swarm-feed -->
+
+    <?php if (Auth::check() && isset($currentUser)): ?>
+    <!-- ── SAĞ PANEL (Desktop) ──────────────────────────── -->
+    <aside class="swarm-right-panel">
+
+        <!-- Kullanıcı Gamification Widget -->
+        <div class="right-panel-card">
+            <div class="right-panel-card-header">
+                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-3);">Bu Hafta</div>
             </div>
-            <?php endif; ?>
+            <div class="right-panel-card-body" style="display:flex;flex-direction:column;gap:8px;">
+                <!-- Streak -->
+                <div class="streak-widget">
+                    <span class="material-symbols-outlined" style="color:var(--color-primary);font-variation-settings:'FILL' 1;font-size:20px;">local_fire_department</span>
+                    <div>
+                        <div style="font-size:16px;font-weight:800;line-height:1;"><?php echo $headerStreak; ?> gün</div>
+                        <div style="font-size:11px;font-weight:500;color:var(--color-primary);opacity:0.7;">Günlük Seri</div>
+                    </div>
+                </div>
 
-            <!-- Map View Bento Widget (Yakında) -->
-            <div class="swarm-glass-card rounded-xl border border-outline-variant/20 overflow-hidden shadow-md flex flex-col relative">
-                <div class="p-4 flex justify-between items-center">
-                    <h3 class="text-[9px] text-on-surface-variant font-bold uppercase tracking-wider font-mono">Yakında</h3>
-                    <a href="<?php echo BASE_URL; ?>/venues" class="text-primary text-[9px] font-bold hover:underline">Tümünü Gör</a>
-                </div>
-                <div class="h-48 relative bg-[#131314] cursor-pointer group overflow-hidden" onclick="window.location.href='<?php echo BASE_URL; ?>/venues'">
-                    <img class="w-full h-full object-cover opacity-40 grayscale-[0.8] invert-[0.9] group-hover:scale-105 group-hover:opacity-50 transition-all duration-700" src="https://lh3.googleusercontent.com/aida/AP1WRLudjIkYlGBmWTPYJUvLFzH2Tw0cGp8ikU9WEO9mqsjg7gsgTevDFlnp2dkPXUro1NNq4mTrbxUvyIxDMPZBe60dHROByG9EheR2Gbi3nAH-wyKDQsdWm1yunx-ZqK9Sz-a_FPJJp29JteU3WWba1-_UkQtdFpYlWjgRj5k6m2Ibqu3P4VbGVL-xL6pheN38RhYZyrEtz-en_Au81D2NNMcT0IbPxd9hXc-JIRF6xlDNhqwX3kxs7Kns6v4" alt="City Map" loading="lazy">
-                    <div class="absolute inset-0 pointer-events-none">
-                        <div class="absolute top-1/4 left-1/3 p-1.5 bg-[#ff9100] rounded-full border border-white/20 shadow-[0_0_10px_#ff9100] cybermap-marker-pulse">
-                            <span class="material-symbols-outlined text-[12px] text-white" style="display:block;">restaurant</span>
-                        </div>
-                        <div class="absolute top-1/2 left-1/2 p-1.5 bg-[#deb9ff] rounded-full border border-white/20 shadow-[0_0_10px_#deb9ff]">
-                            <span class="material-symbols-outlined text-[12px] text-white" style="display:block;">local_cafe</span>
-                        </div>
-                        <div class="absolute bottom-1/4 right-1/4 p-1.5 bg-[#ffb778] rounded-full border border-white/20 shadow-[0_0_10px_#ffb778]">
-                            <span class="material-symbols-outlined text-[12px] text-on-primary-container" style="display:block;">shopping_bag</span>
-                        </div>
+                <!-- Haftalık İlerleme -->
+                <div style="background:var(--bg-section);border-radius:12px;padding:10px 14px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                        <span style="font-size:12px;font-weight:600;color:var(--text-2);">Haftalık Hedef</span>
+                        <span style="font-size:12px;font-weight:800;color:var(--color-primary);"><?php echo min(5, $headerWeekly); ?>/5</span>
                     </div>
-                    <div class="absolute bottom-4 left-1/2 -translate-x-1/2 glass-effect px-4 py-1.5 rounded-full text-[10px] font-bold border border-white/20 whitespace-nowrap text-white">
-                        Haritayı Büyüt
+                    <div class="progress-bar-track">
+                        <div class="progress-bar-fill" style="width:<?php echo min(100, ($headerWeekly / 5) * 100); ?>%;"></div>
                     </div>
                 </div>
+
+                <?php if ($headerRank): ?>
+                <!-- Sıralama -->
+                <div class="rank-widget">
+                    <span class="material-symbols-outlined" style="color:#7C3AED;font-variation-settings:'FILL' 1;font-size:20px;">emoji_events</span>
+                    <div>
+                        <div style="font-size:16px;font-weight:800;line-height:1;">#<?php echo $headerRank; ?></div>
+                        <div style="font-size:11px;color:#7C3AED;opacity:0.7;">Haftalık Sıran</div>
+                    </div>
+                    <a href="<?php echo BASE_URL; ?>/leaderboard" style="margin-left:auto;font-size:11px;font-weight:700;color:#7C3AED;text-decoration:none;">Gör →</a>
+                </div>
+                <?php endif; ?>
+
+                <!-- Check-in yap butonu -->
+                <a href="<?php echo BASE_URL; ?>/venues" class="btn btn-primary btn-block" style="justify-content:center;">
+                    <span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:'FILL' 1;">add_location_alt</span>
+                    Check-in Yap
+                </a>
             </div>
+        </div>
 
-            <!-- Trend Olan Mekanlar (Trending Places) -->
-            <?php
-            $footerTrendVenues = $trendVenues ?? [];
-            if (empty($footerTrendVenues)) {
-                try {
-                    $footerTrendVenues = (new VenueModel())->getTrending(3);
-                } catch (Exception $e) {}
-            }
-            if (empty($footerTrendVenues)) {
-                try {
-                    $footerTrendVenues = (new VenueModel())->getApproved('', '', 3);
-                } catch (Exception $e) {}
-            }
-            $footerTrendVenues = array_slice($footerTrendVenues, 0, 3);
-            if (!empty($footerTrendVenues)):
-            ?>
-            <div class="swarm-glass-card p-4 rounded-xl border border-outline-variant/20 shadow-md">
-                <div class="flex justify-between items-center mb-3">
-                    <h3 class="text-[9px] text-on-surface-variant font-bold uppercase tracking-wider font-mono">Trend Olan Mekanlar</h3>
-                    <a href="<?php echo BASE_URL; ?>/venues" class="text-primary text-[9px] font-bold hover:underline">Tümünü Gör</a>
-                </div>
-                <div class="space-y-4">
-                    <?php foreach ($footerTrendVenues as $i => $tv): ?>
-                    <div class="flex items-center gap-3 group cursor-pointer" onclick="window.location.href='<?php echo BASE_URL; ?>/venue-detail?id=<?php echo $tv['id']; ?>'">
-                        <div class="text-headline-sm font-bold text-on-surface-variant/40 w-4"><?php echo $i + 1; ?></div>
-                        
-                        <div class="w-14 h-14 rounded-lg overflow-hidden bg-surface-container flex items-center justify-center text-primary border border-white/5 group-hover:border-primary/40 transition-colors flex-shrink-0 relative">
-                            <?php if (!empty($tv['cover_image'])): ?>
-                                <img src="<?php echo BASE_URL . '/uploads/venues/' . escape($tv['cover_image']); ?>" class="w-full h-full object-cover" width="56" height="56" loading="lazy">
-                            <?php elseif (!empty($tv['image'])): ?>
-                                <img src="<?php echo uploadUrl('posts', $tv['image']); ?>" class="w-full h-full object-cover" width="56" height="56" loading="lazy">
-                            <?php else: ?>
-                                <span class="material-symbols-outlined text-[24px]">store</span>
-                            <?php endif; ?>
-                        </div>
-                        
-                        <div class="flex-grow min-w-0">
-                            <div class="text-xs font-bold text-on-surface group-hover:text-primary transition-colors truncate"><?php echo escape($tv['name']); ?></div>
-                            <div class="text-[10px] text-on-surface-variant truncate mt-0.5">
-                                <?php echo escape(VenueModel::categories()[$tv['category'] ?? 'kafe'] ?? ($tv['category'] ?? 'Mekan')); ?> 
-                                • <?php echo escape($tv['weekly_checkins'] ?? ($tv['checkin_count'] ?? 0)); ?> Check-in
-                            </div>
-                        </div>
-                        
-                        <!-- Rating score badge -->
-                        <div class="bg-red-900/40 text-secondary text-[11px] font-bold px-1.5 py-0.5 rounded flex-shrink-0">
-                            <?php 
-                            $tvRating = 9.4 - ($i * 0.2);
-                            try {
-                                $ratingData = (new VenueModel())->getVenueRating($tv['id']);
-                                if ($ratingData['average_rating'] > 0) {
-                                    $tvRating = $ratingData['average_rating'];
-                                }
-                            } catch (Exception $e) {}
-                            echo number_format($tvRating, 1); 
-                            ?>
-                        </div>
-                    </div>
-                    <?php endforeach; ?>
-                </div>
-                
-                <button onclick="window.location.href='<?php echo BASE_URL; ?>/venues'" class="w-full mt-4 border border-outline-variant py-2.5 rounded-lg text-label-md font-bold hover:bg-surface-container transition-all flex items-center justify-center gap-xs text-xs">
-                    <span class="material-symbols-outlined text-sm">explore</span>
-                    Keşfetmeye Devam Et
-                </button>
+        <!-- Trend Mekanlar -->
+        <?php
+        $footerTrendV = $headerTrend ?? [];
+        if (empty($footerTrendV)) {
+            try { $footerTrendV = (new VenueModel())->getTrending(5); } catch (Exception $e) {}
+        }
+        if (empty($footerTrendV)) {
+            try { $footerTrendV = (new VenueModel())->getApproved('', '', 5); } catch (Exception $e) {}
+        }
+        $footerTrendV = array_slice($footerTrendV, 0, 5);
+        if (!empty($footerTrendV)):
+        ?>
+        <div class="right-panel-card">
+            <div class="right-panel-card-header" style="display:flex;align-items:center;justify-content:space-between;">
+                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-3);">🔥 Trend Mekanlar</div>
+                <a href="<?php echo BASE_URL; ?>/venues" style="font-size:11px;font-weight:700;color:var(--color-primary);text-decoration:none;">Tümü →</a>
             </div>
-            <?php endif; ?>
-
-            <!-- Sponsors -->
-            <?php
-            if (!class_exists('AdModel')) {
-                require_once dirname(__DIR__, 2) . '/app/Models/Ad.php';
-            }
-            $rightSidebarSponsors = [];
-            $sidebarRightAds = [];
-            try {
-                $adModel = new AdModel();
-                $dbSponsors = $adModel->getByPosition('carousel');
-                foreach ($dbSponsors as $ds) {
-                    $rightSidebarSponsors[] = [
-                        'name' => $ds['title'],
-                        'logo' => $ds['image_url'],
-                        'url'  => $ds['link_url']
-                    ];
-                }
-                $sidebarRightAds = $adModel->getByPosition('sidebar_right');
-            } catch (Exception $e) {}
-
-            if (empty($rightSidebarSponsors)) {
-                $rightSidebarSponsors = [
-                    ['name' => 'COLOSSEUM', 'logo' => 'assets/img/sponsors/colosseum.png', 'url' => 'https://face-tr.gta.world/page/colosseum'],
-                    ['name' => 'Paradise Group', 'logo' => 'assets/img/sponsors/paradise-group.png', 'url' => 'https://face-tr.gta.world/page/paradise'],
-                ];
-            }
-            ?>
-            <div class="swarm-glass-card border border-outline-variant/10 rounded-xl p-5 shadow-lg overflow-hidden">
-                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4 flex items-center gap-2">
-                    Sponsorlarımız <span class="material-symbols-outlined text-[#ff9100] text-[16px]">campaign</span>
-                </h3>
-                <?php if (!empty($rightSidebarSponsors)): ?>
-                <div class="relative w-full rounded-xl overflow-hidden group bg-surface border border-white/5 shadow-inner" style="height: 160px;">
-                    <?php foreach ($rightSidebarSponsors as $index => $sp): ?>
-                    <a href="<?php echo escape($sp['url'] ?? '#'); ?>" target="_blank" rel="noopener" 
-                       class="sponsor-slide absolute inset-0 flex flex-col items-center justify-center p-2 transition-opacity duration-1000 ease-in-out <?php echo $index === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'; ?>"
-                       data-index="<?php echo $index; ?>">
-                        
-                        <?php if (!empty($sp['logo'])): ?>
-                            <img src="<?php echo BASE_URL . '/' . escape($sp['logo']); ?>" alt="<?php echo escape($sp['name']); ?>" class="filter drop-shadow-md transition-transform duration-500 group-hover:scale-105" style="width: 100%; height: 100%; object-fit: contain;" loading="lazy">
+            <div style="padding:8px 0;">
+                <?php foreach ($footerTrendV as $i => $tv):
+                    $tvCats = VenueModel::categories();
+                    $tvCatLabel = $tvCats[$tv['category'] ?? 'diger'] ?? 'Mekan';
+                    $tvCheckins = (int)($tv['weekly_checkins'] ?? $tv['checkin_count'] ?? 0);
+                ?>
+                <a href="<?php echo BASE_URL; ?>/venue-detail?id=<?php echo $tv['id']; ?>" style="display:flex;align-items:center;gap:10px;padding:8px 14px;text-decoration:none;color:inherit;transition:background .12s;" onmouseover="this.style.background='var(--bg-section)'" onmouseout="this.style.background=''">
+                    <!-- Sıra -->
+                    <div style="width:20px;font-size:13px;font-weight:800;color:var(--text-3);text-align:center;flex-shrink:0;"><?php echo $i+1; ?></div>
+                    <!-- Görsel -->
+                    <div style="width:40px;height:40px;border-radius:10px;overflow:hidden;background:var(--bg-section);flex-shrink:0;">
+                        <?php if (!empty($tv['cover_image'])): ?>
+                            <img src="<?php echo BASE_URL . '/uploads/venues/' . escape($tv['cover_image']); ?>" style="width:100%;height:100%;object-fit:cover;" loading="lazy">
+                        <?php elseif (!empty($tv['image'])): ?>
+                            <img src="<?php echo uploadUrl('posts', $tv['image']); ?>" style="width:100%;height:100%;object-fit:cover;" loading="lazy">
                         <?php else: ?>
-                            <span class="material-symbols-outlined text-slate-500 text-[40px] transition-transform duration-500 group-hover:scale-110">store</span>
-                        <?php endif; ?>
-                        
-                        <!-- Hover Overlay -->
-                        <div class="absolute inset-0 bg-background/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center backdrop-blur-sm z-20">
-                            <span class="font-bold text-xs text-[#ff9100] text-center mb-0.5"><?php echo escape($sp['name']); ?></span>
-                            <span class="text-[9px] text-slate-400 mb-1.5 tracking-widest uppercase opacity-80">Resmi Sponsor</span>
-                            <div class="w-7 h-7 rounded-full bg-[#ff9100] text-white flex items-center justify-center shadow-lg transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-                                <span class="material-symbols-outlined text-[14px]">arrow_outward</span>
+                            <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;">
+                                <span class="material-symbols-outlined" style="font-size:20px;color:var(--text-3);">storefront</span>
                             </div>
-                        </div>
+                        <?php endif; ?>
+                    </div>
+                    <!-- İsim + check-in -->
+                    <div style="flex:1;min-width:0;">
+                        <div style="font-size:13px;font-weight:700;color:var(--text-1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><?php echo escape($tv['name']); ?></div>
+                        <div style="font-size:11px;color:var(--text-3);"><?php echo escape($tvCatLabel); ?></div>
+                    </div>
+                    <!-- Check-in sayısı -->
+                    <div style="font-size:11px;font-weight:700;color:var(--color-primary);flex-shrink:0;"><?php echo $tvCheckins; ?> ✓</div>
+                </a>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <!-- Sponsor / Reklam alanı -->
+        <?php
+        if (!class_exists('AdModel')) {
+            require_once dirname(__DIR__, 2) . '/app/Models/Ad.php';
+        }
+        $rightAds = [];
+        $sponsorSlides = [];
+        try {
+            $adModel_f = new AdModel();
+            $rightAds = $adModel_f->getByPosition('sidebar_right');
+            $carouselAds_f = $adModel_f->getByPosition('carousel');
+            foreach ($carouselAds_f as $ca) {
+                $sponsorSlides[] = ['name' => $ca['title'], 'logo' => $ca['image_url'], 'url' => $ca['link_url']];
+            }
+        } catch (Exception $e) {}
+
+        // Sponsorlar
+        if (!empty($sponsorSlides) || !empty($rightAds)):
+        ?>
+        <div class="right-panel-card">
+            <div class="right-panel-card-header" style="display:flex;align-items:center;justify-content:space-between;">
+                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-3);">Sponsorlar</div>
+                <span class="material-symbols-outlined" style="font-size:14px;color:var(--color-primary);">campaign</span>
+            </div>
+            <div class="right-panel-card-body" style="padding:10px 14px;">
+                <?php if (!empty($rightAds)): $rAd = $rightAds[0]; ?>
+                <a href="<?php echo escape($rAd['link_url'] ?? '#'); ?>" target="_blank" rel="noopener" style="display:block;border-radius:10px;overflow:hidden;position:relative;">
+                    <span class="ad-card-label" style="position:absolute;top:8px;left:8px;z-index:2;">Reklam</span>
+                    <img src="<?php echo escape($rAd['image_url']); ?>" alt="<?php echo escape($rAd['title']); ?>" style="width:100%;border-radius:10px;display:block;" loading="lazy">
+                </a>
+                <?php elseif (!empty($sponsorSlides)): ?>
+                <div style="position:relative;border-radius:10px;overflow:hidden;background:var(--bg-section);aspect-ratio:4/3;">
+                    <?php foreach ($sponsorSlides as $idx => $sp): ?>
+                    <a href="<?php echo escape($sp['url'] ?? '#'); ?>" target="_blank" rel="noopener" class="sponsor-slide" data-index="<?php echo $idx; ?>"
+                       style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:16px;opacity:<?php echo $idx === 0 ? '1' : '0'; ?>;transition:opacity .8s;pointer-events:<?php echo $idx === 0 ? 'auto' : 'none'; ?>;">
+                        <?php if (!empty($sp['logo'])): ?>
+                        <img src="<?php echo escape($sp['logo']); ?>" alt="<?php echo escape($sp['name']); ?>" style="max-width:100%;max-height:100%;object-fit:contain;" loading="lazy">
+                        <?php else: ?>
+                        <span style="font-weight:800;color:var(--text-2);"><?php echo escape($sp['name']); ?></span>
+                        <?php endif; ?>
                     </a>
                     <?php endforeach; ?>
                 </div>
-
                 <script>
-                document.addEventListener('DOMContentLoaded', () => {
-                    const slides = document.querySelectorAll('.sponsor-slide');
+                (function(){
+                    var slides = document.querySelectorAll('.sponsor-slide');
                     if (slides.length <= 1) return;
-                    
-                    let currentIndex = 0;
-                    setInterval(() => {
-                        slides[currentIndex].classList.remove('opacity-100', 'z-10');
-                        slides[currentIndex].classList.add('opacity-0', 'z-0', 'pointer-events-none');
-                        
-                        currentIndex = (currentIndex + 1) % slides.length;
-                        
-                        slides[currentIndex].classList.remove('opacity-0', 'z-0', 'pointer-events-none');
-                        slides[currentIndex].classList.add('opacity-100', 'z-10');
+                    var cur = 0;
+                    setInterval(function(){
+                        slides[cur].style.opacity = '0';
+                        slides[cur].style.pointerEvents = 'none';
+                        cur = (cur + 1) % slides.length;
+                        slides[cur].style.opacity = '1';
+                        slides[cur].style.pointerEvents = 'auto';
                     }, 5000);
-                });
+                })();
                 </script>
                 <?php else: ?>
-                <p class="text-slate-500 text-xs text-center py-2">Henüz sponsor yok</p>
+                <a href="mailto:reklam@sociaera.online" style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;background:var(--bg-section);border-radius:10px;border:2px dashed var(--border);text-decoration:none;color:var(--text-3);gap:8px;text-align:center;">
+                    <span class="material-symbols-outlined" style="font-size:28px;">ads_click</span>
+                    <span style="font-size:12px;font-weight:700;">Reklam Alanı</span>
+                    <span style="font-size:11px;">reklam@sociaera.online</span>
+                </a>
                 <?php endif; ?>
             </div>
+        </div>
+        <?php endif; ?>
 
-            <!-- Ad Space -->
-            <?php if (!empty($sidebarRightAds)): 
-                $activeShowcase = $sidebarRightAds[0];
-            ?>
-            <div class="swarm-glass-card border border-outline-variant/10 rounded-xl overflow-hidden shadow-lg flex flex-col relative w-full h-[500px] group hover:border-[#ff9100]/30 transition-colors">
-                <a href="<?php echo escape($activeShowcase['link_url'] ?? '#'); ?>" target="_blank" rel="noopener" class="block w-full h-full relative">
-                    <img src="<?php echo BASE_URL . '/' . escape($activeShowcase['logo'] ?? $activeShowcase['image_url']); ?>" alt="<?php echo escape($activeShowcase['title']); ?>" class="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500" loading="lazy">
-                    <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-[2px]">
-                        <div class="w-10 h-10 rounded-full bg-[#ff9100] text-white flex items-center justify-center shadow-lg transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-                            <span class="material-symbols-outlined text-[18px]">arrow_outward</span>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <?php else: ?>
-            <div class="swarm-glass-card border border-dashed border-white/10 rounded-xl overflow-hidden shadow-lg flex flex-col relative w-full h-[500px] group hover:border-[#ff9100]/30 transition-colors">
-                <a href="mailto:info@sociaera.online" class="absolute inset-0 flex flex-col items-center justify-center p-4 text-center cursor-pointer z-10">
-                    <span class="material-symbols-outlined text-slate-600 text-[36px] mb-3 group-hover:scale-110 group-hover:text-[#ff9100] transition-all duration-300">view_carousel</span>
-                    <span class="font-black text-sm text-slate-500 group-hover:text-white transition-colors tracking-wide">REKLAM ALANI</span>
-                    <span class="text-[10px] text-slate-400 mt-2 font-mono bg-black/40 px-3 py-1 rounded-full border border-white/5 shadow-inner">300 x 500</span>
-                    
-                    <div class="absolute bottom-6 w-9 h-9 rounded-full bg-[#ff9100] text-white flex items-center justify-center opacity-0 group-hover:opacity-100 group-hover:-translate-y-1 transition-all duration-300 shadow-md">
-                        <span class="material-symbols-outlined text-[18px]">ads_click</span>
-                    </div>
-                </a>
-                <div class="absolute inset-0 overflow-hidden pointer-events-none">
-                    <div class="absolute -top-10 -right-10 w-32 h-32 bg-[#ff9100]/5 rounded-full blur-3xl group-hover:bg-[#ff9100]/10 transition-colors"></div>
-                    <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-blue-500/5 rounded-full blur-3xl group-hover:bg-blue-500/10 transition-colors"></div>
-                </div>
-            </div>
-            <?php endif; ?>
-        </aside>
-        <?php endif; /* !$hideSidebar */ ?>
-</main>
+    </aside>
+    <?php endif; ?>
 
-<!-- Mobile Bottom Navigation -->
+</div><!-- /swarm-layout -->
+
 <?php if (Auth::check() && isset($currentUser)): ?>
-<nav class="fixed bottom-0 left-0 right-0 z-50 bg-surface-container/95 backdrop-blur-xl border-t border-outline-variant/30 md:hidden safe-area-bottom">
-    <div class="flex items-center justify-around h-16">
-        <?php
-        $mobileNavItems = [
-            'dashboard'     => ['icon' => 'home',           'label' => 'Ana Sayfa'],
-            'venues'        => ['icon' => 'location_on',    'label' => 'Mekanlar'],
-            'leaderboard'   => ['icon' => 'leaderboard',    'label' => 'Liderlik'],
-            'notifications' => ['icon' => 'notifications',  'label' => 'Bildirim'],
-            'profile'       => ['icon' => 'person',         'label' => 'Profil'],
-        ];
-        $mobileUrls = [
-            'dashboard'     => '/dashboard',
-            'venues'        => '/venues',
-            'leaderboard'   => '/leaderboard',
-            'notifications' => '/notifications',
-            'profile'       => '/profile',
-        ];
-        foreach ($mobileNavItems as $mKey => $mItem):
-            $mActive = ($activeNav ?? '') === $mKey;
-            $mClass  = $mActive
-                ? 'flex flex-col items-center justify-center gap-0.5 text-primary-container transition-colors relative'
-                : 'flex flex-col items-center justify-center gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors relative';
-        ?>
-        <a href="<?php echo BASE_URL . ($mobileUrls[$mKey] ?? ''); ?>" class="<?php echo $mClass; ?>">
-            <?php if ($mActive): ?>
-            <div class="absolute -top-px left-1/2 -translate-x-1/2 w-8 h-0.5 bg-primary-container rounded-full"></div>
-            <?php endif; ?>
-            <span class="material-symbols-outlined text-[22px]" <?php echo $mActive ? 'data-weight="fill"' : ''; ?>><?php echo $mItem['icon']; ?></span>
-            <span class="text-[10px] font-semibold tracking-wide"><?php echo $mItem['label']; ?></span>
+
+<!-- ── MOBILE BOTTOM NAV ──────────────────────────────────── -->
+<nav class="swarm-bottom-nav">
+    <?php
+    $nav = [
+        'dashboard'   => ['icon' => 'home',       'label' => 'Ana Sayfa', 'url' => '/dashboard'],
+        'activity'    => ['icon' => 'explore',     'label' => 'Keşfet',   'url' => '/activity'],
+        '_checkin'    => ['icon' => 'add_location','label' => '',          'url' => '/venues'],
+        'leaderboard' => ['icon' => 'leaderboard', 'label' => 'Sıralama', 'url' => '/leaderboard'],
+        'profile'     => ['icon' => 'person',      'label' => 'Profil',   'url' => '/profile'],
+    ];
+    $activeNavKey = $activeNav ?? '';
+    ?>
+    <?php foreach ($nav as $key => $item): ?>
+        <?php if ($key === '_checkin'): ?>
+        <div class="swarm-nav-fab-item">
+            <a href="<?php echo BASE_URL . $item['url']; ?>" class="swarm-nav-fab-inner" aria-label="Check-in Yap">
+                <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">add_location_alt</span>
+            </a>
+        </div>
+        <?php else: ?>
+        <?php $isActive = ($activeNavKey === $key); ?>
+        <a href="<?php echo BASE_URL . $item['url']; ?>" class="swarm-nav-item <?php echo $isActive ? 'active' : ''; ?>">
+            <span class="material-symbols-outlined"><?php echo $item['icon']; ?></span>
+            <?php if ($item['label']): ?><span><?php echo $item['label']; ?></span><?php endif; ?>
         </a>
-        <?php endforeach; ?>
-    </div>
+        <?php endif; ?>
+    <?php endforeach; ?>
 </nav>
-<style>
-    @media (max-width: 767px) {
-        body { padding-bottom: 64px !important; }
-    }
-    .safe-area-bottom { padding-bottom: env(safe-area-inset-bottom, 0px); }
-</style>
+
+<!-- ── DESKTOP FAB (Check-in) ────────────────────────────── -->
+<a href="<?php echo BASE_URL; ?>/venues" class="swarm-fab" aria-label="Check-in Yap">
+    <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">add_location_alt</span>
+</a>
+
 <?php endif; ?>
 
-<!-- Report Modal -->
+<!-- ── FLASH MESSAGES ─────────────────────────────────────── -->
+<?php if (!empty($_SESSION['flash'])): ?>
+<?php foreach ((array)$_SESSION['flash'] as $fType => $fMsg): ?>
+<div class="flash-message flash-<?php echo htmlspecialchars($fType); ?>" id="flashMsg">
+    <span class="material-symbols-outlined" style="font-size:18px;flex-shrink:0;">
+        <?php echo $fType === 'success' ? 'check_circle' : ($fType === 'error' ? 'error' : 'info'); ?>
+    </span>
+    <span style="flex:1;"><?php echo htmlspecialchars($fMsg); ?></span>
+    <button class="flash-close" onclick="this.closest('.flash-message').classList.add('flash-hide')">
+        <span class="material-symbols-outlined" style="font-size:18px;">close</span>
+    </button>
+</div>
+<script>setTimeout(function(){var f=document.getElementById('flashMsg');if(f)f.classList.add('flash-hide');},4000);</script>
+<?php endforeach; unset($_SESSION['flash']); ?>
+<?php endif; ?>
+
+<!-- ── RAPOR MODAL ────────────────────────────────────────── -->
 <?php if (Auth::check()): ?>
-<div id="reportModal" class="fixed inset-0 z-[9999] hidden">
-    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="App.closeReportModal()"></div>
-    <div class="absolute inset-0 flex items-center justify-center p-4">
-        <div class="bg-[#2a2a2b] border border-white/10 rounded-2xl w-full max-w-md shadow-2xl relative animate-[modalIn_0.2s_ease-out]">
-            <div class="flex items-center justify-between p-6 border-b border-white/5">
-                <h3 class="text-lg font-bold text-on-surface flex items-center gap-2">
-                    <span class="material-symbols-outlined text-red-400">flag</span> İçeriği Raporla
+<div id="reportModal" style="display:none;position:fixed;inset:0;z-index:9999;">
+    <div style="position:absolute;inset:0;background:rgba(0,0,0,0.5);" onclick="App.closeReportModal()"></div>
+    <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:16px;">
+        <div style="background:#fff;border-radius:20px;width:100%;max-width:440px;box-shadow:0 24px 48px rgba(0,0,0,0.2);animation:modalIn .2s ease-out;">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 20px 14px;border-bottom:1px solid var(--border-light);">
+                <h3 style="font-size:16px;font-weight:800;display:flex;align-items:center;gap:8px;color:var(--text-1);">
+                    <span class="material-symbols-outlined" style="color:var(--color-danger);">flag</span>
+                    İçeriği Raporla
                 </h3>
-                <button onclick="App.closeReportModal()" class="text-slate-400 hover:text-white transition-colors">
+                <button onclick="App.closeReportModal()" style="background:none;border:none;cursor:pointer;color:var(--text-3);">
                     <span class="material-symbols-outlined">close</span>
                 </button>
             </div>
-            <form id="reportForm" onsubmit="App.submitReport(event)" class="p-6">
+            <form id="reportForm" onsubmit="App.submitReport(event)" style="padding:16px 20px 20px;">
                 <input type="hidden" name="entity_type" id="report_entity_type">
                 <input type="hidden" name="entity_id" id="report_entity_id">
-                
-                <label class="block text-sm font-bold text-slate-300 mb-3">Neden raporlıyorsunuz?</label>
-                <div class="grid grid-cols-1 gap-2 mb-5">
+
+                <label style="display:block;font-size:13px;font-weight:700;color:var(--text-2);margin-bottom:10px;">Neden raporluyorsunuz?</label>
+                <div style="display:grid;gap:6px;margin-bottom:14px;">
                     <?php
                     $reasons = [
-                        'spam' => ['icon' => 'mark_email_unread', 'label' => 'Spam / Reklam'],
-                        'harassment' => ['icon' => 'report', 'label' => 'Taciz / Zorbalık'],
-                        'inappropriate' => ['icon' => 'block', 'label' => 'Uygunsuz İçerik'],
-                        'fake_checkin' => ['icon' => 'location_off', 'label' => 'Sahte Check-in'],
-                        'fraud' => ['icon' => 'gpp_bad', 'label' => 'Dolandırıcılık'],
-                        'privacy' => ['icon' => 'privacy_tip', 'label' => 'Gizlilik İhlali'],
-                        'copyright' => ['icon' => 'copyright', 'label' => 'Telif Hakkı'],
-                        'other' => ['icon' => 'more_horiz', 'label' => 'Diğer'],
+                        'spam'          => ['icon' => 'mark_email_unread', 'label' => 'Spam / Reklam'],
+                        'harassment'    => ['icon' => 'report',            'label' => 'Taciz / Zorbalık'],
+                        'inappropriate' => ['icon' => 'block',             'label' => 'Uygunsuz İçerik'],
+                        'fake_checkin'  => ['icon' => 'location_off',      'label' => 'Sahte Check-in'],
+                        'fraud'         => ['icon' => 'gpp_bad',           'label' => 'Dolandırıcılık'],
+                        'other'         => ['icon' => 'more_horiz',        'label' => 'Diğer'],
                     ];
                     foreach ($reasons as $key => $r):
                     ?>
-                    <label class="cursor-pointer">
-                        <input type="radio" name="reason" value="<?php echo $key; ?>" class="sr-only peer" required>
-                        <div class="flex items-center gap-3 px-4 py-3 rounded-xl border border-white/10 bg-white/5 peer-checked:border-red-400/50 peer-checked:bg-red-500/10 hover:bg-white/10 transition-all">
-                            <span class="material-symbols-outlined text-[18px] text-slate-400 peer-checked:text-red-400"><?php echo $r['icon']; ?></span>
-                            <span class="text-sm text-slate-300"><?php echo $r['label']; ?></span>
+                    <label style="cursor:pointer;">
+                        <input type="radio" name="reason" value="<?php echo $key; ?>" style="display:none;" class="report-radio" required>
+                        <div class="report-option" style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;border:1.5px solid var(--border);background:var(--bg-section);transition:all .12s;">
+                            <span class="material-symbols-outlined" style="font-size:18px;color:var(--text-3);"><?php echo $r['icon']; ?></span>
+                            <span style="font-size:13px;font-weight:600;color:var(--text-2);"><?php echo $r['label']; ?></span>
                         </div>
                     </label>
                     <?php endforeach; ?>
                 </div>
 
-                <label class="block text-sm font-bold text-slate-300 mb-2">Açıklama <span class="text-slate-500 font-normal">(opsiyonel)</span></label>
-                <textarea name="description" id="report_description" rows="3" maxlength="500" 
-                    class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-on-surface text-sm focus:border-red-400/50 focus:bg-white/10 outline-none transition-all resize-none mb-5"
-                    placeholder="Detay eklemek isterseniz..."></textarea>
+                <textarea name="description" id="report_description" rows="2" maxlength="500"
+                    style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:10px 14px;font-size:13px;font-family:var(--font);outline:none;resize:none;margin-bottom:14px;color:var(--text-1);background:var(--bg-input);"
+                    placeholder="Ek açıklama (opsiyonel)"></textarea>
 
-                <div class="flex gap-3">
-                    <button type="button" onclick="App.closeReportModal()" class="flex-1 py-3 rounded-xl bg-white/5 text-slate-300 font-bold text-sm border border-white/10 hover:bg-white/10 transition-colors">
-                        İptal
-                    </button>
-                    <button type="submit" id="reportSubmitBtn" class="flex-1 py-3 rounded-xl bg-red-500/20 text-red-400 font-bold text-sm border border-red-500/30 hover:bg-red-500/30 transition-colors flex items-center justify-center gap-2">
-                        <span class="material-symbols-outlined text-[18px]">send</span> Rapor Gönder
+                <div style="display:flex;gap:10px;">
+                    <button type="button" onclick="App.closeReportModal()" class="btn btn-ghost btn-sm" style="flex:1;">İptal</button>
+                    <button type="submit" id="reportSubmitBtn" class="btn btn-sm" style="flex:1;background:#FEF2F2;color:var(--color-danger);border:1.5px solid #FCA5A5;">
+                        <span class="material-symbols-outlined" style="font-size:16px;">send</span>
+                        Rapor Gönder
                     </button>
                 </div>
             </form>
         </div>
     </div>
 </div>
-<style>
-@keyframes modalIn { from { opacity:0; transform:scale(0.95) translateY(10px); } to { opacity:1; transform:scale(1) translateY(0); } }
-</style>
+<script>
+// Report radio highlight
+document.querySelectorAll('.report-radio').forEach(function(r){
+    r.addEventListener('change', function(){
+        document.querySelectorAll('.report-option').forEach(function(o){
+            o.style.borderColor = 'var(--border)';
+            o.style.background = 'var(--bg-section)';
+        });
+        this.closest('label').querySelector('.report-option').style.borderColor = 'var(--color-danger)';
+        this.closest('label').querySelector('.report-option').style.background = '#FEF2F2';
+    });
+});
+</script>
 <?php endif; ?>
 
 <script src="<?php echo asset('js/app.js'); ?>"></script>

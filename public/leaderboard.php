@@ -34,140 +34,462 @@ $activeNav = 'leaderboard';
 require_once __DIR__ . '/partials/app_header.php';
 ?>
 
-<section class="flex-1 flex flex-col gap-stack-md max-w-3xl w-full mx-auto lg:mx-0">
-    <div class="mb-6">
-        <h1 class="text-3xl font-bold flex items-center gap-2 text-on-surface mb-2"><span class="material-symbols-outlined text-primary-container text-[32px]">emoji_events</span> Haftalık Sıralama</h1>
-        <p class="text-slate-400 font-label-md text-label-md"><?php echo formatDate($week['start']); ?> — <?php echo formatDate($week['end']); ?></p>
-    </div>
+<style>
+/* ── Leaderboard page-local styles ───────────────────────── */
+.lb-page-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--text-1);
+    margin: 0 0 4px;
+}
+.lb-page-title .material-symbols-outlined {
+    font-size: 32px;
+    color: var(--color-primary);
+    font-variation-settings: 'FILL' 1;
+}
+.lb-week-label {
+    font-size: 13px;
+    color: var(--text-3);
+    margin-bottom: 20px;
+}
 
+/* My rank sticky banner */
+.lb-my-rank-banner {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: #fff;
+    border: 1.5px solid var(--color-primary);
+    border-radius: 16px;
+    padding: 14px 18px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 20px rgba(240, 109, 31, 0.12);
+}
+.lb-my-rank-circle {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    color: #fff;
+    font-size: 1.2rem;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(240, 109, 31, 0.35);
+}
+.lb-my-rank-info strong {
+    display: block;
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--text-1);
+}
+.lb-my-rank-info span {
+    font-size: 13px;
+    color: var(--text-3);
+}
+
+/* Section headers */
+.lb-section-heading {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--text-1);
+    margin: 24px 0 12px;
+}
+.lb-section-heading .material-symbols-outlined {
+    font-size: 22px;
+    color: var(--color-primary);
+    font-variation-settings: 'FILL' 1;
+}
+
+/* ── Podium (top 3) ──────────────────────────────────────── */
+.lb-podium {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+.lb-podium-card {
+    flex: 1;
+    background: #fff;
+    border-radius: 16px;
+    border: 1.5px solid var(--border-light);
+    padding: 18px 10px 14px;
+    text-align: center;
+    position: relative;
+    transition: box-shadow .18s, transform .18s;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+.lb-podium-card:hover {
+    box-shadow: 0 8px 28px rgba(240, 109, 31, 0.13);
+    transform: translateY(-2px);
+}
+.lb-podium-card.rank-1 {
+    border-color: #FFD700;
+    box-shadow: 0 4px 20px rgba(255, 215, 0, 0.18);
+    order: 2; /* center */
+    padding-top: 26px;
+}
+.lb-podium-card.rank-2 {
+    border-color: #C0C0C0;
+    box-shadow: 0 4px 16px rgba(192, 192, 192, 0.18);
+    order: 1;
+}
+.lb-podium-card.rank-3 {
+    border-color: #CD7F32;
+    box-shadow: 0 4px 16px rgba(205, 127, 50, 0.14);
+    order: 3;
+}
+.lb-podium-rank-badge {
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 13px;
+    border: 2.5px solid #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.lb-podium-rank-badge.gold   { background: #FFD700; color: #7a5c00; }
+.lb-podium-rank-badge.silver { background: #C0C0C0; color: #4a4a4a; }
+.lb-podium-rank-badge.bronze { background: #CD7F32; color: #fff; }
+
+.lb-podium-avatar {
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #fff;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.10);
+}
+.lb-podium-card.rank-1 .lb-podium-avatar {
+    width: 70px;
+    height: 70px;
+}
+.lb-podium-username {
+    font-weight: 800;
+    font-size: 13px;
+    color: var(--text-1);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+.lb-podium-count {
+    font-weight: 900;
+    font-size: 1.1rem;
+    color: var(--color-primary);
+    line-height: 1;
+}
+.lb-podium-count-label {
+    font-size: 10px;
+    color: var(--text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 700;
+}
+.lb-premium-dot {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 10px;
+    font-weight: 800;
+    color: #4F46E5;
+    background: rgba(79, 70, 229, 0.08);
+    border: 1px solid rgba(79, 70, 229, 0.2);
+    border-radius: 20px;
+    padding: 1px 6px;
+}
+
+/* ── List rows (ranks 4–10) ──────────────────────────────── */
+.lb-list-card {
+    background: #fff;
+    border: 1.5px solid var(--border-light);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+.lb-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 13px 16px;
+    border-bottom: 1px solid var(--border-light);
+    text-decoration: none;
+    transition: background .14s;
+}
+.lb-row:last-child { border-bottom: none; }
+.lb-row:hover { background: #faf8f5; }
+
+.lb-rank {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 14px;
+    flex-shrink: 0;
+    border: 1.5px solid var(--border-light);
+    color: var(--text-2);
+    background: var(--bg-app);
+}
+.lb-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 2px solid var(--border-light);
+}
+.lb-user-info { flex: 1; min-width: 0; }
+.lb-user-name {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--text-1);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.lb-user-tag {
+    font-size: 12px;
+    color: var(--text-3);
+}
+.lb-count {
+    font-weight: 900;
+    font-size: 1.15rem;
+    color: var(--color-primary);
+    text-align: right;
+}
+.lb-count-label {
+    font-size: 10px;
+    color: var(--text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+    text-align: right;
+}
+
+/* ── Venue list ──────────────────────────────────────────── */
+.lb-venue-img {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    object-fit: cover;
+    border: 1.5px solid var(--border-light);
+    flex-shrink: 0;
+}
+.lb-venue-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: #FFF4EE;
+    border: 1.5px solid #FFE0CC;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--color-primary);
+}
+.lb-venue-name {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--text-1);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.lb-venue-cat {
+    font-size: 12px;
+    color: var(--text-3);
+}
+
+/* Empty state */
+.lb-empty {
+    text-align: center;
+    padding: 48px 24px;
+    color: var(--text-3);
+}
+.lb-empty .material-symbols-outlined {
+    font-size: 48px;
+    opacity: 0.35;
+    display: block;
+    margin-bottom: 10px;
+}
+</style>
+
+<div style="padding-bottom: 40px;">
+
+    <!-- Page title -->
+    <h1 class="lb-page-title">
+        <span class="material-symbols-outlined">emoji_events</span>
+        Sıralama
+    </h1>
+    <p class="lb-week-label">
+        <?php echo formatDate($week['start']); ?> — <?php echo formatDate($week['end']); ?>
+    </p>
+
+    <!-- ── Kendi Sıran ──────────────────────────────────── -->
     <?php if ($myRank): ?>
-    <div class="bg-gradient-to-r from-primary-container/20 to-[#2a2a2b]/80 backdrop-blur-[20px] border border-primary-container/30 rounded-xl p-6 shadow-[0_15px_30px_-15px_rgba(255,145,0,0.15)] flex items-center gap-5 mb-4">
-        <div class="w-14 h-14 rounded-full bg-primary-container text-white flex items-center justify-center font-bold text-xl shadow-[0_0_15px_rgba(255,145,0,0.5)] flex-shrink-0">
-            #<?php echo $myRank; ?>
-        </div>
-        <div>
-            <div class="font-bold text-lg text-on-surface">Senin Sıran: #<?php echo $myRank; ?></div>
-            <div class="text-sm text-primary-fixed-dim mt-1">Bu hafta <?php echo (new CheckinModel())->getWeeklyCheckinCount(Auth::id()); ?> check-in</div>
+    <div class="lb-my-rank-banner">
+        <div class="lb-my-rank-circle">#<?php echo $myRank; ?></div>
+        <div class="lb-my-rank-info">
+            <strong>Senin Sıran: #<?php echo $myRank; ?></strong>
+            <span>Bu hafta <?php echo (new CheckinModel())->getWeeklyCheckinCount(Auth::id()); ?> check-in</span>
         </div>
     </div>
     <?php endif; ?>
 
-    <!-- Top Kullanıcılar -->
-    <h2 class="text-xl font-bold flex items-center gap-2 text-on-surface mt-2 mb-2"><span class="material-symbols-outlined text-primary-container">groups</span> En Aktif Kullanıcılar</h2>
-    <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl overflow-hidden shadow-[0_15px_30px_-15px_rgba(19,19,20,0.3)] mb-8">
-        <?php if (empty($topUsers)): ?>
-            <div class="p-8 text-center text-slate-400">
-                <span class="material-symbols-outlined text-[48px] mb-2 opacity-50">emoji_events</span>
-                <p>Bu hafta henüz check-in yok.</p>
-            </div>
-        <?php else: ?>
-            <div class="flex flex-col">
-                <?php foreach ($topUsers as $i => $u):
-                    $isTop3 = $i < 3;
-                    $rankColor = 'text-slate-400 bg-surface-container border-white/10';
-                    $rowBg = 'hover:bg-white/5';
-                    if ($i === 0) {
-                        $rankColor = 'text-white bg-[#FFD700] border-[#FFD700] shadow-[0_0_10px_rgba(255,215,0,0.5)]';
-                        $rowBg = 'bg-[#FFD700]/5 hover:bg-[#FFD700]/10 border-b border-white/5';
-                    } elseif ($i === 1) {
-                        $rankColor = 'text-slate-800 bg-[#C0C0C0] border-[#C0C0C0] shadow-[0_0_10px_rgba(192,192,192,0.5)]';
-                        $rowBg = 'bg-[#C0C0C0]/5 hover:bg-[#C0C0C0]/10 border-b border-white/5';
-                    } elseif ($i === 2) {
-                        $rankColor = 'text-white bg-[#CD7F32] border-[#CD7F32] shadow-[0_0_10px_rgba(205,127,50,0.5)]';
-                        $rowBg = 'bg-[#CD7F32]/5 hover:bg-[#CD7F32]/10 border-b border-white/5';
-                    } else {
-                        $rowBg = 'hover:bg-white/5 border-b border-white/5 last:border-0';
-                    }
-                ?>
-                <?php
-                    $uIsPremium = !empty($u['is_premium']);
-                ?>
-                <a href="<?php echo BASE_URL; ?>/profile?u=<?php echo escape($u['tag'] ?: $u['username']); ?>" class="flex items-center gap-4 p-4 transition-colors <?php echo $rowBg; ?> group relative <?php echo $uIsPremium ? 'ring-1 ring-inset ring-[#7bd0ff]/20' : ''; ?>">
-                    <?php if ($uIsPremium): ?>
-                    <div class="absolute inset-0 bg-gradient-to-r from-[#7bd0ff]/5 via-transparent to-[#7bd0ff]/5 pointer-events-none"></div>
-                    <?php endif; ?>
+    <!-- ── En Aktif Kullanıcılar ───────────────────────── -->
+    <h2 class="lb-section-heading">
+        <span class="material-symbols-outlined">groups</span>
+        En Aktif Kullanıcılar
+    </h2>
 
-                    <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg border flex-shrink-0 <?php echo $rankColor; ?> transition-transform group-hover:scale-110 relative z-10"><?php echo $i + 1; ?></div>
-                    
-                    <div class="relative flex-shrink-0 z-10">
-                        <?php $uAvatar = safeAvatarUrl($u['avatar'] ?? null, $u['username']); ?>
-                        <img alt="User avatar" class="w-12 h-12 rounded-full object-cover border-2 <?php echo $uIsPremium ? 'border-[#7bd0ff]/50 shadow-[0_0_12px_rgba(123,208,255,0.3)]' : 'border-white/10'; ?> group-hover:border-primary-container/50 transition-all" src="<?php echo $uAvatar; ?>"/>
+    <?php if (empty($topUsers)): ?>
+        <div class="swarm-card lb-empty">
+            <span class="material-symbols-outlined">emoji_events</span>
+            <p>Bu hafta henüz check-in yok.</p>
+        </div>
+    <?php else: ?>
+
+        <!-- ── Podium: top 3 ──────────────────────────── -->
+        <?php $top3 = array_slice($topUsers, 0, 3); ?>
+        <div class="lb-podium">
+            <?php foreach ($top3 as $i => $u):
+                $podiumRank = $i + 1;
+                $rankClass  = ['rank-1','rank-2','rank-3'][$i];
+                $badgeClass = ['gold','silver','bronze'][$i];
+                $uAvatar    = safeAvatarUrl($u['avatar'] ?? null, $u['username']);
+                $uIsPremium = !empty($u['is_premium']);
+            ?>
+            <a href="<?php echo BASE_URL; ?>/profile?u=<?php echo escape($u['tag'] ?: $u['username']); ?>"
+               class="lb-podium-card <?php echo $rankClass; ?>">
+                <div class="lb-podium-rank-badge <?php echo $badgeClass; ?>"><?php echo $podiumRank; ?></div>
+                <img src="<?php echo $uAvatar; ?>" alt="<?php echo escape($u['username']); ?>" class="lb-podium-avatar">
+                <div class="lb-podium-username"><?php echo escape($u['username']); ?></div>
+                <?php if ($uIsPremium): ?>
+                <div class="lb-premium-dot">
+                    <span class="material-symbols-outlined" style="font-size:11px;font-variation-settings:'FILL' 1;">diamond</span>
+                    PRO
+                </div>
+                <?php endif; ?>
+                <div class="lb-podium-count"><?php echo $u['checkin_count']; ?></div>
+                <div class="lb-podium-count-label">check-in</div>
+            </a>
+            <?php endforeach; ?>
+        </div>
+
+        <!-- ── List: ranks 4-10 ───────────────────────── -->
+        <?php $rest = array_slice($topUsers, 3); ?>
+        <?php if (!empty($rest)): ?>
+        <div class="lb-list-card">
+            <?php foreach ($rest as $i => $u):
+                $rank       = $i + 4;
+                $uAvatar    = safeAvatarUrl($u['avatar'] ?? null, $u['username']);
+                $uIsPremium = !empty($u['is_premium']);
+            ?>
+            <a href="<?php echo BASE_URL; ?>/profile?u=<?php echo escape($u['tag'] ?: $u['username']); ?>"
+               class="lb-row">
+                <div class="lb-rank"><?php echo $rank; ?></div>
+                <img src="<?php echo $uAvatar; ?>" alt="<?php echo escape($u['username']); ?>" class="lb-avatar">
+                <div class="lb-user-info">
+                    <div class="lb-user-name">
+                        <?php echo escape($u['username']); ?>
                         <?php if ($uIsPremium): ?>
-                        <div class="absolute -bottom-0.5 -right-0.5 w-5 h-5 bg-surface-container-high rounded-full flex items-center justify-center border border-[#7bd0ff]/40">
-                            <span class="material-symbols-outlined text-[12px] text-[#7bd0ff]">diamond</span>
-                        </div>
+                        <span class="lb-premium-dot">
+                            <span class="material-symbols-outlined" style="font-size:10px;font-variation-settings:'FILL' 1;">diamond</span>
+                            PRO
+                        </span>
                         <?php endif; ?>
                     </div>
-                    
-                    <div class="flex-grow min-w-0 relative z-10">
-                        <div class="font-bold text-on-surface group-hover:text-primary-container transition-colors truncate text-lg flex items-center gap-2">
-                            <?php echo escape($u['username']); ?>
-                            <?php if ($uIsPremium): ?>
-                            <span class="bg-[#7bd0ff]/15 text-[#7bd0ff] text-[9px] font-black px-1.5 py-0.5 rounded border border-[#7bd0ff]/25 uppercase tracking-wider">PRO</span>
-                            <?php endif; ?>
-                        </div>
-                        <?php if ($u['tag']): ?><div class="text-sm text-slate-400 truncate">@<?php echo escape($u['tag']); ?></div><?php endif; ?>
-                    </div>
-                    
-                    <div class="text-right flex-shrink-0 relative z-10">
-                        <div class="font-black text-xl text-primary-container"><?php echo $u['checkin_count']; ?></div>
-                        <div class="text-xs text-slate-500 uppercase tracking-wider font-semibold">check-in</div>
-                    </div>
-                </a>
-                <?php endforeach; ?>
-            </div>
+                    <?php if ($u['tag']): ?>
+                    <div class="lb-user-tag">@<?php echo escape($u['tag']); ?></div>
+                    <?php endif; ?>
+                </div>
+                <div>
+                    <div class="lb-count"><?php echo $u['checkin_count']; ?></div>
+                    <div class="lb-count-label">check-in</div>
+                </div>
+            </a>
+            <?php endforeach; ?>
+        </div>
         <?php endif; ?>
-    </div>
 
-    <!-- Top Mekanlar -->
-    <h2 class="text-xl font-bold flex items-center gap-2 text-on-surface mb-2"><span class="material-symbols-outlined text-primary-container">store</span> En Popüler Mekanlar</h2>
-    <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl overflow-hidden shadow-[0_15px_30px_-15px_rgba(19,19,20,0.3)] mb-8">
-        <?php if (empty($topVenues)): ?>
-            <div class="p-8 text-center text-slate-400">
-                <span class="material-symbols-outlined text-[48px] mb-2 opacity-50">location_off</span>
-                <p>Bu hafta henüz check-in yok.</p>
-            </div>
-        <?php else: ?>
-            <div class="flex flex-col">
-                <?php foreach ($topVenues as $i => $v):
-                    $rankColor = 'text-slate-400 bg-surface-container border-white/10';
-                    $rowBg = 'hover:bg-white/5 border-b border-white/5 last:border-0';
-                    if ($i === 0) {
-                        $rankColor = 'text-white bg-[#FFD700] border-[#FFD700] shadow-[0_0_10px_rgba(255,215,0,0.5)]';
-                        $rowBg = 'bg-[#FFD700]/5 hover:bg-[#FFD700]/10 border-b border-white/5';
-                    } elseif ($i === 1) {
-                        $rankColor = 'text-slate-800 bg-[#C0C0C0] border-[#C0C0C0] shadow-[0_0_10px_rgba(192,192,192,0.5)]';
-                        $rowBg = 'bg-[#C0C0C0]/5 hover:bg-[#C0C0C0]/10 border-b border-white/5';
-                    } elseif ($i === 2) {
-                        $rankColor = 'text-white bg-[#CD7F32] border-[#CD7F32] shadow-[0_0_10px_rgba(205,127,50,0.5)]';
-                        $rowBg = 'bg-[#CD7F32]/5 hover:bg-[#CD7F32]/10 border-b border-white/5';
-                    }
-                ?>
-                <a href="<?php echo BASE_URL; ?>/venue-detail?id=<?php echo $v['id']; ?>" class="flex items-center gap-4 p-4 transition-colors <?php echo $rowBg; ?> group">
-                    <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg border flex-shrink-0 <?php echo $rankColor; ?> transition-transform group-hover:scale-110"><?php echo $i + 1; ?></div>
-                    
-                    <div class="w-12 h-12 rounded-lg bg-surface-container-high flex items-center justify-center text-primary-container border border-white/10 group-hover:border-primary-container/50 transition-colors flex-shrink-0 relative overflow-hidden">
-                        <?php if(!empty($v['image'])): ?>
-                            <img src="<?php echo uploadUrl('posts', $v['image']); ?>" class="w-full h-full object-cover">
-                        <?php else: ?>
-                            <span class="material-symbols-outlined">store</span>
-                        <?php endif; ?>
+    <?php endif; ?>
+
+    <!-- ── En Popüler Mekanlar ─────────────────────────── -->
+    <h2 class="lb-section-heading" style="margin-top:32px;">
+        <span class="material-symbols-outlined">store</span>
+        En Popüler Mekanlar
+    </h2>
+
+    <?php if (empty($topVenues)): ?>
+        <div class="swarm-card lb-empty">
+            <span class="material-symbols-outlined">location_off</span>
+            <p>Bu hafta henüz check-in yok.</p>
+        </div>
+    <?php else: ?>
+        <div class="lb-list-card">
+            <?php foreach ($topVenues as $i => $v):
+                $vRank      = $i + 1;
+                $badgeClass = ['gold','silver','bronze'][$i] ?? null;
+            ?>
+            <a href="<?php echo BASE_URL; ?>/venue-detail?id=<?php echo $v['id']; ?>"
+               class="lb-row">
+
+                <!-- Rank badge -->
+                <?php if ($badgeClass): ?>
+                <div class="lb-rank" style="background:<?php echo ['gold'=>'#FFD700','silver'=>'#C0C0C0','bronze'=>'#CD7F32'][$badgeClass]; ?>;color:<?php echo $badgeClass==='silver'?'#4a4a4a':'#fff'; ?>;border-color:transparent;">
+                    <?php echo $vRank; ?>
+                </div>
+                <?php else: ?>
+                <div class="lb-rank"><?php echo $vRank; ?></div>
+                <?php endif; ?>
+
+                <!-- Venue image / icon -->
+                <?php if (!empty($v['image'])): ?>
+                    <img src="<?php echo uploadUrl('posts', $v['image']); ?>" class="lb-venue-img" alt="<?php echo escape($v['name']); ?>">
+                <?php else: ?>
+                    <div class="lb-venue-icon">
+                        <span class="material-symbols-outlined" style="font-size:22px;">store</span>
                     </div>
-                    
-                    <div class="flex-grow min-w-0">
-                        <div class="font-bold text-on-surface group-hover:text-primary-container transition-colors truncate text-lg"><?php echo escape($v['name']); ?></div>
-                        <div class="text-sm text-slate-400 truncate"><?php echo escape($v['category'] ?? 'Genel'); ?></div>
-                    </div>
-                    
-                    <div class="text-right flex-shrink-0">
-                        <div class="font-black text-xl text-primary-container"><?php echo $v['checkin_count']; ?></div>
-                        <div class="text-xs text-slate-500 uppercase tracking-wider font-semibold">check-in</div>
-                    </div>
-                </a>
-                <?php endforeach; ?>
-            </div>
-        <?php endif; ?>
-    </div>
-</section>
+                <?php endif; ?>
+
+                <div class="lb-user-info">
+                    <div class="lb-venue-name"><?php echo escape($v['name']); ?></div>
+                    <div class="lb-venue-cat"><?php echo escape($v['category'] ?? 'Genel'); ?></div>
+                </div>
+
+                <div>
+                    <div class="lb-count"><?php echo $v['checkin_count']; ?></div>
+                    <div class="lb-count-label">check-in</div>
+                </div>
+            </a>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
+
+</div>
 
 <?php require_once __DIR__ . '/partials/app_footer.php'; ?>

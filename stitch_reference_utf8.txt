@@ -1,0 +1,88 @@
+﻿<USER_REQUEST>
+AÅŸaÄŸÄ±da mevcut PHP/HTML sitemin dosya yapÄ±sÄ± ve Google Stitchâ€™ten Ã§Ä±kan frontend kodu var.
+
+GÃ¶rev:
+1. Mevcut PHP kodlarÄ±nÄ±, form actionlarÄ±nÄ±, include yapÄ±larÄ±nÄ± ve backend mantÄ±ÄŸÄ±nÄ± bozma.
+2. Sadece frontend tasarÄ±mÄ±nÄ± mevcut PHP sayfalarÄ±na entegre et.
+3. React veya JSX varsa dÃ¼z HTML/CSSâ€™e Ã§evir.
+4. Tailwind classlarÄ± varsa ya Ã§alÄ±ÅŸÄ±r hale getir ya da normal CSSâ€™e dÃ¶nÃ¼ÅŸtÃ¼r.
+5. CSSâ€™i ayrÄ± bir /assets/css/stitch.css dosyasÄ±na koy.
+6. JS gerekiyorsa /assets/js/main.js dosyasÄ±na koy.
+7. Bana tam dosya dosya Ã§Ä±ktÄ± ver:
+   - index.php
+   - includes/header.php
+   - includes/navbar.php
+   - includes/footer.php
+   - assets/css/stitch.css
+   - assets/js/main.js
+8. PHP taglerini silme veya escape etme.
+9. TasarÄ±m birebir korunmalÄ± ama site Ã§alÄ±ÅŸÄ±r kalmalÄ±.
+
+Ã–nce mevcut yapÄ±yÄ± analiz et, sonra dosya bazlÄ± entegre edilmiÅŸ kodlarÄ± ver.
+
+<!DOCTYPE html>
+
+<html class="dark" lang="tr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Swarm Dashboard - Berk</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed-variant": "#6900b3",
+                        "on-primary-fixed-variant": "#6c3a00",
+                        "error": "#ffb4ab",
+                        "secondary-fixed": "#ffdadb",
+                        "background": "#131314",
+        
+<truncated 40053 bytes>
+et</span>
+</button>
+<button class="bg-primary-container p-3 rounded-full -mt-10 shadow-xl border-4 border-background">
+<span class="material-symbols-outlined text-on-primary-container text-2xl" style="font-variation-settings: 'FILL' 1;">location_on</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined">group</span>
+<span class="text-[10px]">ArkadaÅŸlar</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-on-surface-variant">
+<img alt="Profile" class="w-6 h-6 rounded-full border border-outline-variant" src="https://lh3.googleusercontent.com/aida/AP1WRLsZD-InU_hbFmCra1bBskpGZbjOE8hRPkRZ_aLoGPUq3Xcc1D-kz2BUXmqawKM9at68NN8uajbpqMw3l9JGV9Uhgwz0bim_0iiJqK6BMDzqEzALe-aL1zq15xdejJs85MtwZkGKPCPp8n5HGdaix_XyLePzekLA2uhX-pZSEcDt4TBqF1O_0_XWk1vKbQs82aZGxVZxDIRD_yXSlHPUhKvEJ256W_Vb7SsJuVgjxe3fL9rD0zHbERx23Q"/>
+<span class="text-[10px]">Profil</span>
+</button>
+</nav>
+<script>
+        // Simple interaction for cards and buttons
+        document.querySelectorAll('article, aside div, button').forEach(el => {
+            el.addEventListener('mousedown', () => {
+                el.style.transform = 'scale(0.98)';
+                el.style.transition = 'transform 0.1s ease';
+            });
+            el.addEventListener('mouseup', () => {
+                el.style.transform = 'scale(1)';
+            });
+            el.addEventListener('mouseleave', () => {
+                el.style.transform = 'scale(1)';
+            });
+        });
+
+        // Search Bar Focus Effect
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('scale-105');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('scale-105');
+        });
+    </script>
+</body></html>
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-06-08T13:33:03+03:00.
+</ADDITIONAL_METADATA>

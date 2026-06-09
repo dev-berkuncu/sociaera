@@ -58,43 +58,64 @@ $categoryMeta = [
 $pageTitle = 'Aktivite';
 $activeNav = 'activity';
 require_once __DIR__ . '/partials/app_header.php';
+
+// ── Günlere göre grupla ──────────────────────────────────────────────────────
+$groupedPosts = [];
+foreach ($posts as $post) {
+    $day = date('Y-m-d', strtotime($post['created_at']));
+    $groupedPosts[$day][] = $post;
+}
+
+function feedDayLabel(string $day): string {
+    $today     = date('Y-m-d');
+    $yesterday = date('Y-m-d', strtotime('-1 day'));
+    if ($day === $today)     return 'Bugün';
+    if ($day === $yesterday) return 'Dün';
+    // Turkish month names
+    $months = ['','Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+    $parts  = explode('-', $day);
+    return (int)$parts[2] . ' ' . ($months[(int)$parts[1]] ?? '') . ' ' . $parts[0];
+}
 ?>
 
-<section class="flex-1 flex flex-col gap-5 pb-8 min-w-0">
+<div style="display:flex;flex-direction:column;gap:20px;padding-bottom:40px;">
 
-    <!-- ── BAŞLIK + SEKMELER ── -->
+    <!-- ── BAŞLIK ── -->
     <div>
-        <h1 class="text-xl font-black text-on-surface mb-4 flex items-center gap-2">
-            <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">explore</span>
+        <h1 style="font-size:1.375rem;font-weight:800;color:var(--text-1);margin:0 0 14px;letter-spacing:-0.3px;display:flex;align-items:center;gap:8px;">
+            <span class="material-symbols-outlined" style="font-size:22px;color:var(--color-primary);font-variation-settings:'FILL' 1;">explore</span>
             Aktivite
         </h1>
 
-        <!-- Tab seçici -->
-        <div class="flex gap-1 bg-surface-container/60 border border-white/8 rounded-xl p-1 w-fit">
+        <!-- ── SEKMELER ── -->
+        <div class="swarm-tabs">
             <a href="?tab=global"
-               class="px-5 py-2 rounded-lg text-sm font-bold transition-all <?php echo $tab === 'global' ? 'bg-primary-container text-white shadow-[0_0_12px_rgba(255,145,0,0.3)]' : 'text-on-surface-variant hover:text-on-surface'; ?>">
+               class="swarm-tab <?php echo $tab === 'global' ? 'active' : ''; ?>"
+               style="text-decoration:none;">
                 🌍 Herkes
             </a>
             <a href="?tab=following"
-               class="px-5 py-2 rounded-lg text-sm font-bold transition-all <?php echo $tab === 'following' ? 'bg-primary-container text-white shadow-[0_0_12px_rgba(255,145,0,0.3)]' : 'text-on-surface-variant hover:text-on-surface'; ?>">
+               class="swarm-tab <?php echo $tab === 'following' ? 'active' : ''; ?>"
+               style="text-decoration:none;">
                 👥 Takip Ettiklerim
             </a>
         </div>
     </div>
 
-    <!-- ── CHECK-İN AKIŞI ── -->
+    <!-- ── AKTİVİTE AKIŞI ── -->
     <?php if (empty($posts)): ?>
-    <div class="rounded-2xl border border-dashed border-white/10 p-12 text-center">
-        <span class="material-symbols-outlined text-on-surface-variant text-5xl mb-3 block opacity-25">
+
+    <div class="empty-state">
+        <span class="empty-state-icon material-symbols-outlined">
             <?php echo $tab === 'following' ? 'group' : 'public'; ?>
         </span>
-        <p class="text-sm text-on-surface-variant">
+        <p class="empty-state-title">
             <?php echo $tab === 'following' ? 'Takip ettiğin kişiler henüz check-in yapmadı.' : 'Henüz check-in yok.'; ?>
         </p>
         <?php if ($tab === 'following'): ?>
         <a href="<?php echo BASE_URL; ?>/leaderboard"
-           class="mt-4 inline-flex items-center gap-2 text-primary text-sm font-semibold hover:underline">
-            <span class="material-symbols-outlined text-base">group_add</span>
+           style="color:var(--color-primary);font-size:0.875rem;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:5px;margin-top:4px;">
+            <span class="material-symbols-outlined" style="font-size:16px;">group_add</span>
             Aktif kullanıcıları keşfet
         </a>
         <?php endif; ?>
@@ -102,96 +123,118 @@ require_once __DIR__ . '/partials/app_header.php';
 
     <?php else: ?>
 
-    <div class="flex flex-col gap-3">
-        <?php foreach ($posts as $post):
-            $pMeta   = $categoryMeta[$post['venue_category'] ?? 'diger'] ?? $categoryMeta['diger'];
-            $pAvatar = safeAvatarUrl($post['avatar'] ?? null, $post['username'] ?? 'U');
-            $pTimeAgo = timeAgo($post['created_at']);
-            $isOwn   = (int)($post['user_id'] ?? 0) === Auth::id();
-        ?>
-        <div class="group rounded-2xl border border-white/5 bg-surface-container/50 hover:bg-surface-container hover:border-white/10 transition-all overflow-hidden">
+    <?php
+        $globalIndex = 0;  // for ad insertion
+        $adIndex     = 0;  // which ad to show next
+        $feedAds     = $feedAds ?? [];
+    ?>
 
-            <!-- Üst: Kim, nereye -->
-            <div class="flex items-center gap-3 px-4 pt-4 pb-3">
-                <!-- Avatar + kategori pin -->
+    <div style="display:flex;flex-direction:column;gap:6px;">
+
+        <?php foreach ($groupedPosts as $day => $dayPosts): ?>
+
+        <!-- Day header -->
+        <p class="swarm-section-label" style="margin:10px 0 4px;"><?php echo feedDayLabel($day); ?></p>
+
+        <?php foreach ($dayPosts as $post):
+            $pMeta    = $categoryMeta[$post['venue_category'] ?? 'diger'] ?? $categoryMeta['diger'];
+            $pAvatar  = safeAvatarUrl($post['avatar'] ?? null, $post['username'] ?? 'U');
+            $pTimeAgo = timeAgo($post['created_at']);
+            $isOwn    = (int)($post['user_id'] ?? 0) === Auth::id();
+            $globalIndex++;
+        ?>
+
+        <!-- ── CHECK-IN CARD ── -->
+        <div class="checkin-card" style="background:#fff;border-radius:16px;border:1.5px solid #EEECE8;overflow:hidden;transition:box-shadow 0.18s;"
+             onmouseover="this.style.boxShadow='0 4px 18px rgba(0,0,0,0.07)'" onmouseout="this.style.boxShadow=''">
+
+            <!-- Top: Avatar + info -->
+            <div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px 10px;">
+
+                <!-- Avatar with category dot -->
                 <a href="<?php echo BASE_URL; ?>/profile?u=<?php echo urlencode($post['tag'] ?: $post['username']); ?>"
-                   class="relative flex-shrink-0">
+                   style="position:relative;flex-shrink:0;text-decoration:none;">
                     <img src="<?php echo $pAvatar; ?>" alt=""
-                         class="w-10 h-10 rounded-full object-cover border-2 border-white/10 group-hover:border-white/20 transition-colors" width="40" height="40">
-                    <div class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-[#131314] flex items-center justify-center"
-                         style="background:<?php echo $pMeta['color']; ?>;">
-                        <span class="material-symbols-outlined text-white" style="font-size:9px;font-variation-settings:'FILL' 1;"><?php echo $pMeta['icon']; ?></span>
+                         style="width:42px;height:42px;border-radius:50%;object-fit:cover;border:2px solid #fff;box-shadow:0 0 0 1.5px #E8E6E1;"
+                         width="42" height="42">
+                    <!-- Category dot -->
+                    <div style="position:absolute;bottom:-2px;right:-2px;width:18px;height:18px;border-radius:50%;background:<?php echo $pMeta['color']; ?>;border:2px solid #fff;display:flex;align-items:center;justify-content:center;">
+                        <span class="material-symbols-outlined" style="font-size:9px;color:#fff;font-variation-settings:'FILL' 1;"><?php echo $pMeta['icon']; ?></span>
                     </div>
                 </a>
 
-                <!-- Metin: "X, Y'de check-in yaptı" -->
-                <div class="flex-grow min-w-0">
-                    <div class="text-sm leading-snug">
+                <!-- Text block -->
+                <div style="flex:1;min-width:0;">
+                    <div style="font-size:0.875rem;line-height:1.45;color:var(--text-1);">
                         <a href="<?php echo BASE_URL; ?>/profile?u=<?php echo urlencode($post['tag'] ?: $post['username']); ?>"
-                           class="font-bold text-on-surface hover:text-primary transition-colors">
+                           style="font-weight:700;color:var(--text-1);text-decoration:none;"
+                           onmouseover="this.style.color='var(--color-primary)'" onmouseout="this.style.color='var(--text-1)'">
                             <?php echo escape($post['username']); ?>
                         </a>
-                        <span class="text-on-surface-variant"> check-in yaptı: </span>
+                        <span style="color:var(--text-3);font-weight:400;"> → </span>
                         <a href="<?php echo BASE_URL; ?>/venue-detail?id=<?php echo (int)$post['venue_id']; ?>"
-                           class="font-bold hover:underline" style="color:<?php echo $pMeta['color']; ?>">
+                           style="font-weight:700;color:<?php echo $pMeta['color']; ?>;text-decoration:none;"
+                           onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
                             <?php echo escape($post['venue_name']); ?>
                         </a>
                     </div>
-                    <div class="text-[11px] text-on-surface-variant mt-0.5 flex items-center gap-1.5">
-                        <span class="material-symbols-outlined text-[11px]">schedule</span>
+                    <div style="font-size:0.6875rem;color:var(--text-3);margin-top:3px;display:flex;align-items:center;gap:5px;">
+                        <span class="material-symbols-outlined" style="font-size:11px;">schedule</span>
                         <?php echo $pTimeAgo; ?>
                         <?php if (!empty($post['venue_address'])): ?>
-                        <span class="opacity-40">·</span>
-                        <span class="material-symbols-outlined text-[11px]">pin_drop</span>
-                        <span class="truncate max-w-[200px]"><?php echo escape(truncate($post['venue_address'], 40)); ?></span>
+                        <span style="opacity:0.5;">·</span>
+                        <span class="material-symbols-outlined" style="font-size:11px;">pin_drop</span>
+                        <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:180px;"><?php echo escape(truncate($post['venue_address'], 40)); ?></span>
                         <?php endif; ?>
                     </div>
                 </div>
 
                 <!-- Check-in badge -->
-                <div class="flex items-center gap-1 text-[10px] font-bold px-2.5 py-1 rounded-full flex-shrink-0 border"
-                     style="color:<?php echo $pMeta['color']; ?>;background:<?php echo $pMeta['color']; ?>15;border-color:<?php echo $pMeta['color']; ?>30;">
+                <div style="flex-shrink:0;display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;padding:4px 10px;border-radius:999px;color:<?php echo $pMeta['color']; ?>;background:<?php echo $pMeta['color']; ?>18;border:1px solid <?php echo $pMeta['color']; ?>30;">
                     <span class="material-symbols-outlined" style="font-size:10px;font-variation-settings:'FILL' 1;">verified</span>
                     Check-in
                 </div>
+
             </div>
 
-            <!-- Check-in notu -->
+            <!-- Note (if any) -->
             <?php if (!empty($post['note'])): ?>
-            <div class="px-4 pb-3">
-                <p class="text-sm text-on-surface/80 italic bg-surface-container-highest/50 border border-white/5 rounded-xl px-4 py-3 leading-relaxed">
+            <div style="padding:0 16px 10px;">
+                <p style="font-size:0.875rem;color:var(--text-1);font-style:italic;background:#F9F8F5;border:1.5px solid #EEECE8;border-radius:12px;padding:10px 14px;margin:0;line-height:1.55;">
                     "<?php echo escape($post['note']); ?>"
                 </p>
             </div>
             <?php endif; ?>
 
-            <!-- Check-in görseli -->
+            <!-- Image (if any) -->
             <?php if (!empty($post['image'])): ?>
-            <div class="px-4 pb-3">
+            <div style="padding:0 16px 10px;">
                 <img src="<?php echo uploadUrl('posts', $post['image']); ?>"
-                     class="w-full max-h-80 object-cover rounded-xl border border-white/5" loading="lazy">
+                     style="width:100%;max-height:320px;object-fit:cover;border-radius:12px;display:block;border:1px solid #EEECE8;" loading="lazy">
             </div>
             <?php endif; ?>
 
-            <!-- Alt: Venue butonu + beğeni sayısı -->
-            <div class="flex items-center justify-between px-4 pb-4 pt-1 border-t border-white/5">
+            <!-- Footer: venue link + actions -->
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 16px 12px;border-top:1px solid #F0EDE8;">
                 <a href="<?php echo BASE_URL; ?>/venue-detail?id=<?php echo (int)$post['venue_id']; ?>"
-                   class="flex items-center gap-1.5 text-xs text-on-surface-variant hover:text-on-surface transition-colors group/vl">
-                    <span class="material-symbols-outlined text-sm group-hover/vl:text-primary transition-colors" style="font-variation-settings:'FILL' 1;">storefront</span>
-                    <span class="font-semibold group-hover/vl:text-primary transition-colors"><?php echo escape($post['venue_name']); ?></span>
-                    <span class="material-symbols-outlined text-xs opacity-60">chevron_right</span>
+                   class="checkin-action-btn"
+                   style="display:inline-flex;align-items:center;gap:5px;font-size:0.75rem;color:var(--text-3);text-decoration:none;font-weight:600;transition:color 0.15s;"
+                   onmouseover="this.style.color='var(--color-primary)'" onmouseout="this.style.color='var(--text-3)'">
+                    <span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 1;">storefront</span>
+                    <?php echo escape($post['venue_name']); ?>
+                    <span class="material-symbols-outlined" style="font-size:12px;opacity:0.6;">chevron_right</span>
                 </a>
 
-                <div class="flex items-center gap-3 text-xs text-on-surface-variant">
+                <div style="display:flex;align-items:center;gap:12px;">
                     <?php if (($post['like_count'] ?? 0) > 0): ?>
-                    <span class="flex items-center gap-1">
-                        <span class="material-symbols-outlined text-sm text-red-400" style="font-variation-settings:'FILL' 1;">favorite</span>
+                    <span style="display:inline-flex;align-items:center;gap:4px;font-size:0.75rem;color:var(--text-3);font-weight:600;">
+                        <span class="material-symbols-outlined" style="font-size:14px;color:#f43f5e;font-variation-settings:'FILL' 1;">favorite</span>
                         <?php echo (int)$post['like_count']; ?>
                     </span>
                     <?php endif; ?>
                     <?php if (($post['comment_count'] ?? 0) > 0): ?>
-                    <span class="flex items-center gap-1">
-                        <span class="material-symbols-outlined text-sm">chat_bubble</span>
+                    <span style="display:inline-flex;align-items:center;gap:4px;font-size:0.75rem;color:var(--text-3);font-weight:600;">
+                        <span class="material-symbols-outlined" style="font-size:14px;">chat_bubble</span>
                         <?php echo (int)$post['comment_count']; ?>
                     </span>
                     <?php endif; ?>
@@ -199,15 +242,43 @@ require_once __DIR__ . '/partials/app_header.php';
             </div>
 
         </div>
-        <?php endforeach; ?>
+
+        <?php
+            // Insert ad after every 5 posts
+            if ($globalIndex % 5 === 0 && !empty($feedAds) && isset($feedAds[$adIndex])):
+                $ad = $feedAds[$adIndex++];
+        ?>
+        <!-- AD CARD -->
+        <div style="background:#fff;border-radius:16px;border:1.5px dashed #E8E6E1;overflow:hidden;padding:14px 16px;display:flex;align-items:center;gap:12px;">
+            <?php if (!empty($ad['image'])): ?>
+            <img src="<?php echo escape($ad['image']); ?>" style="width:56px;height:56px;border-radius:10px;object-fit:cover;flex-shrink:0;" loading="lazy">
+            <?php endif; ?>
+            <div style="flex:1;min-width:0;">
+                <div style="font-size:0.6875rem;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:2px;">Sponsorlu</div>
+                <div style="font-size:0.875rem;font-weight:700;color:var(--text-1);"><?php echo escape($ad['title'] ?? ''); ?></div>
+                <?php if (!empty($ad['description'])): ?>
+                <div style="font-size:0.75rem;color:var(--text-3);margin-top:2px;"><?php echo escape($ad['description']); ?></div>
+                <?php endif; ?>
+            </div>
+            <?php if (!empty($ad['url'])): ?>
+            <a href="<?php echo escape($ad['url']); ?>" target="_blank" rel="noopener"
+               class="btn btn-primary btn-sm" style="flex-shrink:0;text-decoration:none;">İncele</a>
+            <?php endif; ?>
+        </div>
+        <?php endif; ?>
+
+        <?php endforeach; // dayPosts ?>
+        <?php endforeach; // groupedPosts ?>
+
     </div>
 
-    <!-- Daha fazla yükle -->
+    <!-- ── DAHA FAZLA ── -->
     <?php if (count($posts) >= 20): ?>
-    <div class="text-center">
+    <div style="text-align:center;">
         <a href="?tab=<?php echo $tab; ?>&page=<?php echo $page + 1; ?>"
-           class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-surface-container border border-white/8 text-sm font-semibold text-on-surface-variant hover:border-white/15 hover:text-on-surface transition-all">
-            <span class="material-symbols-outlined text-base">expand_more</span>
+           class="btn btn-ghost"
+           style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;font-size:0.875rem;">
+            <span class="material-symbols-outlined" style="font-size:18px;">expand_more</span>
             Daha Fazla Göster
         </a>
     </div>
@@ -215,6 +286,6 @@ require_once __DIR__ . '/partials/app_header.php';
 
     <?php endif; ?>
 
-</section>
+</div>
 
 <?php require_once __DIR__ . '/partials/app_footer.php'; ?>
