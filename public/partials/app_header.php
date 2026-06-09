@@ -11,6 +11,7 @@ if (!class_exists('CheckinModel'))  { require_once $baseDir . '/app/Models/Check
 if (!class_exists('NotificationModel')) { require_once $baseDir . '/app/Models/Notification.php'; }
 if (!class_exists('WalletModel'))   { require_once $baseDir . '/app/Models/Wallet.php'; }
 if (!class_exists('LeaderboardModel')) { require_once $baseDir . '/app/Models/Leaderboard.php'; }
+if (!class_exists('AdModel'))          { require_once $baseDir . '/app/Models/Ad.php'; }
 
 if (!isset($currentUser) && Auth::check()) {
     $currentUser = (new UserModel())->getById(Auth::id());
@@ -151,6 +152,18 @@ nav.swarm-topnav{
   padding:20px 16px 100px;align-items:start;box-sizing:border-box;}
 @media(min-width:1024px){
   .swarm-layout{grid-template-columns:minmax(0,1fr) 280px;padding:24px 20px 100px;}}
+@media(min-width:1200px){
+  .swarm-layout{
+    grid-template-columns:220px minmax(0,1fr) 280px;
+    max-width:1240px;
+  }
+}
+
+/* ── LEFT SIDEBAR ── */
+.swarm-left-sidebar{
+  display:none!important;flex-direction:column;gap:12px;
+  position:sticky;top:70px;max-height:calc(100vh - 86px);overflow-y:auto;}
+@media(min-width:1200px){.swarm-left-sidebar{display:flex!important;}}
 
 /* ── RIGHT PANEL ── */
 .swarm-right-panel{
@@ -456,6 +469,80 @@ nav.swarm-topnav{
 
 <!-- ── MAIN LAYOUT ────────────────────────────────────────── -->
 <div class="swarm-layout">
+    
+    <!-- ── SOL SIDEBAR (Sponsorlar ve Reklamlar) ────────────────── -->
+    <?php
+    $leftAds = [];
+    try {
+        if (class_exists('AdModel')) {
+            $leftAds = (new AdModel())->getByPosition('sidebar_left', 6);
+        }
+    } catch (Exception $e) {}
+    ?>
+    <aside class="swarm-left-sidebar">
+        <!-- Sponsor ve Reklam Grid Kartı -->
+        <div class="right-panel-card" style="padding:14px; display:flex; flex-direction:column; gap:12px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1.5px solid #F2F1EE; padding-bottom:8px; margin-bottom:4px;">
+                <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-3); display:flex; align-items:center; gap:4px;">
+                    <span class="material-symbols-outlined" style="font-size:16px; color:var(--color-primary);">campaign</span>
+                    Sponsorlar
+                </div>
+                <a href="mailto:reklam@sociaera.online" style="font-size:10px; font-weight:700; color:var(--color-primary); text-decoration:none;">Reklam</a>
+            </div>
+
+            <!-- Sponsor Grid (2 columns) -->
+            <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:8px;">
+                <?php 
+                if (!empty($leftAds)):
+                    foreach ($leftAds as $lAd): 
+                ?>
+                    <a href="<?php echo escape($lAd['link_url'] ?? '#'); ?>" target="_blank" rel="noopener" 
+                       style="display:flex; flex-direction:column; background:var(--bg-section); border:1px solid var(--border); border-radius:10px; overflow:hidden; text-decoration:none; color:inherit; transition:transform 0.15s; position:relative;"
+                       onmouseover="this.style.transform='scale(1.03)'"
+                       onmouseout="this.style.transform='scale(1)'">
+                        <span style="position:absolute; top:4px; left:4px; font-size:7px; font-weight:800; background:rgba(240,109,31,0.9); color:#fff; padding:1px 4px; border-radius:3px; text-transform:uppercase;">Reklam</span>
+                        <div style="aspect-ratio:1; background:#fff; display:flex; align-items:center; justify-content:center; padding:6px; border-bottom:1px solid var(--border-light);">
+                            <img src="<?php echo escape($lAd['image_url']); ?>" alt="<?php echo escape($lAd['title']); ?>" style="max-width:100%; max-height:100%; object-fit:contain; border-radius:4px;" loading="lazy">
+                        </div>
+                        <div style="padding:6px; font-size:10px; font-weight:700; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:var(--text-2);">
+                            <?php echo escape($lAd['title']); ?>
+                        </div>
+                    </a>
+                <?php 
+                    endforeach;
+                else:
+                    // Premium Mock Sponsors (Foursquare/Swarm style local sponsors)
+                    $mockSponsors = [
+                        ['name' => 'Burger House', 'logo' => 'https://img.icons8.com/color/96/hamburger.png', 'desc' => '%15 İndirim', 'url' => '#'],
+                        ['name' => 'Coffee Lab', 'logo' => 'https://img.icons8.com/color/96/coffee-to-go.png', 'desc' => '1 Alana 1', 'url' => '#'],
+                        ['name' => 'Fitness Club', 'logo' => 'https://img.icons8.com/color/96/dumbbell.png', 'desc' => 'Ücretsiz Gün', 'url' => '#'],
+                        ['name' => 'Pizzeria Bella', 'logo' => 'https://img.icons8.com/color/96/pizza.png', 'desc' => 'Özel Menü', 'url' => '#'],
+                    ];
+                    foreach ($mockSponsors as $mock):
+                ?>
+                    <a href="<?php echo $mock['url']; ?>" 
+                       style="display:flex; flex-direction:column; background:var(--bg-section); border:1.5px solid var(--border); border-radius:12px; overflow:hidden; text-decoration:none; color:inherit; transition:all 0.15s; padding:10px 6px; align-items:center; justify-content:center; text-align:center;"
+                       onmouseover="this.style.borderColor='var(--color-primary)'; this.style.transform='translateY(-2px)'"
+                       onmouseout="this.style.borderColor='var(--border)'; this.style.transform='translateY(0)'">
+                        <img src="<?php echo $mock['logo']; ?>" alt="<?php echo $mock['name']; ?>" style="width:32px; height:32px; object-fit:contain; margin-bottom:4px;" loading="lazy">
+                        <div style="font-size:10px; font-weight:800; color:var(--text-1); line-height:1.2; white-space:nowrap; overflow:hidden; width:100%; text-overflow:ellipsis;"><?php echo $mock['name']; ?></div>
+                        <div style="font-size:9px; font-weight:700; color:var(--color-primary); margin-top:2px;"><?php echo $mock['desc']; ?></div>
+                    </a>
+                <?php 
+                    endforeach; 
+                endif;
+                ?>
+            </div>
+
+            <!-- Alt Öne Çıkan Reklam Banner Alanı -->
+            <a href="mailto:reklam@sociaera.online" style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding:14px 10px; background:var(--bg-section); border-radius:10px; border:1.5px dashed var(--border); text-decoration:none; color:var(--text-3); gap:6px; text-align:center; transition:background .12s;" onmouseover="this.style.background='#FFF3EB'; this.style.borderColor='var(--color-primary)';" onmouseout="this.style.background='var(--bg-section)'; this.style.borderColor='var(--border)';">
+                <span class="material-symbols-outlined" style="font-size:24px; color:var(--color-primary);">ads_click</span>
+                <span style="font-size:11px; font-weight:700; color:var(--text-1);">Sponsorluk & Reklam</span>
+                <span style="font-size:9px; color:var(--text-3);">Tıklayın ve Reklam Verin</span>
+            </a>
+        </div>
+    </aside>
+
     <!-- Feed area starts — page content renders directly here -->
 
 <?php else: ?>

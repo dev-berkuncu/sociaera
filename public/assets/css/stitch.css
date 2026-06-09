@@ -198,6 +198,17 @@ body {
   min-width: 0;
 }
 
+/* Sol panel */
+.swarm-left-sidebar {
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+  position: sticky;
+  top: 70px;
+  max-height: calc(100vh - 86px);
+  overflow-y: auto;
+}
+
 /* Sağ panel */
 .swarm-right-panel {
   display: none;
@@ -215,6 +226,14 @@ body {
     padding: 24px 20px 100px;
   }
   .swarm-right-panel { display: flex; }
+}
+
+@media (min-width: 1200px) {
+  .swarm-layout {
+    grid-template-columns: 220px minmax(0, 1fr) 280px;
+    max-width: 1240px;
+  }
+  .swarm-left-sidebar { display: flex; }
 }
 
 /* Eski flex feed wrapper — geriye dönük uyumluluk */

@@ -79,6 +79,7 @@ require_once __DIR__ . '/_header.php';
                 <label class="block text-label-md text-slate-400 mb-1">Gösterim Yeri</label>
                 <select name="position" class="w-full bg-white/5 border border-white/10 text-on-surface rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary-container/40 transition-colors font-sans">
                     <option value="carousel" class="bg-background">🎟️ Sponsorlarımız (Logo Slider)</option>
+                    <option value="sidebar_left" class="bg-background">👈 Sol Sidebar (Grid Reklamı)</option>
                     <option value="sidebar_right" class="bg-background">🗺️ Reklam Alanı (300x600 Sidebar)</option>
                 </select>
             </div>
@@ -116,6 +117,7 @@ require_once __DIR__ . '/_header.php';
                             <?php 
                             echo match($ad['position']) {
                                 'carousel' => 'Sponsorlarımız (Slider)',
+                                'sidebar_left' => 'Sol Sidebar (Grid)',
                                 'sidebar_right' => 'Reklam Alanı (Sidebar)',
                                 default => escape($ad['position'])
                             };
