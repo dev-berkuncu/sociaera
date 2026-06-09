@@ -186,16 +186,16 @@ $hideSidebar = $hideSidebar ?? false;
                     Sponsorlarımız <span class="material-symbols-outlined text-[#ff9100] text-[16px]">campaign</span>
                 </h3>
                 <?php if (!empty($rightSidebarSponsors)): ?>
-                <div class="relative w-full h-24 rounded-xl overflow-hidden group bg-surface border border-white/5 shadow-inner">
+                <div class="relative w-full h-36 rounded-xl overflow-hidden group bg-surface border border-white/5 shadow-inner">
                     <?php foreach ($rightSidebarSponsors as $index => $sp): ?>
                     <a href="<?php echo escape($sp['url'] ?? '#'); ?>" target="_blank" rel="noopener" 
                        class="sponsor-slide absolute inset-0 flex flex-col items-center justify-center p-4 transition-opacity duration-1000 ease-in-out <?php echo $index === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'; ?>"
                        data-index="<?php echo $index; ?>">
                         
                         <?php if (!empty($sp['logo'])): ?>
-                            <img src="<?php echo BASE_URL . '/' . escape($sp['logo']); ?>" alt="<?php echo escape($sp['name']); ?>" class="w-full h-full object-contain filter drop-shadow-md transition-transform duration-500 group-hover:scale-105" width="280" height="96" loading="lazy">
+                            <img src="<?php echo BASE_URL . '/' . escape($sp['logo']); ?>" alt="<?php echo escape($sp['name']); ?>" class="w-full h-full object-contain filter drop-shadow-md transition-transform duration-500 group-hover:scale-105" width="280" height="144" loading="lazy">
                         <?php else: ?>
-                            <span class="material-symbols-outlined text-slate-500 text-[32px] transition-transform duration-500 group-hover:scale-110">store</span>
+                            <span class="material-symbols-outlined text-slate-500 text-[40px] transition-transform duration-500 group-hover:scale-110">store</span>
                         <?php endif; ?>
                         
                         <!-- Hover Overlay -->
