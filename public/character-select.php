@@ -76,6 +76,7 @@ require_once __DIR__ . '/partials/app_header.php';
 require_once __DIR__ . '/partials/flash.php';
 ?>
 
+<div style="min-width:0;">
 <div class="flex-grow flex items-center justify-center w-full relative overflow-hidden">
     <!-- Background Design -->
     <div class="absolute inset-0 z-0">
@@ -136,5 +137,6 @@ require_once __DIR__ . '/partials/flash.php';
 .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
 </style>
+</div><!-- /grid cell -->
 
 <?php require_once __DIR__ . '/partials/app_footer.php'; ?>

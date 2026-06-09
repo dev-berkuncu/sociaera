@@ -181,6 +181,7 @@ $activeNav = 'profile';
 require_once __DIR__ . '/partials/app_header.php';
 ?>
 
+<div style="min-width:0;">
 <style>
 /* ── Profile page-local styles ───────────────────────────── */
 
@@ -1069,5 +1070,6 @@ if (bannerUrl($profileUser['banner'] ?? null)) {
 <?php endif; ?>
 
 </div><!-- /tab content -->
+</div><!-- /grid cell -->
 
 <?php require_once __DIR__ . '/partials/app_footer.php'; ?>

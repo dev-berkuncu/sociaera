@@ -58,6 +58,7 @@ $activeNav = 'venues';
 require_once __DIR__ . '/partials/app_header.php';
 ?>
 
+<div style="min-width:0;">
 <div style="display:flex;flex-direction:column;gap:20px;padding-bottom:32px;">
 
     <!-- ── BAŞLIK ── -->
@@ -240,5 +241,6 @@ require_once __DIR__ . '/partials/app_header.php';
     <?php endif; ?>
 
 </div>
+</div><!-- /grid cell -->
 
 <?php require_once __DIR__ . '/partials/app_footer.php'; ?>

@@ -30,21 +30,21 @@ $activeNav = 'notifications';
 require_once __DIR__ . '/partials/app_header.php';
 ?>
 
-<section class="flex-1 flex flex-col gap-stack-md max-w-3xl w-full mx-auto lg:mx-0">
+<div style="min-width:0;display:flex;flex-direction:column;gap:20px;padding-bottom:40px;">
     <div class="flex items-center justify-between flex-wrap gap-3 mb-4">
-        <h1 class="text-3xl font-bold flex items-center gap-2 text-on-surface"><span class="material-symbols-outlined text-primary-container text-[32px]">notifications</span> Bildirimler</h1>
+        <h1 style="font-size:1.75rem;font-weight:900;display:flex;align-items:center;gap:8px;color:var(--text-1);"><span class="material-symbols-outlined" style="color:var(--color-primary);font-size:32px;font-variation-settings:'FILL' 1;">notifications</span> Bildirimler</h1>
         <?php if (!empty($notifications)): ?>
-            <button class="bg-surface-container hover:bg-white/10 text-slate-300 border border-white/10 px-4 py-2 rounded-lg text-sm font-bold transition-colors flex items-center gap-2" onclick="App.clearNotifications(this)">
+            <button style="background:var(--bg-section);border:1.5px solid var(--border);color:var(--text-2);padding:8px 16px;border-radius:10px;font-size:.875rem;font-weight:700;transition:background .14s;display:flex;align-items:center;gap:8px;cursor:pointer;" onclick="App.clearNotifications(this)">
                 <span class="material-symbols-outlined text-[18px]">delete</span> Temizle
             </button>
         <?php endif; ?>
     </div>
 
-    <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl overflow-hidden shadow-[0_15px_30px_-15px_rgba(19,19,20,0.3)]">
+    <div style="background:#fff;border:1.5px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.05);">
         <?php if (empty($notifications)): ?>
-            <div class="p-12 text-center text-slate-400">
-                <span class="material-symbols-outlined text-[64px] mb-4 opacity-50">notifications_off</span>
-                <p class="text-lg">Yeni bildirim yok.</p>
+            <div style="padding:48px 24px;text-align:center;color:var(--text-3);">
+                <span class="material-symbols-outlined" style="font-size:64px;display:block;margin-bottom:16px;opacity:.4;">notifications_off</span>
+                <p style="font-size:1.125rem;color:var(--text-2);">Yeni bildirim yok.</p>
             </div>
         <?php else: ?>
             <div class="flex flex-col">
@@ -66,13 +66,13 @@ require_once __DIR__ . '/partials/app_header.php';
                         ? BASE_URL . '/post?id=' . (int)$n['checkin_id']
                         : ($n['from_user_id'] ? BASE_URL . '/profile?u=' . escape($n['from_username'] ?? '') : '#');
                 ?>
-                <a href="<?php echo escape($link); ?>" class="flex items-center gap-4 p-4 border-b border-white/5 hover:bg-white/5 transition-colors last:border-0 <?php echo !$n['is_read'] ? 'bg-primary-container/5' : ''; ?>">
+                <a href="<?php echo escape($link); ?>" style="display:flex;align-items:center;gap:16px;padding:14px 16px;border-bottom:1px solid var(--border-light);transition:background .12s;text-decoration:none;<?php echo !$n['is_read'] ? 'background:rgba(240,109,31,0.04);' : ''; ?>" onmouseover="this.style.background='#faf8f5'" onmouseout="this.style.background='<?php echo !$n['is_read'] ? 'rgba(240,109,31,0.04)' : ''; ?>'">
                     <div class="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 <?php echo $iconColor; ?>">
                         <span class="material-symbols-outlined"><?php echo $icon; ?></span>
                     </div>
                     
-                    <div class="flex-grow min-w-0 text-[15px] leading-relaxed">
-                        <div class="text-on-surface">
+                    <div style="flex:1;min-width:0;font-size:.9375rem;line-height:1.6;">
+                        <div style="color:var(--text-1);">
                             <?php if (!empty($n['from_avatar'])): ?>
                                 <span class="inline-block align-middle mr-1.5">
                                     <?php echo avatarHtml($n['from_avatar'], $n['from_username'] ?? '', '24'); ?>
@@ -80,20 +80,20 @@ require_once __DIR__ . '/partials/app_header.php';
                             <?php endif; ?>
                             <?php echo escape($n['content']); ?>
                         </div>
-                        <div class="text-xs text-slate-500 mt-1 flex items-center gap-1">
+                        <div style="font-size:11px;color:var(--text-3);margin-top:4px;display:flex;align-items:center;gap:4px;">
                             <span class="material-symbols-outlined text-[12px]">schedule</span>
                             <?php echo timeAgo($n['created_at']); ?>
                         </div>
                     </div>
                     
                     <?php if (!$n['is_read']): ?>
-                        <div class="w-2.5 h-2.5 rounded-full bg-primary-container flex-shrink-0 shadow-[0_0_8px_rgba(255,145,0,0.8)]"></div>
+                        <div style="width:10px;height:10px;border-radius:50%;background:var(--color-primary);flex-shrink:0;box-shadow:0 0 8px rgba(240,109,31,0.5);"></div>
                     <?php endif; ?>
                 </a>
                 <?php endforeach; ?>
             </div>
         <?php endif; ?>
     </div>
-</section>
+</div><!-- /grid cell -->
 
 <?php require_once __DIR__ . '/partials/app_footer.php'; ?>
