@@ -65,16 +65,40 @@ if (!isset($currentUser) && Auth::check()) {
                         "surface-container-high": "#2a2a2b",
                         "tertiary": "#deb9ff",
                         "surface-variant": "#353436",
-                        "surface-container-highest": "#353436",
-                        "primary-container": "#ff9100",
-                        "surface-dim": "#131314",
-                        "on-primary-fixed": "#2e1500",
-                        "outline-variant": "#564334",
-                        "on-secondary-container": "#ffc2c4",
-                        "outline": "#a48c7a",
-                        "surface-container-lowest": "#0e0e0f",
-                        "on-primary": "#4c2700",
-                        "on-primary-container": "#633500"
+                        "primary": "#ff6a00",
+                        "secondary": "#00f0ff",
+                        "tertiary": "#a855f7",
+                        "background": "#060a13",
+                        "surface": "#0b0c10",
+                        "on-primary": "#ffffff",
+                        "on-secondary": "#0b0c10",
+                        "on-tertiary": "#ffffff",
+                        "on-surface": "#f1f5f9",
+                        "on-surface-variant": "#94a3b8",
+                        "surface-container": "rgba(11, 16, 26, 0.65)",
+                        "surface-container-high": "rgba(16, 20, 30, 0.45)",
+                        "surface-container-low": "#0b0c10",
+                        "surface-container-lowest": "#040810",
+                        "surface-container-highest": "rgba(255, 255, 255, 0.08)",
+                        "outline": "rgba(255, 255, 255, 0.08)",
+                        "outline-variant": "rgba(255, 255, 255, 0.05)",
+                        "primary-container": "rgba(255, 106, 0, 0.15)",
+                        "secondary-container": "rgba(0, 240, 255, 0.15)",
+                        "tertiary-container": "rgba(168, 85, 247, 0.15)",
+                        "cyber": {
+                            "bg": "#060a13",
+                            "dark": "#0b0c10",
+                            "panel": "rgba(11, 16, 26, 0.65)",
+                            "glass": "rgba(16, 20, 30, 0.45)",
+                            "orange": "#ff6a00",
+                            "orangeLight": "#ff9100",
+                            "cyan": "#00f0ff",
+                            "purple": "#a855f7",
+                            "pink": "#ec4899",
+                            "green": "#10b981",
+                            "border": "rgba(255, 255, 255, 0.06)",
+                            "borderGlow": "rgba(255, 106, 0, 0.15)"
+                        }
                     },
                     "borderRadius": {
                         "DEFAULT": "0.25rem",
@@ -83,38 +107,50 @@ if (!isset($currentUser) && Auth::check()) {
                         "full": "9999px"
                     },
                     "spacing": {
+                        "stack-lg": "32px",
+                        "stack-sm": "8px",
+                        "container-margin": "24px",
+                        "stack-md": "16px",
+                        "unit": "4px",
+                        "gutter": "16px",
                         "md": "16px",
                         "base": "4px",
                         "margin": "24px",
-                        "gutter": "16px",
                         "xl": "32px",
                         "sm": "12px",
                         "xs": "8px",
                         "lg": "24px",
-                        "stack-sm": "12px",
-                        "container-padding": "32px",
-                        "stack-lg": "48px",
-                        "stack-md": "24px"
+                        "container-padding": "32px"
                     },
                     "fontFamily": {
-                        "headline-md": ["Plus Jakarta Sans"],
-                        "body-md": ["Plus Jakarta Sans"],
-                        "body-lg": ["Plus Jakarta Sans"],
-                        "display-lg": ["Plus Jakarta Sans"],
-                        "label-md": ["Plus Jakarta Sans"],
-                        "headline-sm": ["Plus Jakarta Sans"],
-                        "label-sm": ["Plus Jakarta Sans"],
-                        "headline-lg": ["Plus Jakarta Sans"]
+                        "sans": ["Outfit", "sans-serif"],
+                        "mono": ["Share Tech Mono", "Courier New", "monospace"],
+                        "headline-lg-mobile": ["Outfit"],
+                        "label-caps": ["Share Tech Mono"],
+                        "title-md": ["Outfit"],
+                        "body-sm": ["Outfit"],
+                        "display-lg": ["Outfit"],
+                        "headline-lg": ["Outfit"],
+                        "body-lg": ["Outfit"],
+                        "headline-md": ["Outfit"],
+                        "body-md": ["Outfit"],
+                        "label-md": ["Share Tech Mono"],
+                        "headline-sm": ["Outfit"],
+                        "label-sm": ["Outfit"]
                     },
                     "fontSize": {
+                        "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.1em", "fontWeight": "700"}],
+                        "title-md": ["20px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                        "headline-lg": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "body-lg": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
                         "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
                         "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
-                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
-                        "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
                         "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
                         "headline-sm": ["16px", {"lineHeight": "24px", "fontWeight": "600"}],
-                        "label-sm": ["11px", {"lineHeight": "14px", "fontWeight": "400"}],
-                        "headline-lg": ["32px", { "lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600" }]
+                        "label-sm": ["11px", {"lineHeight": "14px", "fontWeight": "400"}]
                     }
                 },
             },
@@ -133,91 +169,180 @@ if (!isset($currentUser) && Auth::check()) {
 </script>
 <script defer src="<?php echo BASE_URL; ?>/assets/js/main.js"></script>
 </head>
-<body class="dark overflow-x-hidden">
+<body class="bg-obsidian text-on-surface font-body-sm min-h-screen antialiased selection:bg-primary selection:text-on-primary dark overflow-x-hidden relative">
+
+<!-- Screen Overlay Scanlines -->
+<div class="scanlines"></div>
+
+<!-- ── MAP-FIRST WEB LAYOUT: Fullscreen Background Map ── -->
+<div class="fixed inset-0 z-0 overflow-hidden pointer-events-none bg-[#040810]">
+    <!-- Stylized Los Santos Neon Map (SVG & Canvas based grid for crisp look) -->
+    <svg class="absolute inset-0 w-full h-full opacity-35 select-none" xmlns="http://www.w3.org/2000/svg" id="tactical-map">
+        <defs>
+            <radialGradient id="map-glow" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#00f0ff" stop-opacity="0.15"/>
+                <stop offset="100%" stop-color="#060a13" stop-opacity="0"/>
+            </radialGradient>
+        </defs>
+        <!-- Map Vignette Glow -->
+        <rect width="100%" height="100%" fill="url(#map-glow)" />
+        
+        <!-- Stylized roads / topography paths representing Los Santos -->
+        <!-- Major Highway routes (styled as neon paths) -->
+        <path d="M -100 800 C 300 600, 500 800, 900 650 S 1400 300, 2200 400" fill="none" stroke="rgba(0, 240, 255, 0.12)" stroke-width="3" stroke-dasharray="10 5" />
+        <path d="M 400 -100 C 600 300, 300 700, 800 1200" fill="none" stroke="rgba(255, 106, 0, 0.08)" stroke-width="2.5" />
+        <path d="M 1200 -100 C 900 400, 1100 800, 1500 1300" fill="none" stroke="rgba(0, 240, 255, 0.08)" stroke-width="2" />
+        <path d="M -100 300 C 500 200, 800 500, 2100 100" fill="none" stroke="rgba(168, 85, 247, 0.08)" stroke-width="1.5" />
+
+        <!-- Coastline/Water outline shape -->
+        <path d="M -200 1500 Q 300 1100, 500 900 T 1000 850 T 1600 950 Q 1900 1200, 2200 1500" fill="rgba(0, 240, 255, 0.015)" stroke="rgba(0, 240, 255, 0.2)" stroke-width="1" />
+
+        <!-- Grid Coordinates & Crosshairs overlay -->
+        <g class="text-[9px] font-mono" style="fill: rgba(0, 240, 255, 0.4);">
+            <text x="20" y="30">LOC: 34.0522° N, 118.2437° W</text>
+            <text x="20" y="45">GRID: Z-294.04 (LS-METRO)</text>
+            <text x="20" y="60">SYS: LINK_OK // SE_PORTAL_ACTIVE</text>
+            
+            <!-- Crosshair marks -->
+            <path d="M 100 100 L 120 100 M 110 90 L 110 110" stroke="rgba(0, 240, 255, 0.2)" stroke-width="1" />
+            <circle cx="110" cy="100" r="15" fill="none" stroke="rgba(0, 240, 255, 0.1)" stroke-width="0.5" />
+        </g>
+    </svg>
+
+    <!-- Dynamic Map Grid overlay -->
+    <div class="absolute inset-0 map-grid opacity-40 z-0 pointer-events-none"></div>
+</div>
 
 <?php if (Auth::check() && $currentUser): ?>
 <!-- Top Navigation Bar -->
-<header class="glass-effect sticky top-0 z-50 flex justify-between items-center w-full px-6 py-3 max-w-[1920px] mx-auto border-b border-outline-variant/20">
-    <div class="flex items-center gap-xl">
-        <a href="<?php echo BASE_URL; ?>/dashboard" class="text-headline-md font-headline-md font-bold text-primary flex items-center gap-xs">
-            <span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings: 'FILL' 1;">hive</span>
-            Sociaera
-        </a>
-        <div class="hidden md:flex relative group">
-            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-body-lg">search</span>
-            <input class="stitch-search-input bg-surface-container/60 border border-white/5 rounded-lg pl-10 pr-12 py-2 text-body-md w-[400px] focus:ring-1 focus:ring-primary focus:bg-surface-container transition-all" placeholder="Mekan, kategori veya arkadaş ara..." type="text" onkeyup="if(event.key === 'Enter') window.location.href='<?php echo BASE_URL; ?>/venues?q=' + encodeURIComponent(this.value)"/>
-            <div class="absolute right-3 top-1/2 -translate-y-1/2 text-label-sm text-on-surface-variant border border-outline-variant px-1.5 rounded-md font-mono">⌘ K</div>
+<?php
+$walletBalance = 0.0;
+$streak = 0;
+$weeklyCheckins = 0;
+$followingUsers = [];
+try {
+    if (!class_exists('WalletModel')) {
+        require_once dirname(__DIR__, 2) . '/app/Models/Wallet.php';
+    }
+    $walletBalance = (new WalletModel())->getBalance($currentUser['id']);
+} catch (Exception $e) {}
+
+try {
+    $stats = (new UserModel())->getStats($currentUser['id']);
+    $db = Database::getConnection();
+    $stmt = $db->prepare("SELECT DISTINCT DATE(created_at) as d FROM checkins WHERE user_id = ? AND is_deleted = 0 ORDER BY d DESC LIMIT 60");
+    $stmt->execute([$currentUser['id']]);
+    $dates = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    $today = new DateTime();
+    foreach ($dates as $i => $d) {
+        $expected = (clone $today)->modify("-{$i} days")->format('Y-m-d');
+        if ($d === $expected) { $streak++; } else { break; }
+    }
+    $weeklyCheckins = (new CheckinModel())->getWeeklyCheckinCount($currentUser['id']);
+    $stmt = $db->prepare("SELECT u.id, u.username, u.avatar, u.tag, u.is_active FROM users u JOIN user_follows f ON u.id = f.following_id WHERE f.follower_id = ? AND u.is_active = 1 LIMIT 10");
+    $stmt->execute([$currentUser['id']]);
+    $followingUsers = $stmt->fetchAll();
+    if (empty($followingUsers)) {
+        $stmt = $db->prepare("SELECT u.id, u.username, u.avatar, u.tag, u.is_active, (SELECT COUNT(*) FROM user_follows WHERE following_id = u.id) as followers FROM users u WHERE u.id != ? AND u.is_active = 1 ORDER BY followers DESC, u.id DESC LIMIT 10");
+        $stmt->execute([$currentUser['id']]);
+        $followingUsers = $stmt->fetchAll();
+    }
+} catch (Exception $e) {}
+
+$userLevel = floor(($stats['checkins'] ?? 0) / 15) + 1;
+$avatarUrl = safeAvatarUrl($currentUser['avatar'] ?? null, $currentUser['username']);
+$levelRingClass = 'bg-gradient-to-tr from-slate-700 to-slate-800';
+if ($userLevel >= 20) {
+    $levelRingClass = 'level-ring-gold';
+} elseif ($userLevel >= 10) {
+    $levelRingClass = 'level-ring-purple';
+} elseif ($userLevel >= 3) {
+    $levelRingClass = 'level-ring-bronze';
+}
+?>
+<header class="bg-cyber-dark/85 backdrop-blur-xl border-b border-cyber-border py-3 px-4 md:px-6 flex flex-wrap md:flex-nowrap justify-between items-center sticky top-0 w-full z-50 max-w-[1920px] mx-auto left-0 right-0 gap-3">
+    <!-- Logo & Portal Identity -->
+    <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded bg-gradient-to-br from-primary to-cyber-pink flex items-center justify-center shadow-neonOrange flex-shrink-0">
+            <span class="material-symbols-outlined text-white text-[20px] font-bold" style="font-variation-settings: 'wght' 700;">hive</span>
+        </div>
+        <div class="flex flex-col">
+            <h1 class="font-bold text-sm tracking-widest text-white uppercase leading-none">
+                Sociaera <span class="text-xs text-secondary font-mono font-normal">v3.8-RP</span>
+            </h1>
+            <span class="text-[9px] font-mono text-secondary tracking-wider mt-0.5 leading-none">CONNECTED_TO: NETWORK_LOS_SANTOS</span>
         </div>
     </div>
-    
-    <div class="flex items-center gap-md">
-        <!-- Notification Bell -->
-        <?php
-        $notifCount = 0;
-        try {
-            $notifCount = (new NotificationModel())->getUnreadCount($currentUser['id']);
-        } catch (Exception $e) {}
-        ?>
-        <a href="<?php echo BASE_URL; ?>/notifications" class="relative p-2 hover:bg-surface-container/60 rounded-lg transition-colors active:scale-95 duration-150">
-            <span class="material-symbols-outlined text-primary">notifications</span>
-            <?php if ($notifCount > 0): ?>
-                <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-secondary rounded-full"></span>
-            <?php endif; ?>
-        </a>
-        
-        <!-- User Pill with Hover Dropdown -->
-        <?php 
-            $stats = (new UserModel())->getStats($currentUser['id']);
-            $streak = 0;
-            $weeklyCheckins = 0;
-            $followingUsers = [];
+
+    <!-- Navigation links -->
+    <nav class="hidden xl:flex items-center gap-stack-sm">
+        <a class="<?php echo ($activeNav ?? '') === 'activity' ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-on-surface'; ?> transition-colors duration-200 px-3 py-1 font-mono text-xs uppercase" href="<?php echo BASE_URL; ?>/activity">Keşfet</a>
+        <a class="<?php echo ($activeNav ?? '') === 'venues' ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-on-surface'; ?> transition-colors duration-200 px-3 py-1 font-mono text-xs uppercase" href="<?php echo BASE_URL; ?>/venues">Mekânlar</a>
+        <a class="<?php echo ($activeNav ?? '') === 'missions' ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-on-surface'; ?> transition-colors duration-200 px-3 py-1 font-mono text-xs uppercase" href="<?php echo BASE_URL; ?>/missions">Görevler</a>
+        <a class="<?php echo ($activeNav ?? '') === 'kampanyalar' ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-on-surface'; ?> transition-colors duration-200 px-3 py-1 font-mono text-xs uppercase" href="<?php echo BASE_URL; ?>/kampanyalar">Kampanyalar</a>
+        <a class="<?php echo ($activeNav ?? '') === 'leaderboard' ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-on-surface'; ?> transition-colors duration-200 px-3 py-1 font-mono text-xs uppercase" href="<?php echo BASE_URL; ?>/leaderboard">Liderlik</a>
+        <a class="<?php echo ($activeNav ?? '') === 'wallet' ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-on-surface'; ?> transition-colors duration-200 px-3 py-1 font-mono text-xs uppercase" href="<?php echo BASE_URL; ?>/wallet">Cüzdan</a>
+    </nav>
+
+    <!-- Telemetry status widget in the center -->
+    <div class="hidden lg:flex items-center gap-4 font-mono text-[10px] text-slate-400">
+        <div class="flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-cyber-green animate-pulse" style="background-color:#10b981;"></span>
+            <span>LSPD NET: ONLINE</span>
+        </div>
+        <div class="w-px h-3 bg-white/10"></div>
+        <div>
+            <span>GPS: ACTIVE</span>
+        </div>
+        <div class="w-px h-3 bg-white/10"></div>
+        <div class="flex items-center gap-1 text-primary">
+            <span class="material-symbols-outlined text-xs animate-pulse">local_fire_department</span>
+            <span><?php echo $streak; ?> GÜN SERİ</span>
+        </div>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="hidden md:flex relative group max-w-xs w-full">
+        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-body-lg">search</span>
+        <input class="stitch-search-input bg-slate-900/60 border border-white/5 rounded-lg pl-10 pr-12 py-1.5 text-xs w-full focus:ring-1 focus:ring-primary focus:bg-slate-900 focus:border-primary/30 transition-all font-mono" placeholder="Mekan veya arkadaş ara..." type="text" onkeyup="if(event.key === 'Enter') window.location.href='<?php echo BASE_URL; ?>/venues?q=' + encodeURIComponent(this.value)"/>
+        <div class="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] text-on-surface-variant border border-white/5 px-1 rounded font-mono">⌘ K</div>
+    </div>
+
+    <!-- Right Header Actions -->
+    <div class="flex items-center gap-3 font-mono">
+        <!-- Cash HUD display -->
+        <div class="hidden sm:flex flex-col text-right">
+            <span class="text-[9px] text-slate-500 uppercase leading-none">Bakiye</span>
+            <span class="text-cyber-green font-bold text-xs" style="color: #10b981;">$<?php echo number_format($walletBalance, 2, ',', '.'); ?></span>
+        </div>
+        <div class="w-px h-6 bg-white/10 hidden sm:block"></div>
+
+        <!-- Checkin FAB and Notifications -->
+        <div class="flex items-center gap-1 text-primary">
+            <?php
+            $notifCount = 0;
             try {
-                $db = Database::getConnection();
-                $stmt = $db->prepare("SELECT DISTINCT DATE(created_at) as d FROM checkins WHERE user_id = ? AND is_deleted = 0 ORDER BY d DESC LIMIT 60");
-                $stmt->execute([$currentUser['id']]);
-                $dates = $stmt->fetchAll(PDO::FETCH_COLUMN);
-                $today = new DateTime();
-                foreach ($dates as $i => $d) {
-                    $expected = (clone $today)->modify("-{$i} days")->format('Y-m-d');
-                    if ($d === $expected) { $streak++; } else { break; }
-                }
-                $weeklyCheckins = (new CheckinModel())->getWeeklyCheckinCount($currentUser['id']);
-                $stmt = $db->prepare("SELECT u.id, u.username, u.avatar, u.tag, u.is_active FROM users u JOIN user_follows f ON u.id = f.following_id WHERE f.follower_id = ? AND u.is_active = 1 LIMIT 10");
-                $stmt->execute([$currentUser['id']]);
-                $followingUsers = $stmt->fetchAll();
-                if (empty($followingUsers)) {
-                    $stmt = $db->prepare("SELECT u.id, u.username, u.avatar, u.tag, u.is_active, (SELECT COUNT(*) FROM user_follows WHERE following_id = u.id) as followers FROM users u WHERE u.id != ? AND u.is_active = 1 ORDER BY followers DESC, u.id DESC LIMIT 10");
-                    $stmt->execute([$currentUser['id']]);
-                    $followingUsers = $stmt->fetchAll();
-                }
+                $notifCount = (new NotificationModel())->getUnreadCount($currentUser['id']);
             } catch (Exception $e) {}
-        ?>
-        <?php
-            $userLevel = floor(($stats['checkins'] ?? 0) / 15) + 1;
-            $levelRingClass = 'bg-gradient-to-tr from-slate-700 to-slate-800';
-            if ($userLevel >= 20) {
-                $levelRingClass = 'level-ring-gold';
-            } elseif ($userLevel >= 10) {
-                $levelRingClass = 'level-ring-purple';
-            } elseif ($userLevel >= 3) {
-                $levelRingClass = 'level-ring-bronze';
-            }
-        ?>
+            ?>
+            <a href="<?php echo BASE_URL; ?>/notifications" aria-label="notifications" class="hover:bg-white/5 rounded-lg transition-all duration-200 p-2 relative flex items-center justify-center">
+                <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 0;">notifications</span>
+                <?php if ($notifCount > 0): ?>
+                    <span class="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-[#00f0ff] rounded-full"></span>
+                <?php endif; ?>
+            </a>
+            <a href="<?php echo BASE_URL; ?>/profile" aria-label="person_pin" class="hover:bg-white/5 rounded-lg transition-all duration-200 p-2 flex items-center justify-center">
+                <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 0;">person_pin</span>
+            </a>
+            <a href="<?php echo BASE_URL; ?>/character-select" aria-label="swap_horiz" class="hover:bg-white/5 rounded-lg transition-all duration-200 p-2 flex items-center justify-center">
+                <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 0;">swap_horiz</span>
+            </a>
+        </div>
+
         <div class="relative group">
-            <button class="flex items-center gap-sm bg-surface-container/60 border border-white/5 px-3 py-1.5 rounded-full cursor-pointer hover:bg-surface-container transition-all focus:outline-none">
-                <div class="relative flex-shrink-0 p-[2px] rounded-full <?php echo $levelRingClass; ?>">
-                    <?php $avatarUrl = safeAvatarUrl($currentUser['avatar'] ?? null, $currentUser['username']); ?>
-                    <img alt="<?php echo escape($currentUser['username']); ?>" class="w-8 h-8 rounded-full border-2 border-[#131314] object-cover" src="<?php echo $avatarUrl; ?>"/>
-                    <div class="absolute -bottom-1 -right-1 bg-primary text-[8px] font-bold px-1 rounded-full text-on-primary shadow-md">
-                        <?php echo $userLevel; ?>
-                    </div>
-                </div>
-                <div class="hidden lg:block text-left">
-                    <div class="text-label-md font-bold leading-none text-on-surface"><?php echo escape($currentUser['username']); ?></div>
-                    <div class="text-[10px] text-primary mt-0.5">Seviye <?php echo $userLevel; ?></div>
-                </div>
-                <span class="material-symbols-outlined text-on-surface-variant text-sm">expand_more</span>
-            </button>
+            <div class="w-8 h-8 rounded-full overflow-hidden border border-white/20 hover:border-primary transition-colors cursor-pointer flex-shrink-0">
+                <img alt="Character Avatar" class="w-full h-full object-cover" src="<?php echo $avatarUrl; ?>"/>
+            </div>
             <div class="absolute right-0 mt-1 w-52 bg-[#1c1b1c]/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl py-2 hidden group-hover:block hover:block z-50 animate-[fadeIn_0.15s_ease-out]">
                 <a href="<?php echo BASE_URL; ?>/profile" class="flex items-center gap-3 px-4 py-2 text-sm text-on-surface hover:bg-white/5 transition-colors">
                     <span class="material-symbols-outlined text-base text-primary">person</span>

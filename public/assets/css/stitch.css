@@ -5,30 +5,58 @@
 
 /* ── BASE ── */
 body {
-    background-color: #131314;
-    color: #e5e2e3;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: #060a13;
+    color: #f1f5f9;
+    font-family: 'Outfit', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+}
+
+/* Screen Overlay Scanlines */
+.scanlines {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+        rgba(18, 16, 16, 0) 50%, 
+        rgba(0, 0, 0, 0.25) 50%
+    ), linear-gradient(
+        90deg,
+        rgba(255, 0, 0, 0.05),
+        rgba(0, 255, 0, 0.02),
+        rgba(0, 0, 255, 0.05)
+    );
+    background-size: 100% 4px, 6px 100%;
+    z-index: 9999;
+    opacity: 0.15;
+}
+
+/* Custom Map Grids */
+.map-grid {
+    background-size: 40px 40px;
+    background-image: 
+        linear-gradient(to right, rgba(0, 240, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 240, 255, 0.02) 1px, transparent 1px);
 }
 
 /* ── SCROLLBAR ── */
-::-webkit-scrollbar { width: 8px; height: 8px; }
-::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); }
-::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: rgba(6, 10, 19, 0.3); }
+::-webkit-scrollbar-thumb { background: rgba(255, 106, 0, 0.25); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255, 106, 0, 0.5); }
 
 .custom-scrollbar::-webkit-scrollbar {
     width: 4px;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: #353436;
+    background: rgba(255, 106, 0, 0.2);
     border-radius: 10px;
 }
 
 /* ── PATTERNS & EFFECTS ── */
 .hero-pattern {
-    background: linear-gradient(to bottom, rgba(255,145,0,0.2) 0%, rgba(19,19,20,0) 100%),
+    background: linear-gradient(to bottom, rgba(255, 106, 0, 0.15) 0%, rgba(6, 10, 19, 0) 100%),
                 url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
 }
 
@@ -225,16 +253,17 @@ body {
 
 /* ── PREMIUM SWARM-STYLE GRAPHICS ── */
 .swarm-glass-card {
-    background: rgba(22, 22, 25, 0.7) !important;
-    backdrop-filter: blur(16px) saturate(180%) !important;
-    border: 1px solid rgba(255, 145, 0, 0.08) !important;
+    background: rgba(11, 16, 26, 0.65) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
     box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.03) !important;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 .swarm-glass-card:hover {
-    border-color: rgba(255, 145, 0, 0.2) !important;
+    border-color: rgba(0, 240, 255, 0.25) !important;
     transform: translateY(-2px);
-    box-shadow: 0 20px 40px -10px rgba(255, 145, 0, 0.05), 0 0 15px rgba(255, 145, 0, 0.02) !important;
+    box-shadow: 0 20px 40px -10px rgba(0, 240, 255, 0.05), 0 0 15px rgba(0, 240, 255, 0.02) !important;
 }
 
 /* Flame streak dynamic pulse */
@@ -243,12 +272,12 @@ body {
 }
 @keyframes flameGlow {
     0% {
-        text-shadow: 0 0 5px rgba(255, 145, 0, 0.2), 0 0 10px rgba(255, 145, 0, 0.1);
-        filter: drop-shadow(0 0 2px rgba(255, 145, 0, 0.3));
+        text-shadow: 0 0 5px rgba(255, 106, 0, 0.2), 0 0 10px rgba(255, 106, 0, 0.1);
+        filter: drop-shadow(0 0 2px rgba(255, 106, 0, 0.3));
     }
     100% {
-        text-shadow: 0 0 15px rgba(255, 145, 0, 0.6), 0 0 25px rgba(255, 145, 0, 0.3);
-        filter: drop-shadow(0 0 6px rgba(255, 145, 0, 0.7));
+        text-shadow: 0 0 15px rgba(255, 106, 0, 0.6), 0 0 25px rgba(255, 106, 0, 0.3);
+        filter: drop-shadow(0 0 6px rgba(255, 106, 0, 0.7));
     }
 }
 
@@ -258,23 +287,69 @@ body {
 }
 @keyframes markerPulse {
     0% {
-        box-shadow: 0 0 0 0 rgba(255, 145, 0, 0.7);
+        box-shadow: 0 0 0 0 rgba(0, 240, 255, 0.7);
     }
     70% {
-        box-shadow: 0 0 0 10px rgba(255, 145, 0, 0);
+        box-shadow: 0 0 0 10px rgba(0, 240, 255, 0);
     }
     100% {
-        box-shadow: 0 0 0 0 rgba(255, 145, 0, 0);
+        box-shadow: 0 0 0 0 rgba(0, 240, 255, 0);
     }
 }
 
 /* Custom Level Ring */
 .level-ring-gold {
-    background: conic-gradient(#ff9100 0%, #ffdb78 70%, transparent 70%);
+    background: conic-gradient(#ff6a00 0%, #ffc078 70%, transparent 70%);
 }
 .level-ring-purple {
-    background: conic-gradient(#8b5cf6 0%, #cb95ff 50%, transparent 50%);
+    background: conic-gradient(#a855f7 0%, #d8b4fe 50%, transparent 50%);
 }
 .level-ring-bronze {
-    background: conic-gradient(#a48c7a 0%, #ffdcc1 30%, transparent 30%);
+    background: conic-gradient(#b45309 0%, #fde68a 30%, transparent 30%);
+}
+
+/* ── NEW CYBERPUNK GLASSMORPHISM THEME ── */
+.glass-panel {
+    background: rgba(11, 16, 26, 0.65) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+}
+
+.neon-glow-primary {
+    box-shadow: 0 0 20px rgba(255, 106, 0, 0.25);
+}
+
+.neon-glow-secondary {
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.25);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #ff6a00, #ff9100) !important;
+    color: #ffffff !important;
+    transition: all 0.2s ease;
+}
+.btn-primary:hover {
+    box-shadow: 0 0 25px rgba(255, 106, 0, 0.45) !important;
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    border: 1px solid #00f0ff !important;
+    color: #00f0ff !important;
+    transition: all 0.2s ease;
+    background: transparent !important;
+}
+.btn-secondary:hover {
+    box-shadow: 0 0 25px rgba(0, 240, 255, 0.2) !important;
+    background: rgba(0, 240, 255, 0.1) !important;
+    transform: translateY(-2px);
+}
+
+.bg-obsidian {
+    background-color: #060a13;
+    background-image: 
+        radial-gradient(circle at 15% 50%, rgba(0, 240, 255, 0.04), transparent 30%),
+        radial-gradient(circle at 85% 30%, rgba(255, 106, 0, 0.04), transparent 30%);
 }

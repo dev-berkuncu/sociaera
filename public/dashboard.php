@@ -97,50 +97,47 @@ $categoryMeta = [
 $pageTitle = 'Ana Sayfa';
 $activeNav = 'dashboard';
 require_once __DIR__ . '/partials/app_header.php';
-?>
-
 <section class="flex-1 flex flex-col gap-8 pb-8 min-w-0">
 
     <!-- ── HERO: Check-in CTA + İstatistikler ── -->
-    <div class="relative overflow-hidden rounded-2xl border border-white/8 p-6 md:p-8"
-         style="background:linear-gradient(135deg,rgba(255,145,0,0.08) 0%,rgba(30,30,31,0.9) 60%);">
-        <div class="absolute top-0 right-0 w-80 h-80 rounded-full blur-3xl pointer-events-none"
-             style="background:rgba(255,145,0,0.06);transform:translate(30%,-30%);"></div>
+    <div class="relative overflow-hidden rounded-2xl border border-white/5 glass-panel p-6 md:p-8">
+        <!-- Accent Glows -->
+        <div class="absolute -top-20 -right-20 w-80 h-80 rounded-full blur-[100px] pointer-events-none bg-primary/10"></div>
+        <div class="absolute -bottom-20 -left-20 w-80 h-80 rounded-full blur-[100px] pointer-events-none bg-secondary/5"></div>
 
         <div class="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
             <div>
-                <p class="text-[11px] text-on-surface-variant font-mono uppercase tracking-widest mb-1">Hoş geldin 👋</p>
-                <h1 class="text-2xl md:text-3xl font-black text-on-surface tracking-tight mb-5">
+                <p class="text-[10px] text-slate-500 font-mono uppercase tracking-widest mb-1.5">Kullanıcı HUD // Giriş Başarılı</p>
+                <h1 class="text-2xl md:text-3xl font-black text-on-surface tracking-tight mb-5 font-mono">
                     <?php echo escape($currentUser['gta_character_name'] ?: $currentUser['username']); ?>
                 </h1>
                 <div class="flex flex-wrap gap-2.5">
                     <div class="stat-pill">
                         <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings:'FILL' 1;">location_on</span>
                         <span class="font-bold"><?php echo (int)($stats['checkins'] ?? 0); ?></span>
-                        <span class="text-on-surface-variant">Check-in</span>
+                        <span class="text-slate-400">Check-in</span>
                     </div>
                     <?php if ($streak > 0): ?>
-                    <div class="stat-pill" style="border-color:rgba(255,145,0,0.25);">
-                        <span class="material-symbols-outlined text-[#ff9100] text-sm streak-pulse" style="font-variation-settings:'FILL' 1;">local_fire_department</span>
+                    <div class="stat-pill" style="border-color:rgba(255,106,0,0.25);">
+                        <span class="material-symbols-outlined text-primary text-sm streak-pulse" style="font-variation-settings:'FILL' 1;">local_fire_department</span>
                         <span class="font-bold"><?php echo $streak; ?> Gün</span>
-                        <span style="color:#ff9100;opacity:0.7;">Seri</span>
+                        <span style="color:#ff6a00;opacity:0.9;">Seri</span>
                     </div>
                     <?php endif; ?>
                     <div class="stat-pill">
-                        <span class="material-symbols-outlined text-emerald-400 text-sm" style="font-variation-settings:'FILL' 1;">calendar_today</span>
+                        <span class="material-symbols-outlined text-secondary text-sm" style="font-variation-settings:'FILL' 1;">calendar_today</span>
                         <span class="font-bold"><?php echo min(5, $weeklyCheckins); ?>/5</span>
-                        <span class="text-on-surface-variant">Bu Hafta</span>
+                        <span class="text-slate-400">Haftalık</span>
                     </div>
                     <div class="stat-pill">
                         <span class="material-symbols-outlined text-tertiary text-sm" style="font-variation-settings:'FILL' 1;">military_tech</span>
-                        <span class="font-bold">Seviye <?php echo $userLevel; ?></span>
+                        <span class="font-bold">SEVİYE <?php echo $userLevel; ?></span>
                     </div>
                 </div>
             </div>
 
             <a href="<?php echo BASE_URL; ?>/venues" id="hero-checkin-btn"
-               class="group flex items-center gap-3 text-white font-bold px-7 py-4 rounded-2xl transition-all active:scale-95 shrink-0 self-start sm:self-auto"
-               style="background:linear-gradient(135deg,#ff9100,#ff6b00);box-shadow:0 0 30px rgba(255,145,0,0.3);">
+               class="group flex items-center gap-3 text-white font-bold px-7 py-4 rounded-xl transition-all active:scale-95 shrink-0 self-start sm:self-auto btn-primary shadow-[0_0_30px_rgba(255,106,0,0.2)]">
                 <span class="material-symbols-outlined text-xl group-hover:scale-110 transition-transform" style="font-variation-settings:'FILL' 1;">add_location_alt</span>
                 Check-in Yap
                 <span class="material-symbols-outlined text-base opacity-80 group-hover:translate-x-1 transition-transform">arrow_forward</span>
@@ -152,7 +149,7 @@ require_once __DIR__ . '/partials/app_header.php';
     <?php if (!empty($friendActivity)): ?>
     <div>
         <div class="flex items-center justify-between mb-4">
-            <h2 class="text-sm font-bold text-on-surface flex items-center gap-2">
+            <h2 class="text-xs font-bold font-mono text-slate-400 uppercase tracking-wider flex items-center gap-2">
                 <span class="material-symbols-outlined text-secondary text-base" style="font-variation-settings:'FILL' 1;">group</span>
                 Arkadaşlar Ne Yapıyor?
             </h2>
@@ -163,26 +160,28 @@ require_once __DIR__ . '/partials/app_header.php';
                 $faAvatar = safeAvatarUrl($fa['avatar'] ?? null, $fa['username'] ?? 'U');
             ?>
             <a href="<?php echo BASE_URL; ?>/venue-detail?id=<?php echo (int)$fa['venue_id']; ?>"
-               class="group flex items-center gap-3 p-3.5 rounded-xl border border-white/5 bg-surface-container/50 hover:bg-surface-container hover:border-white/10 transition-all">
+               class="group flex items-center gap-3 p-3.5 rounded-xl border border-white/5 glass-panel hover:border-secondary/40 transition-all duration-300 hover:-translate-y-0.5 shadow-lg">
                 <!-- Avatar + check-in pin -->
                 <div class="relative flex-shrink-0">
                     <img src="<?php echo $faAvatar; ?>" alt=""
-                         class="w-10 h-10 rounded-full object-cover border-2 border-white/10 group-hover:border-primary/30 transition-colors" width="40" height="40">
-                    <div class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-[#131314] flex items-center justify-center"
-                         style="background:<?php echo $faMeta['color']; ?>;">
+                          class="w-10 h-10 rounded-full object-cover border-2 border-white/10 group-hover:border-secondary/50 transition-colors" width="40" height="40">
+                    <div class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-[#060a13] flex items-center justify-center shadow-[0_0_10px_rgba(0,0,0,0.5)]"
+                          style="background:<?php echo $faMeta['color']; ?>;">
                         <span class="material-symbols-outlined text-white" style="font-size:10px;font-variation-settings:'FILL' 1;"><?php echo $faMeta['icon']; ?></span>
                     </div>
                 </div>
                 <!-- İçerik -->
                 <div class="flex-grow min-w-0">
-                    <div class="text-sm font-semibold text-on-surface truncate group-hover:text-primary transition-colors">
-                        <span class="text-on-surface-variant font-normal">@<?php echo escape($fa['tag'] ?: $fa['username']); ?></span>
-                        → <?php echo escape($fa['venue_name']); ?>
+                    <div class="text-sm font-semibold text-on-surface truncate">
+                        <span class="text-slate-400 font-mono font-normal">@<?php echo escape($fa['tag'] ?: $fa['username']); ?></span>
+                        <span class="text-slate-500">→</span>
+                        <span class="text-secondary font-bold group-hover:text-primary transition-colors"><?php echo escape($fa['venue_name']); ?></span>
                     </div>
-                    <div class="text-[11px] text-on-surface-variant mt-0.5">
-                        <?php echo timeAgo($fa['created_at']); ?>
+                    <div class="text-[10px] text-slate-500 font-mono mt-0.5 flex items-center gap-1.5">
+                        <span><?php echo timeAgo($fa['created_at']); ?></span>
                         <?php if (!empty($fa['note'])): ?>
-                        · <span class="italic"><?php echo escape(mb_strimwidth($fa['note'], 0, 30, '…')); ?></span>
+                        <span>·</span>
+                        <span class="italic text-slate-400 font-sans">"<?php echo escape(mb_strimwidth($fa['note'], 0, 30, '…')); ?>"</span>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -196,11 +195,11 @@ require_once __DIR__ . '/partials/app_header.php';
     <?php if (!empty($trendVenues)): ?>
     <div>
         <div class="flex items-center justify-between mb-4">
-            <h2 class="text-sm font-bold text-on-surface flex items-center gap-2">
-                <span class="material-symbols-outlined text-[#ff9100] text-base" style="font-variation-settings:'FILL' 1;">trending_up</span>
+            <h2 class="text-xs font-bold font-mono text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary text-base" style="font-variation-settings:'FILL' 1;">trending_up</span>
                 Bu Hafta Popüler
             </h2>
-            <a href="<?php echo BASE_URL; ?>/venues" class="text-xs text-on-surface-variant hover:text-primary transition-colors font-semibold flex items-center gap-0.5">
+            <a href="<?php echo BASE_URL; ?>/venues" class="text-xs text-secondary hover:text-primary transition-colors font-mono uppercase tracking-wider flex items-center gap-0.5">
                 Tümü <span class="material-symbols-outlined text-sm">chevron_right</span>
             </a>
         </div>
@@ -213,9 +212,9 @@ require_once __DIR__ . '/partials/app_header.php';
                 $checkinCount = (int)($v['weekly_checkins'] ?? 0);
             ?>
             <a href="<?php echo BASE_URL; ?>/venue-detail?id=<?php echo $v['id']; ?>"
-               class="group rounded-2xl overflow-hidden border border-white/5 bg-surface-container hover:border-white/15 hover:shadow-[0_8px_30px_-8px_rgba(0,0,0,0.5)] transition-all active:scale-[0.98] flex flex-col <?php echo $isHero ? 'md:col-span-2 md:row-span-2' : ''; ?>">
+               class="group rounded-2xl overflow-hidden border border-white/5 glass-panel hover:border-primary/40 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_-8px_rgba(0,240,255,0.15)] flex flex-col <?php echo $isHero ? 'md:col-span-2 md:row-span-2' : ''; ?>">
 
-                <div class="relative overflow-hidden bg-surface-container-high <?php echo $isHero ? 'h-44 md:h-56' : 'h-32'; ?>">
+                <div class="relative overflow-hidden bg-slate-950/40 <?php echo $isHero ? 'h-44 md:h-56' : 'h-32'; ?>">
                     <?php if (!empty($v['cover_image'])): ?>
                         <img src="<?php echo BASE_URL . '/uploads/venues/' . escape($v['cover_image']); ?>"
                              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
@@ -223,37 +222,37 @@ require_once __DIR__ . '/partials/app_header.php';
                         <img src="<?php echo uploadUrl('posts', $v['image']); ?>"
                              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
                     <?php else: ?>
-                        <div class="w-full h-full flex items-center justify-center" style="background:<?php echo $meta['color']; ?>18;">
-                            <span class="material-symbols-outlined text-5xl" style="color:<?php echo $meta['color']; ?>;font-variation-settings:'FILL' 1;"><?php echo $meta['icon']; ?></span>
+                        <div class="w-full h-full flex items-center justify-center bg-slate-950/20">
+                            <span class="material-symbols-outlined text-5xl opacity-30" style="color:<?php echo $meta['color']; ?>;font-variation-settings:'FILL' 1;"><?php echo $meta['icon']; ?></span>
                         </div>
                     <?php endif; ?>
 
-                    <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(0,0,0,0.7) 0%,transparent 60%);"></div>
+                    <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(6,10,19,0.9) 0%,transparent 60%);"></div>
 
                     <!-- Kategori ikonu -->
-                    <div class="absolute bottom-3 left-3 w-9 h-9 rounded-xl flex items-center justify-center border border-white/20"
-                         style="background:<?php echo $meta['color']; ?>ee;backdrop-filter:blur(8px);">
+                    <div class="absolute bottom-3 left-3 w-9 h-9 rounded-xl flex items-center justify-center border border-white/10"
+                         style="background:<?php echo $meta['color']; ?>dd;backdrop-filter:blur(8px);">
                         <span class="material-symbols-outlined text-white text-[17px]" style="font-variation-settings:'FILL' 1;"><?php echo $meta['icon']; ?></span>
                     </div>
 
                     <!-- Check-in count -->
-                    <div class="absolute bottom-3 right-3 flex items-center gap-1 text-white text-[11px] font-bold px-2 py-1 rounded-lg border border-white/15" style="background:rgba(0,0,0,0.55);backdrop-filter:blur(6px);">
-                        <span class="material-symbols-outlined text-primary text-[11px]" style="font-variation-settings:'FILL' 1;">location_on</span>
-                        <?php echo $checkinCount; ?> bu hafta
+                    <div class="absolute bottom-3 right-3 flex items-center gap-1 text-white text-[10px] font-bold px-2 py-1 rounded-lg border border-white/10 font-mono" style="background:rgba(6,10,19,0.75);backdrop-filter:blur(6px);">
+                        <span class="material-symbols-outlined text-secondary text-[11px] animate-pulse" style="font-variation-settings:'FILL' 1;">location_on</span>
+                        <?php echo $checkinCount; ?> check-in
                     </div>
 
                     <!-- Sıra badge -->
                     <?php if ($idx < 3): ?>
-                    <div class="absolute top-3 left-3 w-6 h-6 rounded-full flex items-center justify-center font-black text-[11px] border"
-                         style="<?php echo $idx === 0 ? 'background:#FFD700;border-color:#FFD700;color:#000;box-shadow:0 0 10px rgba(255,215,0,0.5)' : ($idx === 1 ? 'background:#C0C0C0;border-color:#C0C0C0;color:#000' : 'background:#CD7F32;border-color:#CD7F32;color:#fff'); ?>">
+                    <div class="absolute top-3 left-3 w-6 h-6 rounded-full flex items-center justify-center font-mono font-black text-[11px] border"
+                         style="<?php echo $idx === 0 ? 'background:#ff6a00;border-color:#ff6a00;color:#fff;box-shadow:0 0 10px rgba(255,106,0,0.6)' : ($idx === 1 ? 'background:#00f0ff;border-color:#00f0ff;color:#000;box-shadow:0 0 10px rgba(0,240,255,0.6)' : 'background:#a855f7;border-color:#a855f7;color:#fff;box-shadow:0 0 10px rgba(168,85,247,0.6)'); ?>">
                         <?php echo $idx + 1; ?>
                     </div>
                     <?php endif; ?>
 
                     <?php if (isset($v['is_open'])): ?>
-                    <div class="absolute top-3 right-3 flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-lg border border-white/10 <?php echo $v['is_open'] ? 'text-emerald-400' : 'text-red-400'; ?>" style="background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);">
-                        <span class="w-1.5 h-1.5 rounded-full <?php echo $v['is_open'] ? 'bg-emerald-400' : 'bg-red-400'; ?>"></span>
-                        <?php echo $v['is_open'] ? 'Açık' : 'Kapalı'; ?>
+                    <div class="absolute top-3 right-3 flex items-center gap-1 text-[10px] font-mono font-bold px-2 py-1 rounded-lg border border-white/10 <?php echo $v['is_open'] ? 'text-emerald-400' : 'text-rose-400'; ?>" style="background:rgba(6,10,19,0.8);backdrop-filter:blur(6px);">
+                        <span class="w-1.5 h-1.5 rounded-full <?php echo $v['is_open'] ? 'bg-emerald-400 animate-pulse' : 'bg-rose-400'; ?>"></span>
+                        <?php echo $v['is_open'] ? 'AÇIK' : 'KAPALI'; ?>
                     </div>
                     <?php endif; ?>
                 </div>
@@ -262,7 +261,7 @@ require_once __DIR__ . '/partials/app_header.php';
                     <div class="font-bold <?php echo $isHero ? 'text-base' : 'text-sm'; ?> text-on-surface group-hover:text-primary transition-colors truncate">
                         <?php echo escape($v['name']); ?>
                     </div>
-                    <div class="text-[11px] font-semibold mt-0.5" style="color:<?php echo $meta['color']; ?>;opacity:0.8;">
+                    <div class="text-[10px] font-semibold font-mono mt-0.5 uppercase tracking-wider" style="color:<?php echo $meta['color']; ?>;opacity:0.9;">
                         <?php echo escape($categories[$v['category'] ?? 'diger'] ?? 'Mekan'); ?>
                     </div>
                 </div>
@@ -275,22 +274,21 @@ require_once __DIR__ . '/partials/app_header.php';
     <!-- ── SON CHECK-İN'LERİM ── -->
     <div>
         <div class="flex items-center justify-between mb-4">
-            <h2 class="text-sm font-bold text-on-surface flex items-center gap-2">
+            <h2 class="text-xs font-bold font-mono text-slate-400 uppercase tracking-wider flex items-center gap-2">
                 <span class="material-symbols-outlined text-primary text-base" style="font-variation-settings:'FILL' 1;">history</span>
                 Son Check-in'lerim
             </h2>
-            <a href="<?php echo BASE_URL; ?>/profile" class="text-xs text-on-surface-variant hover:text-primary transition-colors font-semibold flex items-center gap-0.5">
+            <a href="<?php echo BASE_URL; ?>/profile" class="text-xs text-secondary hover:text-primary transition-colors font-mono uppercase tracking-wider flex items-center gap-0.5">
                 Tümü <span class="material-symbols-outlined text-sm">chevron_right</span>
             </a>
         </div>
 
         <?php if (empty($recentCheckins)): ?>
-        <div class="rounded-2xl border border-dashed border-white/10 p-8 text-center">
-            <span class="material-symbols-outlined text-on-surface-variant text-4xl mb-3 block opacity-25">pin_drop</span>
-            <p class="text-sm text-on-surface-variant mb-4">Henüz check-in yapmadın.</p>
+        <div class="rounded-2xl border border-dashed border-white/10 p-8 text-center glass-panel">
+            <span class="material-symbols-outlined text-primary text-4xl mb-3 block opacity-40 animate-bounce">pin_drop</span>
+            <p class="text-sm text-slate-400 mb-4 font-mono text-xs">Henüz check-in yapmadın.</p>
             <a href="<?php echo BASE_URL; ?>/venues"
-               class="inline-flex items-center gap-2 text-white font-bold px-5 py-2.5 rounded-xl text-sm active:scale-95 transition-all"
-               style="background:linear-gradient(135deg,#ff9100,#ff6b00);box-shadow:0 0 15px rgba(255,145,0,0.25);">
+               class="inline-flex items-center gap-2 text-white font-bold px-5 py-2.5 rounded-xl text-sm active:scale-95 transition-all btn-primary shadow-[0_0_15px_rgba(255,106,0,0.25)]">
                 <span class="material-symbols-outlined text-base" style="font-variation-settings:'FILL' 1;">add_location_alt</span>
                 İlk Check-in'ini Yap
             </a>
@@ -302,27 +300,28 @@ require_once __DIR__ . '/partials/app_header.php';
                 $ciAvatar = safeAvatarUrl($ci['avatar'] ?? null, $ci['username'] ?? 'U');
             ?>
             <a href="<?php echo BASE_URL; ?>/venue-detail?id=<?php echo (int)($ci['venue_id'] ?? 0); ?>"
-               class="group flex items-center gap-3 p-4 rounded-xl border border-white/5 bg-surface-container/50 hover:bg-surface-container hover:border-white/10 transition-all">
+               class="group flex items-center gap-3 p-4 rounded-xl border border-white/5 glass-panel hover:border-primary/40 transition-all duration-300 hover:-translate-y-0.5 shadow-lg">
                 <div class="relative flex-shrink-0">
                     <img src="<?php echo $ciAvatar; ?>" alt="" class="w-10 h-10 rounded-full object-cover border-2 border-white/10 group-hover:border-primary/30 transition-colors" width="40" height="40">
-                    <div class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-[#131314] flex items-center justify-center"
+                    <div class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-[#060a13] flex items-center justify-center shadow-[0_0_10px_rgba(0,0,0,0.5)]"
                          style="background:<?php echo $ciMeta['color']; ?>;">
                         <span class="material-symbols-outlined text-white" style="font-size:9px;font-variation-settings:'FILL' 1;"><?php echo $ciMeta['icon']; ?></span>
                     </div>
                 </div>
                 <div class="flex-grow min-w-0">
-                    <div class="font-semibold text-sm text-on-surface group-hover:text-primary transition-colors truncate">
+                    <div class="font-bold text-sm text-on-surface group-hover:text-primary transition-colors truncate">
                         <?php echo escape($ci['venue_name'] ?? 'Mekan'); ?>
                     </div>
-                    <div class="text-[11px] text-on-surface-variant mt-0.5 flex items-center gap-1">
-                        <span class="material-symbols-outlined text-[11px]">schedule</span>
-                        <?php echo timeAgo($ci['created_at']); ?>
+                    <div class="text-[10px] text-slate-500 font-mono mt-0.5 flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-[11px] text-slate-500">schedule</span>
+                        <span><?php echo timeAgo($ci['created_at']); ?></span>
                         <?php if (!empty($ci['note'])): ?>
-                        · <span class="italic truncate"><?php echo escape(mb_strimwidth($ci['note'], 0, 28, '…')); ?></span>
+                        <span>·</span>
+                        <span class="italic text-slate-400 font-sans">"<?php echo escape(mb_strimwidth($ci['note'], 0, 28, '…')); ?>"</span>
                         <?php endif; ?>
                     </div>
                 </div>
-                <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors flex-shrink-0">chevron_right</span>
+                <span class="material-symbols-outlined text-slate-500 group-hover:text-primary transition-colors flex-shrink-0">chevron_right</span>
             </a>
             <?php endforeach; ?>
         </div>
@@ -336,12 +335,18 @@ require_once __DIR__ . '/partials/app_header.php';
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    background: rgba(0,0,0,0.35);
-    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(11, 16, 26, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: 999px;
     padding: 6px 14px;
-    font-size: 13px;
+    font-size: 11px;
+    font-family: 'JetBrains Mono', 'Share Tech Mono', monospace;
     color: #e5e2e3;
+    backdrop-filter: blur(8px);
+}
+</style>
+
+<?php require_once __DIR__ . '/partials/app_footer.php'; ?>e2e3;
 }
 </style>
 
