@@ -165,12 +165,19 @@ body {
 .swarm-avatar-btn:hover { border-color: var(--color-primary); }
 .swarm-avatar-btn img { width: 100%; height: 100%; object-fit: cover; }
 
-/* ── MAIN LAYOUT ──────────────────────────────────────────── */
+/* ── DARK MODE OVERRIDE — Tailwind'in OS dark mode'unu sıfırla ── */
+@media (prefers-color-scheme: dark) {
+  html, body { background: #F5F4F0 !important; color: #1A1A1A !important; }
+  * { border-color: inherit; }
+}
+
 .swarm-layout {
   max-width: 960px;
   margin: 0 auto;
   padding: 16px 16px 80px;
-  display: flex;
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
   gap: 24px;
   align-items: flex-start;
 }
@@ -212,6 +219,7 @@ body {
   .swarm-right-panel { display: flex; }
   .swarm-layout { max-width: 920px; }
 }
+
 
 /* ── CARD ─────────────────────────────────────────────────── */
 .swarm-card {

@@ -61,7 +61,11 @@ if (Auth::check() && isset($currentUser)) {
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta name="csrf-token" content="<?php echo csrfToken(); ?>"/>
-<style>body{opacity:0}body.ready{opacity:1;transition:opacity .15s ease-in}</style>
+<style>
+  body{opacity:0}
+  body.ready{opacity:1;transition:opacity .15s ease-in}
+  html, body { background:#F5F4F0 !important; color:#1A1A1A !important; }
+</style>
 <script>window.BASE_URL = '<?php echo BASE_URL; ?>';</script>
 
 <title><?php echo View::title($pageTitle ?? 'Sociaera'); ?></title>
@@ -72,10 +76,10 @@ if (Auth::check() && isset($currentUser)) {
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block" rel="stylesheet"/>
 
-<!-- Tailwind (sadece utility class'lar için) -->
 <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
 <script id="tailwind-config">
 tailwind.config = {
+    darkMode: 'class',
     theme: {
         extend: {
             colors: {
