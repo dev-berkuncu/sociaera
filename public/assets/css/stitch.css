@@ -90,12 +90,13 @@ body {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: #fff;
-  border-bottom: 1px solid var(--border);
+  background: #ffffff;
+  border-bottom: 2px solid #EBEBEB;
   padding: 10px 16px;
-  display: flex;
+  display: flex !important;
   align-items: center;
   gap: 12px;
+  min-height: 56px;
 }
 
 .swarm-topnav-logo {
@@ -184,13 +185,16 @@ body {
 
 /* Sayfalar swarm-feed div açmadan da doğrudan içerik yazabilir */
 .swarm-layout > section,
-.swarm-layout > div.swarm-feed {
+.swarm-layout > div {
   flex: 1;
   min-width: 0;
   max-width: 600px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+}
+
+/* Sağ panel swarm-layout içinde flex child olarak soldan sonra gelir */
+.swarm-layout > aside.swarm-right-panel {
+  flex: none !important;
+  max-width: 280px !important;
 }
 
 .swarm-feed {

@@ -62,8 +62,6 @@ if (Auth::check() && isset($currentUser)) {
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta name="csrf-token" content="<?php echo csrfToken(); ?>"/>
 <style>
-  body{opacity:0}
-  body.ready{opacity:1;transition:opacity .15s ease-in}
   html, body { background:#F5F4F0 !important; color:#1A1A1A !important; }
 </style>
 <script>window.BASE_URL = '<?php echo BASE_URL; ?>';</script>
@@ -97,19 +95,10 @@ tailwind.config = {
 <!-- Swarm Design System -->
 <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/stitch.css"/>
 
-<script>
-(function(){
-    var t = setTimeout(function(){ document.body.classList.add('ready'); }, 1500);
-    if (document.fonts && document.fonts.ready) {
-        document.fonts.ready.then(function(){ clearTimeout(t); document.body.classList.add('ready'); });
-    } else {
-        clearTimeout(t); document.body.classList.add('ready');
-    }
-})();
-</script>
+<!-- stitch.css yüklendi -->
 <script defer src="<?php echo BASE_URL; ?>/assets/js/main.js"></script>
 </head>
-<body>
+<body class="ready">
 
 <?php if (Auth::check() && isset($currentUser)): ?>
 
