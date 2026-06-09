@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+<html class="dark" lang="tr">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Sociaera — Cyber Roleplay Portal</title>
+    
+    <!-- Fonts: Outfit for UI, Share Tech Mono for cyber/receipt elements -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    
+    <!-- Material Symbols -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet"/>
+    
+    <!-- Tailwind CSS with CDN -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            bg: "#060a13",
+                            dark: "#0b0c10",
+                            panel: "rgba(11, 12, 16, 0.65)",
+                            glass: "rgba(16, 20, 30, 0.45)",
+                            orange: "#ff6a00",
+                            orangeLight: "#ff9100",
+                            cyan: "#00f0ff",
+                            purple: "#a855f7",
+                            pink: "#ec4899",
+                            green: "#10b981",
+                            border: "rgba(255, 255, 255, 0.06)",
+                            borderGlow: "rgba(255, 106, 0, 0.15)"
+                        }
+                    },
+                    fontFamily: {
+                        sans: ["Outfit", "sans-serif"],
+                        mono: ["Share Tech Mono", "Courier New", "monospace"]
+                    },
+                    boxShadow: {
+                        neonOrange: "0 0 15px rgba(255, 106, 0, 0.35), 0 0 30px rgba(255, 106, 0, 0.15)",
+                        neonCyan: "0 0 15px rgba(0, 240, 255, 0.35), 0 0 30px rgba(0, 240, 255, 0.15)",
+                        neonPurple: "0 0 15px rgba(168, 85, 247, 0.35), 0 0 30px rgba(168, 85, 247, 0.15)"
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Styles that can't be easily done in Tailwind */
+        body {
+            background-color: #060a13;
+            overflow-x: hidden;
+        }
+
+        /* Scanline Effect */
+        .scanlines {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background: linear-gradient(
+                rgba(18, 16, 16, 0) 50%, 
+                rgba(0, 0, 0, 0.25) 50%
+            ), linear-gradient(
+                90deg,
+                rgba(255, 0, 0, 0.06),
+                rgba(0, 255, 0, 0.02),
+                rgba(0, 0, 255, 0.06)
+            );
+            background-size: 100% 4px, 6px 100%;
+            z-index: 999;
+            opacity: 0.4;
+        }
+
+        /* Glassmorphism Panel styles */
+        .cyber-panel {
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(11, 16, 26, 0.65);
+        }
+
+        /* Receipt Card Custom Styles */
+        .receipt-card {
+            position: relative;
+            background: rgba(9, 11, 16, 0.85);
+            border: 1px solid rgba(255, 106, 0, 0.15);
+            border-bottom: 2px dashed rgba(255, 106, 0, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .receipt-card:hover {
+            border-color: rgba(255, 106, 0, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(255, 106, 0, 0.08), 0 0 20px rgba(0, 0, 0, 0.6);
+        }
+        /* Top Ticket Jagged Border */
+        .receipt-card::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, transparent 50%, #ff6a00 50%), linear-gradient(225deg, transparent 50%, #ff6a00 50%);
+            background-size: 8px 8px;
+            background-repeat: repeat-x;
+            opacity: 0.85;
+            z-index: 10;
+        }
+        /* Bottom Jagged Tear Border */
+        .receipt-card-tear {
+            height: 8px;
+            background: linear-gradient(45deg, transparent 33.333%, rgba(255, 106, 0, 0.15) 33.333%, rgba(255, 106, 0, 0.15) 66.667%, transparent 66.667%),
+                        linear-gradient(-45deg, transparent 33.333%, rgba(255, 106, 0, 0.15) 33.333%, rgba(255, 106, 0, 0.15) 66.667%, transparent 66.667%);
+            background-size: 12px 24px;
+            background-position: 0 -12px;
+            width: 100%;
+        }
+
+        /* Pulse glow for FAB */
+        .fab-glow {
+            animation: fabPulse 2.5s infinite;
+        }
+        @keyframes fabPulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 106, 0, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(255, 106, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 106, 0, 0); }
+        }
+
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(6, 10, 19, 0.3);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 106, 0, 0.25);
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 106, 0, 0.5);
+        }
+
+        /* CRT Screen Flicker */
+        @keyframes crtFlicker {
+            0% { opacity: 0.98; }
+            50% { opacity: 1; }
+            100% { opacity: 0.99; }
+        }
+        .crt-monitor {
+            animation: crtFlicker 0.15s infinite;
+        }
+
+        /* Custom Map Grids */
+        .map-grid {
+            background-size: 40px 40px;
+            background-image: 
+                linear-gradient(to right, rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+        }
+        
+        /* Barcode Style */
+        .barcode-stripes {
+            background: repeating-linear-gradient(
+                90deg,
+                #fff,
+                #fff 2px,
+                transparent 2px,
+                transparent 5px,
+                #fff 5px,
+                #fff 8px
+            );
+        }
+    </style>
+</head>
+<body class="text-slate-100 font-sans selection:bg-cyber-orange selection:text-white antialiased min-h-screen relative overflow-hidden">
+    
+    <!-- Screen Overlay Scanlines -->
+    <div class="scanlines"></div>
+
+    <!-- ── MAP-FIRST WEB LAYOUT: Fullscreen Background Map ── -->
+    <div class="fixed inset-0 z-0 overflow-hidden pointer-events-auto bg-[#040810]">
+        <!-- Stylized Los Santos Neon Map (SVG & Canvas based grid for crisp look) -->
+        <svg class="absolute inset-0 w-full h-full opacity-35 select-none" xmlns="http://www.w3.org/2000/svg" id="tactical-map">
+            <defs>
+                <radialGradient id="map-glow" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stop-color="#00f0ff" stop-opacity="0.15"/>
+                    <stop offset="100%" stop-color="#060a13" stop-opacity="0"/>
+                </radialGradient>
+            </defs>
+            <!-- Map Vignette Glow -->
+            <rect width="100%" height="100%" fill="url(#map-glow)" />
+            
+            <!-- Map Coordinate Grid -->
+            <g class="map-grid-lines" stroke="rgba(0, 240, 255, 0.06)" stroke-width="0.5">
+                <!-- Grid will be generated dynamically or visually via CSS map-grid class -->
+            </g>
+
+            <!-- Stylized roads / topography paths representing Los Santos -->
+            <!-- Major Highway routes (styled as neon paths) -->
+            <path d="M -100 800 C 300 600, 500 800, 900 650 S 1400 300, 2200 400" fill="none" stroke="rgba(0, 240, 255, 0.12)" stroke-width="3" stroke-dasharray="10 5" />
+            <path d="M 400 -100 C 600 300, 300 700, 800 1200" fill="none" stroke="rgba(255, 106, 0, 0.08)" stroke-width="2.5" />
+            <path d="M 1200 -100 C 900 400, 1100 800, 1500 1300" fill="none" stroke="rgba(0, 240, 255, 0.08)" stroke-width="2" />
+            <path d="M -100 300 C 500 200, 800 500, 2100 100" fill="none" stroke="rgba(168, 85, 247, 0.08)" stroke-width="1.5" />
+
+            <!-- Coastline/Water outline shape -->
+            <path d="M -200 1500 Q 300 1100, 500 900 T 1000 850 T 1600 950 Q 1900 1200, 2200 1500" fill="rgba(0, 240, 255, 0.015)" stroke="rgba(0, 240, 255, 0.2)" stroke-width="1" />
+
+            <!-- Radar Scan Line -->
+            <line id="radar-sweep" x1="0" y1="0" x2="2000" y2="2000" stroke="rgba(0, 240, 255, 0.08)" stroke-width="1.5" class="origin-center" style="transform-origin: 50% 50%;" />
+
+            <!-- Grid Coordinates & Crosshairs overlay -->
+            <g class="text-[9px] font-mono fill-cyber-cyan/40">
+                <text x="20" y="30">LOC: 34.0522° N, 118.2437° W</text>
+                <text x="20" y="45">GRID: Z-294.04 (LS-METRO)</text>
+                <text x="20" y="60">SYS: LINK_OK // SE_PORTAL_ACTIVE</text>
+                
+                <!-- Crosshair marks -->
+                <path d="M 100 100 L 120 100 M 110 90 L 110 110" stroke="rgba(0, 240, 255, 0.2)" stroke-width="1" />
+                <circle cx="110" cy="100" r="15" fill="none" stroke="rgba(0, 240, 255, 0.1)" stroke-width="0.5" />
+            </g>
+        </svg>
+
+        <!-- Dynamic Map Grid overlay -->
+        <div class="absolute inset-0 map-grid opacity-40 z-0 pointer-events-none"></div>
+
+        <!-- Interactive Map Pins (Venues) -->
+        <div class="absolute inset-0 z-10 pointer-events-none" id="map-interactive-layer">
+            <!-- Bahama Mamas Pin -->
+            <div class="absolute top-[42%] left-[32%] pointer-events-auto cursor-pointer group" style="transform: translate(-50%, -50%);" onclick="selectVenue('Bahama Mamas Club', -1388.2, -586.4, 30.2, 'eglence')">
+                <div class="w-8 h-8 rounded-full bg-cyber-purple/20 border border-cyber-purple flex items-center justify-center shadow-[0_0_15px_rgba(168,85,247,0.5)] transition-all group-hover:scale-110">
+                    <span class="material-symbols-outlined text-cyber-purple text-[16px]" style="font-variation-settings: 'FILL' 1;">nightlife</span>
+                </div>
+                <div class="absolute top-1/2 left-9 -translate-y-1/2 bg-cyber-dark/90 border border-cyber-purple/30 text-[10px] font-mono px-2 py-0.5 rounded whitespace-nowrap text-cyber-purple opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    BAHAMA MAMAS CLUB [-1388, -586]
+                </div>
+                <!-- Pulsing outer circle -->
+                <div class="absolute -inset-2 rounded-full border border-cyber-purple/30 animate-ping opacity-60"></div>
+            </div>
+
+            <!-- Maze Bank Arena Pin -->
+            <div class="absolute top-[68%] left-[48%] pointer-events-auto cursor-pointer group" style="transform: translate(-50%, -50%);" onclick="selectVenue('Maze Bank Arena', -324.8, -1960.5, 22.1, 'eglence')">
+                <div class="w-8 h-8 rounded-full bg-cyber-cyan/20 border border-cyber-cyan flex items-center justify-center shadow-[0_0_15px_rgba(0,240,255,0.5)] transition-all group-hover:scale-110">
+                    <span class="material-symbols-outlined text-cyber-cyan text-[16px]" style="font-variation-settings: 'FILL' 1;">stadium</span>
+                </div>
+                <div class="absolute top-1/2 left-9 -translate-y-1/2 bg-cyber-dark/90 border border-cyber-cyan/30 text-[10px] font-mono px-2 py-0.5 rounded whitespace-nowrap text-cyber-cyan opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    MAZE BANK ARENA [-324, -1960]
+                </div>
+                <div class="absolute -inset-2 rounded-full border border-cyber-cyan/30 animate-ping opacity-60" style="animation-delay: 0.5s;"></div>
+            </div>
+
+            <!-- Tequi-la-la Pin -->
+            <div class="absolute top-[28%] left-[42%] pointer-events-auto cursor-pointer group" style="transform: translate(-50%, -50%);" onclick="selectVenue('Tequi-la-la Bar', -564.2, 275.8, 83.1, 'bar')">
+                <div class="w-8 h-8 rounded-full bg-cyber-orange/20 border border-cyber-orange flex items-center justify-center shadow-[0_0_15px_rgba(255,106,0,0.5)] transition-all group-hover:scale-110">
+                    <span class="material-symbols-outlined text-cyber-orange text-[16px]" style="font-variation-settings: 'FILL' 1;">sports_bar</span>
+                </div>
+                <div class="absolute top-1/2 left-9 -translate-y-1/2 bg-cyber-dark/90 border border-cyber-orange/30 text-[10px] font-mono px-2 py-0.5 rounded whitespace-nowrap text-cyber-orange opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    TEQUI-LA-LA BAR [-564, 275]
+                </div>
+                <div class="absolute -inset-2 rounded-full border border-cyber-orange/30 animate-ping opacity-60" style="animation-delay: 1s;"></div>
+            </div>
+
+            <!-- Vanilla Unicorn Pin -->
+            <div class="absolute top-[55%] left-[58%] pointer-events-auto cursor-pointer group" style="transform: translate(-50%, -50%);" onclick="selectVenue('Vanilla Unicorn', 128.3, -1298.4, 29.2, 'eglence')">
+                <div class="w-8 h-8 rounded-full bg-cyber-pink/20 border border-cyber-pink flex items-center justify-center shadow-[0_0_15px_rgba(236,72,153,0.5)] transition-all group-hover:scale-110">
+                    <span class="material-symbols-outlined text-cyber-pink text-[16px]" style="font-variation-settings: 'FILL' 1;">favorite</span>
+                </div>
+                <div class="absolute top-1/2 left-9 -translate-y-1/2 bg-cyber-dark/90 border border-cyber-pink/30 text-[10px] font-mono px-2 py-0.5 rounded whitespace-nowrap text-cyber-pink opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    VANILLA UNICORN [128, -1298]
+                </div>
+                <div class="absolute -inset-2 rounded-full border border-cyber-pink/30 animate-ping opacity-60" style="animation-delay: 0.7s;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── FULL APPLICATION WRAPPER ── -->
+    <div class="relative z-10 flex flex-col h-screen overflow-hidden crt-monitor">
+        
+        <!-- TOP STATUS HEADER -->
+        <header class="flex-shrink-0 w-full bg-cyber-dark/80 backdrop-blur-xl border-b border-cyber-border py-3 px-4 md:px-6 flex justify-between items-center z-50">
+            <!-- Logo & Portal Identity -->
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded bg-gradient-to-br from-cyber-orange to-cyber-pink flex items-center justify-center shadow-neonOrange">
+                    <span class="material-symbols-outlined text-white text-[20px] font-bold" style="font-variation-settings: 'wght' 700;">hive</span>
+                </div>
+                <div class="flex flex-col">
+                    <h1 class="font-bold text-sm tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-cyber-orange uppercase">
+                        Sociaera <span class="text-xs text-cyber-cyan font-mono font-normal">v3.8-RP</span>
+                    </h1>
+                    <span class="text-[9px] font-mono text-cyber-cyan tracking-wider leading-none">CONNECTED_TO: NETWORK_LOS_SANTOS</span>
+                </div>
+            </div>
+
+            <!-- Portal Center: Interactive HUD readout -->
+            <div class="hidden lg:flex items-center gap-6 font-mono text-[10px] text-slate-400">
+                <div class="flex items-center gap-2">
+                    <span class="w-1.5 h-1.5 rounded-full bg-cyber-green animate-pulse"></span>
+                    <span>LSPD NET: ONLINE</span>
+                </div>
+                <div class="w-px h-3 bg-cyber-border"></div>
+                <div>
+                    <span>GPS SIGNAL: LATCHED (45 CHANNELS)</span>
+                </div>
+                <div class="w-px h-3 bg-cyber-border"></div>
+                <div class="flex items-center gap-1.5 text-cyber-orange">
+                    <span class="material-symbols-outlined text-xs">local_fire_department</span>
+                    <span>14 ACTIVE CHECKS TONIGHT</span>
+                </div>
+            </div>
+
+            <!-- Top Header Actions: User Details -->
+            <div class="flex items-center gap-3 font-mono">
+                <!-- Cash display (styled like an In-Character HUD) -->
+                <div class="hidden sm:flex flex-col text-right">
+                    <span class="text-[9px] text-slate-500 uppercase leading-none">Bank Account</span>
+                    <span class="text-cyber-green font-bold text-xs">$1,482,904</span>
+                </div>
+                <div class="w-px h-6 bg-cyber-border hidden sm:block"></div>
+                
+                <!-- Character Avatar Pill -->
+                <div class="flex items-center gap-2 bg-slate-900/60 border border-cyber-border px-3 py-1.5 rounded-full hover:border-cyber-orange/40 transition-colors cursor-pointer">
+                    <div class="relative w-6 h-6 rounded-full overflow-hidden border border-cyber-orange">
+                        <!-- Default avatar image representing GTA character -->
+                        <img src="https://ui-avatars.com/api/?name=Berk+uncu&background=ff6a00&color=ffffff" alt="Avatar" class="w-full h-full object-cover">
+                    </div>
+                    <span class="text-[11px] font-bold text-slate-200">Berk Uncu</span>
+                    <span class="material-symbols-outlined text-[14px] text-slate-400">expand_more</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- MAIN LAYOUT: SPLIT SIDEBAR & BENTO FEED Grid -->
+        <div class="flex-grow flex w-full overflow-hidden max-w-[1920px] mx-auto relative">
+            
+            <!-- ── DESKTOP SIDEBAR: Transparent, Slim & Floating ── -->
+            <aside class="hidden md:flex flex-col justify-between items-center w-20 flex-shrink-0 bg-cyber-dark/50 backdrop-blur-xl border-r border-cyber-border py-6 z-40">
+                <!-- Navigation Items -->
+                <nav class="flex flex-col gap-5 w-full px-2">
+                    <a href="#feed" class="group flex flex-col items-center justify-center p-2.5 rounded-xl bg-cyber-orange/10 border border-cyber-orange/30 text-cyber-orange shadow-neonOrange transition-all" title="Aktivite Akışı" onclick="switchTab('feed')">
+                        <span class="material-symbols-outlined text-[24px]">explore</span>
+                        <span class="text-[9px] font-mono font-bold mt-1 uppercase tracking-wider">Feed</span>
+                    </a>
+                    
+                    <a href="#map" class="group flex flex-col items-center justify-center p-2.5 rounded-xl border border-transparent text-slate-400 hover:text-cyber-cyan hover:bg-cyber-cyan/5 hover:border-cyber-cyan/25 transition-all" title="Grid Radar Map" onclick="switchTab('map')">
+                        <span class="material-symbols-outlined text-[24px]">map</span>
+                        <span class="text-[9px] font-mono font-bold mt-1 uppercase tracking-wider">Radar</span>
+                    </a>
+
+                    <a href="#venues" class="group flex flex-col items-center justify-center p-2.5 rounded-xl border border-transparent text-slate-400 hover:text-cyber-orange hover:bg-cyber-orange/5 hover:border-cyber-orange/25 transition-all" title="Mekan Listesi" onclick="switchTab('venues')">
+                        <span class="material-symbols-outlined text-[24px]">storefront</span>
+                        <span class="text-[9px] font-mono font-bold mt-1 uppercase tracking-wider">Venues</span>
+                    </a>
+
+                    <a href="#faction" class="group flex flex-col items-center justify-center p-2.5 rounded-xl border border-transparent text-slate-400 hover:text-cyber-purple hover:bg-cyber-purple/5 hover:border-cyber-purple/25 transition-all" title="Birlik Telsizi" onclick="switchTab('faction')">
+                        <span class="material-symbols-outlined text-[24px]">settings_input_antenna</span>
+                        <span class="text-[9px] font-mono font-bold mt-1 uppercase tracking-wider">Radio</span>
+                    </a>
+
+                    <a href="#leaderboard" class="group flex flex-col items-center justify-center p-2.5 rounded-xl border border-transparent text-slate-400 hover:text-amber-400 hover:bg-amber-400/5 hover:border-amber-400/25 transition-all" title="Liderlik Tablosu" onclick="switchTab('leaderboard')">
+                        <span class="material-symbols-outlined text-[24px]">military_tech</span>
+                        <span class="text-[9px] font-mono font-bold mt-1 uppercase tracking-wider">Ranks</span>
+                    </a>
+                </nav>
+
+                <!-- Footer Operations (Settings / Logout) -->
+                <div class="flex flex-col gap-4 w-full px-2">
+                    <a href="#settings" class="group flex flex-col items-center justify-center p-2.5 rounded-xl border border-transparent text-slate-500 hover:text-slate-200 transition-colors" title="Sistem Ayarları">
+                        <span class="material-symbols-outlined text-[20px]">settings</span>
+                    </a>
+                    <a href="#disconnect" class="group flex flex-col items-center justify-center p-2.5 rounded-xl border border-transparent text-red-500/40 hover:text-red-400 transition-colors" title="Bağlantıyı Kes">
+                        <span class="material-symbols-outlined text-[20px]">power_settings_new</span>
+                    </a>
+                </div>
+            </aside>
+
+            <!-- ── MAIN FEED AREA: Bento Grid Floating on the Map ── -->
+            <main class="flex-grow overflow-y-auto p-4 md:p-6 pb-24 md:pb-6 relative z-30" id="main-content-scroll">
+                
+                <!-- Bento Grid Grid Layout (3 Column Grid on Desktop, 1 Column on Mobile) -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                    
+                    <!-- LEFT & CENTER COLUMN: FEED + STATUS (Spans 8 columns on large screens) -->
+                    <div class="lg:col-span-8 flex flex-col gap-6">
+
+                        <!-- ── TERMINAL INPUT PANEL ── -->
+                        <div class="cyber-panel p-4 rounded-xl border border-cyber-border/40 hover:border-cyber-cyan/30 transition-all relative overflow-hidden group">
+                            <!-- Cyber decoration lines -->
+                            <div class="absolute top-0 left-0 w-8 h-0.5 bg-cyber-cyan"></div>
+                            <div class="absolute top-0 left-0 w-0.5 h-8 bg-cyber-cyan"></div>
+                            <div class="absolute bottom-0 right-0 w-8 h-0.5 bg-cyber-cyan/40"></div>
+                            <div class="absolute bottom-0 right-0 w-0.5 h-8 bg-cyber-cyan/40"></div>
+
+                            <div class="flex justify-between items-center mb-3 border-b border-cyber-border pb-2">
+                                <div class="flex items-center gap-2 font-mono text-xs text-cyber-cyan">
+                                    <span class="material-symbols-outlined text-sm">terminal</span>
+                                    <span>CONSOLE://SOCIAERA.USER.CHECKIN</span>
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <span class="w-2 h-2 rounded-full bg-cyber-cyan animate-pulse"></span>
+                                    <span class="text-[9px] font-mono text-slate-400 tracking-wider">AWAITING_INPUT...</span>
+                                </div>
+                            </div>
+
+                            <!-- Form Area styled like terminal command lines -->
+                            <form onsubmit="submitCheckin(event)" class="space-y-3">
+                                <div class="font-mono text-xs bg-slate-950/70 p-3 rounded-lg border border-cyber-border relative">
+                                    <div class="flex flex-col gap-2">
+                                        <!-- Active Venue Indicator -->
+                                        <div class="flex flex-wrap items-center gap-2 text-[11px]">
+                                            <span class="text-cyber-orange font-bold uppercase tracking-wider">SELECTED VENUE:</span>
+                                            <div id="selected-venue-display" class="bg-cyber-orange/10 border border-cyber-orange/30 text-cyber-orange px-2 py-0.5 rounded font-bold flex items-center gap-1">
+                                                <span class="material-symbols-outlined text-xs">storefront</span>
+                                                <span id="active-venue-name">Bahama Mamas Club</span>
+                                                <button type="button" class="hover:text-white" onclick="clearSelectedVenue()">×</button>
+                                            </div>
+                                            <span class="text-slate-500">|</span>
+                                            <span class="text-cyber-cyan font-bold uppercase tracking-wider">COORDS:</span>
+                                            <span id="active-venue-coords" class="text-cyber-cyan">X: -1388.2, Y: -586.4, Z: 30.2</span>
+                                        </div>
+
+                                        <!-- Terminal input prompt line -->
+                                        <div class="flex items-start gap-1 mt-1">
+                                            <span class="text-cyber-cyan font-bold select-none whitespace-nowrap">C:\SOCIAERA\CHECKIN&gt;</span>
+                                            <!-- Textarea styled as raw terminal cursor text area -->
+                                            <textarea id="checkin-note-input" rows="2" 
+                                                class="flex-grow bg-transparent border-none p-0 text-slate-100 text-xs font-mono focus:ring-0 focus:outline-none resize-none placeholder-slate-600"
+                                                placeholder="/checkin [durum notu yazın veya /me komutu kullanın...]"
+                                                onfocus="this.parentElement.parentElement.parentElement.classList.add('shadow-neonCyan')"
+                                                onblur="this.parentElement.parentElement.parentElement.classList.remove('shadow-neonCyan')"
+                                                required></textarea>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Command hints floating -->
+                                    <div class="absolute bottom-1 right-2 text-[8px] text-slate-500 flex gap-2 select-none">
+                                        <span>CMD: /me [eylem]</span>
+                                        <span>/checkin [mekan]</span>
+                                    </div>
+                                </div>
+
+                                <!-- Actions Row -->
+                                <div class="flex justify-between items-center pt-1">
+                                    <!-- Attach Media button -->
+                                    <div class="flex gap-2">
+                                        <button type="button" class="flex items-center gap-1.5 px-3 py-1.5 rounded bg-slate-900/60 border border-cyber-border text-xs hover:text-cyber-cyan hover:border-cyber-cyan/35 transition-colors font-mono" onclick="simulateAttachPhoto()">
+                                            <span class="material-symbols-outlined text-sm">photo_camera</span>
+                                            <span class="hidden sm:inline">ATTACH PHOTO</span>
+                                        </button>
+                                        <!-- Photo Preview State -->
+                                        <div id="attached-photo-preview" class="hidden relative h-8 w-14 rounded overflow-hidden border border-cyber-cyan">
+                                            <img id="attached-img" src="" class="w-full h-full object-cover">
+                                            <button type="button" class="absolute inset-0 bg-black/40 flex items-center justify-center text-red-400 font-bold hover:bg-black/70" onclick="removeAttachedPhoto()">×</button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Submit Action -->
+                                    <button type="submit" class="flex items-center gap-2 px-5 py-2 rounded bg-gradient-to-r from-cyber-orange to-cyber-orangeLight font-mono font-bold text-xs text-white shadow-neonOrange hover:brightness-110 active:scale-95 transition-all">
+                                        <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">add_location_alt</span>
+                                        EXECUTE CHECKIN
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- ── ACTIVITY FEED SECTION (Receipt UI Estetiği) ── -->
+                        <div class="flex flex-col gap-6" id="activity-feed">
+                            
+                            <!-- TICKET 1: Gece Kulübü Giriş Bileti (Premium Nightclub Ticket) -->
+                            <article class="receipt-card p-5 group flex flex-col gap-3">
+                                
+                                <!-- Stamp Decoration -->
+                                <div class="absolute top-4 right-5 z-20 pointer-events-none">
+                                    <div class="ticket-stamp stamp-vip">GOLD VIP</div>
+                                </div>
+
+                                <!-- Header info -->
+                                <div class="flex items-center gap-3">
+                                    <img class="w-9 h-9 rounded-full border border-cyber-orange object-cover" src="https://ui-avatars.com/api/?name=Michael+DeSanta&background=00f0ff&color=ffffff" alt="Michael" />
+                                    <div class="flex flex-col min-w-0">
+                                        <div class="flex items-center gap-1.5 flex-wrap">
+                                            <span class="font-bold text-cyber-orange text-sm">Michael De Santa</span>
+                                            <span class="text-[10px] bg-cyber-orange/10 border border-cyber-orange/20 text-cyber-orange font-mono px-1.5 py-0.2 rounded font-bold">LEVEL 24</span>
+                                            <span class="text-xs text-slate-500 font-mono">• 12 dk önce</span>
+                                        </div>
+                                        <span class="text-xs text-slate-300">
+                                            <span class="text-white font-bold">Bahama Mamas Club</span> mekanında check-in yaptı.
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- Review text -->
+                                <p class="text-sm italic text-slate-300 pl-1 border-l-2 border-cyber-orange/40 py-0.5">
+                                    “Bahama Mamas bu akşam yanıyor! VIP locasından Los Santos'u izliyoruz. Viski mükemmel, müzik 10/10.”
+                                </p>
+
+                                <!-- Attached Image -->
+                                <div class="relative rounded-lg overflow-hidden aspect-video bg-slate-950 border border-cyber-border">
+                                    <img class="w-full h-full object-cover group-hover:scale-[1.01] transition-transform duration-700" src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3" alt="Nightclub event" />
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+                                    <div class="absolute bottom-3 left-4 font-mono text-[9px] text-cyber-cyan bg-slate-950/80 px-2 py-0.5 rounded border border-cyber-cyan/30">
+                                        LIVE_CAM://CAM_SEC_04 // BAHAMA_MAIN
+                                    </div>
+                                </div>
+
+                                <!-- ── Monospace Ticket details & Barcode (Receipt Aesthetic) ── -->
+                                <div class="ticket-meta-grid">
+                                    <div>OPERATOR: @m_desanta</div>
+                                    <div>TICKET ID: #CK-98421</div>
+                                    <div>COORDS: X: -1388.2 / Y: -586.4 / Z: 30.2</div>
+                                    <div>DATE: 09/06/2026 10:28 AM</div>
+                                    
+                                    <!-- Barcode Decoration -->
+                                    <div class="col-span-2 flex flex-col items-center mt-2 border-t border-cyber-border/40 pt-2 gap-1 font-mono">
+                                        <div class="w-full h-7 barcode-stripes opacity-45"></div>
+                                        <span class="text-[8px] text-slate-500 font-mono tracking-[0.2em]">*CK-98421-DESANTA-MAMAS*</span>
+                                    </div>
+                                </div>
+
+                                <!-- Interactive Buttons -->
+                                <div class="flex justify-between items-center mt-1 border-t border-cyber-border/20 pt-3 text-xs font-mono">
+                                    <div class="flex gap-4">
+                                        <button class="flex items-center gap-1 hover:text-cyber-pink transition-colors text-slate-400" onclick="toggleLike(this)">
+                                            <span class="material-symbols-outlined text-[18px]">favorite</span>
+                                            <span class="font-bold">24 LIKES</span>
+                                        </button>
+                                        <button class="flex items-center gap-1 hover:text-cyber-cyan transition-colors text-slate-400" onclick="toggleCommentsSection(98421)">
+                                            <span class="material-symbols-outlined text-[18px]">chat_bubble</span>
+                                            <span class="font-bold">3 RADIO COMMUNICATES</span>
+                                        </button>
+                                    </div>
+                                    <button class="flex items-center gap-1 hover:text-cyber-orange transition-colors text-slate-400" onclick="navigator.clipboard.writeText(window.location.href); alert('Bilet linki kopyalandı!')">
+                                        <span class="material-symbols-outlined text-[18px]">bookmark</span>
+                                        <span>ENCODE TICKET</span>
+                                    </button>
+                                </div>
+
+                                <!-- Radio Log Comments Section (Interactive Radio Logs) -->
+                                <div class="post-comments-section mt-2 pt-2 border-t border-dashed border-cyber-border/40 hidden" id="comments-98421">
+                                    <div class="radio-log-container mb-3 space-y-2 max-h-48 overflow-y-auto pr-1">
+                                        <div class="radio-log-item">
+                                            <span class="radio-time">[10:30]</span>
+                                            <span class="radio-tag">@f_clinton:</span>
+                                            <span class="radio-msg">Ben de yoldayım dostum, kapıda vale kuyruğu var mı?</span>
+                                        </div>
+                                        <div class="radio-log-item">
+                                            <span class="radio-time">[10:31]</span>
+                                            <span class="radio-tag">@m_desanta:</span>
+                                            <span class="radio-msg">Arka kapıyı kullan, şifre 'omega'. Vale dolu.</span>
+                                        </div>
+                                        <div class="radio-log-item">
+                                            <span class="radio-time">[10:32]</span>
+                                            <span class="radio-tag">@t_philips:</span>
+                                            <span class="radio-msg">Viskiyi içip durma, otoparkta bekliyorum acele et.</span>
+                                        </div>
+                                    </div>
+                                    <form class="flex gap-2" onsubmit="submitComment(event, 98421)">
+                                        <span class="text-cyber-cyan font-mono text-xs self-center">RADIO_IN:</span>
+                                        <input type="text" placeholder="Telsiz mesajı girin..." class="flex-grow radio-input-line bg-transparent border-none text-xs text-white focus:ring-0 focus:outline-none" required>
+                                        <button type="submit" class="p-1 text-cyber-cyan hover:text-cyber-orange"><span class="material-symbols-outlined text-sm">send</span></button>
+                                    </form>
+                                </div>
+                            </article>
+                            <div class="receipt-card-tear -mt-6 opacity-80 mb-4"></div>
+
+                            <!-- TICKET 2: Vale Fişi (Valet Voucher Style - Normal Post) -->
+                            <article class="receipt-card p-5 group flex flex-col gap-3">
+                                
+                                <!-- Stamp Decoration -->
+                                <div class="absolute top-4 right-5 z-20 pointer-events-none">
+                                    <div class="ticket-stamp stamp-approved">VALET VALIDATED</div>
+                                </div>
+
+                                <!-- Header info -->
+                                <div class="flex items-center gap-3">
+                                    <img class="w-9 h-9 rounded-full border border-cyber-cyan object-cover" src="https://ui-avatars.com/api/?name=Franklin+Clinton&background=a855f7&color=ffffff" alt="Franklin" />
+                                    <div class="flex flex-col min-w-0">
+                                        <div class="flex items-center gap-1.5 flex-wrap">
+                                            <span class="font-bold text-cyber-cyan text-sm">Franklin Clinton</span>
+                                            <span class="text-[10px] bg-cyber-cyan/10 border border-cyber-cyan/20 text-cyber-cyan font-mono px-1.5 py-0.2 rounded font-bold">LEVEL 18</span>
+                                            <span class="text-xs text-slate-500 font-mono">• 1 saat önce</span>
+                                        </div>
+                                        <span class="text-xs text-slate-300">
+                                            <span class="text-white font-bold">Maze Bank Arena</span> mekanında check-in yaptı.
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- Review text -->
+                                <p class="text-sm italic text-slate-300 pl-1 border-l-2 border-cyber-cyan/40 py-0.5">
+                                    “Maze Bank Arena otoparkındayım. Yeni Buffalo EVX'in vale fişini aldık. Çeyrek mil kapışmasına hazırız!”
+                                </p>
+
+                                <!-- ── Monospace Ticket details & Barcode (Receipt Aesthetic) ── -->
+                                <div class="ticket-meta-grid">
+                                    <div>OPERATOR: @f_clinton</div>
+                                    <div>TICKET ID: #CK-98319</div>
+                                    <div>COORDS: X: -324.8 / Y: -1960.5 / Z: 22.1</div>
+                                    <div>DATE: 09/06/2026 09:15 AM</div>
+                                    
+                                    <!-- Barcode Decoration -->
+                                    <div class="col-span-2 flex flex-col items-center mt-2 border-t border-cyber-border/40 pt-2 gap-1 font-mono">
+                                        <div class="w-full h-7 barcode-stripes opacity-45"></div>
+                                        <span class="text-[8px] text-slate-500 font-mono tracking-[0.2em]">*CK-98319-CLINTON-MAZE*</span>
+                                    </div>
+                                </div>
+
+                                <!-- Interactive Buttons -->
+                                <div class="flex justify-between items-center mt-1 border-t border-cyber-border/20 pt-3 text-xs font-mono">
+                                    <div class="flex gap-4">
+                                        <button class="flex items-center gap-1 hover:text-cyber-pink transition-colors text-slate-400" onclick="toggleLike(this)">
+                                            <span class="material-symbols-outlined text-[18px]">favorite</span>
+                                            <span class="font-bold">12 LIKES</span>
+                                        </button>
+                                        <button class="flex items-center gap-1 hover:text-cyber-cyan transition-colors text-slate-400" onclick="toggleCommentsSection(98319)">
+                                            <span class="material-symbols-outlined text-[18px]">chat_bubble</span>
+                                            <span class="font-bold">0 COMMUNICATES</span>
+                                        </button>
+                                    </div>
+                                    <button class="flex items-center gap-1 hover:text-cyber-orange transition-colors text-slate-400" onclick="navigator.clipboard.writeText(window.location.href); alert('Bilet linki kopyalandı!')">
+                                        <span class="material-symbols-outlined text-[18px]">bookmark</span>
+                                        <span>ENCODE TICKET</span>
+                                    </button>
+                                </div>
+
+                                <!-- Radio Log Comments Section -->
+                                <div class="post-comments-section mt-2 pt-2 border-t border-dashed border-cyber-border/40 hidden" id="comments-98319">
+                                    <div class="radio-log-container mb-3 space-y-2 max-h-48 overflow-y-auto pr-1">
+                                        <div class="text-center text-slate-500 py-3 text-[10px]">TELSİZ SESSSİZ // MESAJ YOK</div>
+                                    </div>
+                                    <form class="flex gap-2" onsubmit="submitComment(event, 98319)">
+                                        <span class="text-cyber-cyan font-mono text-xs self-center">RADIO_IN:</span>
+                                        <input type="text" placeholder="Telsiz mesajı girin..." class="flex-grow radio-input-line bg-transparent border-none text-xs text-white focus:ring-0 focus:outline-none" required>
+                                        <button type="submit" class="p-1 text-cyber-cyan hover:text-cyber-orange"><span class="material-symbols-outlined text-sm">send</span></button>
+                                    </form>
+                                </div>
+                            </article>
+                            <div class="receipt-card-tear -mt-6 opacity-80 mb-4"></div>
+
+                            <!-- TICKET 3: Denetleme Fişi (Mystery Shopper Ticket Style) -->
+                            <article class="receipt-card p-5 group flex flex-col gap-3">
+                                
+                                <!-- Stamp Decoration -->
+                                <div class="absolute top-4 right-5 z-20 pointer-events-none">
+                                    <div class="ticket-stamp stamp-mystery">DENETLENDİ</div>
+                                </div>
+
+                                <!-- Header info -->
+                                <div class="flex items-center gap-3">
+                                    <img class="w-9 h-9 rounded-full border border-cyber-purple object-cover" src="https://ui-avatars.com/api/?name=Audit+Agent&background=6900b3&color=ffffff" alt="Audit" />
+                                    <div class="flex flex-col min-w-0">
+                                        <div class="flex items-center gap-1.5 flex-wrap">
+                                            <span class="font-bold text-cyber-purple text-sm">Gizli Müşteri (Agent 09)</span>
+                                            <span class="text-[10px] bg-cyber-purple/10 border border-cyber-purple/20 text-cyber-purple font-mono px-1.5 py-0.2 rounded font-bold">AUDITOR</span>
+                                            <span class="text-xs text-slate-500 font-mono">• 3 saat önce</span>
+                                        </div>
+                                        <span class="text-xs text-slate-300">
+                                            <span class="text-white font-bold">Tequi-la-la Bar</span> mekanını denetledi.
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- Review text -->
+                                <p class="text-sm italic text-slate-300 pl-1 border-l-2 border-cyber-purple/40 py-0.5">
+                                    “Bar personeli hızlıydı ancak masa temizliği yetersiz. İçecek kalitesi fiyata göre standart. Puanım: 7.2/10.”
+                                </p>
+
+                                <!-- ── Monospace Ticket details & Barcode (Receipt Aesthetic) ── -->
+                                <div class="ticket-meta-grid">
+                                    <div>AUDITOR ID: #A-09</div>
+                                    <div>TICKET ID: #CK-97210</div>
+                                    <div>COORDS: X: -564.2 / Y: 275.8 / Z: 83.1</div>
+                                    <div>AUDIT RATING: 7.2 / 10.0</div>
+                                    
+                                    <!-- Barcode Decoration -->
+                                    <div class="col-span-2 flex flex-col items-center mt-2 border-t border-cyber-border/40 pt-2 gap-1 font-mono">
+                                        <div class="w-full h-7 barcode-stripes opacity-45"></div>
+                                        <span class="text-[8px] text-slate-500 font-mono tracking-[0.2em]">*CK-97210-AUDIT-TEQUI*</span>
+                                    </div>
+                                </div>
+
+                                <!-- Interactive Buttons -->
+                                <div class="flex justify-between items-center mt-1 border-t border-cyber-border/20 pt-3 text-xs font-mono">
+                                    <div class="flex gap-4">
+                                        <button class="flex items-center gap-1 hover:text-cyber-pink transition-colors text-slate-400" onclick="toggleLike(this)">
+                                            <span class="material-symbols-outlined text-[18px]">favorite</span>
+                                            <span class="font-bold">8 LIKES</span>
+                                        </button>
+                                        <button class="flex items-center gap-1 hover:text-cyber-cyan transition-colors text-slate-400" onclick="toggleCommentsSection(97210)">
+                                            <span class="material-symbols-outlined text-[18px]">chat_bubble</span>
+                                            <span class="font-bold">1 COMMUNICATE</span>
+                                        </button>
+                                    </div>
+                                    <button class="flex items-center gap-1 hover:text-cyber-orange transition-colors text-slate-400" onclick="navigator.clipboard.writeText(window.location.href); alert('Bilet linki kopyalandı!')">
+                                        <span class="material-symbols-outlined text-[18px]">bookmark</span>
+                                        <span>ENCODE TICKET</span>
+                                    </button>
+                                </div>
+
+                                <!-- Radio Log Comments Section -->
+                                <div class="post-comments-section mt-2 pt-2 border-t border-dashed border-cyber-border/40 hidden" id="comments-97210">
+                                    <div class="radio-log-container mb-3 space-y-2 max-h-48 overflow-y-auto pr-1">
+                                        <div class="radio-log-item">
+                                            <span class="radio-time">[11:15]</span>
+                                            <span class="radio-tag">@tequila_manager:</span>
+                                            <span class="radio-msg">Geri bildiriminiz için teşekkürler, temizlik ekibi uyarıldı.</span>
+                                        </div>
+                                    </div>
+                                    <form class="flex gap-2" onsubmit="submitComment(event, 97210)">
+                                        <span class="text-cyber-cyan font-mono text-xs self-center">RADIO_IN:</span>
+                                        <input type="text" placeholder="Telsiz mesajı girin..." class="flex-grow radio-input-line bg-transparent border-none text-xs text-white focus:ring-0 focus:outline-none" required>
+                                        <button type="submit" class="p-1 text-cyber-cyan hover:text-cyber-orange"><span class="material-symbols-outlined text-sm">send</span></button>
+                                    </form>
+                                </div>
+                            </article>
+                            <div class="receipt-card-tear -mt-6 opacity-80 mb-4"></div>
+
+                        </div>
+                    </div>
+
+                    <!-- ── RIGHT COLUMN: BENTO PANEL WIDGETS (Spans 4 columns on large screens) ── -->
+                    <div class="lg:col-span-4 flex flex-col gap-6">
+
+                        <!-- BENTO WIDGET 1: CHARACTER IDENTITY CARD -->
+                        <div class="cyber-panel p-4 rounded-xl border border-cyber-border/40 relative overflow-hidden">
+                            <div class="absolute top-0 right-0 w-24 h-24 bg-cyber-orange/5 rounded-full blur-2xl"></div>
+                            
+                            <h3 class="text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-3">CHARACTER_BIOMETRICS</h3>
+                            
+                            <div class="flex items-center gap-4 mb-4">
+                                <div class="relative w-14 h-14 rounded-full p-[2px] bg-gradient-to-tr from-cyber-orange to-cyber-pink">
+                                    <img class="w-full h-full object-cover rounded-full border border-cyber-bg" src="https://ui-avatars.com/api/?name=Berk+uncu&background=ff6a00&color=ffffff" alt="Character Face">
+                                </div>
+                                <div class="min-w-0">
+                                    <h4 class="font-bold text-base text-white truncate">Berk Uncu</h4>
+                                    <div class="flex items-center gap-2 mt-0.5">
+                                        <span class="text-[9px] font-mono bg-cyber-orange/10 border border-cyber-orange/20 text-cyber-orange px-1.5 py-0.2 rounded font-bold uppercase">LSPD DEPUTY</span>
+                                        <span class="text-[10px] font-mono text-slate-400">ID: #9042</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Grid stats -->
+                            <div class="grid grid-cols-2 gap-2 font-mono text-[10px] border-t border-cyber-border/40 pt-3">
+                                <div class="bg-slate-950/40 p-2 rounded border border-cyber-border/30">
+                                    <div class="text-slate-500 uppercase">Check-ins</div>
+                                    <div class="text-xs font-bold text-white mt-0.5">147 Total</div>
+                                </div>
+                                <div class="bg-slate-950/40 p-2 rounded border border-cyber-border/30">
+                                    <div class="text-slate-500 uppercase">Daily Streak</div>
+                                    <div class="text-xs font-bold text-cyber-orange mt-0.5 flex items-center gap-0.5">
+                                        <span class="material-symbols-outlined text-xs">local_fire_department</span>
+                                        <span>8 Days</span>
+                                    </div>
+                                </div>
+                                <div class="bg-slate-950/40 p-2 rounded border border-cyber-border/30">
+                                    <div class="text-slate-500 uppercase">Weekly Rank</div>
+                                    <div class="text-xs font-bold text-cyber-cyan mt-0.5">#4 Active</div>
+                                </div>
+                                <div class="bg-slate-950/40 p-2 rounded border border-cyber-border/30">
+                                    <div class="text-slate-500 uppercase">Audit Badge</div>
+                                    <div class="text-xs font-bold text-cyber-purple mt-0.5">Class III</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- BENTO WIDGET 2: RADAR TRACKER WIDGET -->
+                        <div class="cyber-panel rounded-xl border border-cyber-border/40 overflow-hidden relative">
+                            <div class="p-4 border-b border-cyber-border/40 flex justify-between items-center">
+                                <h3 class="text-[10px] font-mono text-slate-500 uppercase tracking-widest">RADAR_TARGETS</h3>
+                                <span class="text-[9px] font-mono text-cyber-cyan bg-cyber-cyan/10 px-2 py-0.5 rounded border border-cyber-cyan/20">LIVE GPS</span>
+                            </div>
+                            
+                            <!-- Static Grid map view -->
+                            <div class="h-44 relative bg-slate-950 overflow-hidden cursor-pointer group" onclick="switchTab('map')">
+                                <!-- Grid Lines -->
+                                <div class="absolute inset-0 map-grid opacity-30"></div>
+                                
+                                <!-- Pulse Radar Beam -->
+                                <div class="absolute inset-0 bg-gradient-to-tr from-cyber-cyan/5 to-transparent pointer-events-none origin-bottom-left animate-pulse"></div>
+
+                                <!-- Mini map nodes -->
+                                <div class="absolute top-1/4 left-1/3 p-1 bg-cyber-purple rounded-full shadow-[0_0_10px_#a855f7] cybermap-marker-pulse"></div>
+                                <div class="absolute top-1/2 left-2/3 p-1 bg-cyber-cyan rounded-full shadow-[0_0_10px_#00f0ff]"></div>
+                                <div class="absolute bottom-1/3 left-1/2 p-1 bg-cyber-orange rounded-full shadow-[0_0_10px_#ff6a00]"></div>
+
+                                <!-- Floating tag overlay -->
+                                <div class="absolute bottom-3 left-1/2 -translate-x-1/2 bg-cyber-dark/90 border border-cyber-cyan/40 px-3 py-1 rounded-full text-[10px] font-bold text-white shadow-2xl group-hover:scale-105 transition-transform duration-300">
+                                    ENLARGE RADAR HUD
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- BENTO WIDGET 3: ACTIVE HOTSPOTS (VENUES) -->
+                        <div class="cyber-panel p-4 rounded-xl border border-cyber-border/40">
+                            <h3 class="text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-3">LOS_SANTOS_HOTSPOTS</h3>
+                            
+                            <div class="flex flex-col gap-3">
+                                <!-- Venue item 1 -->
+                                <div class="flex items-center justify-between p-2 rounded bg-slate-950/40 border border-cyber-border/40 hover:border-cyber-orange/40 transition-colors group cursor-pointer" onclick="selectVenue('Bahama Mamas Club', -1388.2, -586.4, 30.2, 'eglence')">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded bg-cyber-purple/20 flex items-center justify-center border border-cyber-purple/35 text-cyber-purple">
+                                            <span class="material-symbols-outlined text-sm">nightlife</span>
+                                        </div>
+                                        <div class="min-w-0">
+                                            <h4 class="font-bold text-xs text-white truncate">Bahama Mamas Club</h4>
+                                            <span class="text-[9px] font-mono text-slate-500 uppercase">NIGHTCLUB • 6 ACTIVE NOW</span>
+                                        </div>
+                                    </div>
+                                    <span class="text-[10px] font-mono text-cyber-green bg-cyber-green/10 px-1.5 py-0.5 rounded border border-cyber-green/20">OPEN</span>
+                                </div>
+
+                                <!-- Venue item 2 -->
+                                <div class="flex items-center justify-between p-2 rounded bg-slate-950/40 border border-cyber-border/40 hover:border-cyber-cyan/40 transition-colors group cursor-pointer" onclick="selectVenue('Maze Bank Arena', -324.8, -1960.5, 22.1, 'eglence')">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded bg-cyber-cyan/20 flex items-center justify-center border border-cyber-cyan/35 text-cyber-cyan">
+                                            <span class="material-symbols-outlined text-sm">stadium</span>
+                                        </div>
+                                        <div class="min-w-0">
+                                            <h4 class="font-bold text-xs text-white truncate">Maze Bank Arena</h4>
+                                            <span class="text-[9px] font-mono text-slate-500 uppercase">STADIUM • 2 ACTIVE NOW</span>
+                                        </div>
+                                    </div>
+                                    <span class="text-[10px] font-mono text-cyber-green bg-cyber-green/10 px-1.5 py-0.5 rounded border border-cyber-green/20">OPEN</span>
+                                </div>
+
+                                <!-- Venue item 3 -->
+                                <div class="flex items-center justify-between p-2 rounded bg-slate-950/40 border border-cyber-border/40 hover:border-cyber-orange/40 transition-colors group cursor-pointer" onclick="selectVenue('Tequi-la-la Bar', -564.2, 275.8, 83.1, 'bar')">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded bg-cyber-orange/20 flex items-center justify-center border border-cyber-orange/35 text-cyber-orange">
+                                            <span class="material-symbols-outlined text-sm">sports_bar</span>
+                                        </div>
+                                        <div class="min-w-0">
+                                            <h4 class="font-bold text-xs text-white truncate">Tequi-la-la Bar</h4>
+                                            <span class="text-[9px] font-mono text-slate-500 uppercase">PUB/BAR • 1 ACTIVE NOW</span>
+                                        </div>
+                                    </div>
+                                    <span class="text-[10px] font-mono text-red-400 bg-red-400/10 px-1.5 py-0.5 rounded border border-red-400/20">CLOSED</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </main>
+        </div>
+
+        <!-- ── MOBILE BOTTOM NAVIGATION BAR ── -->
+        <nav class="fixed bottom-0 left-0 right-0 z-50 bg-cyber-dark/90 backdrop-blur-xl border-t border-cyber-border md:hidden flex justify-around items-center h-16 safe-area-bottom">
+            <a href="#feed" class="flex flex-col items-center justify-center text-cyber-orange relative w-12" onclick="switchTab('feed')">
+                <span class="material-symbols-outlined text-[24px]">explore</span>
+                <span class="text-[9px] font-mono mt-0.5 font-bold">FEED</span>
+                <div class="absolute -top-px left-1/2 -translate-x-1/2 w-6 h-0.5 bg-cyber-orange rounded-full"></div>
+            </a>
+            
+            <a href="#map" class="flex flex-col items-center justify-center text-slate-400 hover:text-white transition-colors relative w-12" onclick="switchTab('map')">
+                <span class="material-symbols-outlined text-[24px]">map</span>
+                <span class="text-[9px] font-mono mt-0.5 font-semibold">RADAR</span>
+            </a>
+
+            <!-- Central FAB Placeholder to prevent overlap -->
+            <div class="w-12 h-12"></div>
+
+            <a href="#venues" class="flex flex-col items-center justify-center text-slate-400 hover:text-white transition-colors relative w-12" onclick="switchTab('venues')">
+                <span class="material-symbols-outlined text-[24px]">storefront</span>
+                <span class="text-[9px] font-mono mt-0.5 font-semibold">VENUES</span>
+            </a>
+
+            <a href="#profile" class="flex flex-col items-center justify-center text-slate-400 hover:text-white transition-colors relative w-12" onclick="switchTab('profile')">
+                <span class="material-symbols-outlined text-[24px]">person</span>
+                <span class="text-[9px] font-mono mt-0.5 font-semibold">PROFILE</span>
+            </a>
+        </nav>
+
+        <!-- ── GLOBAL FAB (FLOATING ACTION BUTTON) ── -->
+        <button class="fixed bottom-6 right-6 md:bottom-8 md:right-8 z-50 w-14 h-14 rounded-full bg-gradient-to-r from-cyber-orange to-cyber-orangeLight text-white flex items-center justify-center shadow-neonOrange hover:scale-105 active:scale-95 transition-transform cursor-pointer fab-glow"
+            onclick="openCheckinModal()" title="Yeni Check-in Yap">
+            <span class="material-symbols-outlined text-[28px] font-bold" style="font-variation-settings: 'FILL' 1;">add_location_alt</span>
+        </button>
+
+    </div>
+
+    <!-- ── TERMINAL CHECK-IN MODAL (FLOATING) ── -->
+    <div id="checkin-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4">
+        <!-- Backdrop blur -->
+        <div class="absolute inset-0 bg-cyber-dark/85 backdrop-blur-md" onclick="closeCheckinModal()"></div>
+        
+        <!-- Modal Content panel -->
+        <div class="cyber-panel w-full max-w-lg rounded-xl border border-cyber-orange/40 overflow-hidden relative shadow-neonOrange animate-[modalIn_0.25s_ease-out]">
+            <!-- Top cyber lines -->
+            <div class="absolute top-0 left-0 right-0 height-1 bg-gradient-to-r from-cyber-orange to-cyber-cyan"></div>
+            
+            <div class="flex items-center justify-between p-4 border-b border-cyber-border">
+                <div class="flex items-center gap-2 font-mono text-xs text-cyber-orange">
+                    <span class="material-symbols-outlined text-sm">terminal</span>
+                    <span>SECURE_TERMINAL_CHECKIN</span>
+                </div>
+                <button onclick="closeCheckinModal()" class="text-slate-400 hover:text-white font-bold text-lg">×</button>
+            </div>
+
+            <!-- Terminal Form -->
+            <form onsubmit="submitCheckin(event, true)" class="p-5 space-y-4">
+                
+                <!-- Venue selection console input -->
+                <div>
+                    <label class="block font-mono text-[10px] text-slate-400 uppercase mb-1">SELECT_VENUE_TARGET:</label>
+                    <select id="modal-venue-select" class="w-full bg-slate-950/80 border border-cyber-border rounded px-3 py-2 font-mono text-xs text-slate-100 focus:border-cyber-orange focus:ring-0 focus:outline-none" onchange="updateModalCoords()">
+                        <option value="Bahama Mamas Club" data-coords="X: -1388.2, Y: -586.4, Z: 30.2" data-category="eglence">Bahama Mamas Club [-1388, -586]</option>
+                        <option value="Maze Bank Arena" data-coords="X: -324.8, Y: -1960.5, Z: 22.1" data-category="eglence">Maze Bank Arena [-324, -1960]</option>
+                        <option value="Tequi-la-la Bar" data-coords="X: -564.2, Y: 275.8, Z: 83.1" data-category="bar">Tequi-la-la Bar [-564, 275]</option>
+                        <option value="Vanilla Unicorn" data-coords="X: 128.3, Y: -1298.4, Z: 29.2" data-category="eglence">Vanilla Unicorn [128, -1298]</option>
+                    </select>
+                </div>
+
+                <!-- Coords readout -->
+                <div class="font-mono text-[9px] text-cyber-cyan bg-slate-950/60 border border-cyber-border/40 p-2 rounded flex justify-between">
+                    <span>GPS LOCK: ACTIVE</span>
+                    <span id="modal-coords-readout">COORDS: X: -1388.2, Y: -586.4, Z: 30.2</span>
+                </div>
+
+                <!-- Input area -->
+                <div class="bg-slate-950 p-3 rounded border border-cyber-border/80 focus-within:border-cyber-orange transition-all font-mono">
+                    <span class="text-cyber-orange font-bold text-xs select-none">C:\SOCIAERA\CONSOLE&gt;</span>
+                    <textarea id="modal-note-input" rows="3" 
+                        class="w-full bg-transparent border-none p-0 text-slate-100 text-xs focus:ring-0 focus:outline-none resize-none placeholder-slate-700 mt-1"
+                        placeholder="/me bir bira sipariş etti veya durumunu güncelle..."></textarea>
+                </div>
+
+                <!-- Custom Stamp choice -->
+                <div class="flex items-center gap-4">
+                    <span class="font-mono text-[10px] text-slate-400 uppercase">APPLY_TICKET_STAMP:</span>
+                    <div class="flex gap-2">
+                        <label class="cursor-pointer">
+                            <input type="radio" name="modal-stamp" value="approved" class="sr-only peer" checked>
+                            <span class="text-[9px] font-mono border border-cyber-green/40 bg-cyber-green/5 text-cyber-green px-2 py-0.5 rounded peer-checked:bg-cyber-green peer-checked:text-black transition-colors block">APPROVED</span>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="modal-stamp" value="vip" class="sr-only peer">
+                            <span class="text-[9px] font-mono border border-amber-400/40 bg-amber-400/5 text-amber-400 px-2 py-0.5 rounded peer-checked:bg-amber-400 peer-checked:text-black transition-colors block">GOLD VIP</span>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="modal-stamp" value="mystery" class="sr-only peer">
+                            <span class="text-[9px] font-mono border border-cyber-purple/40 bg-cyber-purple/5 text-cyber-purple px-2 py-0.5 rounded peer-checked:bg-cyber-purple peer-checked:text-black transition-colors block">AUDIT</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Photo mock attach -->
+                <div class="flex justify-between items-center pt-2">
+                    <button type="button" class="flex items-center gap-1.5 px-3 py-1.5 rounded bg-slate-950 border border-cyber-border text-[11px] font-mono hover:text-cyber-cyan transition-colors" onclick="simulateAttachPhoto(true)">
+                        <span class="material-symbols-outlined text-sm">photo_camera</span>
+                        <span>ATTACH IMAGE</span>
+                    </button>
+                    
+                    <div id="modal-attached-preview" class="hidden relative h-8 w-14 rounded overflow-hidden border border-cyber-cyan">
+                        <img id="modal-attached-img" src="" class="w-full h-full object-cover">
+                        <button type="button" class="absolute inset-0 bg-black/40 flex items-center justify-center text-red-400 font-bold" onclick="removeAttachedPhoto(true)">×</button>
+                    </div>
+                </div>
+
+                <!-- Footer buttons -->
+                <div class="flex gap-3 pt-3 border-t border-cyber-border/40">
+                    <button type="button" onclick="closeCheckinModal()" class="flex-1 py-2 rounded bg-slate-900 border border-cyber-border font-mono text-xs font-bold text-slate-400 hover:text-white transition-colors">
+                        ABORT_VOUCHER
+                    </button>
+                    <button type="submit" class="flex-1 py-2 rounded bg-gradient-to-r from-cyber-orange to-cyber-orangeLight font-mono text-xs font-bold text-white shadow-neonOrange flex items-center justify-center gap-1">
+                        <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">add_location_alt</span>
+                        TRANSMIT_CHECKIN
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ── SYSTEM JAVASCRIPT: Dynamic Logic & Mock Data Interactions ── -->
+    <script>
+        // Store attached image states globally
+        let attachedImageBase64 = "";
+
+        // Ambient radar scanner animation
+        const radarSweep = document.getElementById("radar-sweep");
+        let angle = 0;
+        function animateRadar() {
+            angle = (angle + 0.3) % 360;
+            if (radarSweep) {
+                radarSweep.setAttribute("transform", `rotate(${angle} 960 540)`);
+            }
+            requestAnimationFrame(animateRadar);
+        }
+        animateRadar();
+
+        // Active selected venue state
+        let currentVenue = {
+            name: "Bahama Mamas Club",
+            coords: "X: -1388.2, Y: -586.4, Z: 30.2",
+            category: "eglence"
+        };
+
+        // Select venue from interactive map or sidebars
+        function selectVenue(name, x, y, z, category) {
+            currentVenue = {
+                name: name,
+                coords: `X: ${x.toFixed(1)}, Y: ${y.toFixed(1)}, Z: ${z.toFixed(1)}`,
+                category: category
+            };
+            
+            // Update UI elements
+            document.getElementById("active-venue-name").textContent = name;
+            document.getElementById("active-venue-coords").textContent = currentVenue.coords;
+            
+            // Also select in modal dropdown if open
+            const modalSelect = document.getElementById("modal-venue-select");
+            if (modalSelect) {
+                modalSelect.value = name;
+                updateModalCoords();
+            }
+
+            // Scroll feed input into view on mobile or desktop if needed
+            document.getElementById("checkin-note-input").focus();
+            
+            // Add mini notification flash
+            flashMessage(`TARGET ACQUIRED: ${name.toUpperCase()}`, "success");
+        }
+
+        // Update coordinates in the modal dropdown changes
+        function updateModalCoords() {
+            const select = document.getElementById("modal-venue-select");
+            const selectedOption = select.options[select.selectedIndex];
+            const coords = selectedOption.getAttribute("data-coords");
+            
+            document.getElementById("modal-coords-readout").textContent = `COORDS: ${coords}`;
+        }
+
+        function clearSelectedVenue() {
+            document.getElementById("active-venue-name").textContent = "General Area";
+            document.getElementById("active-venue-coords").textContent = "GPS TRACKING: DRIFT";
+            currentVenue = {
+                name: "Los Santos Metro",
+                coords: "X: 0.0, Y: 0.0, Z: 0.0",
+                category: "diger"
+            };
+        }
+
+        // Tab Switching for Desktop Sidebar / Mobile Nav
+        function switchTab(tabId) {
+            // Update active states
+            const desktopLinks = document.querySelectorAll("aside nav a");
+            const mobileLinks = document.querySelectorAll("nav.fixed a");
+            
+            desktopLinks.forEach(link => {
+                if (link.getAttribute("href") === `#${tabId}`) {
+                    link.className = "group flex flex-col items-center justify-center p-2.5 rounded-xl bg-cyber-orange/10 border border-cyber-orange/30 text-cyber-orange shadow-neonOrange transition-all";
+                } else {
+                    link.className = "group flex flex-col items-center justify-center p-2.5 rounded-xl border border-transparent text-slate-400 hover:text-cyber-orange hover:bg-cyber-orange/5 hover:border-cyber-orange/25 transition-all";
+                }
+            });
+
+            // Filter/hide elements in real feed as a mock behavior
+            if (tabId === "map") {
+                // Focus interactive map view
+                document.getElementById("tactical-map").style.opacity = "0.8";
+                flashMessage("HUD GRID EXPANDED. FULL RADAR RANGE LOCK.", "success");
+            } else {
+                document.getElementById("tactical-map").style.opacity = "0.35";
+            }
+        }
+
+        // Mock photo attaching
+        function simulateAttachPhoto(isModal = false) {
+            // Pick a random cool nightlife/gta photo from Unsplash
+            const photos = [
+                "https://images.unsplash.com/photo-1545128485-c400e7702796?w=600&auto=format&fit=crop&q=60",
+                "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&auto=format&fit=crop&q=60",
+                "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=600&auto=format&fit=crop&q=60",
+                "https://images.unsplash.com/photo-1563841930606-67e2b64a8d6e?w=600&auto=format&fit=crop&q=60"
+            ];
+            const randomPhoto = photos[Math.floor(Math.random() * photos.length)];
+            
+            if (isModal) {
+                const preview = document.getElementById("modal-attached-preview");
+                const img = document.getElementById("modal-attached-img");
+                img.src = randomPhoto;
+                preview.classList.remove("hidden");
+                attachedImageBase64 = randomPhoto;
+            } else {
+                const preview = document.getElementById("attached-photo-preview");
+                const img = document.getElementById("attached-img");
+                img.src = randomPhoto;
+                preview.classList.remove("hidden");
+                attachedImageBase64 = randomPhoto;
+            }
+            
+            flashMessage("IMAGE LINK ENCODED INTO BUFFER", "success");
+        }
+
+        function removeAttachedPhoto(isModal = false) {
+            if (isModal) {
+                document.getElementById("modal-attached-preview").classList.add("hidden");
+            } else {
+                document.getElementById("attached-photo-preview").classList.add("hidden");
+            }
+            attachedImageBase64 = "";
+        }
+
+        // Checkin Modals
+        function openCheckinModal() {
+            document.getElementById("checkin-modal").classList.remove("hidden");
+            updateModalCoords();
+        }
+
+        // Add bounce-in animation class keyframes dynamically
+        const style = document.createElement('style');
+        style.type = 'text/css';
+        style.innerHTML = `
+            @keyframes modalIn {
+                0% { opacity: 0; transform: scale(0.95) translateY(10px); }
+                100% { opacity: 1; transform: scale(1) translateY(0); }
+            }
+        `;
+        document.getElementsByTagName('head')[0].appendChild(style);
+
+        function closeCheckinModal() {
+            document.getElementById("checkin-modal").classList.add("hidden");
+            document.getElementById("modal-note-input").value = "";
+            removeAttachedPhoto(true);
+        }
+
+        // Handle Check-in Submission
+        function submitCheckin(event, isModal = false) {
+            event.preventDefault();
+            
+            let note = "";
+            let selectedVenueName = currentVenue.name;
+            let coords = currentVenue.coords;
+            let category = currentVenue.category;
+            let stampValue = "approved";
+
+            if (isModal) {
+                note = document.getElementById("modal-note-input").value;
+                const select = document.getElementById("modal-venue-select");
+                selectedVenueName = select.value;
+                const option = select.options[select.selectedIndex];
+                coords = option.getAttribute("data-coords");
+                category = option.getAttribute("data-category");
+                
+                // Get selected stamp
+                const checkedStamp = document.querySelector('input[name="modal-stamp"]:checked');
+                if (checkedStamp) stampValue = checkedStamp.value;
+            } else {
+                note = document.getElementById("checkin-note-input").value;
+            }
+
+            // Create new Ticket Card dynamically
+            const newTicketId = Math.floor(10000 + Math.random() * 90000);
+            
+            // Map category to icon
+            const catIcons = { eglence: "nightlife", bar: "sports_bar", kafe: "coffee", diger: "explore" };
+            const icon = catIcons[category] || "explore";
+
+            // Determine Stamp Classes
+            let stampHTML = "";
+            if (stampValue === "vip") {
+                stampHTML = `<div class="ticket-stamp stamp-vip">GOLD VIP</div>`;
+            } else if (stampValue === "mystery") {
+                stampHTML = `<div class="ticket-stamp stamp-mystery">DENETLENDİ</div>`;
+            } else {
+                stampHTML = `<div class="ticket-stamp stamp-approved">APPROVED</div>`;
+            }
+
+            // Photo HTML if attached
+            let photoHTML = "";
+            if (attachedImageBase64) {
+                photoHTML = `
+                <div class="relative rounded-lg overflow-hidden aspect-video bg-slate-950 border border-cyber-border">
+                    <img class="w-full h-full object-cover group-hover:scale-[1.01] transition-transform duration-700" src="${attachedImageBase64}" alt="Check-in Photo" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+                    <div class="absolute bottom-3 left-4 font-mono text-[9px] text-cyber-cyan bg-slate-950/80 px-2 py-0.5 rounded border border-cyber-cyan/30">
+                        CAMERA_UPLOADER://IMG_${newTicketId}
+                    </div>
+                </div>
+                `;
+            }
+
+            // Build card element
+            const newCardHTML = `
+            <article class="receipt-card p-5 group flex flex-col gap-3 animate-[modalIn_0.3s_ease-out]">
+                <div class="absolute top-4 right-5 z-20 pointer-events-none">
+                    ${stampHTML}
+                </div>
+                <div class="flex items-center gap-3">
+                    <img class="w-9 h-9 rounded-full border border-cyber-orange object-cover" src="https://ui-avatars.com/api/?name=Berk+uncu&background=ff6a00&color=ffffff" alt="Berk" />
+                    <div class="flex flex-col min-w-0">
+                        <div class="flex items-center gap-1.5 flex-wrap">
+                            <span class="font-bold text-cyber-orange text-sm">Berk Uncu</span>
+                            <span class="text-[10px] bg-cyber-orange/10 border border-cyber-orange/20 text-cyber-orange font-mono px-1.5 py-0.2 rounded font-bold">LEVEL 12</span>
+                            <span class="text-xs text-slate-500 font-mono">• Az önce</span>
+                        </div>
+                        <span class="text-xs text-slate-300">
+                            <span class="text-white font-bold">${selectedVenueName}</span> mekanında check-in yaptı.
+                        </span>
+                    </div>
+                </div>
+                ${note ? `<p class="text-sm italic text-slate-300 pl-1 border-l-2 border-cyber-orange/40 py-0.5">“${note}”</p>` : ""}
+                ${photoHTML}
+                
+                <div class="ticket-meta-grid font-mono">
+                    <div>OPERATOR: @berk_uncu</div>
+                    <div>TICKET ID: #CK-${newTicketId}</div>
+                    <div>COORDS: ${coords}</div>
+                    <div>DATE: ${new Date().toLocaleString()}</div>
+                    <div class="col-span-2 flex flex-col items-center mt-2 border-t border-cyber-border/40 pt-2 gap-1">
+                        <div class="w-full h-7 barcode-stripes opacity-45"></div>
+                        <span class="text-[8px] text-slate-500 tracking-[0.2em]">*CK-${newTicketId}-UNCU-${selectedVenueName.toUpperCase().replace(/\s+/g, '')}*</span>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center mt-1 border-t border-cyber-border/20 pt-3 text-xs font-mono">
+                    <div class="flex gap-4">
+                        <button class="flex items-center gap-1 hover:text-cyber-pink transition-colors text-slate-400" onclick="toggleLike(this)">
+                            <span class="material-symbols-outlined text-[18px]">favorite</span>
+                            <span class="font-bold">0 LIKES</span>
+                        </button>
+                        <button class="flex items-center gap-1 hover:text-cyber-cyan transition-colors text-slate-400" onclick="toggleCommentsSection(${newTicketId})">
+                            <span class="material-symbols-outlined text-[18px]">chat_bubble</span>
+                            <span class="font-bold">0 RADIO COMMUNICATES</span>
+                        </button>
+                    </div>
+                    <button class="flex items-center gap-1 hover:text-cyber-orange transition-colors text-slate-400" onclick="navigator.clipboard.writeText(window.location.href); alert('Bilet linki kopyalandı!')">
+                        <span class="material-symbols-outlined text-[18px]">bookmark</span>
+                        <span>ENCODE TICKET</span>
+                    </button>
+                </div>
+
+                <div class="post-comments-section mt-2 pt-2 border-t border-dashed border-cyber-border/40 hidden" id="comments-${newTicketId}">
+                    <div class="radio-log-container mb-3 space-y-2 max-h-48 overflow-y-auto pr-1">
+                        <div class="text-center text-slate-500 py-3 text-[10px]">TELSİZ SESSSİZ // MESAJ YOK</div>
+                    </div>
+                    <form class="flex gap-2" onsubmit="submitComment(event, ${newTicketId})">
+                        <span class="text-cyber-cyan font-mono text-xs self-center">RADIO_IN:</span>
+                        <input type="text" placeholder="Telsiz mesajı girin..." class="flex-grow radio-input-line bg-transparent border-none text-xs text-white focus:ring-0 focus:outline-none" required>
+                        <button type="submit" class="p-1 text-cyber-cyan hover:text-cyber-orange"><span class="material-symbols-outlined text-sm">send</span></button>
+                    </form>
+                </div>
+            </article>
+            <div class="receipt-card-tear -mt-6 opacity-80 mb-4 animate-[modalIn_0.3s_ease-out]"></div>
+            `;
+
+            // Insert at top of feed
+            const feed = document.getElementById("activity-feed");
+            feed.insertAdjacentHTML("afterbegin", newCardHTML);
+
+            // Clean inputs
+            if (isModal) {
+                closeCheckinModal();
+            } else {
+                document.getElementById("checkin-note-input").value = "";
+                removeAttachedPhoto();
+            }
+
+            flashMessage("CHECKIN TRANSMITTED SECURELY TO THE NET", "success");
+            
+            // Scroll feed to top
+            document.getElementById("main-content-scroll").scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Toggle Comments visibility
+        function toggleCommentsSection(id) {
+            const container = document.getElementById(`comments-${id}`);
+            if (container) {
+                container.classList.toggle("hidden");
+            }
+        }
+
+        // Submit comment inside radio log
+        function submitComment(event, id) {
+            event.preventDefault();
+            const input = event.target.querySelector("input");
+            const text = input.value;
+            if (!text) return;
+
+            const logsList = event.target.previousElementSibling;
+            
+            // Clear mock empty state if any
+            if (logsList.innerHTML.includes("TELSİZ SESSSİZ")) {
+                logsList.innerHTML = "";
+            }
+
+            const newLogHTML = `
+            <div class="radio-log-item animate-[modalIn_0.2s_ease-out]">
+                <span class="radio-time">[${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}]</span>
+                <span class="radio-tag">@berk_uncu:</span>
+                <span class="radio-msg">${text}</span>
+            </div>
+            `;
+            logsList.insertAdjacentHTML("beforeend", newLogHTML);
+            input.value = "";
+            
+            // Scroll comments to bottom
+            logsList.scrollTop = logsList.scrollHeight;
+
+            flashMessage("COMMENT RECORDED ON FREQUENCY", "success");
+        }
+
+        // Toggle Like Button
+        function toggleLike(btn) {
+            const icon = btn.querySelector(".material-symbols-outlined");
+            const countText = btn.querySelector("span.font-bold");
+            let currentLikes = parseInt(countText.innerText);
+
+            if (btn.classList.contains("liked")) {
+                btn.classList.remove("liked", "text-cyber-pink");
+                btn.classList.add("text-slate-400");
+                icon.style.fontVariationSettings = "'FILL' 0";
+                currentLikes = Math.max(0, currentLikes - 1);
+            } else {
+                btn.classList.add("liked", "text-cyber-pink");
+                btn.classList.remove("text-slate-400");
+                icon.style.fontVariationSettings = "'FILL' 1";
+                currentLikes++;
+                
+                // Add pop scale animation effect
+                icon.classList.add("scale-125");
+                setTimeout(() => icon.classList.remove("scale-125"), 200);
+            }
+
+            countText.innerText = `${currentLikes} LIKE${currentLikes === 1 ? '' : 'S'}`;
+        }
+
+        // Custom cyber flash notification
+        function flashMessage(text, type = "success") {
+            // Create flash element
+            const flash = document.createElement("div");
+            flash.className = `fixed top-4 right-4 z-[9999] bg-slate-900 border border-cyber-border p-3.5 rounded-lg flex items-center gap-3 shadow-2xl animate-[modalIn_0.2s_ease-out]`;
+            flash.style.borderLeftWidth = "4px";
+            flash.style.borderLeftColor = type === "success" ? "#00f0ff" : "#ff6a00";
+
+            flash.innerHTML = `
+                <span class="material-symbols-outlined ${type === 'success' ? 'text-cyber-cyan' : 'text-cyber-orange'} text-lg">
+                    ${type === 'success' ? 'wifi' : 'warning'}
+                </span>
+                <div class="flex flex-col">
+                    <span class="font-mono text-[10px] text-slate-500 uppercase leading-none">${type === 'success' ? 'NET_TRANSMISSION' : 'NET_WARN'}</span>
+                    <span class="text-xs font-mono font-bold mt-1 text-slate-200">${text}</span>
+                </div>
+            `;
+
+            document.body.appendChild(flash);
+
+            // Auto dismiss
+            setTimeout(() => {
+                flash.classList.add("opacity-0", "transition-opacity", "duration-500");
+                setTimeout(() => flash.remove(), 500);
+            }, 3000);
+        }
+
+        // Run alert on start
+        setTimeout(() => {
+            flashMessage("DECRYPTED DATALINK TERMINAL INTERFACE STABLE", "success");
+        }, 1000);
+    </script>
+</body>
+</html>
