@@ -235,6 +235,7 @@ require_once __DIR__ . '/partials/app_header.php';
         </form>
     </div>
 </div>
+</div><!-- /grid cell -->
 
 <script>
 function openTopupModal() {

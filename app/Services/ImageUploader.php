@@ -71,31 +71,49 @@ class ImageUploader
         $destPath = $uploadDir . '/' . $filename;
 
         // WebP dönüştürme veya direkt taşıma
+        $uploadSuccess = false;
         if ($outputFormat === 'webp' && function_exists('imagewebp') && $mime !== 'image/gif') {
-            $result = $this->convertToWebP(
-                $file['tmp_name'],
-                $destPath,
-                $mime,
-                $options['quality'] ?? 85,
-                $options['maxWidth'] ?? null,
-                $options['maxHeight'] ?? null
-            );
-            if (!$result) {
-                return $this->fail('Resim işlenirken hata oluştu.');
+            try {
+                $uploadSuccess = $this->convertToWebP(
+                    $file['tmp_name'],
+                    $destPath,
+                    $mime,
+                    $options['quality'] ?? 85,
+                    $options['maxWidth'] ?? null,
+                    $options['maxHeight'] ?? null
+                );
+            } catch (\Throwable $e) {
+                $uploadSuccess = false;
+            }
+            if (!$uploadSuccess) {
+                // Fallback: WebP dönüştürme başarısız olursa orijinal formatta direkt taşı
+                $ext = self::ALLOWED_MIMES[$mime];
+                $filename = bin2hex(random_bytes(16)) . '.' . $ext;
+                $destPath = $uploadDir . '/' . $filename;
+                if (!move_uploaded_file($file['tmp_name'], $destPath)) {
+                    return $this->fail('Dosya yüklenemedi.');
+                }
             }
         } else {
             // Boyut sınırlama (WebP olmadan)
             if (!empty($options['maxWidth']) || !empty($options['maxHeight'])) {
-                $result = $this->resize(
-                    $file['tmp_name'],
-                    $destPath,
-                    $mime,
-                    $options['maxWidth'] ?? null,
-                    $options['maxHeight'] ?? null,
-                    $options['quality'] ?? 85
-                );
-                if (!$result) {
-                    return $this->fail('Resim boyutlandırılamadı. Lütfen daha küçük bir dosya deneyin.');
+                try {
+                    $uploadSuccess = $this->resize(
+                        $file['tmp_name'],
+                        $destPath,
+                        $mime,
+                        $options['maxWidth'] ?? null,
+                        $options['maxHeight'] ?? null,
+                        $options['quality'] ?? 85
+                    );
+                } catch (\Throwable $e) {
+                    $uploadSuccess = false;
+                }
+                if (!$uploadSuccess) {
+                    // Fallback: Boyutlandırma başarısız olursa direkt taşı
+                    if (!move_uploaded_file($file['tmp_name'], $destPath)) {
+                        return $this->fail('Dosya yüklenemedi.');
+                    }
                 }
             } else {
                 if (!move_uploaded_file($file['tmp_name'], $destPath)) {
@@ -175,10 +193,10 @@ class ImageUploader
     private function createFromMime(string $path, string $mime)
     {
         switch ($mime) {
-            case 'image/jpeg': return @imagecreatefromjpeg($path);
-            case 'image/png':  return @imagecreatefrompng($path);
-            case 'image/gif':  return @imagecreatefromgif($path);
-            case 'image/webp': return @imagecreatefromwebp($path);
+            case 'image/jpeg': return function_exists('imagecreatefromjpeg') ? @imagecreatefromjpeg($path) : false;
+            case 'image/png':  return function_exists('imagecreatefrompng') ? @imagecreatefrompng($path) : false;
+            case 'image/gif':  return function_exists('imagecreatefromgif') ? @imagecreatefromgif($path) : false;
+            case 'image/webp': return function_exists('imagecreatefromwebp') ? @imagecreatefromwebp($path) : false;
             default: return false;
         }
     }

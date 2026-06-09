@@ -388,7 +388,7 @@ require_once __DIR__ . '/partials/app_header.php';
                 <div class="flex items-center justify-between">
                     <label class="flex items-center gap-2 cursor-pointer transition-colors" style="color:var(--text-3);" title="Fotoğraf ekle">
                         <span class="material-symbols-outlined text-xl">add_a_photo</span>
-                        <span class="text-xs">Fotoğraf</span>
+                        <span class="text-xs" id="venueCheckinImageLabel">Fotoğraf</span>
                         <input type="file" name="image" id="venueCheckinImage" accept="image/*" class="hidden">
                     </label>
                     <button type="submit" id="venueCheckinBtn"
@@ -535,6 +535,23 @@ document.addEventListener('DOMContentLoaded', function() {
     const btn  = document.getElementById('venueCheckinBtn');
     if (!form || !btn) return;
 
+    // File input selection feedback
+    const fileInput = document.getElementById('venueCheckinImage');
+    const fileLabel = document.getElementById('venueCheckinImageLabel');
+    if (fileInput && fileLabel) {
+        fileInput.addEventListener('change', function() {
+            if (this.files && this.files.length > 0) {
+                fileLabel.textContent = this.files[0].name.substring(0, 18) + (this.files[0].name.length > 18 ? '...' : '');
+                fileLabel.style.color = 'var(--color-primary)';
+                fileLabel.style.fontWeight = 'bold';
+            } else {
+                fileLabel.textContent = 'Fotoğraf';
+                fileLabel.style.color = 'var(--text-3)';
+                fileLabel.style.fontWeight = 'normal';
+            }
+        });
+    }
+
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
         btn.disabled = true;
@@ -568,28 +585,28 @@ function showVenueCampaignModal(campaigns) {
     document.getElementById('campaignRewardOverlay')?.remove();
     const overlay = document.createElement('div');
     overlay.id = 'campaignRewardOverlay';
-    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);z-index:99999;display:flex;align-items:center;justify-content:center;padding:1rem;';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);z-index:99999;display:flex;align-items:center;justify-content:center;padding:1rem;';
 
     const cardsHtml = campaigns.map(c => `
-        <div style="background:linear-gradient(135deg,rgba(139,92,246,0.15),rgba(236,72,153,0.1));border:1px solid rgba(139,92,246,0.3);border-radius:16px;padding:1.5rem;text-align:center;">
-            <div style="font-size:1rem;font-weight:700;color:#e2e8f0;margin-bottom:0.25rem;">${escapeHtml(c.title)}</div>
-            ${c.reward_text ? `<div style="font-size:0.8rem;color:#a78bfa;margin-bottom:1rem;">${escapeHtml(c.reward_text)}</div>` : '<div style="margin-bottom:1rem;"></div>'}
-            <div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.1em;color:#94a3b8;margin-bottom:0.5rem;">Ödül Kodun</div>
-            <div onclick="navigator.clipboard.writeText('${escapeHtml(c.code)}'); this.querySelector('.copy-hint').textContent='Kopyalandı!'; this.style.borderColor='#10b981';"
-                 style="font-family:monospace;font-size:1.4rem;font-weight:800;letter-spacing:0.2em;color:#a78bfa;background:rgba(139,92,246,0.1);border:2px dashed rgba(139,92,246,0.4);border-radius:12px;padding:0.75rem 1rem;cursor:pointer;">
+        <div style="background:var(--color-primary-bg);border:1px solid rgba(240,109,31,0.3);border-radius:16px;padding:1.5rem;text-align:center;">
+            <div style="font-size:1rem;font-weight:700;color:var(--text-1);margin-bottom:0.25rem;">${escapeHtml(c.title)}</div>
+            ${c.reward_text ? `<div style="font-size:0.8rem;color:var(--color-primary);margin-bottom:1rem;">${escapeHtml(c.reward_text)}</div>` : '<div style="margin-bottom:1rem;"></div>'}
+            <div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-3);margin-bottom:0.5rem;">Ödül Kodun</div>
+            <div onclick="navigator.clipboard.writeText('${escapeHtml(c.code)}'); this.querySelector('.copy-hint').textContent='Kopyalandı!'; this.style.borderColor='#16a34a';"
+                 style="font-family:monospace;font-size:1.4rem;font-weight:800;letter-spacing:0.2em;color:var(--color-primary);background:#fff;border:2px dashed rgba(240,109,31,0.4);border-radius:12px;padding:0.75rem 1rem;cursor:pointer;">
                 ${escapeHtml(c.code)}
-                <div class="copy-hint" style="font-size:0.6rem;color:#64748b;margin-top:0.25rem;font-family:system-ui;letter-spacing:normal;">tıkla → kopyala</div>
+                <div class="copy-hint" style="font-size:0.6rem;color:var(--text-3);margin-top:0.25rem;font-family:system-ui;letter-spacing:normal;">tıkla → kopyala</div>
             </div>
         </div>`).join('');
 
     overlay.innerHTML = `
-        <div style="background:#2a2a2b;border:1px solid rgba(139,92,246,0.3);border-radius:24px;max-width:400px;width:100%;padding:2rem;position:relative;box-shadow:0 25px 60px rgba(0,0,0,0.5);">
+        <div style="background:#fff;border:1.5px solid var(--border);border-radius:24px;max-width:400px;width:100%;padding:2rem;position:relative;box-shadow:0 20px 48px rgba(0,0,0,0.12);">
             <div style="text-align:center;font-size:2.5rem;margin-bottom:0.5rem;">🎉</div>
-            <h2 style="text-align:center;font-size:1.3rem;font-weight:800;color:#f1f5f9;margin:0 0 0.25rem;">Kampanya Kazandın!</h2>
-            <p style="text-align:center;font-size:0.8rem;color:#64748b;margin:0 0 1.5rem;">Check-in'in seni ödüllendirdi</p>
+            <h2 style="text-align:center;font-size:1.3rem;font-weight:800;color:var(--text-1);margin:0 0 0.25rem;">Kampanya Kazandın!</h2>
+            <p style="text-align:center;font-size:0.8rem;color:var(--text-3);margin:0 0 1.5rem;">Check-in'in seni ödüllendirdi</p>
             <div style="display:flex;flex-direction:column;gap:1rem;margin-bottom:1.5rem;">${cardsHtml}</div>
             <button onclick="document.getElementById('campaignRewardOverlay').remove(); location.reload();"
-                    style="width:100%;padding:0.85rem;border:none;border-radius:14px;background:linear-gradient(135deg,#8b5cf6,#a855f7);color:white;font-size:0.9rem;font-weight:700;cursor:pointer;">
+                    class="btn btn-primary btn-block" style="width:100%;padding:0.85rem;border:none;border-radius:14px;color:white;font-size:0.9rem;font-weight:700;cursor:pointer;justify-content:center;">
                 Harika! 🎁
             </button>
         </div>`;

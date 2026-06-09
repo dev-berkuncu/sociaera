@@ -46,40 +46,39 @@ $activeNav      = 'mystery';
 require_once __DIR__ . '/partials/app_header.php';
 ?>
 
-<section class="flex-1 flex flex-col gap-6 max-w-2xl w-full mx-auto lg:mx-0">
+<div style="min-width:0;" class="flex-1 flex flex-col gap-6 max-w-2xl w-full mx-auto lg:mx-0">
 
     <!-- Hero -->
-    <div class="relative bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl overflow-hidden">
-        <!-- Gradient BG -->
-        <div class="absolute inset-0 bg-gradient-to-br from-slate-800/50 via-[#2a2a2b] to-indigo-900/30 pointer-events-none"></div>
-        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-indigo-400 to-transparent"></div>
+    <div class="relative rounded-2xl overflow-hidden shadow-[0_4px_16px_rgba(0,0,0,0.04)]" style="background:#fff; border:1.5px solid var(--border);">
+        <!-- Top accent border -->
+        <div style="height:4px; background:linear-gradient(90deg, #4f46e5, #818cf8);"></div>
 
         <div class="relative z-10 p-8 md:p-10">
             <div class="flex items-start gap-4">
-                <div class="w-16 h-16 rounded-2xl bg-indigo-500/15 border border-indigo-500/20 flex items-center justify-center flex-shrink-0">
-                    <span class="material-symbols-outlined text-indigo-400 text-[32px]">person_search</span>
+                <div class="w-16 h-16 rounded-2xl flex items-center justify-center flex-shrink-0" style="background:rgba(79,70,229,0.08); border:1.5px solid rgba(79,70,229,0.15);">
+                    <span class="material-symbols-outlined text-[32px]" style="color:#4F46E5;">person_search</span>
                 </div>
                 <div>
-                    <h1 class="text-2xl md:text-3xl font-black text-on-surface tracking-tight">Gizli Müşteri Ol</h1>
-                    <p class="text-slate-400 mt-1">İşletmeleri anonim olarak değerlendir, topluluğa katkı sağla</p>
+                    <h1 class="text-2xl md:text-3xl font-black tracking-tight" style="color:var(--text-1);">Gizli Müşteri Ol</h1>
+                    <p class="mt-1" style="color:var(--text-3);">İşletmeleri anonim olarak değerlendir, topluluğa katkı sağla</p>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8">
-                <div class="bg-white/5 rounded-xl p-4 border border-white/5">
-                    <span class="material-symbols-outlined text-indigo-400 text-[24px] block mb-2">visibility_off</span>
-                    <div class="text-sm font-semibold text-on-surface">Gizli Kimlik</div>
-                    <div class="text-xs text-slate-500 mt-1">Yorumların "Gizli Müşteri" etiketiyle yayınlanır, kimliğin gizli kalır</div>
+                <div class="rounded-xl p-4" style="background:var(--bg-section); border:1.5px solid var(--border-light);">
+                    <span class="material-symbols-outlined text-[24px] block mb-2" style="color:#4F46E5;">visibility_off</span>
+                    <div class="text-sm font-bold" style="color:var(--text-1);">Gizli Kimlik</div>
+                    <div class="text-xs mt-1" style="color:var(--text-3);">Yorumların "Gizli Müşteri" etiketiyle yayınlanır, kimliğin gizli kalır</div>
                 </div>
-                <div class="bg-white/5 rounded-xl p-4 border border-white/5">
-                    <span class="material-symbols-outlined text-emerald-400 text-[24px] block mb-2">verified</span>
-                    <div class="text-sm font-semibold text-on-surface">Admin Onayı</div>
-                    <div class="text-xs text-slate-500 mt-1">Başvurular incelenir, seçilen kullanıcılar özel tag kazanır</div>
+                <div class="rounded-xl p-4" style="background:var(--bg-section); border:1.5px solid var(--border-light);">
+                    <span class="material-symbols-outlined text-[24px] block mb-2" style="color:#16a34a;">verified</span>
+                    <div class="text-sm font-bold" style="color:var(--text-1);">Admin Onayı</div>
+                    <div class="text-xs mt-1" style="color:var(--text-3);">Başvurular incelenir, seçilen kullanıcılar özel tag kazanır</div>
                 </div>
-                <div class="bg-white/5 rounded-xl p-4 border border-white/5">
-                    <span class="material-symbols-outlined text-amber-400 text-[24px] block mb-2">rate_review</span>
-                    <div class="text-sm font-semibold text-on-surface">Kalite Raporu</div>
-                    <div class="text-xs text-slate-500 mt-1">Mekan kalitesini artırmak için dürüst değerlendirmeler yaparsın</div>
+                <div class="rounded-xl p-4" style="background:var(--bg-section); border:1.5px solid var(--border-light);">
+                    <span class="material-symbols-outlined text-[24px] block mb-2" style="color:#f59e0b;">rate_review</span>
+                    <div class="text-sm font-bold" style="color:var(--text-1);">Kalite Raporu</div>
+                    <div class="text-xs mt-1" style="color:var(--text-3);">Mekan kalitesini artırmak için dürüst değerlendirmeler yaparsın</div>
                 </div>
             </div>
         </div>
@@ -89,30 +88,30 @@ require_once __DIR__ . '/partials/app_header.php';
     // ── Durum Kartı ──
     if ($application):
         $statusMap = [
-            'pending'  => ['icon' => 'hourglass_top',  'color' => 'amber',  'label' => 'İnceleniyor',  'text' => 'Başvurunuz admin tarafından inceleniyor. Sonucu bildirim olarak alacaksınız.'],
-            'approved' => ['icon' => 'check_circle',   'color' => 'emerald','label' => 'Onaylandı',    'text' => 'Tebrikler! Artık mekan check-in\'lerinde "Gizli Müşteri" etiketiyle yorum yapabilirsiniz.'],
-            'rejected' => ['icon' => 'cancel',         'color' => 'red',    'label' => 'Reddedildi',   'text' => 'Başvurunuz bu sefer onaylanmadı. Tekrar başvurabilirsiniz.'],
+            'pending'  => ['icon' => 'hourglass_top',  'color' => '#f59e0b', 'bg' => 'rgba(245,158,11,0.08)',  'border' => 'rgba(245,158,11,0.25)', 'label' => 'İnceleniyor',  'text' => 'Başvurunuz admin tarafından inceleniyor. Sonucu bildirim olarak alacaksınız.'],
+            'approved' => ['icon' => 'check_circle',   'color' => '#16a34a', 'bg' => 'rgba(22,163,74,0.08)',   'border' => 'rgba(22,163,74,0.25)',  'label' => 'Onaylandı',    'text' => 'Tebrikler! Artık mekan check-in\'lerinde "Gizli Müşteri" etiketiyle yorum yapabilirsiniz.'],
+            'rejected' => ['icon' => 'cancel',         'color' => '#ef4444', 'bg' => 'rgba(239,68,68,0.08)',   'border' => 'rgba(239,68,68,0.25)',  'label' => 'Reddedildi',   'text' => 'Başvurunuz bu sefer onaylanmadı. Tekrar başvurabilirsiniz.'],
         ];
         $s = $statusMap[$application['status']] ?? $statusMap['pending'];
     ?>
-    <div class="bg-[#2a2a2b]/80 border border-<?php echo $s['color']; ?>-500/20 rounded-xl p-6">
+    <div class="rounded-xl p-6" style="background:#fff; border:1.5px solid <?php echo $s['border']; ?>; box-shadow:0 1px 3px rgba(0,0,0,.06);">
         <div class="flex items-center gap-3 mb-3">
-            <span class="material-symbols-outlined text-<?php echo $s['color']; ?>-400 text-[24px]"><?php echo $s['icon']; ?></span>
-            <span class="font-bold text-on-surface">Başvuru Durumu: <span class="text-<?php echo $s['color']; ?>-400"><?php echo $s['label']; ?></span></span>
+            <span class="material-symbols-outlined text-[24px]" style="color:<?php echo $s['color']; ?>;"><?php echo $s['icon']; ?></span>
+            <span class="font-bold text-sm" style="color:var(--text-1);">Başvuru Durumu: <span style="color:<?php echo $s['color']; ?>;"><?php echo $s['label']; ?></span></span>
         </div>
-        <p class="text-sm text-slate-400"><?php echo $s['text']; ?></p>
+        <p class="text-sm" style="color:var(--text-2);"><?php echo $s['text']; ?></p>
         <?php if ($application['admin_note']): ?>
-            <div class="mt-3 bg-white/5 rounded-lg px-4 py-3 text-sm text-slate-300 border border-white/5">
-                <span class="text-slate-500 text-xs uppercase tracking-widest font-semibold block mb-1">Admin Notu</span>
+            <div class="mt-3 rounded-lg px-4 py-3 text-sm border" style="background:var(--bg-section); border-color:var(--border); color:var(--text-2);">
+                <span class="text-xs uppercase tracking-widest font-semibold block mb-1" style="color:var(--text-3);">Admin Notu</span>
                 <?php echo escape($application['admin_note']); ?>
             </div>
         <?php endif; ?>
         <?php if ($application['status'] === 'approved'): ?>
-            <div class="mt-4 bg-indigo-500/10 border border-indigo-500/20 rounded-xl p-4 flex items-center gap-3">
-                <span class="material-symbols-outlined text-indigo-400">badge</span>
+            <div class="mt-4 rounded-xl p-4 flex items-center gap-3" style="background:rgba(79,70,229,0.08); border:1.5px solid rgba(79,70,229,0.2);">
+                <span class="material-symbols-outlined" style="color:#4F46E5;">badge</span>
                 <div>
-                    <div class="text-sm font-bold text-indigo-300">Gizli Müşteri Rozeti Aktif</div>
-                    <div class="text-xs text-slate-400 mt-0.5">Check-in paylaşırken "Gizli Müşteri olarak yayınla" seçeneğini kullanabilirsin</div>
+                    <div class="text-sm font-bold" style="color:#4F46E5;">Gizli Müşteri Rozeti Aktif</div>
+                    <div class="text-xs mt-0.5" style="color:var(--text-3);">Check-in paylaşırken "Gizli Müşteri olarak yayınla" seçeneğini kullanabilirsin</div>
                 </div>
             </div>
         <?php endif; ?>
@@ -123,19 +122,20 @@ require_once __DIR__ . '/partials/app_header.php';
 
     <?php if (in_array($application['status'], ['approved', 'pending'])): ?>
         <!-- Zaten aktif başvuru var, form gösterme -->
+        </div><!-- /grid cell -->
         <?php
         require_once __DIR__ . '/partials/app_footer.php';
         exit;
-    ?>
+        ?>
     <?php endif; ?>
 
     <?php endif; // $application ?>
 
     <!-- ── Başvuru Formu ── -->
-    <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl overflow-hidden">
-        <div class="px-6 py-4 border-b border-white/5 flex items-center gap-2">
-            <span class="material-symbols-outlined text-indigo-400 text-[20px]">edit_note</span>
-            <h2 class="text-base font-bold text-on-surface">
+    <div class="rounded-xl overflow-hidden" style="background:#fff; border:1px solid var(--border); box-shadow:0 1px 3px rgba(0,0,0,.08);">
+        <div class="px-6 py-4 flex items-center gap-2" style="border-bottom:1px solid var(--border-light);">
+            <span class="material-symbols-outlined text-[20px]" style="color:#4F46E5;">edit_note</span>
+            <h2 class="text-base font-bold" style="color:var(--text-1);">
                 <?php echo ($application && $application['status'] === 'rejected') ? 'Yeniden Başvur' : 'Başvuru Formu'; ?>
             </h2>
         </div>
@@ -143,24 +143,25 @@ require_once __DIR__ . '/partials/app_header.php';
             <?php echo csrfField(); ?>
 
             <div>
-                <label class="block text-label-md text-slate-400 mb-1.5">
+                <label class="block text-sm font-bold mb-1.5" style="color:var(--text-2);">
                     Neden Gizli Müşteri Olmak İstiyorsun?
-                    <span class="text-red-400">*</span>
-                    <span class="text-slate-600 ml-1">(en az 30 karakter)</span>
+                    <span class="text-red-500">*</span>
+                    <span class="ml-1" style="color:var(--text-3); font-weight:normal;">(en az 30 karakter)</span>
                 </label>
                 <textarea name="motivation" rows="5" required
                           placeholder="Mekan kalitesini iyileştirmek, topluluğa dürüst değerlendirmeler sunmak ve..."
-                          class="w-full bg-white/5 border border-white/10 text-on-surface rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-indigo-400/40 transition-colors resize-none"
+                          class="w-full rounded-lg px-4 py-3 text-sm focus:outline-none transition-colors resize-none shadow-inner"
+                          style="background:var(--bg-section); border:1px solid var(--border); color:var(--text-1);"
                           id="motivationText"><?php echo escape($application['motivation'] ?? ''); ?></textarea>
                 <div class="flex justify-between mt-1">
-                    <p class="text-xs text-slate-500">Dürüst ve açıklayıcı bir metin yaz</p>
-                    <span class="text-xs text-slate-500" id="charCount">0 / 30+</span>
+                    <p class="text-xs" style="color:var(--text-3);">Dürüst ve açıklayıcı bir metin yaz</p>
+                    <span class="text-xs" style="color:var(--text-3);" id="charCount">0 / 30+</span>
                 </div>
             </div>
 
             <!-- Kurallar -->
-            <div class="bg-white/5 rounded-xl p-4 space-y-2 border border-white/5">
-                <div class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Kuralları Kabul Ediyorum</div>
+            <div class="rounded-xl p-4 space-y-2 border" style="background:var(--bg-section); border-color:var(--border-light);">
+                <div class="text-xs font-bold uppercase tracking-widest mb-2" style="color:var(--text-3);">Kuralları Kabul Ediyorum</div>
                 <?php $rules = [
                     'Mekanları tarafsız ve dürüst değerlendireceğim',
                     'Gizli müşteri kimliğimi mekan sahiplerine açıklamayacağım',
@@ -170,21 +171,22 @@ require_once __DIR__ . '/partials/app_header.php';
                 <?php foreach ($rules as $i => $rule): ?>
                 <label class="flex items-start gap-2 cursor-pointer">
                     <input type="checkbox" name="rule_<?php echo $i; ?>" required
-                           class="mt-0.5 rounded border-white/20 bg-white/5 text-indigo-500">
-                    <span class="text-xs text-slate-400"><?php echo $rule; ?></span>
+                           class="mt-0.5 rounded" style="background:#fff; border-color:var(--border); color:#4F46E5;">
+                    <span class="text-xs" style="color:var(--text-2);"><?php echo $rule; ?></span>
                 </label>
                 <?php endforeach; ?>
             </div>
 
             <button type="submit"
-                    class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-3.5 rounded-xl text-label-md font-semibold transition-colors shadow-[0_0_20px_rgba(99,102,241,0.3)] flex items-center justify-center gap-2">
+                    class="w-full text-white py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 hover:brightness-110 active:scale-95 transition-all shadow-[0_4px_16px_rgba(79,70,229,0.25)]"
+                    style="background:#4F46E5; border:none; cursor:pointer;">
                 <span class="material-symbols-outlined text-[20px]">send</span>
                 Başvuruyu Gönder
             </button>
         </form>
     </div>
 
-</section>
+</div><!-- /grid cell -->
 
 <script>
 const ta = document.getElementById('motivationText');
@@ -193,7 +195,7 @@ if (ta && cc) {
     const update = () => {
         const len = ta.value.length;
         cc.textContent = len + ' karakter';
-        cc.className = 'text-xs ' + (len >= 30 ? 'text-emerald-400' : 'text-red-400');
+        cc.className = 'text-xs ' + (len >= 30 ? 'text-emerald-500' : 'text-red-500');
     };
     ta.addEventListener('input', update);
     update();

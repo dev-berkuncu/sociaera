@@ -6,14 +6,32 @@ require_once __DIR__ . '/../app/Config/database.php';
 require_once __DIR__ . '/../app/Services/Logger.php';
 require_once __DIR__ . '/../app/Models/User.php';
 
-$characters   = $_SESSION['oauth_characters'] ?? [];
-$gtaUserId    = $_SESSION['oauth_gta_user_id'] ?? null;
-$gtaUsername   = $_SESSION['oauth_gta_username'] ?? '';
+$isLoggedIn = Auth::check();
+$currentUserData = null;
+if ($isLoggedIn) {
+    $currentUserData = (new UserModel())->getById(Auth::id());
+}
 
-// Zaten giriş yapmış ve OAuth akışı yok ise dashboard'a yönlendir
-if (Auth::check() && !$gtaUserId) {
-    header('Location: ' . BASE_URL . '/dashboard');
-    exit;
+$characters   = $_SESSION['oauth_characters'] ?? [];
+$gtaUserId    = $_SESSION['oauth_gta_user_id'] ?? ($currentUserData ? $currentUserData['gta_user_id'] : null);
+$gtaUsername   = $_SESSION['oauth_gta_username'] ?? ($currentUserData ? $currentUserData['gta_username'] : '');
+
+// Eğer giriş yapmışsa ve OAuth akışında değilsek, diğer karakterlerini UCP id'sine göre veritabanından çek
+$isSwitching = ($isLoggedIn && !isset($_SESSION['oauth_gta_user_id']));
+if ($isSwitching && $gtaUserId) {
+    try {
+        $db = Database::getConnection();
+        $stmt = $db->prepare("SELECT id, username as name, gta_character_id FROM users WHERE gta_user_id = ? AND id != ? AND is_active = 1");
+        $stmt->execute([$gtaUserId, Auth::id()]);
+        $dbChars = $stmt->fetchAll();
+        $characters = [];
+        foreach ($dbChars as $dc) {
+            $characters[] = [
+                'id' => $dc['id'],
+                'name' => $dc['name']
+            ];
+        }
+    } catch (Exception $e) {}
 }
 
 if (!$gtaUserId) {
@@ -22,7 +40,7 @@ if (!$gtaUserId) {
     exit;
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$isSwitching) {
     Csrf::requireValid();
     $charId = (int) ($_POST['character_id'] ?? 0);
     $charName = '';
@@ -77,7 +95,7 @@ require_once __DIR__ . '/partials/flash.php';
 ?>
 
 <div style="min-width:0;">
-<div class="flex-grow flex items-center justify-center w-full relative overflow-hidden">
+<div class="flex-grow flex items-center justify-center w-full relative overflow-hidden" style="min-height:70vh;">
     <!-- Background Design -->
     <div class="absolute inset-0 z-0">
         <div class="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-primary-container/20 rounded-full blur-[100px] opacity-50 mix-blend-screen"></div>
@@ -85,44 +103,48 @@ require_once __DIR__ . '/partials/flash.php';
     </div>
     
     <div class="w-full max-w-3xl relative z-10">
-        <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl p-8 md:p-12 shadow-[0_20px_40px_-15px_rgba(19,19,20,0.5)]">
+        <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-2xl p-8 md:p-12 shadow-[0_20px_40px_-15px_rgba(19,19,20,0.5)]" style="background:#fff; border-color:var(--border); box-shadow:0 8px 30px rgba(0,0,0,0.06);">
             <div class="text-center mb-10">
-                <h1 class="text-3xl font-light text-on-surface mb-2">Karakter Seçimi</h1>
-                <p class="text-slate-400 text-sm">Hangi karakter ile devam etmek istiyorsun?</p>
+                <h1 class="text-3xl font-black mb-2" style="color:var(--text-1);"><?php echo $isSwitching ? 'Karakter Değiştir' : 'Karakter Seçimi'; ?></h1>
+                <p class="text-sm" style="color:var(--text-3);"><?php echo $isSwitching ? 'Diğer karakterlerinizden birine hızlıca geçiş yapın.' : 'Hangi karakter ile devam etmek istiyorsun?'; ?></p>
             </div>
 
             <?php if (empty($characters)): ?>
-                <div class="bg-surface-container border border-white/10 rounded-xl p-8 text-center text-slate-400 mb-6">
-                    <span class="material-symbols-outlined text-[48px] mb-2 opacity-50">person_off</span>
-                    <p>Hiç karakter bulunamadı.</p>
+                <div class="border rounded-xl p-8 text-center mb-6" style="background:var(--bg-section); border-color:var(--border);">
+                    <span class="material-symbols-outlined text-[48px] mb-2 opacity-50" style="color:var(--text-3);">person_off</span>
+                    <p style="color:var(--text-2); font-weight:600;"><?php echo $isSwitching ? 'Aynı UCP hesabına bağlı geçiş yapabileceğiniz başka aktif karakter bulunamadı.' : 'Hiç karakter bulunamadı.'; ?></p>
                 </div>
-                <a href="<?php echo BASE_URL; ?>/login" class="block w-full bg-white/10 hover:bg-white/20 text-white text-center py-3 rounded-xl font-bold transition-colors border border-white/10">Giriş Sayfasına Dön</a>
+                <?php if ($isSwitching): ?>
+                    <a href="<?php echo BASE_URL; ?>/dashboard" class="block w-full text-center py-3 rounded-xl font-bold btn btn-ghost" style="text-decoration:none;">Ana Sayfaya Dön</a>
+                <?php else: ?>
+                    <a href="<?php echo BASE_URL; ?>/login" class="block w-full text-center py-3 rounded-xl font-bold btn btn-ghost" style="text-decoration:none;">Giriş Sayfasına Dön</a>
+                <?php endif; ?>
             <?php else: ?>
-                <form method="POST" class="flex flex-col gap-10">
+                <form method="POST" action="<?php echo $isSwitching ? BASE_URL . '/switch-character' : ''; ?>" class="flex flex-col gap-10">
                     <?php echo csrfField(); ?>
                     
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <?php foreach ($characters as $char):
-                            $name = $char['name'] ?? trim(($char['firstname'] ?? '') . ' ' . ($char['lastname'] ?? ''));
-                            $cid = $char['id'] ?? 0;
+                            $name = $char['name'];
+                            $cid = $char['id'];
                         ?>
                         <label class="relative cursor-pointer group">
-                            <input type="radio" name="character_id" value="<?php echo $cid; ?>" required class="peer sr-only">
-                            <div class="bg-background border border-white/10 rounded-xl p-8 flex flex-col items-center justify-center gap-1 hover:bg-white/5 hover:border-primary-container/30 peer-checked:border-primary-container peer-checked:bg-primary-container/5 transition-all">
-                                <div class="w-16 h-16 rounded-full bg-primary-container/20 text-primary-container flex items-center justify-center mb-3 group-hover:scale-110 transition-transform peer-checked:bg-primary-container peer-checked:text-white shadow-[0_0_15px_rgba(255,145,0,0.1)]">
+                            <input type="radio" name="<?php echo $isSwitching ? 'target_user_id' : 'character_id'; ?>" value="<?php echo $cid; ?>" required class="peer sr-only">
+                            <div class="bg-background border rounded-xl p-8 flex flex-col items-center justify-center gap-1 hover:bg-white/5 hover:border-primary-container/30 peer-checked:border-primary-container peer-checked:bg-primary-container/5 transition-all" style="background:var(--bg-section); border-color:var(--border);">
+                                <div class="w-16 h-16 rounded-full bg-primary-container/20 text-primary-container flex items-center justify-center mb-3 group-hover:scale-110 transition-transform peer-checked:bg-primary-container peer-checked:text-white shadow-[0_0_15px_rgba(255,145,0,0.1)]" style="background:var(--color-primary-bg); color:var(--color-primary);">
                                     <span class="material-symbols-outlined text-[32px] font-light">account_circle</span>
                                 </div>
                                 
-                                <div class="font-light text-xl text-on-surface text-center mb-1"><?php echo escape($name); ?></div>
-                                <div class="text-sm text-slate-500 text-center font-light tracking-wide">ID: <?php echo (int)$cid; ?></div>
+                                <div class="font-bold text-xl text-center mb-1" style="color:var(--text-1);"><?php echo escape($name); ?></div>
+                                <div class="text-sm text-center font-light tracking-wide" style="color:var(--text-3);">ID: <?php echo (int)$cid; ?></div>
                             </div>
                         </label>
                         <?php endforeach; ?>
                     </div>
                     
                     <div class="flex justify-center">
-                        <button type="submit" class="bg-primary-container text-white px-8 py-4 rounded-xl font-bold shadow-[0_0_15px_rgba(255,145,0,0.3)] hover:bg-primary-container/90 transition-all flex items-center justify-center gap-3 active:scale-95 text-sm uppercase tracking-wider">
-                            <span class="material-symbols-outlined text-[20px]">login</span> Seçili Karakterle Devam Et
+                        <button type="submit" class="btn btn-primary btn-lg flex items-center justify-center gap-3">
+                            <span class="material-symbols-outlined text-[20px]">sync_alt</span> Seçili Karakterle Devam Et
                         </button>
                     </div>
                 </form>
