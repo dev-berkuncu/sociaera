@@ -97,6 +97,7 @@ $categoryMeta = [
 $pageTitle = 'Ana Sayfa';
 $activeNav = 'dashboard';
 require_once __DIR__ . '/partials/app_header.php';
+?>
 <section class="flex-1 flex flex-col gap-8 pb-8 min-w-0">
 
     <!-- ── HERO: Check-in CTA + İstatistikler ── -->
