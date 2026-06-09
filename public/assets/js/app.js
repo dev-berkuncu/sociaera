@@ -368,15 +368,21 @@ const App = {
     },
 
     renderComment(c) {
-        const safeTag = escapeHtml(c.tag || c.username || 'U');
+        const safeUsername = escapeHtml(c.username || 'U');
+        const safeTag = escapeHtml(c.tag || c.username);
         const safeComment = escapeHtml(c.comment);
         const safeTimeAgo = escapeHtml(c.time_ago || '');
         
         return `
-            <div class="radio-log-item">
-                <span class="radio-time">[${safeTimeAgo}]</span>
-                <span class="radio-tag">@${safeTag}:</span>
-                <span class="radio-msg">${safeComment}</span>
+            <div class="flex gap-sm items-start py-2 border-b border-white/5 last:border-b-0">
+                <div class="flex-grow">
+                    <div class="flex items-center gap-xs">
+                        <span class="font-bold text-sm text-on-surface">${safeUsername}</span>
+                        <span class="text-xs text-on-surface-variant">• @${safeTag}</span>
+                        <span class="text-[10px] text-on-surface-variant ml-auto">${safeTimeAgo}</span>
+                    </div>
+                    <p class="text-xs text-on-surface/90 mt-1">${safeComment}</p>
+                </div>
             </div>
         `;
     },
