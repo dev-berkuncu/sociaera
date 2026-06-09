@@ -187,12 +187,10 @@ tailwind.config = {
 
 <!-- ── MAIN LAYOUT ────────────────────────────────────────── -->
 <div class="swarm-layout">
-
-    <!-- Feed (center) -->
-    <div class="swarm-feed">
-        <!-- Page content renders here -->
+    <!-- Feed area starts — page content renders directly here -->
 
 <?php else: ?>
 <!-- Guest: sadece içerik alanı -->
 <main>
 <?php endif; ?>
+

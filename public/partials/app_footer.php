@@ -4,7 +4,6 @@
  * Bottom nav + Right panel + FAB + Modals
  */
 ?>
-    </div><!-- /swarm-feed -->
 
     <?php if (Auth::check() && isset($currentUser)): ?>
     <!-- ── SAĞ PANEL (Desktop) ──────────────────────────── -->

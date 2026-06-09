@@ -175,6 +175,17 @@ body {
   align-items: flex-start;
 }
 
+/* Sayfalar swarm-feed div açmadan da doğrudan içerik yazabilir */
+.swarm-layout > section,
+.swarm-layout > div.swarm-feed {
+  flex: 1;
+  min-width: 0;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
 .swarm-feed {
   flex: 1;
   min-width: 0;
@@ -183,6 +194,7 @@ body {
   flex-direction: column;
   gap: 12px;
 }
+
 
 .swarm-right-panel {
   display: none;
@@ -1043,3 +1055,153 @@ body {
 }
 .animate-marquee { animation: marquee 14s linear infinite; }
 .animate-marquee:hover { animation-play-state: paused; }
+
+/* ── BACKWARD COMPAT — Eski cyberpunk class'ları light mode'a dönüştür ── */
+
+/* Eski body class'ı */
+body.bg-obsidian, body.font-body-sm { /* noop — overridden by body {} */ }
+
+/* Scanlines & map overlay — kaldır */
+.scanlines, .map-grid { display: none !important; }
+
+/* glass-panel → white card */
+.glass-panel,
+.swarm-glass-card,
+.glass-effect,
+.receipt-card {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius-card) !important;
+  box-shadow: var(--shadow-card) !important;
+  backdrop-filter: none !important;
+}
+
+/* Eski Tailwind renk class compat */
+.bg-surface-container,
+.bg-surface-container\/60,
+.bg-surface-container\/30 { background: var(--bg-section) !important; }
+.bg-surface-container-highest,
+.bg-surface-container-high { background: var(--border) !important; }
+.bg-surface-container-low,
+.bg-surface-container-lowest { background: var(--bg-card) !important; }
+.bg-surface { background: var(--bg-card) !important; }
+.bg-\[#131314\], .bg-\[#0b0c10\], .bg-\[#060a13\], .bg-obsidian { background: var(--bg-section) !important; }
+.bg-cyber-dark, .bg-cyber-dark\/85 { background: #fff !important; }
+
+/* Metin renkleri */
+.text-on-surface { color: var(--text-1) !important; }
+.text-on-surface-variant { color: var(--text-2) !important; }
+.text-on-background { color: var(--text-1) !important; }
+.text-primary { color: var(--color-primary) !important; }
+.text-secondary { color: var(--color-primary-light) !important; }
+.text-tertiary { color: #7C3AED !important; }
+.text-\[#ffb778\], .text-\[#ff9100\], .text-\[#ff6a00\] { color: var(--color-primary) !important; }
+.text-slate-400, .text-slate-500 { color: var(--text-3) !important; }
+.text-slate-300, .text-slate-200 { color: var(--text-2) !important; }
+.text-white { color: var(--text-1) !important; }
+
+/* Border renkleri */
+.border-outline-variant,
+.border-outline-variant\/10,
+.border-outline-variant\/20,
+.border-outline-variant\/30,
+.border-white\/5,
+.border-white\/10,
+.border-white\/20 { border-color: var(--border) !important; }
+.border-cyber-border { border-color: var(--border) !important; }
+
+/* Cyber orange → primary */
+.border-primary { border-color: var(--color-primary) !important; }
+.text-cyber-orange, .text-cyber-green { color: var(--color-primary) !important; }
+.bg-primary { background: var(--color-primary) !important; }
+.bg-primary-container { background: var(--color-primary-bg) !important; }
+.text-on-primary { color: #fff !important; }
+.text-on-primary-container { color: var(--color-primary) !important; }
+.bg-secondary-container { background: #F0F9FF !important; }
+
+/* Glow & shadow effects → sıfırla */
+.shadow-neonOrange,
+.shadow-neonCyan,
+.shadow-\[0_0_20px_rgba\(255\,106\,0\,0\.2\)\],
+.shadow-\[0_0_30px_rgba\(255\,106\,0\,0\.2\)\] { box-shadow: var(--shadow-card) !important; }
+
+/* Neon gradients → neutral */
+.bg-gradient-to-br.from-primary { background: var(--color-primary) !important; }
+.hero-pattern { background: linear-gradient(135deg, #FFF3EB, #fff8f4) !important; }
+
+/* btn-primary redef */
+.btn-primary {
+  background: var(--color-primary) !important;
+  color: #fff !important;
+  border-color: var(--color-primary) !important;
+}
+
+/* Stat pill compat */
+.stat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-section);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 11px;
+  color: var(--text-2);
+}
+
+/* Ticket/receipt card compat */
+.ticket-stamp-wrapper { display: none; }
+.ticket-meta-grid { display: none; }
+
+/* Level ring compat */
+.level-ring-gold { background: linear-gradient(135deg, #FFD700, #FFA500); }
+.level-ring-purple { background: linear-gradient(135deg, #7C3AED, #4F46E5); }
+.level-ring-bronze { background: linear-gradient(135deg, #CD7F32, #B8722A); }
+
+/* custom-scrollbar */
+.custom-scrollbar::-webkit-scrollbar { width: 4px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+/* radio-log-container */
+.radio-log-container { display: flex; flex-direction: column; gap: 6px; }
+
+/* Pulse animations */
+.streak-pulse { animation: streakPulse 2s ease-in-out infinite; }
+@keyframes streakPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.15); }
+}
+
+/* Cybermap markers → hidden */
+.cybermap-marker-pulse { display: none; }
+
+/* comment-input-inline */
+.comment-input-inline {
+  background: var(--bg-input);
+  border: 1.5px solid transparent;
+  border-radius: 20px;
+  padding: 7px 14px;
+  font-size: 13px;
+  font-family: var(--font);
+  outline: none;
+  color: var(--text-1);
+  width: 100%;
+}
+.comment-input-inline:focus { border-color: var(--color-primary); }
+
+.comment-send-btn {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--color-primary-bg);
+  color: var(--color-primary);
+  border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: background .15s;
+}
+.comment-send-btn:hover { background: var(--color-primary); color: #fff; }
+
+/* backdrop-blur compat → off */
+.backdrop-blur-xl, .backdrop-blur-sm, .backdrop-blur { backdrop-filter: none !important; }
+
