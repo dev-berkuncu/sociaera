@@ -62,7 +62,111 @@ if (Auth::check() && isset($currentUser)) {
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta name="csrf-token" content="<?php echo csrfToken(); ?>"/>
 <style>
-  html, body { background:#F5F4F0 !important; color:#1A1A1A !important; }
+/* ── CRITICAL INLINE CSS — dış dosyaya bağımlı değil ── */
+:root{--cp:#F06D1F;--cp-hover:#D95E10;--cp-light:#FFA633;--cp-bg:#FFF3EB;
+--bg-app:#F5F4F0;--bg-card:#fff;--bg-section:#F8F7F5;--bg-input:#F2F1EE;
+--border:#E8E7E3;--border-l:#F0EFEc;--t1:#1A1A1A;--t2:#5C5C5C;--t3:#A0A0A0;
+--r-card:16px;--r-btn:24px;--r-inp:12px;
+--sh-card:0 1px 3px rgba(0,0,0,.08),0 4px 12px rgba(0,0,0,.05);
+--sh-hover:0 4px 12px rgba(0,0,0,.12),0 8px 24px rgba(0,0,0,.08);
+--font:'Plus Jakarta Sans','Inter',sans-serif;}
+
+/* Dark mode sıfırla */
+@media(prefers-color-scheme:dark){html,body{background:#F5F4F0!important;color:#1A1A1A!important}}
+
+html,body{background:#F5F4F0!important;color:#1A1A1A!important;font-family:var(--font);margin:0;padding:0}
+
+/* NAV */
+nav.swarm-topnav{
+  position:sticky;top:0;z-index:200;
+  background:#fff!important;border-bottom:2px solid #E8E7E3;
+  padding:10px 16px;display:flex!important;align-items:center;gap:12px;min-height:56px;
+  box-shadow:0 1px 4px rgba(0,0,0,.06);}
+.swarm-topnav-logo{font-weight:800;font-size:18px;color:#F06D1F!important;
+  text-decoration:none;display:flex;align-items:center;gap:6px;flex-shrink:0;}
+.swarm-topnav input{flex:1;background:#F2F1EE;border:1.5px solid transparent;
+  border-radius:12px;padding:8px 14px 8px 36px;font-size:14px;outline:none;color:#1A1A1A;}
+.swarm-topnav input:focus{border-color:#F06D1F;background:#fff;}
+.swarm-icon-btn{width:38px;height:38px;border-radius:50%;border:none;background:transparent;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;color:#5C5C5C;
+  text-decoration:none;position:relative;}
+.swarm-icon-btn:hover{background:#F8F7F5;}
+.swarm-avatar-btn{width:34px;height:34px;border-radius:50%;overflow:hidden;cursor:pointer;
+  border:2px solid #E8E7E3;display:block;}
+.swarm-avatar-btn img{width:100%;height:100%;object-fit:cover;}
+
+/* LAYOUT — CSS Grid ile kesin çözüm */
+.swarm-layout{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr);
+  gap:24px;max-width:920px;margin:0 auto;padding:16px 16px 90px;
+  align-items:start;}
+@media(min-width:1024px){
+  .swarm-layout{grid-template-columns:minmax(0,600px) 280px;max-width:920px;}}
+
+.swarm-right-panel{display:none!important;flex-direction:column;gap:12px;
+  position:sticky;top:72px;max-height:calc(100vh - 88px);overflow-y:auto;}
+@media(min-width:1024px){.swarm-right-panel{display:flex!important;}}
+
+/* CARDS */
+.swarm-card,.checkin-card,.venue-card,.right-panel-card{
+  background:#fff!important;border-radius:16px;
+  box-shadow:0 1px 3px rgba(0,0,0,.08),0 4px 12px rgba(0,0,0,.05);
+  overflow:hidden;}
+.swarm-card:hover,.checkin-card:hover,.venue-card:hover{
+  box-shadow:0 4px 12px rgba(0,0,0,.12),0 8px 24px rgba(0,0,0,.08);}
+
+/* BOTTOM NAV */
+.swarm-bottom-nav{
+  position:fixed;bottom:0;left:0;right:0;z-index:150;
+  background:#fff!important;border-top:1.5px solid #E8E7E3;
+  display:flex!important;align-items:center;justify-content:space-around;
+  padding:6px 0 calc(6px + env(safe-area-inset-bottom));height:60px;}
+@media(min-width:1024px){.swarm-bottom-nav{display:none!important;}}
+.swarm-nav-item{display:flex;flex-direction:column;align-items:center;
+  gap:2px;font-size:10px;font-weight:600;color:#A0A0A0;text-decoration:none;
+  padding:4px 12px;border-radius:12px;}
+.swarm-nav-item.active,.swarm-nav-item:hover{color:#F06D1F;}
+.swarm-nav-fab-item{display:flex;align-items:center;justify-content:center;}
+.swarm-nav-fab-inner{width:48px;height:48px;border-radius:50%;
+  background:linear-gradient(135deg,#F06D1F,#FFA633);color:#fff;
+  display:flex;align-items:center;justify-content:center;text-decoration:none;
+  box-shadow:0 4px 16px rgba(240,109,31,.4);}
+
+/* FAB (desktop) */
+.swarm-fab{position:fixed;right:24px;bottom:24px;z-index:150;
+  width:56px;height:56px;border-radius:50%;
+  background:linear-gradient(135deg,#F06D1F,#FFA633);color:#fff;
+  display:flex;align-items:center;justify-content:center;text-decoration:none;
+  box-shadow:0 4px 16px rgba(240,109,31,.4);}
+@media(max-width:1023px){.swarm-fab{display:none!important;}}
+
+/* BTN */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;
+  border-radius:24px;font-weight:700;font-size:13px;cursor:pointer;
+  border:1.5px solid transparent;text-decoration:none;transition:all .15s;}
+.btn-primary{background:#F06D1F!important;color:#fff!important;border-color:#F06D1F!important;}
+.btn-primary:hover{background:#D95E10!important;}
+.btn-ghost{background:transparent;color:#5C5C5C;border-color:#E8E7E3;}
+.btn-ghost:hover{background:#F8F7F5;}
+.btn-sm{padding:6px 14px;font-size:12px;}
+.btn-block{width:100%;justify-content:center;}
+.btn-lg{padding:13px 24px;font-size:15px;}
+
+/* Tailwind compat - eski siyah renkleri beyaza */
+.glass-panel,.swarm-glass-card,.receipt-card,.glass-effect{
+  background:#fff!important;backdrop-filter:none!important;border-color:#E8E7E3!important;}
+.bg-\[#2a2a2b\],.bg-\[#2a2a2b\]\/80,.bg-\[#2a2a2b\]\/90,.bg-\[#0b0c10\],
+.bg-\[#131314\],.bg-\[#060a13\],.bg-obsidian,.bg-cyber-dark{background:#fff!important;}
+.text-on-surface,.text-white{color:#1A1A1A!important;}
+.text-on-surface-variant,.text-slate-400,.text-slate-500{color:#5C5C5C!important;}
+.text-primary,.text-primary-container,.text-cyber-orange{color:#F06D1F!important;}
+.text-secondary{color:#FFA633!important;}
+.bg-surface-container,.bg-surface-container\/60,.bg-surface-container\/30{background:#F8F7F5!important;}
+.bg-primary-container{background:#F06D1F!important;color:#fff!important;}
+.border-white\/5,.border-white\/10,.border-white\/20,.border-white\/0{border-color:#E8E7E3!important;}
+.scanlines,.map-grid,.cybermap-marker-pulse{display:none!important;}
+.backdrop-blur-xl,.backdrop-blur-sm,.backdrop-blur{backdrop-filter:none!important;}
 </style>
 <script>window.BASE_URL = '<?php echo BASE_URL; ?>';</script>
 
