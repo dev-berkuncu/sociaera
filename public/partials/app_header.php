@@ -316,10 +316,10 @@ if (!isset($currentUser) && Auth::check()) {
 
         <!-- Primary Actions -->
         <div class="space-y-sm">
-            <button onclick="triggerCheckin()" class="w-full bg-primary-container text-on-primary-container font-bold py-3.5 rounded-lg flex items-center justify-center gap-sm transition-all hover:brightness-110 active:scale-95 shadow-[0_0_20px_rgba(255,145,0,0.3)]">
+            <a href="<?php echo BASE_URL; ?>/venues" class="w-full bg-primary-container text-on-primary-container font-bold py-3.5 rounded-lg flex items-center justify-center gap-sm transition-all hover:brightness-110 active:scale-95 shadow-[0_0_20px_rgba(255,145,0,0.3)]">
                 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add_location_alt</span>
-                Check-in Yap
-            </button>
+                Mekan Seç & Check-in
+            </a>
             <a href="<?php echo BASE_URL; ?>/venues" class="w-full bg-surface-container/60 border border-white/5 text-on-surface font-semibold py-3.5 rounded-lg flex items-center justify-start px-md gap-md hover:bg-surface-container transition-colors group">
                 <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">search</span>
                 Mekan Ara

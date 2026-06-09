@@ -2,30 +2,19 @@
    STITCH INTERACTIONS — Sociaera
    ============================================ */
 
-// Global triggerCheckin function
+// Global triggerCheckin — mekan sayfasına yönlendir
 window.triggerCheckin = function() {
-    const modal = document.getElementById('composeModal');
-    if (modal) {
-        modal.classList.remove('hidden');
-        const textarea = document.getElementById('composeNote');
-        if (textarea) textarea.focus();
-    } else {
-        window.location.href = (window.BASE_URL || '') + '/dashboard?checkin=1';
+    // Eğer venue-detail'de inline modal varsa onu aç
+    const venueModal = document.getElementById('venueCheckinModal');
+    if (venueModal && typeof openVenueCheckinModal === 'function') {
+        openVenueCheckinModal();
+        return;
     }
+    // Aksi halde mekan arama sayfasına git
+    window.location.href = (window.BASE_URL || '') + '/venues';
 };
 
 document.addEventListener('DOMContentLoaded', function() {
-
-    // ── Auto-open Check-in Modal from URL parameters ──
-    const modal = document.getElementById('composeModal');
-    if (modal) {
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has('checkin') || urlParams.has('venue_id')) {
-            modal.classList.remove('hidden');
-            const textarea = document.getElementById('composeNote');
-            if (textarea) textarea.focus();
-        }
-    }
 
     // ── Card & Button micro-interaction ──
     document.querySelectorAll('article, button').forEach(function(el) {

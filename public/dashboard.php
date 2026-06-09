@@ -1,6 +1,7 @@
 <?php
 /**
- * Sociaera — Dashboard (Ana Sayfa / Feed) - Tailwind Design
+ * Sociaera — Dashboard (Keşfet Paneli)
+ * Feed-free, check-in ve mekan keşfi odaklı tasarım
  */
 require_once __DIR__ . '/../app/Config/env.php';
 loadEnv(dirname(__DIR__) . '/.env');
@@ -22,417 +23,290 @@ require_once __DIR__ . '/../app/Helpers/ads_logic.php';
 
 Auth::requireLogin();
 
-// XSS: Whitelist ile güvenli hale getirildi
-$allowedFilters = ['all', 'following'];
-$feedFilter = in_array($_GET['filter'] ?? 'all', $allowedFilters, true) ? ($_GET['filter'] ?? 'all') : 'all';
-$page = max(1, (int)($_GET['page'] ?? 1));
-
+$userModel    = new UserModel();
 $checkinModel = new CheckinModel();
+$venueModel   = new VenueModel();
 
-if ($feedFilter === 'following') {
-    $posts = $checkinModel->getFollowingFeed(Auth::id(), $page);
-} else {
-    $posts = $checkinModel->getGlobalFeed($page, 20, Auth::id());
-}
-
-$userModel = new UserModel();
 $currentUser = $userModel->getById(Auth::id());
-
-// Hesap silinmişse oturumu kapat
 if (!$currentUser) {
     Auth::logout();
     header('Location: ' . BASE_URL . '/login');
     exit;
 }
 
-$trendVenues = [];
-$miniLeaderboard = [];
+$stats = $userModel->getStats(Auth::id());
+
+// Streak & haftalık check-in
+$streak         = 0;
+$weeklyCheckins = 0;
 try {
-    $trendVenues = (new VenueModel())->getTrending(5);
-    $miniLeaderboard = (new LeaderboardModel())->getTopUsers(5);
+    $db   = Database::getConnection();
+    $stmt = $db->prepare("SELECT DISTINCT DATE(created_at) as d FROM checkins WHERE user_id = ? AND is_deleted = 0 ORDER BY d DESC LIMIT 60");
+    $stmt->execute([Auth::id()]);
+    $dates = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    $today = new DateTime();
+    foreach ($dates as $i => $d) {
+        $expected = (clone $today)->modify("-{$i} days")->format('Y-m-d');
+        if ($d === $expected) { $streak++; } else { break; }
+    }
+    $weeklyCheckins = $checkinModel->getWeeklyCheckinCount(Auth::id());
 } catch (Exception $e) {}
 
-// Sponsorlu içerikleri çek (Premium kullanıcılar reklamsız)
-$sponsoredAds = [];
-if (!UserModel::isPremiumActive($currentUser)) {
-    try {
-        $sponsoredAds = (new AdModel())->getActiveForFeed(5);
-    } catch (Exception $e) {}
+// Kullanıcının son 5 check-in'i
+$recentCheckins = [];
+try {
+    $recentCheckins = $checkinModel->getUserCheckins(Auth::id(), 1, 5, Auth::id());
+} catch (Exception $e) {}
+
+// Mekan keşif verileri
+$trendVenues    = [];
+$featuredVenues = [];
+try {
+    $trendVenues    = $venueModel->getTrending(4);
+    $featuredVenues = $venueModel->getApproved('', '', 6, 0);
+    // Trend'de olmayanları "yeni" olarak göster
+    $trendIds = array_column($trendVenues, 'id');
+    $newVenues = array_filter($featuredVenues, fn($v) => !in_array($v['id'], $trendIds));
+    $newVenues = array_slice(array_values($newVenues), 0, 4);
+} catch (Exception $e) {
+    $newVenues = [];
 }
 
-$pageTitle = 'Ana Sayfa';
+$userLevel = floor(($stats['checkins'] ?? 0) / 15) + 1;
+$levelLabel = $userLevel >= 20 ? 'Efsane' : ($userLevel >= 10 ? 'Uzman' : ($userLevel >= 3 ? 'Kaşif' : 'Yeni'));
+
+$categories = VenueModel::categories();
+
+$pageTitle = 'Keşfet';
 $activeNav = 'dashboard';
 
 require_once __DIR__ . '/partials/app_header.php';
 ?>
 
-<!-- Center Main Feed -->
-<section class="flex-1 flex flex-col gap-6 max-w-3xl">
-    <!-- Feed Filter Tabs -->
-    <div class="flex items-center gap-6 border-b border-white/5 pb-2">
-        <a href="?filter=all" class="<?php echo $feedFilter === 'all' ? 'text-[#ff9100] font-bold text-sm border-b-2 border-[#ff9100] pb-2 px-1 -mb-[10px]' : 'text-slate-400 hover:text-white text-sm pb-2 px-1 transition-colors'; ?>">Herkes</a>
-        <a href="?filter=following" class="<?php echo $feedFilter === 'following' ? 'text-[#ff9100] font-bold text-sm border-b-2 border-[#ff9100] pb-2 px-1 -mb-[10px]' : 'text-slate-400 hover:text-white text-sm pb-2 px-1 transition-colors'; ?>">Takip Ettiklerim</a>
+<section class="flex-1 flex flex-col gap-8 max-w-3xl w-full pb-8">
+
+    <!-- ── HERO: Kullanıcı İstatistik Kartları ── -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+
+        <!-- Toplam Check-in -->
+        <div class="swarm-glass-card rounded-xl p-4 flex flex-col gap-1 border border-outline-variant/20 relative overflow-hidden group hover:border-primary/30 transition-colors">
+            <div class="absolute top-0 right-0 w-16 h-16 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:bg-primary/10 transition-colors"></div>
+            <span class="material-symbols-outlined text-primary text-xl" style="font-variation-settings:'FILL' 1;">location_on</span>
+            <div class="text-2xl font-black text-on-surface mt-1"><?php echo (int)($stats['checkins'] ?? 0); ?></div>
+            <div class="text-[10px] text-on-surface-variant uppercase tracking-widest font-mono">Toplam Check-in</div>
+        </div>
+
+        <!-- Günlük Seri -->
+        <div class="swarm-glass-card rounded-xl p-4 flex flex-col gap-1 border border-outline-variant/20 relative overflow-hidden group hover:border-[#ff9100]/30 transition-colors">
+            <div class="absolute top-0 right-0 w-16 h-16 bg-[#ff9100]/5 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:bg-[#ff9100]/10 transition-colors"></div>
+            <span class="material-symbols-outlined text-[#ff9100] text-xl streak-pulse" style="font-variation-settings:'FILL' 1;">local_fire_department</span>
+            <div class="text-2xl font-black text-on-surface mt-1"><?php echo $streak; ?></div>
+            <div class="text-[10px] text-on-surface-variant uppercase tracking-widest font-mono">Günlük Seri</div>
+        </div>
+
+        <!-- Bu Hafta -->
+        <div class="swarm-glass-card rounded-xl p-4 flex flex-col gap-1 border border-outline-variant/20 relative overflow-hidden group hover:border-emerald-500/30 transition-colors">
+            <div class="absolute top-0 right-0 w-16 h-16 bg-emerald-500/5 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:bg-emerald-500/10 transition-colors"></div>
+            <span class="material-symbols-outlined text-emerald-400 text-xl" style="font-variation-settings:'FILL' 1;">calendar_month</span>
+            <div class="text-2xl font-black text-on-surface mt-1"><?php echo min(5, $weeklyCheckins); ?><span class="text-sm text-on-surface-variant font-normal">/5</span></div>
+            <div class="text-[10px] text-on-surface-variant uppercase tracking-widest font-mono">Bu Hafta</div>
+            <!-- Mini Progress -->
+            <div class="h-1 bg-surface-container-highest rounded-full mt-1 overflow-hidden">
+                <div class="h-full bg-emerald-500 rounded-full transition-all" style="width:<?php echo min(100, ($weeklyCheckins/5)*100); ?>%"></div>
+            </div>
+        </div>
+
+        <!-- Seviye -->
+        <div class="swarm-glass-card rounded-xl p-4 flex flex-col gap-1 border border-outline-variant/20 relative overflow-hidden group hover:border-tertiary/30 transition-colors">
+            <div class="absolute top-0 right-0 w-16 h-16 bg-tertiary/5 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:bg-tertiary/10 transition-colors"></div>
+            <span class="material-symbols-outlined text-tertiary text-xl" style="font-variation-settings:'FILL' 1;">military_tech</span>
+            <div class="text-2xl font-black text-on-surface mt-1"><?php echo $userLevel; ?></div>
+            <div class="text-[10px] text-on-surface-variant uppercase tracking-widest font-mono"><?php echo $levelLabel; ?></div>
+        </div>
+
     </div>
 
-    <!-- Story/Friends Ribbon -->
-    <div class="swarm-glass-card p-md rounded-xl border border-outline-variant/10 overflow-x-auto custom-scrollbar">
-        <div class="flex items-center justify-between mb-md">
-            <h3 class="text-headline-sm font-headline-sm">Yakındaki Arkadaşlar</h3>
-            <a href="<?php echo BASE_URL; ?>/members" class="text-on-surface-variant text-label-sm hover:text-primary transition-colors">Tümünü Gör</a>
-        </div>
-        <div class="flex gap-lg pb-2">
-            <!-- Add Story -->
-            <div onclick="triggerCheckin()" class="flex flex-col items-center gap-xs cursor-pointer group shrink-0">
-                <div class="w-16 h-16 rounded-full border-2 border-dashed border-[#ff9100]/40 flex items-center justify-center group-hover:border-primary transition-colors">
-                    <span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">add</span>
-                </div>
-                <span class="text-label-sm text-on-surface-variant">Hikaye Ekle</span>
+    <!-- ── HIZLI AKSİYON BUTONLARI ── -->
+    <div class="grid grid-cols-3 gap-3">
+        <a href="<?php echo BASE_URL; ?>/venues" id="btn-explore-venues"
+           class="swarm-glass-card rounded-xl p-4 flex flex-col items-center gap-2 border border-outline-variant/20 hover:border-primary/40 transition-all group active:scale-95 text-center">
+            <div class="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center group-hover:bg-primary/25 transition-colors">
+                <span class="material-symbols-outlined text-primary text-xl" style="font-variation-settings:'FILL' 1;">explore</span>
             </div>
-            <!-- Friends -->
-            <?php foreach ($followingUsers as $fu): ?>
-            <div class="flex flex-col items-center gap-xs cursor-pointer shrink-0" onclick="window.location.href='<?php echo BASE_URL; ?>/profile?u=<?php echo escape($fu['tag'] ?: $fu['username']); ?>'">
-                <div class="relative">
-                    <?php $fuAvatar = safeAvatarUrl($fu['avatar'] ?? null, $fu['username']); ?>
-                    <img alt="<?php echo escape($fu['username']); ?>" class="w-16 h-16 rounded-full border-2 border-[#ffb778]/40 p-0.5 object-cover" src="<?php echo $fuAvatar; ?>" width="64" height="64" />
-                    <?php if ($fu['is_active']): ?>
-                    <div class="absolute bottom-0 right-0 w-4 h-4 bg-green-500 rounded-full border-2 border-[#131314] cybermap-marker-pulse"></div>
+            <div class="text-xs font-bold text-on-surface group-hover:text-primary transition-colors">Mekan Keşfet</div>
+        </a>
+        <a href="<?php echo BASE_URL; ?>/kampanyalar" id="btn-campaigns"
+           class="swarm-glass-card rounded-xl p-4 flex flex-col items-center gap-2 border border-outline-variant/20 hover:border-secondary/40 transition-all group active:scale-95 text-center">
+            <div class="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center group-hover:bg-secondary/20 transition-colors">
+                <span class="material-symbols-outlined text-secondary text-xl" style="font-variation-settings:'FILL' 1;">redeem</span>
+            </div>
+            <div class="text-xs font-bold text-on-surface group-hover:text-secondary transition-colors">Kampanyalar</div>
+        </a>
+        <a href="<?php echo BASE_URL; ?>/leaderboard" id="btn-leaderboard"
+           class="swarm-glass-card rounded-xl p-4 flex flex-col items-center gap-2 border border-outline-variant/20 hover:border-[#FFD700]/40 transition-all group active:scale-95 text-center">
+            <div class="w-10 h-10 rounded-full bg-[#FFD700]/10 flex items-center justify-center group-hover:bg-[#FFD700]/20 transition-colors">
+                <span class="material-symbols-outlined text-[#FFD700] text-xl" style="font-variation-settings:'FILL' 1;">emoji_events</span>
+            </div>
+            <div class="text-xs font-bold text-on-surface group-hover:text-[#FFD700] transition-colors">Sıralama</div>
+        </a>
+    </div>
+
+    <!-- ── TREND MEKANLAR ── -->
+    <?php if (!empty($trendVenues)): ?>
+    <div>
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-base font-bold text-on-surface flex items-center gap-2">
+                <span class="material-symbols-outlined text-secondary text-lg" style="font-variation-settings:'FILL' 1;">trending_up</span>
+                Trend Mekanlar
+            </h2>
+            <a href="<?php echo BASE_URL; ?>/venues" class="text-xs text-on-surface-variant hover:text-primary transition-colors font-semibold">Tümünü Gör →</a>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <?php foreach ($trendVenues as $idx => $v): ?>
+            <?php
+                $vRating = 0;
+                try {
+                    $rd = $venueModel->getVenueRating($v['id']);
+                    $vRating = round((float)($rd['average_rating'] ?? 0), 1);
+                } catch (Exception $e) {}
+            ?>
+            <a href="<?php echo BASE_URL; ?>/venue-detail?id=<?php echo $v['id']; ?>"
+               class="swarm-glass-card rounded-xl overflow-hidden flex items-stretch gap-0 border border-outline-variant/20 hover:border-primary/40 hover:shadow-[0_8px_30px_-10px_rgba(255,145,0,0.15)] transition-all group active:scale-[0.99]">
+
+                <!-- Görsel -->
+                <div class="w-24 sm:w-28 flex-shrink-0 bg-surface-container relative overflow-hidden">
+                    <?php if (!empty($v['cover_image'])): ?>
+                        <img src="<?php echo BASE_URL . '/uploads/venues/' . escape($v['cover_image']); ?>"
+                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                    <?php elseif (!empty($v['image'])): ?>
+                        <img src="<?php echo uploadUrl('posts', $v['image']); ?>"
+                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                    <?php else: ?>
+                        <div class="w-full h-full flex items-center justify-center bg-surface-container-high">
+                            <span class="material-symbols-outlined text-on-surface-variant text-3xl">storefront</span>
+                        </div>
+                    <?php endif; ?>
+                    <!-- Sıra badge -->
+                    <div class="absolute top-2 left-2 w-6 h-6 rounded-full bg-black/70 backdrop-blur flex items-center justify-center text-[10px] font-black text-white border border-white/10">
+                        <?php echo $idx + 1; ?>
+                    </div>
+                </div>
+
+                <!-- Bilgi -->
+                <div class="flex-grow p-3 flex flex-col justify-between min-w-0">
+                    <div>
+                        <div class="font-bold text-sm text-on-surface group-hover:text-primary transition-colors truncate"><?php echo escape($v['name']); ?></div>
+                        <div class="text-[10px] text-on-surface-variant mt-0.5 truncate">
+                            <?php echo escape($categories[$v['category'] ?? 'diger'] ?? 'Mekan'); ?>
+                            <?php if (!empty($v['address'])): ?> · <?php echo escape(truncate($v['address'], 30)); ?><?php endif; ?>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 mt-2">
+                        <span class="inline-flex items-center gap-1 bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold px-2 py-0.5 rounded-full">
+                            <span class="material-symbols-outlined text-[10px]" style="font-variation-settings:'FILL' 1;">location_on</span>
+                            <?php echo (int)($v['weekly_checkins'] ?? $v['checkin_count'] ?? 0); ?> bu hafta
+                        </span>
+                        <?php if ($vRating > 0): ?>
+                        <span class="inline-flex items-center gap-0.5 text-amber-400 text-[10px] font-bold">
+                            <span class="material-symbols-outlined text-[10px]" style="font-variation-settings:'FILL' 1;">star</span>
+                            <?php echo number_format($vRating, 1); ?>
+                        </span>
+                        <?php endif; ?>
+                        <?php if (isset($v['is_open'])): ?>
+                        <span class="text-[10px] font-semibold <?php echo $v['is_open'] ? 'text-emerald-400' : 'text-red-400'; ?>">
+                            <?php echo $v['is_open'] ? '● Açık' : '● Kapalı'; ?>
+                        </span>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+                <!-- Chevron -->
+                <div class="flex items-center pr-3 text-on-surface-variant group-hover:text-primary transition-colors">
+                    <span class="material-symbols-outlined text-lg">chevron_right</span>
+                </div>
+            </a>
+            <?php endforeach; ?>
+        </div>
+    </div>
+    <?php endif; ?>
+
+    <!-- ── YENİ / DİĞER MEKANLAR ── -->
+    <?php if (!empty($newVenues)): ?>
+    <div>
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-base font-bold text-on-surface flex items-center gap-2">
+                <span class="material-symbols-outlined text-tertiary text-lg" style="font-variation-settings:'FILL' 1;">storefront</span>
+                Keşfedilecek Mekanlar
+            </h2>
+            <a href="<?php echo BASE_URL; ?>/venues" class="text-xs text-on-surface-variant hover:text-primary transition-colors font-semibold">Tümünü Gör →</a>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <?php foreach ($newVenues as $v): ?>
+            <a href="<?php echo BASE_URL; ?>/venue-detail?id=<?php echo $v['id']; ?>"
+               class="swarm-glass-card rounded-xl overflow-hidden border border-outline-variant/20 hover:border-tertiary/40 transition-all group active:scale-[0.98] flex flex-col">
+
+                <div class="h-28 bg-surface-container relative overflow-hidden flex-shrink-0">
+                    <?php if (!empty($v['cover_image'])): ?>
+                        <img src="<?php echo BASE_URL . '/uploads/venues/' . escape($v['cover_image']); ?>"
+                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                    <?php elseif (!empty($v['image'])): ?>
+                        <img src="<?php echo uploadUrl('posts', $v['image']); ?>"
+                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                    <?php else: ?>
+                        <div class="w-full h-full flex items-center justify-center bg-surface-container-high">
+                            <span class="material-symbols-outlined text-on-surface-variant text-3xl">storefront</span>
+                        </div>
+                    <?php endif; ?>
+                    <?php if ($v['category']): ?>
+                    <span class="absolute top-2 right-2 bg-black/60 backdrop-blur text-[9px] font-bold px-1.5 py-0.5 rounded-md border border-white/10 text-white">
+                        <?php echo escape($categories[$v['category']] ?? $v['category']); ?>
+                    </span>
                     <?php endif; ?>
                 </div>
-                <span class="text-label-sm max-w-[70px] truncate text-slate-300"><?php echo escape($fu['username']); ?></span>
-            </div>
+
+                <div class="p-3 flex-grow">
+                    <div class="font-bold text-xs text-on-surface group-hover:text-tertiary transition-colors truncate"><?php echo escape($v['name']); ?></div>
+                    <div class="text-[9px] text-on-surface-variant mt-1 flex items-center gap-1">
+                        <span class="material-symbols-outlined text-[10px]">location_on</span>
+                        <?php echo (int)($v['checkin_count'] ?? 0); ?> check-in
+                    </div>
+                </div>
+            </a>
             <?php endforeach; ?>
         </div>
     </div>
+    <?php endif; ?>
 
-    <!-- Preset Venue PHP Logic -->
-    <?php 
-    $presetVenueId = (int)($_GET['venue_id'] ?? 0); 
-    $presetVenueName = '';
-    if ($presetVenueId > 0) {
-        try {
-            $pv = (new VenueModel())->getById($presetVenueId);
-            if ($pv) $presetVenueName = $pv['name'];
-        } catch(Exception $e){}
-    }
-    ?>
-
-    <!-- Compose Modal (Check-in Modalı) -->
-    <div id="composeModal" class="fixed inset-0 z-[9999] hidden">
-        <!-- Blur Backdrop -->
-        <div class="absolute inset-0 bg-black/70 backdrop-blur-md" onclick="document.getElementById('composeModal').classList.add('hidden')"></div>
-        <!-- Modal Content Container -->
-        <div class="absolute inset-0 flex items-center justify-center p-4">
-            <div class="bg-[#1c1b1c]/90 backdrop-blur-xl border border-white/10 rounded-2xl w-full max-w-lg shadow-2xl relative p-6 animate-[modalIn_0.25s_ease-out]">
-                <!-- Modal Header -->
-                <div class="flex items-center justify-between pb-4 border-b border-white/5 mb-4">
-                    <h3 class="text-lg font-bold text-on-surface flex items-center gap-2">
-                        <span class="material-symbols-outlined text-[#ff9100]">add_location_alt</span> Check-in Yap
-                    </h3>
-                    <button type="button" onclick="document.getElementById('composeModal').classList.add('hidden')" class="text-slate-400 hover:text-white transition-colors">
-                        <span class="material-symbols-outlined">close</span>
-                    </button>
-                </div>
-                
-                <form id="composeForm" enctype="multipart/form-data">
-                    <input type="hidden" name="csrf_token" value="<?php echo csrfToken(); ?>">
-                    <input type="hidden" name="venue_id" id="selectedVenueId" value="<?php echo $presetVenueId ?: ''; ?>">
-                    
-                    <!-- Venue Selection Status -->
-                    <div id="selectedVenueDisplay" class="flex items-center gap-2 mb-3 bg-[#ff9100]/10 w-fit px-3 py-1 rounded-full border border-[#ff9100]/20" style="<?php echo $presetVenueId > 0 ? '' : 'display:none;'; ?>">
-                        <span class="material-symbols-outlined text-[14px] text-[#ff9100]" style="font-variation-settings: 'FILL' 1;">location_on</span>
-                        <span id="selectedVenueName" class="text-xs font-bold text-slate-300"><?php echo escape($presetVenueName); ?></span>
-                        <button type="button" onclick="removeVenue()" class="text-slate-500 hover:text-red-400 transition-colors"><span class="material-symbols-outlined text-[14px]">close</span></button>
-                    </div>
-
-                    <div class="flex gap-4">
-                        <?php $avatarUrl = safeAvatarUrl($currentUser['avatar'] ?? null, $currentUser['username']); ?>
-                        <img alt="User avatar" class="w-12 h-12 rounded-full object-cover border border-white/10 flex-shrink-0" src="<?php echo $avatarUrl; ?>" width="48" height="48"/>
-                        <div class="flex-grow relative">
-                            <!-- Textarea styled nicely as input -->
-                            <textarea class="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-on-surface placeholder:text-slate-500 text-sm focus:outline-none focus:border-[#ff9100]/40 transition-colors resize-none outline-none" name="note" id="composeNote" placeholder="Neredesin? Ne yapıyorsun?" rows="3"></textarea>
-                            <div id="composePreview" class="mt-2 rounded-xl overflow-hidden border border-white/10 relative" style="display:none;"></div>
-                            
-                            <!-- @ Mention Dropdown -->
-                            <div id="mentionDropdown" class="absolute left-0 w-64 bg-surface-container border border-white/10 rounded-lg shadow-xl z-50 max-h-48 overflow-y-auto" style="display:none;"></div>
-                        </div>
-                    </div>
-                    
-                    <div class="mt-5 flex items-center justify-between pt-4 border-t border-white/5">
-                        <div class="flex items-center gap-2">
-                            <label class="flex items-center justify-center w-10 h-10 rounded-xl bg-white/5 border border-white/5 text-slate-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer" title="Fotoğraf ekle">
-                                <span class="material-symbols-outlined text-[20px]">image</span>
-                                <input type="file" name="image" id="composeImage" accept="image/*" class="hidden">
-                            </label>
-                            <button type="button" id="venueToggleBtn" class="flex items-center justify-center w-10 h-10 rounded-xl bg-white/5 border border-white/5 text-slate-400 hover:text-white hover:bg-white/10 transition-colors" title="Mekan seç">
-                                <span class="material-symbols-outlined text-[20px]">location_on</span>
-                            </button>
-                        </div>
-
-                        <button type="submit" id="composeSubmitBtn" disabled class="bg-[#ff9100] text-white px-6 py-2.5 rounded-xl font-bold text-sm shadow-[0_0_20px_rgba(255,145,0,0.3)] hover:brightness-110 transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed">Paylaş</button>
-                    </div>
-                </form>
-            </div>
+    <!-- ── SON CHECK-İN'LERİM ── -->
+    <div>
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-base font-bold text-on-surface flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary text-lg" style="font-variation-settings:'FILL' 1;">history</span>
+                Son Check-in'lerim
+            </h2>
+            <a href="<?php echo BASE_URL; ?>/profile" class="text-xs text-on-surface-variant hover:text-primary transition-colors font-semibold">Tüm Geçmiş →</a>
         </div>
-    </div>
 
-    <!-- Venue Search Dropdown (outside compose card to avoid backdrop-blur clipping) -->
-    <div id="venueSearchWrap" style="display:none;" class="fixed w-72 bg-[#1c1b1c]/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl p-3 z-[10000]">
-        <input type="text" id="venueSearchInput" class="w-full bg-black/40 border border-white/5 rounded-lg px-3 py-2 text-on-surface text-sm focus:outline-none focus:border-[#ff9100]/40 mb-2" placeholder="Mekan ara..." autocomplete="off">
-        <div id="venueDropdown" class="max-h-48 overflow-y-auto"></div>
-    </div>
-
-    <!-- Feed Cards -->
-    <div class="flex flex-col gap-stack-md pb-container-padding">
-        <?php if (empty($posts)): ?>
-            <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-6 text-center text-slate-400">
-                <span class="material-symbols-outlined text-[48px] mb-2 opacity-50">campaign</span>
-                <p><?php echo $feedFilter === 'following' ? 'Takip ettiğin kullanıcıların henüz bir gönderi yok.' : 'Henüz hiç gönderi yok. İlk check-in\'ini yap!'; ?></p>
-            </div>
+        <?php if (empty($recentCheckins)): ?>
+        <div class="swarm-glass-card rounded-xl p-8 text-center border border-outline-variant/20">
+            <span class="material-symbols-outlined text-on-surface-variant text-4xl mb-3 block opacity-40">location_off</span>
+            <p class="text-sm text-on-surface-variant mb-4">Henüz check-in yapmadın.</p>
+            <a href="<?php echo BASE_URL; ?>/venues" class="inline-flex items-center gap-2 bg-primary-container text-white px-5 py-2.5 rounded-lg font-bold text-sm hover:brightness-110 transition-all active:scale-95 shadow-[0_0_15px_rgba(255,145,0,0.3)]">
+                <span class="material-symbols-outlined text-base" style="font-variation-settings:'FILL' 1;">add_location_alt</span>
+                İlk Check-in'ini Yap
+            </a>
+        </div>
         <?php else: ?>
-            <?php 
-            $sponsorIndex = 0;
-            $sponsorInterval = 4; // Her 4 posttan sonra sponsorlu içerik göster
-            foreach ($posts as $index => $post): 
-            ?>
-                <?php include __DIR__ . '/partials/_tailwind_post_card.php'; ?>
-                <?php 
-                // Her $sponsorInterval posttan sonra sponsorlu içerik ekle
-                if (!empty($sponsoredAds) && ($index + 1) % $sponsorInterval === 0) {
-                    $sponsoredAd = $sponsoredAds[$sponsorIndex % count($sponsoredAds)];
-                    include __DIR__ . '/partials/_sponsored_card.php';
-                    $sponsorIndex++;
-                }
-                ?>
+        <div class="swarm-glass-card rounded-xl border border-outline-variant/20 overflow-hidden divide-y divide-white/5">
+            <?php foreach ($recentCheckins as $ci): ?>
+            <?php include __DIR__ . '/partials/_checkin_row.php'; ?>
             <?php endforeach; ?>
-
-            <?php if (count($posts) >= 20): ?>
-                <div class="text-center mt-4">
-                    <a href="?filter=<?php echo $feedFilter; ?>&page=<?php echo $page + 1; ?>" class="inline-flex items-center gap-2 bg-white/5 hover:bg-white/10 text-on-surface px-6 py-2 rounded-full transition-colors border border-white/10">
-                        <span class="material-symbols-outlined">arrow_downward</span> Daha Fazla
-                    </a>
-                </div>
-            <?php endif; ?>
+        </div>
         <?php endif; ?>
     </div>
+
 </section>
 
 <?php require_once __DIR__ . '/partials/app_footer.php'; ?>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const composeForm = document.getElementById('composeForm');
-    const composeNote = document.getElementById('composeNote');
-    const composeBtn = document.getElementById('composeSubmitBtn');
-    const venueIdInput = document.getElementById('selectedVenueId');
-    const composeImage = document.getElementById('composeImage');
-    const mentionDropdown = document.getElementById('mentionDropdown');
-
-    if (!composeForm || !composeNote) return;
-
-    function checkCompose() {
-        const hasNote = composeNote.value.trim().length > 0;
-        const hasImage = composeImage && composeImage.files && composeImage.files.length > 0;
-        const hasVenue = venueIdInput.value.length > 0;
-        composeBtn.disabled = !(hasVenue && (hasNote || hasImage));
-    }
-    composeNote.addEventListener('input', checkCompose);
-    if (composeImage) {
-        composeImage.addEventListener('change', checkCompose);
-    }
-    checkCompose();
-
-    // ── @ Mention Autocomplete ───────────────────────────
-    let mentionTimer = null;
-    let mentionStart = -1;
-
-    composeNote.addEventListener('input', function() {
-        const val = this.value;
-        const pos = this.selectionStart;
-
-        // Find the last @ before cursor
-        let atPos = -1;
-        for (let i = pos - 1; i >= 0; i--) {
-            if (val[i] === '@') { atPos = i; break; }
-            if (val[i] === ' ' || val[i] === '\n') break;
-        }
-
-        if (atPos === -1) {
-            mentionDropdown.style.display = 'none';
-            mentionStart = -1;
-            return;
-        }
-
-        const query = val.substring(atPos + 1, pos);
-        mentionStart = atPos;
-
-        if (query.length < 2) {
-            mentionDropdown.style.display = 'none';
-            return;
-        }
-
-        clearTimeout(mentionTimer);
-        mentionTimer = setTimeout(async () => {
-            const users = await App.searchUsers(query);
-            if (users.length === 0) {
-                mentionDropdown.style.display = 'none';
-                return;
-            }
-
-            mentionDropdown.innerHTML = users.map(u => {
-                const safeUsername = escapeHtml(u.username || 'U');
-                const safeTag = escapeHtml(u.tag || '');
-                const safeAvatar = escapeHtml(u.avatar || '');
-                const avatar = u.avatar
-                    ? `<img src="${App.baseUrl}/uploads/avatars/${safeAvatar}" class="w-8 h-8 rounded-full object-cover border border-white/10">`
-                    : `<div class="w-8 h-8 rounded-full bg-primary-container/20 text-primary-container flex items-center justify-center text-xs font-bold border border-white/10">${safeUsername[0].toUpperCase()}</div>`;
-                return `<div class="mention-item flex items-center gap-3 px-3 py-2 cursor-pointer hover:bg-white/5 rounded-md transition-colors" data-tag="${safeTag || safeUsername}" data-name="${safeUsername}">
-                    ${avatar}
-                    <div>
-                        <div class="text-sm font-semibold text-on-surface">${safeUsername}</div>
-                        ${safeTag ? `<div class="text-xs text-slate-400">@${safeTag}</div>` : ''}
-                    </div>
-                </div>`;
-            }).join('');
-
-            mentionDropdown.style.display = 'block';
-
-            mentionDropdown.querySelectorAll('.mention-item').forEach(item => {
-                item.addEventListener('click', () => {
-                    const tag = item.dataset.tag;
-                    const before = composeNote.value.substring(0, mentionStart);
-                    const after = composeNote.value.substring(composeNote.selectionStart);
-                    composeNote.value = before + '@' + tag + ' ' + after;
-                    mentionDropdown.style.display = 'none';
-                    composeNote.focus();
-                    const newPos = mentionStart + tag.length + 2;
-                    composeNote.setSelectionRange(newPos, newPos);
-                    checkCompose();
-                });
-            });
-        }, 300);
-    });
-
-    // Close mention dropdown on outside click
-    document.addEventListener('click', (e) => {
-        if (!composeNote.contains(e.target) && !mentionDropdown.contains(e.target)) {
-            mentionDropdown.style.display = 'none';
-        }
-    });
-
-    // ── Venue Search ─────────────────────────────────────
-    const venueInput = document.getElementById('venueSearchInput');
-    const venueDropdown = document.getElementById('venueDropdown');
-    const venueWrap = document.getElementById('venueSearchWrap');
-    const venueToggleBtn = document.getElementById('venueToggleBtn');
-
-    if (venueToggleBtn && venueWrap) {
-        venueToggleBtn.addEventListener('click', () => {
-            const rect = venueToggleBtn.getBoundingClientRect();
-            venueWrap.style.top = (rect.bottom + 8) + 'px';
-            venueWrap.style.left = rect.left + 'px';
-            venueWrap.style.display = 'block';
-            venueInput.focus();
-        });
-    }
-
-    if (venueInput && venueDropdown) {
-        App.initVenueSearch(venueInput, venueDropdown, (id, name) => {
-            venueIdInput.value = id;
-            document.getElementById('selectedVenueName').textContent = name;
-            document.getElementById('selectedVenueDisplay').style.display = 'inline-flex';
-            venueWrap.style.display = 'none';
-            checkCompose();
-        });
-    }
-
-    window.removeVenue = function() {
-        venueIdInput.value = '';
-        document.getElementById('selectedVenueDisplay').style.display = 'none';
-        checkCompose();
-    };
-
-    composeForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        composeBtn.disabled = true;
-        composeBtn.innerHTML = '<span class="material-symbols-outlined animate-spin text-[20px]">progress_activity</span>';
-
-        const formData = new FormData(composeForm);
-        const res = await App.post(App.baseUrl + '/api/create-post', formData);
-
-        if (res.ok) {
-            // Kampanya kazanıldı mı kontrol et
-            if (res.data && res.data.earned_campaigns && res.data.earned_campaigns.length > 0) {
-                showCampaignRewardModal(res.data.earned_campaigns);
-            } else {
-                App.flash(res.message || 'Check-in başarılı! 📍', 'success');
-                setTimeout(() => location.reload(), 800);
-            }
-        } else {
-            App.flash(res.error || 'Hata oluştu.', 'error');
-            composeBtn.disabled = false;
-            composeBtn.innerHTML = 'Paylaş';
-        }
-    });
-
-    // ── Kampanya Ödül Modalı ──────────────────────────────
-    function showCampaignRewardModal(campaigns) {
-        // Varsa eski modalı kaldır
-        document.getElementById('campaignRewardOverlay')?.remove();
-
-        const overlay = document.createElement('div');
-        overlay.id = 'campaignRewardOverlay';
-        overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem;animation:fadeIn .3s ease';
-
-        let cardsHtml = campaigns.map(c => {
-            const rewardLabel = c.reward_text || c.title;
-            return `
-                <div style="background:linear-gradient(135deg,rgba(139,92,246,0.15),rgba(236,72,153,0.1));border:1px solid rgba(139,92,246,0.3);border-radius:16px;padding:1.5rem;text-align:center;">
-                    <div style="font-size:1.1rem;font-weight:700;color:#e2e8f0;margin-bottom:0.25rem;">${escapeHtml(c.title)}</div>
-                    ${c.reward_text ? `<div style="font-size:0.85rem;color:#a78bfa;margin-bottom:1rem;">${escapeHtml(c.reward_text)}</div>` : '<div style="margin-bottom:1rem;"></div>'}
-                    <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:#94a3b8;margin-bottom:0.5rem;">Ödül Kodun</div>
-                    <div id="campaignCode_${escapeHtml(c.code)}" 
-                         onclick="navigator.clipboard.writeText('${escapeHtml(c.code)}'); this.querySelector('.copy-hint').textContent='Kopyalandı!'; this.style.borderColor='#10b981';"
-                         style="font-family:monospace;font-size:1.6rem;font-weight:800;letter-spacing:0.2em;color:#a78bfa;background:rgba(139,92,246,0.1);border:2px dashed rgba(139,92,246,0.4);border-radius:12px;padding:0.75rem 1.5rem;cursor:pointer;transition:all 0.2s;">
-                        ${escapeHtml(c.code)}
-                        <div class="copy-hint" style="font-size:0.65rem;color:#64748b;margin-top:0.25rem;font-family:system-ui;letter-spacing:normal;">tıkla → kopyala</div>
-                    </div>
-                </div>`;
-        }).join('');
-
-        overlay.innerHTML = `
-            <div style="background:#2a2a2b;border:1px solid rgba(139,92,246,0.3);border-radius:24px;max-width:420px;width:100%;padding:2rem;position:relative;animation:slideUp .4s ease;box-shadow:0 25px 60px rgba(0,0,0,0.5),0 0 40px rgba(139,92,246,0.15);">
-                <!-- Confetti emoji header -->
-                <div style="text-align:center;font-size:3rem;margin-bottom:0.5rem;animation:bounce 0.6s ease;">🎉</div>
-                <h2 style="text-align:center;font-size:1.5rem;font-weight:800;color:#f1f5f9;margin:0 0 0.25rem;">Kampanya Kazandın!</h2>
-                <p style="text-align:center;font-size:0.85rem;color:#64748b;margin:0 0 1.5rem;">Check-in'in seni ödüllendirdi</p>
-                
-                <div style="display:flex;flex-direction:column;gap:1rem;margin-bottom:1.5rem;">
-                    ${cardsHtml}
-                </div>
-
-                <p style="text-align:center;font-size:0.75rem;color:#64748b;margin-bottom:1.25rem;">
-                    <span style="display:inline-flex;align-items:center;gap:4px;">
-                        <span class="material-symbols-outlined" style="font-size:14px;">info</span>
-                        Kodunu kasada göstererek ödülünü kullanabilirsin
-                    </span>
-                </p>
-
-                <button onclick="document.getElementById('campaignRewardOverlay').remove(); location.reload();"
-                        style="width:100%;padding:0.85rem;border:none;border-radius:14px;background:linear-gradient(135deg,#8b5cf6,#a855f7);color:white;font-size:0.95rem;font-weight:700;cursor:pointer;transition:all 0.2s;box-shadow:0 0 20px rgba(139,92,246,0.3);">
-                    Harika! 🎁
-                </button>
-            </div>
-        `;
-
-        document.body.appendChild(overlay);
-
-        // Click overlay dışına basınca kapat
-        overlay.addEventListener('click', (e) => {
-            if (e.target === overlay) {
-                overlay.remove();
-                location.reload();
-            }
-        });
-    }
-});
-</script>

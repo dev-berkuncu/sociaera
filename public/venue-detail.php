@@ -126,10 +126,10 @@ require_once __DIR__ . '/partials/app_header.php';
                 </div>
                 <!-- Call to action button -->
                 <div class="flex items-center gap-3">
-                    <a href="<?php echo BASE_URL; ?>/dashboard?venue_id=<?php echo $venue['id']; ?>" class="flex items-center justify-center gap-2 bg-primary-container text-white px-6 py-3 rounded-xl font-bold hover:bg-primary-container/90 transition-all shadow-[0_0_20px_rgba(255,145,0,0.3)] active:scale-95 group shrink-0">
-                        <span class="material-symbols-outlined text-[20px] group-hover:scale-110 transition-transform">pin_drop</span>
+                    <button onclick="openVenueCheckinModal()" id="btn-venue-checkin" class="flex items-center justify-center gap-2 bg-primary-container text-white px-6 py-3 rounded-xl font-bold hover:brightness-110 transition-all shadow-[0_0_20px_rgba(255,145,0,0.3)] active:scale-95 group shrink-0">
+                        <span class="material-symbols-outlined text-[20px] group-hover:scale-110 transition-transform" style="font-variation-settings:'FILL' 1;">add_location_alt</span>
                         Burada Check-in Yap
-                    </a>
+                    </button>
                     <!-- Favori Butonu (Premium) -->
                     <form method="POST" class="inline">
                         <input type="hidden" name="csrf_token" value="<?php echo csrfToken(); ?>">
@@ -333,19 +333,74 @@ require_once __DIR__ . '/partials/app_header.php';
     </div>
     <?php endif; ?>
 
-    <div class="flex flex-col gap-stack-md pb-container-padding">
+    <!-- Check-in Listesi (sade) -->
+    <div class="swarm-glass-card rounded-xl border border-outline-variant/20 overflow-hidden mb-4">
         <?php if (empty($posts)): ?>
-            <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-8 text-center text-slate-400">
-                <span class="material-symbols-outlined text-[48px] mb-2 opacity-50">pin_drop</span>
-                <p>Bu mekanda henüz check-in yok.</p>
+            <div class="p-8 text-center text-slate-400">
+                <span class="material-symbols-outlined text-[40px] mb-2 block opacity-40">pin_drop</span>
+                <p class="text-sm">Bu mekanda henüz check-in yok. İlk check-in'i sen yap!</p>
+                <button onclick="openVenueCheckinModal()" class="mt-4 inline-flex items-center gap-2 bg-primary-container text-white px-5 py-2.5 rounded-lg font-bold text-sm hover:brightness-110 transition-all active:scale-95">
+                    <span class="material-symbols-outlined text-base" style="font-variation-settings:'FILL' 1;">add_location_alt</span>
+                    Check-in Yap
+                </button>
             </div>
         <?php else: ?>
-            <?php foreach ($posts as $post): ?>
-                <?php include __DIR__ . '/partials/_tailwind_post_card.php'; ?>
-            <?php endforeach; ?>
+            <div class="divide-y divide-white/5">
+                <?php foreach ($posts as $ci): ?>
+                    <?php include __DIR__ . '/partials/_checkin_row.php'; ?>
+                <?php endforeach; ?>
+            </div>
         <?php endif; ?>
     </div>
 </section>
+
+<!-- ── Inline Check-in Modal ── -->
+<div id="venueCheckinModal" class="fixed inset-0 z-[9999] hidden">
+    <div class="absolute inset-0 bg-black/70 backdrop-blur-md" onclick="closeVenueCheckinModal()"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4">
+        <div class="bg-[#1c1b1c]/95 backdrop-blur-xl border border-white/10 rounded-2xl w-full max-w-md shadow-2xl relative p-6 animate-[modalIn_0.25s_ease-out]">
+
+            <div class="flex items-center justify-between pb-4 border-b border-white/5 mb-4">
+                <div>
+                    <h3 class="text-base font-bold text-on-surface flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">add_location_alt</span>
+                        Check-in Yap
+                    </h3>
+                    <p class="text-xs text-on-surface-variant mt-0.5"><?php echo escape($venue['name']); ?></p>
+                </div>
+                <button onclick="closeVenueCheckinModal()" class="text-slate-400 hover:text-white transition-colors p-1">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+
+            <form id="venueCheckinForm" enctype="multipart/form-data">
+                <input type="hidden" name="csrf_token" value="<?php echo csrfToken(); ?>">
+                <input type="hidden" name="venue_id" value="<?php echo $venue['id']; ?>">
+
+                <?php $ciAvatarUrl = safeAvatarUrl($currentUserData['avatar'] ?? null, $currentUserData['username'] ?? 'U'); ?>
+                <div class="flex gap-3 mb-4">
+                    <img src="<?php echo $ciAvatarUrl; ?>" alt="" class="w-10 h-10 rounded-full object-cover border border-white/10 flex-shrink-0" width="40" height="40">
+                    <textarea id="venueCheckinNote" name="note"
+                        class="flex-grow bg-black/40 border border-white/5 rounded-xl px-3 py-2.5 text-on-surface placeholder:text-slate-500 text-sm focus:outline-none focus:border-primary/40 transition-colors resize-none"
+                        placeholder="Bu mekanda ne yaptın? (opsiyonel)" rows="3" maxlength="500"></textarea>
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <label class="flex items-center gap-2 cursor-pointer text-slate-400 hover:text-white transition-colors" title="Fotoğraf ekle">
+                        <span class="material-symbols-outlined text-xl">add_a_photo</span>
+                        <span class="text-xs">Fotoğraf</span>
+                        <input type="file" name="image" id="venueCheckinImage" accept="image/*" class="hidden">
+                    </label>
+                    <button type="submit" id="venueCheckinBtn"
+                        class="bg-primary-container text-white px-6 py-2.5 rounded-xl font-bold text-sm hover:brightness-110 transition-all active:scale-95 shadow-[0_0_15px_rgba(255,145,0,0.3)] flex items-center gap-2">
+                        <span class="material-symbols-outlined text-base" style="font-variation-settings:'FILL' 1;">pin_drop</span>
+                        Check-in Yap
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 <?php require_once __DIR__ . '/partials/app_footer.php'; ?>
 
@@ -451,4 +506,95 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+</script>
+
+<!-- Venue Check-in Modal Script -->
+<script>
+function openVenueCheckinModal() {
+    const modal = document.getElementById('venueCheckinModal');
+    if (modal) {
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        setTimeout(() => {
+            const ta = document.getElementById('venueCheckinNote');
+            if (ta) ta.focus();
+        }, 150);
+    }
+}
+
+function closeVenueCheckinModal() {
+    const modal = document.getElementById('venueCheckinModal');
+    if (modal) {
+        modal.classList.add('hidden');
+        document.body.style.overflow = '';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('venueCheckinForm');
+    const btn  = document.getElementById('venueCheckinBtn');
+    if (!form || !btn) return;
+
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        btn.disabled = true;
+        btn.innerHTML = '<span class="material-symbols-outlined animate-spin text-base">progress_activity</span> Kaydediliyor...';
+
+        const formData = new FormData(form);
+        const res = await App.post(App.baseUrl + '/api/create-post', formData);
+
+        if (res.ok) {
+            closeVenueCheckinModal();
+            if (res.data && res.data.earned_campaigns && res.data.earned_campaigns.length > 0) {
+                showVenueCampaignModal(res.data.earned_campaigns);
+            } else {
+                App.flash(res.message || 'Check-in başarılı! 📍', 'success');
+                setTimeout(() => location.reload(), 800);
+            }
+        } else {
+            App.flash(res.error || 'Hata oluştu.', 'error');
+            btn.disabled = false;
+            btn.innerHTML = '<span class="material-symbols-outlined text-base" style="font-variation-settings:\'FILL\' 1;">pin_drop</span> Check-in Yap';
+        }
+    });
+
+    // ESC tuşu ile kapat
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeVenueCheckinModal();
+    });
+});
+
+function showVenueCampaignModal(campaigns) {
+    document.getElementById('campaignRewardOverlay')?.remove();
+    const overlay = document.createElement('div');
+    overlay.id = 'campaignRewardOverlay';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);z-index:99999;display:flex;align-items:center;justify-content:center;padding:1rem;';
+
+    const cardsHtml = campaigns.map(c => `
+        <div style="background:linear-gradient(135deg,rgba(139,92,246,0.15),rgba(236,72,153,0.1));border:1px solid rgba(139,92,246,0.3);border-radius:16px;padding:1.5rem;text-align:center;">
+            <div style="font-size:1rem;font-weight:700;color:#e2e8f0;margin-bottom:0.25rem;">${escapeHtml(c.title)}</div>
+            ${c.reward_text ? `<div style="font-size:0.8rem;color:#a78bfa;margin-bottom:1rem;">${escapeHtml(c.reward_text)}</div>` : '<div style="margin-bottom:1rem;"></div>'}
+            <div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.1em;color:#94a3b8;margin-bottom:0.5rem;">Ödül Kodun</div>
+            <div onclick="navigator.clipboard.writeText('${escapeHtml(c.code)}'); this.querySelector('.copy-hint').textContent='Kopyalandı!'; this.style.borderColor='#10b981';"
+                 style="font-family:monospace;font-size:1.4rem;font-weight:800;letter-spacing:0.2em;color:#a78bfa;background:rgba(139,92,246,0.1);border:2px dashed rgba(139,92,246,0.4);border-radius:12px;padding:0.75rem 1rem;cursor:pointer;">
+                ${escapeHtml(c.code)}
+                <div class="copy-hint" style="font-size:0.6rem;color:#64748b;margin-top:0.25rem;font-family:system-ui;letter-spacing:normal;">tıkla → kopyala</div>
+            </div>
+        </div>`).join('');
+
+    overlay.innerHTML = `
+        <div style="background:#2a2a2b;border:1px solid rgba(139,92,246,0.3);border-radius:24px;max-width:400px;width:100%;padding:2rem;position:relative;box-shadow:0 25px 60px rgba(0,0,0,0.5);">
+            <div style="text-align:center;font-size:2.5rem;margin-bottom:0.5rem;">🎉</div>
+            <h2 style="text-align:center;font-size:1.3rem;font-weight:800;color:#f1f5f9;margin:0 0 0.25rem;">Kampanya Kazandın!</h2>
+            <p style="text-align:center;font-size:0.8rem;color:#64748b;margin:0 0 1.5rem;">Check-in'in seni ödüllendirdi</p>
+            <div style="display:flex;flex-direction:column;gap:1rem;margin-bottom:1.5rem;">${cardsHtml}</div>
+            <button onclick="document.getElementById('campaignRewardOverlay').remove(); location.reload();"
+                    style="width:100%;padding:0.85rem;border:none;border-radius:14px;background:linear-gradient(135deg,#8b5cf6,#a855f7);color:white;font-size:0.9rem;font-weight:700;cursor:pointer;">
+                Harika! 🎁
+            </button>
+        </div>`;
+
+    document.body.appendChild(overlay);
+    overlay.addEventListener('click', e => { if (e.target === overlay) { overlay.remove(); location.reload(); } });
+}
 </script>
