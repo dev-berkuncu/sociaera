@@ -140,14 +140,16 @@ const App = {
         if (res.ok) {
             if (res.data?.following) {
                 btn.classList.add('following');
-                btn.textContent = 'Takip Ediliyor';
-                btn.classList.remove('bg-primary-container', 'text-white');
-                btn.classList.add('bg-white/10', 'text-slate-300', 'border-white/10');
+                btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px;">person_check</span> Takip Ediliyor';
+                btn.style.background = '#F8F7F5';
+                btn.style.color = '#5C5C5C';
+                btn.style.borderColor = '#E8E7E3';
             } else {
                 btn.classList.remove('following');
-                btn.textContent = 'Takip Et';
-                btn.classList.remove('bg-white/10', 'text-slate-300', 'border-white/10');
-                btn.classList.add('bg-primary-container', 'text-white');
+                btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px;">person_add</span> Takip Et';
+                btn.style.background = '#F06D1F';
+                btn.style.color = '#fff';
+                btn.style.borderColor = '#F06D1F';
             }
         } else {
             this.flash(res.error || 'Hata oluştu.', 'error');
@@ -228,19 +230,15 @@ const App = {
             if (q.length < 2) { dropdownEl.style.display = 'none'; return; }
 
             this.venueSearchTimer = setTimeout(async () => {
-                console.log('[VenueSearch] Searching:', q);
                 const res = await this.get(`${this.baseUrl}/api/venue-search?q=${encodeURIComponent(q)}`);
-                console.log('[VenueSearch] Response:', res);
                 if (res.ok && res.data?.length) {
+                    dropdownEl.style.cssText = 'display:block;position:absolute;left:0;right:0;top:100%;z-index:400;background:#fff;border:1.5px solid #E8E7E3;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.12);overflow:hidden;margin-top:4px;';
                     dropdownEl.innerHTML = res.data.map(v =>
-                        `<div class="venue-picker-item" data-id="${escapeHtml(v.id)}" data-name="${escapeHtml(v.name)}" style="padding:8px 12px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.05);">
-                            <div style="font-weight:500;color:#fff;">${escapeHtml(v.name)}</div>
-                            <div style="font-size:0.8rem;color:#94a3b8;">${escapeHtml(v.category || '')}</div>
+                        `<div class="venue-picker-item" data-id="${escapeHtml(v.id)}" data-name="${escapeHtml(v.name)}" style="padding:10px 14px;cursor:pointer;border-bottom:1px solid #F2F1EE;display:flex;align-items:center;gap:8px;transition:background .1s;" onmouseover="this.style.background='#F8F7F5'" onmouseout="this.style.background=''">
+                            <span class="material-symbols-outlined" style="font-size:18px;color:#F06D1F;">place</span>
+                            <div><div style="font-weight:600;font-size:13px;color:#1A1A1A;">${escapeHtml(v.name)}</div><div style="font-size:11px;color:#A0A0A0;">${escapeHtml(v.category || '')}</div></div>
                         </div>`
                     ).join('');
-                    dropdownEl.style.display = 'block';
-                    console.log('[VenueSearch] Showing', res.data.length, 'results');
-
                     dropdownEl.querySelectorAll('.venue-picker-item').forEach(item => {
                         item.addEventListener('click', () => {
                             onSelect(item.dataset.id, item.dataset.name);
@@ -249,9 +247,8 @@ const App = {
                         });
                     });
                 } else {
-                    dropdownEl.innerHTML = '<div style="padding:12px;text-align:center;color:#94a3b8;font-size:0.85rem;">Sonuç bulunamadı</div>';
-                    dropdownEl.style.display = 'block';
-                    console.log('[VenueSearch] No results');
+                    dropdownEl.style.cssText = 'display:block;position:absolute;left:0;right:0;top:100%;z-index:400;background:#fff;border:1.5px solid #E8E7E3;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.12);overflow:hidden;margin-top:4px;';
+                    dropdownEl.innerHTML = '<div style="padding:14px;text-align:center;color:#A0A0A0;font-size:13px;">Sonuç bulunamadı</div>';
                 }
             }, 300);
         });
@@ -372,16 +369,18 @@ const App = {
         const safeTag = escapeHtml(c.tag || c.username);
         const safeComment = escapeHtml(c.comment);
         const safeTimeAgo = escapeHtml(c.time_ago || '');
+        const avatarUrl = escapeHtml(c.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(c.username||'U')}&background=F06D1F&color=fff&size=32&bold=true`);
         
         return `
-            <div class="flex gap-sm items-start py-2 border-b border-white/5 last:border-b-0">
-                <div class="flex-grow">
-                    <div class="flex items-center gap-xs">
-                        <span class="font-bold text-sm text-on-surface">${safeUsername}</span>
-                        <span class="text-xs text-on-surface-variant">• @${safeTag}</span>
-                        <span class="text-[10px] text-on-surface-variant ml-auto">${safeTimeAgo}</span>
+            <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid #F2F1EE;">
+                <img src="${avatarUrl}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;" />
+                <div style="flex:1;min-width:0;">
+                    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+                        <span style="font-weight:700;font-size:12px;color:#1A1A1A;">${safeUsername}</span>
+                        <span style="font-size:11px;color:#A0A0A0;">@${safeTag}</span>
+                        <span style="font-size:10px;color:#A0A0A0;margin-left:auto;">${safeTimeAgo}</span>
                     </div>
-                    <p class="text-xs text-on-surface/90 mt-1">${safeComment}</p>
+                    <p style="font-size:12px;color:#5C5C5C;margin:3px 0 0;line-height:1.4;">${safeComment}</p>
                 </div>
             </div>
         `;
@@ -422,16 +421,15 @@ const App = {
         if (!modal) return;
         document.getElementById('report_entity_type').value = entityType;
         document.getElementById('report_entity_id').value = entityId;
-        modal.classList.remove('hidden');
+        modal.style.display = 'block';  // footer uses display:none inline
         document.body.style.overflow = 'hidden';
     },
 
     closeReportModal() {
         const modal = document.getElementById('reportModal');
         if (!modal) return;
-        modal.classList.add('hidden');
+        modal.style.display = 'none';
         document.body.style.overflow = '';
-        // Reset form
         const form = document.getElementById('reportForm');
         if (form) form.reset();
     },
