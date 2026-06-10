@@ -100,6 +100,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $success = 'Profil teması güncellendi! 🎨';
             $user = $userModel->getById(Auth::id());
         }
+    } elseif ($action === 'update_bank') {
+        $bank = trim($_POST['bank_account'] ?? '');
+        if (empty($bank)) {
+            $error = 'Banka hesap numarası boş bırakılamaz.';
+        } else {
+            $userModel->updateField(Auth::id(), 'bank_account', $bank);
+            $success = 'Banka hesap numarası güncellendi.';
+            $user = $userModel->getById(Auth::id());
+        }
     }
 }
 
@@ -166,7 +175,9 @@ require_once __DIR__ . '/partials/app_header.php';
             <?php if (bannerUrl($user['banner'])): ?>
                 <img src="<?php echo bannerUrl($user['banner']); ?>" class="w-full h-full object-cover">
             <?php else: ?>
-                <div class="w-full h-full bg-gradient-to-r from-primary-container/40 to-surface-container-high"></div>
+                <div style="width:100%;height:100%;background:linear-gradient(135deg,#FFF3EB,#F5F4F0);display:flex;align-items:center;justify-content:center;">
+                    <span class="material-symbols-outlined" style="font-size:36px;color:var(--text-3);opacity:.4;">wallpaper</span>
+                </div>
             <?php endif; ?>
             <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
                 <span class="material-symbols-outlined text-white text-[32px]">wallpaper</span>
@@ -322,18 +333,23 @@ require_once __DIR__ . '/partials/app_header.php';
                 <label class="text-sm font-bold ml-1" style="color:var(--text-2);">E-posta</label>
                 <div class="relative">
                     <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-[18px]" style="color:var(--text-3);">mail</span>
-                    <input type="email" name="email" value="<?php echo escape($user['email']); ?>" required class="w-full rounded-xl pl-12 pr-4 py-3 focus:outline-none transition-all shadow-inner" style="background:var(--bg-section);border:1px solid var(--border);color:var(--text-1);">
+                    <?php if (!empty($user['gta_user_id'])): ?>
+                    <!-- GTA karakterleri için email readonly, space içerebilir -->
+                    <input type="text" name="email" value="<?php echo escape($user['email']); ?>" readonly
+                           class="w-full rounded-xl pl-12 pr-4 py-3 focus:outline-none"
+                           style="background:var(--bg-input);border:1px solid var(--border);color:var(--text-3);cursor:not-allowed;">
+                    <?php else: ?>
+                    <input type="email" name="email" value="<?php echo escape($user['email']); ?>" required
+                           class="w-full rounded-xl pl-12 pr-4 py-3 focus:outline-none transition-all shadow-inner"
+                           style="background:var(--bg-section);border:1px solid var(--border);color:var(--text-1);">
+                    <?php endif; ?>
                 </div>
+                <?php if (!empty($user['gta_user_id'])): ?>
+                <p class="text-[11px] ml-1" style="color:var(--text-3);">GTA karakterleri için e-posta değiştirilemez.</p>
+                <?php endif; ?>
             </div>
 
-            <div class="flex flex-col gap-2">
-                <label class="text-sm font-bold ml-1" style="color:var(--text-2);">Banka Hesap Numarası <span class="text-error">*</span></label>
-                <div class="relative">
-                    <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-[18px]" style="color:var(--text-3);">account_balance</span>
-                    <input type="text" name="bank_account" value="<?php echo escape($user['bank_account'] ?? ''); ?>" required placeholder="0300 8108 7" pattern="\d{4} \d{4} \d{1}" class="w-full rounded-xl pl-12 pr-4 py-3 focus:outline-none transition-all shadow-inner font-mono" style="background:var(--bg-section);border:1px solid var(--border);color:var(--text-1);" title="Format: #### #### # (Örn: 0300 8108 7)">
-                </div>
-                <p class="text-[11px] ml-1" style="color:var(--text-3);">Bakiye çekim işlemlerinizin gönderileceği banka hesap numarası (Zorunlu).</p>
-            </div>
+
             
             <div class="flex flex-col gap-2">
                 <label class="text-sm font-bold ml-1" style="color:var(--text-2);">Biyografi</label>
@@ -347,6 +363,32 @@ require_once __DIR__ . '/partials/app_header.php';
             
             <button type="submit" class="mt-4 bg-primary-container text-white px-8 py-3 rounded-xl font-bold shadow-[0_0_20px_rgba(255,145,0,0.3)] hover:bg-primary-container/90 transition-all active:scale-95 w-full sm:w-auto flex justify-center items-center gap-2">
                 <span class="material-symbols-outlined text-[20px]">save</span> Bilgileri Kaydet
+            </button>
+        </form>
+    </div>
+
+    <!-- Banka Hesabı (ayrı form) -->
+    <div class="rounded-2xl p-6 md:p-8" style="background:#fff;border:1.5px solid var(--color-primary);box-shadow:0 4px 20px rgba(240,109,31,.12);">
+        <h2 class="text-xl font-bold flex items-center gap-2 mb-2" style="color:var(--text-1);">
+            <span class="material-symbols-outlined text-[24px]" style="color:var(--color-primary);">account_balance</span>
+            Banka Hesap Numarası
+        </h2>
+        <p class="text-sm mb-5" style="color:var(--text-3);">Bakiye çekim işlemlerinizin gönderileceği banka hesap numarası.</p>
+        <form method="POST">
+            <?php echo csrfField(); ?>
+            <input type="hidden" name="action" value="update_bank">
+            <div class="relative mb-4">
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-[18px]" style="color:var(--text-3);">account_balance</span>
+                <input type="text" name="bank_account"
+                       value="<?php echo escape($user['bank_account'] ?? ''); ?>"
+                       placeholder="0300 8108 7"
+                       class="w-full rounded-xl pl-12 pr-4 py-3 focus:outline-none transition-all font-mono"
+                       style="background:var(--bg-section);border:1.5px solid var(--border);color:var(--text-1);font-size:16px;letter-spacing:.05em;"
+                       onfocus="this.style.borderColor='var(--color-primary)'" onblur="this.style.borderColor='var(--border)'">
+            </div>
+            <button type="submit" class="btn btn-primary">
+                <span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:'FILL' 1;">save</span>
+                Banka Hesabını Kaydet
             </button>
         </form>
     </div>
