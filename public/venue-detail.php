@@ -81,112 +81,122 @@ $activeNav = 'venues';
 require_once __DIR__ . '/partials/app_header.php';
 ?>
 
-<div style="min-width:0;" class="flex-1 flex flex-col gap-stack-md max-w-3xl w-full mx-auto lg:mx-0">
-    <a href="<?php echo BASE_URL; ?>/venues" class="flex items-center gap-2 hover:opacity-70 transition-opacity w-fit mb-2" style="color:var(--text-3);text-decoration:none;">
-        <span class="material-symbols-outlined text-[20px]">arrow_back</span> Mekanlar
+<div style="min-width:0; display:flex; flex-direction:column; gap:20px; padding-bottom:40px; max-width:768px; width:100%;">
+    <a href="<?php echo BASE_URL; ?>/venues"
+       style="display:inline-flex; align-items:center; gap:6px; color:var(--text-3); text-decoration:none; font-size:13px; font-weight:600; margin-bottom:8px; transition:color .15s;"
+       onmouseover="this.style.color='var(--color-primary)'" onmouseout="this.style.color='var(--text-3)'">
+        <span class="material-symbols-outlined" style="font-size:20px;">arrow_back</span> Mekanlar
     </a>
 
-    <div class="swarm-glass-card rounded-2xl overflow-hidden shadow-[0_20px_40px_-15px_rgba(19,19,20,0.5)] mb-6 relative">
+    <div style="background:#fff; border:1.5px solid var(--border-light); border-radius:16px; overflow:hidden; box-shadow:0 4px 16px rgba(0,0,0,0.06); margin-bottom:20px; position:relative;">
         <!-- Banner Image -->
-        <div class="h-64 md:h-80 w-full relative" style="background:var(--bg-section);">
-            <div class="absolute inset-0 z-10" style="background:linear-gradient(to top,rgba(255,255,255,0.85) 0%,transparent 60%);"></div>
+        <div style="height:200px; width:100%; position:relative; background:var(--bg-section);">
+            <div style="position:absolute; inset:0; z-index:1; background:linear-gradient(to top,rgba(255,255,255,0.85) 0%,transparent 60%);"></div>
             <?php if (!empty($venue['cover_image'])): ?>
-                <div class="absolute inset-0 bg-cover bg-center blur-2xl opacity-40 scale-110" style="background-image: url('<?php echo BASE_URL . '/uploads/venues/' . escape($venue['cover_image']); ?>')"></div>
-                <img src="<?php echo BASE_URL . '/uploads/venues/' . escape($venue['cover_image']); ?>" class="w-full h-full object-contain p-4 relative z-10" width="800" height="320">
+                <div style="position:absolute; inset:0; background-image:url('<?php echo BASE_URL . '/uploads/venues/' . escape($venue['cover_image']); ?>'); background-size:cover; background-position:center; filter:blur(20px); opacity:0.4; transform:scale(1.1);"></div>
+                <img src="<?php echo BASE_URL . '/uploads/venues/' . escape($venue['cover_image']); ?>" style="width:100%; height:100%; object-fit:contain; padding:16px; box-sizing:border-box; position:relative; z-index:2; display:block;" width="800" height="200">
             <?php elseif (!empty($venue['image'])): ?>
-                <div class="absolute inset-0 bg-cover bg-center blur-2xl opacity-40 scale-110" style="background-image: url('<?php echo uploadUrl('posts', $venue['image']); ?>')"></div>
-                <img src="<?php echo uploadUrl('posts', $venue['image']); ?>" class="w-full h-full object-contain p-4 relative z-10" width="800" height="320">
+                <div style="position:absolute; inset:0; background-image:url('<?php echo uploadUrl('posts', $venue['image']); ?>'); background-size:cover; background-position:center; filter:blur(20px); opacity:0.4; transform:scale(1.1);"></div>
+                <img src="<?php echo uploadUrl('posts', $venue['image']); ?>" style="width:100%; height:100%; object-fit:contain; padding:16px; box-sizing:border-box; position:relative; z-index:2; display:block;" width="800" height="200">
             <?php else: ?>
-                <div class="w-full h-full flex items-center justify-center relative z-10" style="background:var(--bg-section);color:var(--text-3);"><span class="material-symbols-outlined text-[64px]">store</span></div>
+                <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; position:relative; z-index:2; color:var(--text-3);"><span class="material-symbols-outlined" style="font-size:64px;">store</span></div>
             <?php endif; ?>
-            
-            <!-- Category Badge overlaying banner -->
+
+            <!-- Category Badge -->
             <?php if ($venue['category']): ?>
-            <div class="absolute top-4 left-4 z-20">
-                <span class="text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider shadow-lg" style="background:rgba(26,26,26,0.75);color:#fff;border:1px solid rgba(255,255,255,0.25);">
+            <div style="position:absolute; top:12px; left:12px; z-index:10;">
+                <span style="font-size:11px; font-weight:800; padding:4px 12px; border-radius:999px; text-transform:uppercase; letter-spacing:.06em; background:rgba(26,26,26,0.75); color:#fff; border:1px solid rgba(255,255,255,0.2);">
                     <?php echo escape(VenueModel::categories()[$venue['category']] ?? $venue['category']); ?>
                 </span>
             </div>
             <?php endif; ?>
-            
+
             <!-- Open/Close Badge -->
             <?php if (isset($venue['is_open'])): ?>
-            <div class="absolute top-4 right-4 z-20 flex items-center gap-2 text-[12px] font-bold px-3 py-1.5 rounded-full shadow-lg" style="background:rgba(26,26,26,0.75);border:1px solid rgba(255,255,255,0.25);color:<?php echo $venue['is_open'] ? '#10b981' : '#ef4444'; ?>;">
-                <span class="w-2 h-2 rounded-full animate-pulse <?php echo $venue['is_open'] ? 'bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.8)]' : 'bg-red-400 shadow-[0_0_8px_rgba(239,68,68,0.8)]'; ?>"></span>
+            <div style="position:absolute; top:12px; right:12px; z-index:10; display:flex; align-items:center; gap:8px; font-size:12px; font-weight:700; padding:4px 12px; border-radius:999px; background:rgba(26,26,26,0.75); border:1px solid rgba(255,255,255,0.2); color:<?php echo $venue['is_open'] ? '#10b981' : '#ef4444'; ?>;">
+                <span style="width:8px; height:8px; border-radius:50%; background:<?php echo $venue['is_open'] ? '#10b981' : '#ef4444'; ?>; box-shadow:0 0 8px <?php echo $venue['is_open'] ? 'rgba(16,185,129,0.8)' : 'rgba(239,68,68,0.8)'; ?>; flex-shrink:0;"></span>
                 <?php echo $venue['is_open'] ? 'Şu An Açık' : 'Şu An Kapalı'; ?>
             </div>
             <?php endif; ?>
         </div>
 
         <!-- Venue Content -->
-        <div class="p-6 md:p-8 relative z-20 -mt-20">
-            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
+        <div style="padding:24px; position:relative; z-index:5;">
+            <div style="display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:16px; margin-bottom:20px;">
                 <div>
-                    <h1 class="text-4xl md:text-5xl font-black tracking-tight" style="color:var(--text-1);"><?php echo escape($venue['name']); ?></h1>
+                    <h1 style="font-size:2rem; font-weight:900; letter-spacing:-.02em; color:var(--text-1); margin:0;"><?php echo escape($venue['name']); ?></h1>
                 </div>
-                <!-- Call to action button -->
-                <div class="flex items-center gap-3">
-                    <button onclick="openVenueCheckinModal()" id="btn-venue-checkin" class="flex items-center justify-center gap-2 bg-primary-container text-white px-6 py-3 rounded-xl font-bold hover:brightness-110 transition-all shadow-[0_0_20px_rgba(255,145,0,0.3)] active:scale-95 group shrink-0">
-                        <span class="material-symbols-outlined text-[20px] group-hover:scale-110 transition-transform" style="font-variation-settings:'FILL' 1;">add_location_alt</span>
+                <!-- CTA buttons -->
+                <div style="display:flex; align-items:center; gap:10px; flex-shrink:0;">
+                    <button onclick="openVenueCheckinModal()" id="btn-venue-checkin"
+                            style="display:flex; align-items:center; justify-content:center; gap:8px; background:var(--color-primary); color:#fff; padding:11px 22px; border-radius:12px; font-weight:700; font-size:14px; box-shadow:0 4px 16px rgba(240,109,31,0.3); transition:opacity .15s; border:none; cursor:pointer; font-family:inherit; white-space:nowrap;"
+                            onmouseover="this.style.opacity='.9'" onmouseout="this.style.opacity='1'">
+                        <span class="material-symbols-outlined" style="font-size:20px; font-variation-settings:'FILL' 1;">add_location_alt</span>
                         Burada Check-in Yap
                     </button>
                     <!-- Favori Butonu (Premium) -->
-                    <form method="POST" class="inline">
+                    <form method="POST" style="display:inline;">
                         <input type="hidden" name="csrf_token" value="<?php echo csrfToken(); ?>">
                         <input type="hidden" name="action" value="toggle_favorite">
-                        <button type="submit" class="flex items-center justify-center gap-1.5 border px-4 py-3 rounded-xl font-bold transition-all active:scale-95 shrink-0" style="<?php echo $isFavorited ? 'background:rgba(245,158,11,0.15);color:#f59e0b;border-color:rgba(245,158,11,0.35);' : ($isPremiumUser ? 'background:var(--bg-section);color:var(--text-3);border-color:var(--border);' : 'background:var(--bg-section);color:var(--text-3);border-color:var(--border);cursor:not-allowed;'); ?>" <?php echo !$isPremiumUser ? 'title="Premium özellik 💎"' : ''; ?>>
-                            <span class="material-symbols-outlined text-[20px]" <?php echo $isFavorited ? 'data-weight="fill"' : ''; ?>>star</span>
-                            <span class="text-xs"><?php echo $favoriteCount; ?></span>
+                        <button type="submit"
+                                style="display:flex; align-items:center; justify-content:center; gap:6px; padding:11px 14px; border-radius:12px; font-weight:700; font-size:14px; transition:all .15s; flex-shrink:0; font-family:inherit; <?php echo $isFavorited ? 'background:rgba(245,158,11,0.15);color:#f59e0b;border:1.5px solid rgba(245,158,11,0.35);' : 'background:var(--bg-section);color:var(--text-3);border:1.5px solid var(--border);' . (!$isPremiumUser ? 'cursor:not-allowed;' : ''); ?>"
+                                <?php echo !$isPremiumUser ? 'title="Premium özellik 💎"' : ''; ?>>
+                            <span class="material-symbols-outlined" style="font-size:20px; font-variation-settings:'FILL' <?php echo $isFavorited ? '1' : '0'; ?>;" >star</span>
+                            <span style="font-size:13px;"><?php echo $favoriteCount; ?></span>
                         </button>
                     </form>
                 </div>
             </div>
 
             <?php if ($venue['description']): ?>
-                <p class="mb-8 leading-relaxed text-lg max-w-2xl" style="color:var(--text-2);"><?php echo nl2brSafe($venue['description']); ?></p>
+                <p style="margin:0 0 24px; line-height:1.7; font-size:1rem; color:var(--text-2); max-width:640px;"><?php echo nl2brSafe($venue['description']); ?></p>
             <?php endif; ?>
-            
+
             <!-- Information Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-                <div class="flex flex-col gap-4 rounded-xl p-5" style="background:var(--bg-section);border:1px solid var(--border);">
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:16px; margin-bottom:8px;">
+                <div style="display:flex; flex-direction:column; gap:14px; border-radius:12px; padding:18px; background:var(--bg-section); border:1px solid var(--border);">
                     <?php if ($venue['address']): ?>
-                        <div class="flex items-start gap-3">
-                            <span class="material-symbols-outlined text-[24px] shrink-0 mt-0.5" style="color:var(--color-primary);">map</span> 
-                            <span style="color:var(--text-2);"><?php echo escape($venue['address']); ?></span>
+                        <div style="display:flex; align-items:flex-start; gap:12px;">
+                            <span class="material-symbols-outlined" style="font-size:22px; flex-shrink:0; margin-top:2px; color:var(--color-primary);">map</span>
+                            <span style="color:var(--text-2); line-height:1.5;"><?php echo escape($venue['address']); ?></span>
                         </div>
                     <?php endif; ?>
                     <?php if (!empty($venue['hours'])): ?>
-                        <div class="flex items-start gap-3">
-                            <span class="material-symbols-outlined text-[24px] shrink-0" style="color:var(--color-primary);">schedule</span> 
+                        <div style="display:flex; align-items:flex-start; gap:12px;">
+                            <span class="material-symbols-outlined" style="font-size:22px; flex-shrink:0; color:var(--color-primary);">schedule</span>
                             <span style="color:var(--text-2);"><?php echo escape($venue['hours']); ?></span>
                         </div>
                     <?php endif; ?>
                     <?php if (!empty($venue['phone'])): ?>
-                        <div class="flex items-center gap-3">
-                            <span class="material-symbols-outlined text-[24px] shrink-0" style="color:var(--color-primary);">call</span> 
+                        <div style="display:flex; align-items:center; gap:12px;">
+                            <span class="material-symbols-outlined" style="font-size:22px; flex-shrink:0; color:var(--color-primary);">call</span>
                             <span style="color:var(--text-2);"><?php echo escape($venue['phone']); ?></span>
                         </div>
                     <?php endif; ?>
                 </div>
 
-                <div class="flex flex-col gap-4 rounded-xl p-5" style="background:var(--bg-section);border:1px solid var(--border);">
+                <div style="display:flex; flex-direction:column; gap:14px; border-radius:12px; padding:18px; background:var(--bg-section); border:1px solid var(--border);">
                     <?php if ($venue['website']): ?>
-                        <div class="flex items-center gap-3">
-                            <span class="material-symbols-outlined text-[24px] text-[#3b82f6]">language</span> 
-                            <a href="<?php echo safeHref($venue['website']); ?>" target="_blank" rel="noopener noreferrer" class="hover:underline truncate" style="color:var(--text-2);">Resmi Web Sitesi</a>
+                        <div style="display:flex; align-items:center; gap:12px;">
+                            <span class="material-symbols-outlined" style="font-size:22px; color:#3b82f6;">language</span>
+                            <a href="<?php echo safeHref($venue['website']); ?>" target="_blank" rel="noopener noreferrer"
+                               style="color:var(--text-2); text-decoration:none; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"
+                               onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Resmi Web Sitesi</a>
                         </div>
                     <?php endif; ?>
                     <?php if ($venue['facebrowser_url']): ?>
-                        <div class="flex items-center gap-3">
-                            <span class="material-symbols-outlined text-[24px] text-[#3b5998]">link</span> 
-                            <a href="<?php echo safeHref($venue['facebrowser_url']); ?>" target="_blank" rel="noopener noreferrer" class="hover:underline truncate" style="color:var(--text-2);">Facebrowser Sayfası</a>
+                        <div style="display:flex; align-items:center; gap:12px;">
+                            <span class="material-symbols-outlined" style="font-size:22px; color:#3b5998;">link</span>
+                            <a href="<?php echo safeHref($venue['facebrowser_url']); ?>" target="_blank" rel="noopener noreferrer"
+                               style="color:var(--text-2); text-decoration:none; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"
+                               onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Facebrowser Sayfası</a>
                         </div>
                     <?php endif; ?>
-                    
-                    <!-- Stats in the grid -->
-                    <div class="flex items-center gap-3 mt-auto pt-2">
-                        <span class="material-symbols-outlined text-[24px] text-emerald-400">verified_user</span> 
-                        <span style="color:var(--text-2);"><strong style="color:var(--text-1);font-size:1.125rem;"><?php echo $checkinCount; ?></strong> Toplam Check-in</span>
+
+                    <!-- Stats -->
+                    <div style="display:flex; align-items:center; gap:12px; margin-top:auto; padding-top:8px;">
+                        <span class="material-symbols-outlined" style="font-size:22px; color:#10b981;">verified_user</span>
+                        <span style="color:var(--text-2);"><strong style="color:var(--text-1); font-size:1.1rem;"><?php echo $checkinCount; ?></strong> Toplam Check-in</span>
                     </div>
                 </div>
             </div>
@@ -194,85 +204,79 @@ require_once __DIR__ . '/partials/app_header.php';
     </div>
 
     <!-- Rating Section -->
-    <div class="rounded-2xl p-6 md:p-8 mb-6" id="venueRatingSection" style="background:#fff;border:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.08);">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+    <div style="border-radius:16px; padding:24px; margin-bottom:20px; background:#fff; border:1px solid var(--border); box-shadow:0 1px 3px rgba(0,0,0,.08);" id="venueRatingSection">
+        <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:24px;">
             <!-- Left: Average Rating Display -->
-            <div class="flex items-center gap-5">
-                <div class="flex flex-col items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-amber-500/20 to-orange-500/10 border border-amber-500/20">
-                    <span class="text-3xl font-black text-amber-400 leading-none" id="ratingAvgDisplay"><?php echo $averageRating > 0 ? number_format($averageRating, 1) : '—'; ?></span>
-                    <span class="text-[10px] text-amber-400/70 font-semibold uppercase tracking-wider mt-0.5">/ 5</span>
+            <div style="display:flex; align-items:center; gap:20px;">
+                <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:80px; height:80px; border-radius:16px; background:linear-gradient(135deg,rgba(245,158,11,0.2),rgba(249,115,22,0.1)); border:1px solid rgba(245,158,11,0.2);">
+                    <span style="font-size:1.875rem; font-weight:900; color:#f59e0b; line-height:1;" id="ratingAvgDisplay"><?php echo $averageRating > 0 ? number_format($averageRating, 1) : '—'; ?></span>
+                    <span style="font-size:10px; color:rgba(245,158,11,0.7); font-weight:600; text-transform:uppercase; letter-spacing:.05em; margin-top:2px;">/ 5</span>
                 </div>
-                <div class="flex flex-col gap-1">
-                    <h3 class="text-lg font-bold flex items-center gap-2" style="color:var(--text-1);">
-                        <span class="material-symbols-outlined text-amber-400" style="font-variation-settings: 'FILL' 1;">star</span>
+                <div style="display:flex; flex-direction:column; gap:4px;">
+                    <h3 style="font-size:1.1rem; font-weight:700; display:flex; align-items:center; gap:8px; color:var(--text-1); margin:0;">
+                        <span class="material-symbols-outlined" style="color:#f59e0b; font-variation-settings:'FILL' 1;">star</span>
                         Mekan Puanı
                     </h3>
-                    <p class="text-sm" style="color:var(--text-3);">
+                    <p style="font-size:13px; color:var(--text-3); margin:0;">
                         <span id="ratingCountDisplay"><?php echo $ratingCount; ?></span> kişi puan verdi
                     </p>
                     <!-- Average Stars (read-only) -->
-                    <div class="flex items-center gap-0.5 mt-1" id="averageStarsDisplay">
-                        <?php for ($i = 1; $i <= 5; $i++): ?>
-                            <?php
-                                $fillClass = '';
-                                if ($averageRating >= $i) {
-                                    $fillClass = 'text-amber-400';
-                                } elseif ($averageRating >= $i - 0.5) {
-                                    $fillClass = 'text-amber-400/50';
-                                } else {
-                                    $fillClass = 'text-slate-600';
-                                }
-                            ?>
-                            <span class="material-symbols-outlined text-[20px] <?php echo $fillClass; ?>" style="font-variation-settings: 'FILL' 1;">star</span>
+                    <div style="display:flex; align-items:center; gap:2px; margin-top:4px;" id="averageStarsDisplay">
+                        <?php for ($i = 1; $i <= 5; $i++):
+                            if ($averageRating >= $i) $starColor = '#f59e0b';
+                            elseif ($averageRating >= $i - 0.5) $starColor = 'rgba(245,158,11,0.5)';
+                            else $starColor = '#94a3b8';
+                        ?>
+                        <span class="material-symbols-outlined" style="font-size:20px; color:<?php echo $starColor; ?>; font-variation-settings:'FILL' 1;">star</span>
                         <?php endfor; ?>
                     </div>
                 </div>
             </div>
 
             <!-- Right: User Rating Interactive Stars -->
-            <div class="flex flex-col items-center md:items-end gap-2">
+            <div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px;">
                 <?php if (Auth::check()): ?>
-                    <span class="text-xs font-medium uppercase tracking-wider" style="color:var(--text-3);">
+                    <span style="font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.05em; color:var(--text-3);">
                         <?php echo $userRating > 0 ? 'Puanını güncelle' : 'Puan ver'; ?>
                     </span>
-                    <div class="flex items-center gap-1" id="userStarRating" data-venue-id="<?php echo $venueId; ?>" data-current="<?php echo $userRating; ?>">
+                    <div style="display:flex; align-items:center; gap:4px;" id="userStarRating" data-venue-id="<?php echo $venueId; ?>" data-current="<?php echo $userRating; ?>">
                         <?php for ($i = 1; $i <= 5; $i++): ?>
-                            <button type="button"
-                                class="star-btn group relative p-1 rounded-lg hover:bg-amber-400/10 transition-all duration-200"
-                                data-star="<?php echo $i; ?>"
-                                aria-label="<?php echo $i; ?> yıldız">
-                                <span class="material-symbols-outlined text-[32px] transition-all duration-200 <?php echo $i <= $userRating ? 'text-amber-400 scale-110' : 'text-slate-600 group-hover:text-amber-300'; ?>"
-                                    style="font-variation-settings: 'FILL' 1;">
-                                    star
-                                </span>
-                            </button>
+                        <button type="button"
+                            class="star-btn"
+                            style="background:none; border:none; cursor:pointer; padding:4px; border-radius:8px; transition:background .15s;"
+                            data-star="<?php echo $i; ?>"
+                            aria-label="<?php echo $i; ?> yıldız"
+                            onmouseover="this.style.background='rgba(245,158,11,0.1)'"
+                            onmouseout="this.style.background='none'">
+                            <span class="material-symbols-outlined" style="font-size:32px; transition:all .2s; color:<?php echo $i <= $userRating ? '#f59e0b' : '#94a3b8'; ?>; font-variation-settings:'FILL' 1;">star</span>
+                        </button>
                         <?php endfor; ?>
                     </div>
                     <?php if ($userRating > 0): ?>
-                        <span class="text-xs text-amber-400/70" id="userRatingLabel">Senin puanın: <strong><?php echo $userRating; ?>/5</strong></span>
+                        <span style="font-size:11px; color:rgba(245,158,11,0.7);" id="userRatingLabel">Senin puanın: <strong><?php echo $userRating; ?>/5</strong></span>
                     <?php else: ?>
-                        <span class="text-xs" id="userRatingLabel" style="color:var(--text-3);">Henüz puan vermedin</span>
+                        <span style="font-size:11px; color:var(--text-3);" id="userRatingLabel">Henüz puan vermedin</span>
                     <?php endif; ?>
                 <?php else: ?>
-                    <div class="flex flex-col items-center gap-2 rounded-xl px-6 py-4" style="background:var(--bg-section);border:1px solid var(--border);">
-                        <span class="material-symbols-outlined text-[24px]" style="color:var(--text-3);">lock</span>
-                        <p class="text-sm text-center" style="color:var(--text-2);">Puan vermek için <a href="<?php echo BASE_URL; ?>/login" class="hover:underline font-semibold" style="color:var(--color-primary);">giriş yapın</a></p>
+                    <div style="display:flex; flex-direction:column; align-items:center; gap:8px; border-radius:12px; padding:16px 24px; background:var(--bg-section); border:1px solid var(--border);">
+                        <span class="material-symbols-outlined" style="font-size:24px; color:var(--text-3);">lock</span>
+                        <p style="font-size:13px; text-align:center; color:var(--text-2); margin:0;">Puan vermek için <a href="<?php echo BASE_URL; ?>/login" style="color:var(--color-primary); font-weight:600; text-decoration:none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">giriş yapın</a></p>
                     </div>
                 <?php endif; ?>
             </div>
         </div>
     </div>
 
-    <h2 class="text-xl font-bold mb-2 mt-4 flex items-center gap-2" style="color:var(--text-1);"><span class="material-symbols-outlined" style="color:var(--color-primary);">history</span> Son Check-in'ler</h2>
+    <h2 style="font-size:1.25rem; font-weight:800; margin:0 0 8px; margin-top:16px; display:flex; align-items:center; gap:8px; color:var(--text-1);"><span class="material-symbols-outlined" style="color:var(--color-primary);">history</span> Son Check-in'ler</h2>
 
     <!-- ── Aktif Kampanyalar ── -->
     <?php if (!empty($activeCampaigns)): ?>
-    <div class="rounded-xl overflow-hidden mb-2" style="background:#fff;border:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.08);">
-        <div class="px-6 py-4 flex items-center gap-2" style="border-bottom:1px solid var(--border);">
-            <span class="material-symbols-outlined text-purple-400 text-[20px]">campaign</span>
-            <h2 class="text-base font-bold" style="color:var(--text-1);">Aktif Kampanyalar</h2>
+    <div style="border-radius:12px; overflow:hidden; margin-bottom:8px; background:#fff; border:1px solid var(--border); box-shadow:0 1px 3px rgba(0,0,0,.08);">
+        <div style="padding:14px 20px; display:flex; align-items:center; gap:8px; border-bottom:1px solid var(--border);">
+            <span class="material-symbols-outlined" style="color:#a855f7; font-size:20px;">campaign</span>
+            <h2 style="font-size:14px; font-weight:700; color:var(--text-1); margin:0;">Aktif Kampanyalar</h2>
         </div>
-        <div class="divide-y" style="--tw-divide-opacity:1;border-color:var(--border);">
+        <div>
             <?php foreach ($activeCampaigns as $c):
                 $hasEarned = Auth::check() && $campaignModel->hasEarned($c['id'], Auth::id());
                 $myCode    = null;
@@ -290,40 +294,40 @@ require_once __DIR__ . '/partials/app_header.php';
                     $progress = min(100, round(($userCheckinHere / $target) * 100));
                 }
             ?>
-            <div class="px-6 py-4 flex items-start gap-4">
-                <div class="w-10 h-10 rounded-xl <?php echo $hasEarned ? 'bg-emerald-500/15' : 'bg-purple-500/15'; ?> flex items-center justify-center flex-shrink-0">
-                    <span class="material-symbols-outlined <?php echo $hasEarned ? 'text-emerald-400' : 'text-purple-400'; ?> text-[20px]">
+            <div style="padding:16px 20px; display:flex; align-items:flex-start; gap:14px; border-bottom:1px solid var(--border-light);">
+                <div style="width:40px; height:40px; border-radius:10px; background:<?php echo $hasEarned ? 'rgba(16,185,129,0.12)' : 'rgba(168,85,247,0.12)'; ?>; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                    <span class="material-symbols-outlined" style="color:<?php echo $hasEarned ? '#10b981' : '#a855f7'; ?>; font-size:20px;">
                         <?php echo $hasEarned ? 'check_circle' : ($c['reward_type'] === 'free_item' ? 'redeem' : 'percent'); ?>
                     </span>
                 </div>
-                <div class="flex-grow min-w-0">
-                    <div class="font-semibold" style="color:var(--text-1);"><?php echo escape($c['title']); ?></div>
-                    <div class="text-sm mt-0.5" style="color:var(--text-3);">
+                <div style="flex:1; min-width:0;">
+                    <div style="font-weight:600; color:var(--text-1); font-size:14px;"><?php echo escape($c['title']); ?></div>
+                    <div style="font-size:13px; margin-top:2px; color:var(--text-3);">
                         <?php echo escape(CampaignModel::formatTrigger($c)); ?> →
-                        <span class="text-purple-400 font-semibold"><?php echo escape(CampaignModel::formatReward($c)); ?></span>
+                        <span style="color:#a855f7; font-weight:600;"><?php echo escape(CampaignModel::formatReward($c)); ?></span>
                     </div>
                     <?php if ($c['description']): ?>
-                        <p class="text-xs mt-1" style="color:var(--text-3);"><?php echo escape($c['description']); ?></p>
+                        <p style="font-size:12px; margin-top:4px; color:var(--text-3);"><?php echo escape($c['description']); ?></p>
                     <?php endif; ?>
 
                     <?php if (!$hasEarned && $c['trigger_type'] !== 'first_checkin'): ?>
-                    <div class="mt-2">
-                        <div class="flex justify-between text-xs mb-1" style="color:var(--text-3);">
+                    <div style="margin-top:8px;">
+                        <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:4px; color:var(--text-3);">
                             <span><?php echo $userCheckinHere; ?> / <?php echo $target; ?> check-in</span>
                             <span><?php echo $progress; ?>%</span>
                         </div>
-                        <div class="h-1.5 rounded-full overflow-hidden" style="background:var(--bg-section);">
-                            <div class="h-full bg-purple-500/70 rounded-full transition-all duration-700" style="width:<?php echo $progress; ?>%"></div>
+                        <div style="height:6px; border-radius:999px; overflow:hidden; background:var(--bg-section);">
+                            <div style="height:100%; background:rgba(168,85,247,0.7); border-radius:999px; transition:width .7s; width:<?php echo $progress; ?>%;"></div>
                         </div>
                     </div>
                     <?php endif; ?>
 
                     <?php if ($hasEarned): ?>
-                    <div class="mt-2 flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 rounded-lg px-3 py-2 flex-wrap">
-                        <span class="material-symbols-outlined text-emerald-400 text-[16px]">confirmation_number</span>
-                        <span class="text-xs" style="color:var(--text-3);">Kodun:</span>
-                        <code class="font-mono font-bold text-emerald-400 tracking-widest"><?php echo escape($myCode ?? '——'); ?></code>
-                        <span class="text-xs" style="color:var(--text-3);">— kasaya göster</span>
+                    <div style="margin-top:8px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.2); border-radius:8px; padding:8px 12px;">
+                        <span class="material-symbols-outlined" style="color:#10b981; font-size:16px;">confirmation_number</span>
+                        <span style="font-size:12px; color:var(--text-3);">Kodun:</span>
+                        <code style="font-family:monospace; font-weight:700; color:#10b981; letter-spacing:.1em;"><?php echo escape($myCode ?? '——'); ?></code>
+                        <span style="font-size:12px; color:var(--text-3);">— kasaya göster</span>
                     </div>
                     <?php endif; ?>
                 </div>
@@ -333,19 +337,20 @@ require_once __DIR__ . '/partials/app_header.php';
     </div>
     <?php endif; ?>
 
-    <!-- Check-in Listesi (sade) -->
-    <div class="rounded-xl overflow-hidden mb-4" style="background:#fff;border:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.08);">
+    <!-- Check-in Listesi -->
+    <div style="border-radius:12px; overflow:hidden; margin-bottom:16px; background:#fff; border:1px solid var(--border); box-shadow:0 1px 3px rgba(0,0,0,.08);">
         <?php if (empty($posts)): ?>
-            <div class="p-8 text-center" style="color:var(--text-3);">
-                <span class="material-symbols-outlined text-[40px] mb-2 block opacity-40">pin_drop</span>
-                <p class="text-sm">Bu mekanda henüz check-in yok. İlk check-in'i sen yap!</p>
-                <button onclick="openVenueCheckinModal()" class="mt-4 inline-flex items-center gap-2 bg-primary-container text-white px-5 py-2.5 rounded-lg font-bold text-sm hover:brightness-110 transition-all active:scale-95">
-                    <span class="material-symbols-outlined text-base" style="font-variation-settings:'FILL' 1;">add_location_alt</span>
+            <div style="padding:32px; text-align:center; color:var(--text-3);">
+                <span class="material-symbols-outlined" style="font-size:40px; display:block; margin-bottom:8px; opacity:.4;">pin_drop</span>
+                <p style="font-size:13px; margin:0 0 16px;">Bu mekanda henüz check-in yok. İlk check-in'i sen yap!</p>
+                <button onclick="openVenueCheckinModal()"
+                        style="display:inline-flex; align-items:center; gap:8px; background:var(--color-primary); color:#fff; padding:10px 20px; border-radius:10px; font-weight:700; font-size:13px; border:none; cursor:pointer; font-family:inherit;">
+                    <span class="material-symbols-outlined" style="font-size:16px; font-variation-settings:'FILL' 1;">add_location_alt</span>
                     Check-in Yap
                 </button>
             </div>
         <?php else: ?>
-            <div class="divide-y" style="border-color:var(--border);">
+            <div style="border-top:none;">
                 <?php foreach ($posts as $ci): ?>
                     <?php include __DIR__ . '/partials/_checkin_row.php'; ?>
                 <?php endforeach; ?>
@@ -355,20 +360,20 @@ require_once __DIR__ . '/partials/app_header.php';
 </div>
 
 <!-- ── Inline Check-in Modal ── -->
-<div id="venueCheckinModal" class="fixed inset-0 z-[9999] hidden">
-    <div class="absolute inset-0" style="background:rgba(0,0,0,0.6);" onclick="closeVenueCheckinModal()"></div>
-    <div class="absolute inset-0 flex items-center justify-center p-4">
-        <div class="rounded-2xl w-full max-w-md shadow-2xl relative p-6 animate-[modalIn_0.25s_ease-out]" style="background:#fff;border:1px solid var(--border);">
+<div id="venueCheckinModal" style="position:fixed; inset:0; z-index:9999; display:none;">
+    <div style="position:absolute; inset:0;" onclick="closeVenueCheckinModal()"></div>
+    <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; padding:16px;">
+        <div style="border-radius:16px; width:100%; max-width:480px; box-shadow:0 20px 48px rgba(0,0,0,0.18); position:relative; padding:24px; background:#fff; border:1px solid var(--border);">
 
-            <div class="flex items-center justify-between pb-4 mb-4" style="border-bottom:1px solid var(--border);">
+            <div style="display:flex; align-items:center; justify-content:space-between; padding-bottom:16px; margin-bottom:16px; border-bottom:1px solid var(--border);">
                 <div>
-                    <h3 class="text-base font-bold flex items-center gap-2" style="color:var(--text-1);">
-                        <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">add_location_alt</span>
+                    <h3 style="font-size:15px; font-weight:700; display:flex; align-items:center; gap:8px; color:var(--text-1); margin:0;">
+                        <span class="material-symbols-outlined" style="color:var(--color-primary); font-variation-settings:'FILL' 1;">add_location_alt</span>
                         Check-in Yap
                     </h3>
-                    <p class="text-xs text-on-surface-variant mt-0.5"><?php echo escape($venue['name']); ?></p>
+                    <p style="font-size:12px; color:var(--text-3); margin:4px 0 0;"><?php echo escape($venue['name']); ?></p>
                 </div>
-                <button onclick="closeVenueCheckinModal()" class="transition-colors p-1" style="color:var(--text-3);">
+                <button onclick="closeVenueCheckinModal()" style="background:none; border:none; cursor:pointer; color:var(--text-3); padding:4px; transition:color .14s;" onmouseover="this.style.color='var(--text-1)'" onmouseout="this.style.color='var(--text-3)'">
                     <span class="material-symbols-outlined">close</span>
                 </button>
             </div>
@@ -378,22 +383,24 @@ require_once __DIR__ . '/partials/app_header.php';
                 <input type="hidden" name="venue_id" value="<?php echo $venue['id']; ?>">
 
                 <?php $ciAvatarUrl = safeAvatarUrl($currentUserData['avatar'] ?? null, $currentUserData['username'] ?? 'U'); ?>
-                <div class="flex gap-3 mb-4">
-                    <img src="<?php echo $ciAvatarUrl; ?>" alt="" class="w-10 h-10 rounded-full object-cover flex-shrink-0" style="border:1px solid var(--border);" width="40" height="40">
+                <div style="display:flex; gap:12px; margin-bottom:16px;">
+                    <img src="<?php echo $ciAvatarUrl; ?>" alt="" style="width:40px; height:40px; border-radius:50%; object-fit:cover; flex-shrink:0; border:1px solid var(--border);" width="40" height="40">
                     <textarea id="venueCheckinNote" name="note"
-                        class="flex-grow rounded-xl px-3 py-2.5 text-sm focus:outline-none transition-colors resize-none" style="background:var(--bg-section);border:1px solid var(--border);color:var(--text-1);"
+                        style="flex:1; border-radius:12px; padding:10px 14px; font-size:13px; outline:none; transition:border-color .2s; resize:none; background:var(--bg-section); border:1px solid var(--border); color:var(--text-1); font-family:inherit; line-height:1.5;"
                         placeholder="Bu mekanda ne yaptın? (opsiyonel)" rows="3" maxlength="500"></textarea>
                 </div>
 
-                <div class="flex items-center justify-between">
-                    <label class="flex items-center gap-2 cursor-pointer transition-colors" style="color:var(--text-3);" title="Fotoğraf ekle">
-                        <span class="material-symbols-outlined text-xl">add_a_photo</span>
-                        <span class="text-xs" id="venueCheckinImageLabel">Fotoğraf</span>
-                        <input type="file" name="image" id="venueCheckinImage" accept="image/*" class="hidden">
+                <div style="display:flex; align-items:center; justify-content:space-between;">
+                    <label style="display:flex; align-items:center; gap:8px; cursor:pointer; color:var(--text-3); transition:color .15s;" title="Fotoğraf ekle"
+                           onmouseover="this.style.color='var(--color-primary)'" onmouseout="this.style.color='var(--text-3)'">
+                        <span class="material-symbols-outlined" style="font-size:22px;">add_a_photo</span>
+                        <span style="font-size:12px;" id="venueCheckinImageLabel">Fotoğraf</span>
+                        <input type="file" name="image" id="venueCheckinImage" accept="image/*" style="display:none;">
                     </label>
                     <button type="submit" id="venueCheckinBtn"
-                        class="bg-primary-container text-white px-6 py-2.5 rounded-xl font-bold text-sm hover:brightness-110 transition-all active:scale-95 shadow-[0_0_15px_rgba(255,145,0,0.3)] flex items-center gap-2">
-                        <span class="material-symbols-outlined text-base" style="font-variation-settings:'FILL' 1;">pin_drop</span>
+                        style="background:var(--color-primary); color:#fff; padding:10px 22px; border-radius:12px; font-weight:700; font-size:13px; box-shadow:0 4px 16px rgba(240,109,31,0.25); transition:opacity .15s; display:flex; align-items:center; gap:8px; border:none; cursor:pointer; font-family:inherit;"
+                        onmouseover="this.style.opacity='.9'" onmouseout="this.style.opacity='1'">
+                        <span class="material-symbols-outlined" style="font-size:16px; font-variation-settings:'FILL' 1;">pin_drop</span>
                         Check-in Yap
                     </button>
                 </div>
@@ -422,11 +429,8 @@ document.addEventListener('DOMContentLoaded', function() {
             starBtns.forEach(b => {
                 const v = parseInt(b.dataset.star);
                 const icon = b.querySelector('.material-symbols-outlined');
-                if (v <= starVal) {
-                    icon.className = 'material-symbols-outlined text-[32px] transition-all duration-200 text-amber-400 scale-110';
-                } else {
-                    icon.className = 'material-symbols-outlined text-[32px] transition-all duration-200 text-slate-600';
-                }
+                icon.style.color = v <= starVal ? '#f59e0b' : '#94a3b8';
+                icon.style.transform = v <= starVal ? 'scale(1.1)' : 'scale(1)';
             });
         });
 
@@ -457,7 +461,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (countEl) countEl.textContent = res.data.rating_count;
                 if (labelEl) {
                     labelEl.textContent = 'Senin puanın: ' + starVal + '/5';
-                    labelEl.className = 'text-xs text-amber-400/70';
+                    labelEl.style.fontSize = '11px';
+                    labelEl.style.color = 'rgba(245,158,11,0.7)';
                 }
 
                 // Update average stars
@@ -481,11 +486,8 @@ document.addEventListener('DOMContentLoaded', function() {
         starBtns.forEach(b => {
             const v = parseInt(b.dataset.star);
             const icon = b.querySelector('.material-symbols-outlined');
-            if (v <= rating) {
-                icon.className = 'material-symbols-outlined text-[32px] transition-all duration-200 text-amber-400 scale-110';
-            } else {
-                icon.className = 'material-symbols-outlined text-[32px] transition-all duration-200 text-slate-600 group-hover:text-amber-300';
-            }
+            icon.style.color = v <= rating ? '#f59e0b' : '#94a3b8';
+            icon.style.transform = v <= rating ? 'scale(1.1)' : 'scale(1)';
         });
     }
 
@@ -496,11 +498,14 @@ document.addEventListener('DOMContentLoaded', function() {
         icons.forEach((icon, idx) => {
             const starNum = idx + 1;
             if (avg >= starNum) {
-                icon.className = 'material-symbols-outlined text-[20px] text-amber-400';
+                icon.style.color = '#f59e0b';
+                icon.style.opacity = '1';
             } else if (avg >= starNum - 0.5) {
-                icon.className = 'material-symbols-outlined text-[20px] text-amber-400/50';
+                icon.style.color = '#f59e0b';
+                icon.style.opacity = '0.5';
             } else {
-                icon.className = 'material-symbols-outlined text-[20px] text-slate-600';
+                icon.style.color = '#94a3b8';
+                icon.style.opacity = '1';
             }
             icon.style.fontVariationSettings = "'FILL' 1";
         });
@@ -513,7 +518,8 @@ document.addEventListener('DOMContentLoaded', function() {
 function openVenueCheckinModal() {
     const modal = document.getElementById('venueCheckinModal');
     if (modal) {
-        modal.classList.remove('hidden');
+        modal.style.display = 'block';
+        modal.style.background = 'rgba(0,0,0,0.6)';
         document.body.style.overflow = 'hidden';
         setTimeout(() => {
             const ta = document.getElementById('venueCheckinNote');
@@ -525,7 +531,7 @@ function openVenueCheckinModal() {
 function closeVenueCheckinModal() {
     const modal = document.getElementById('venueCheckinModal');
     if (modal) {
-        modal.classList.add('hidden');
+        modal.style.display = 'none';
         document.body.style.overflow = '';
     }
 }

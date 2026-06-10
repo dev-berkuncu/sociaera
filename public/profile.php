@@ -625,7 +625,7 @@ $pAvatar   = safeAvatarUrl($profileUser['avatar'] ?? null, $profileUser['usernam
 
 // Banner background
 if (bannerUrl($profileUser['banner'] ?? null)) {
-    $bannerHtml = '<img src="' . bannerUrl($profileUser['banner']) . '" class="w-full h-full object-cover" width="800" height="180" alt="Banner">';
+    $bannerHtml = '<img src="' . bannerUrl($profileUser['banner']) . '" style="width:100%;height:100%;object-fit:cover;display:block;" width="800" height="180" alt="Banner">';
 } else {
     $bannerStyle = 'background: linear-gradient(135deg, ' . $accentColor . '33, #fff8f4);';
     $bannerHtml  = '<div style="width:100%;height:100%;' . $bannerStyle . '"></div>';

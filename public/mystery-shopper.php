@@ -46,39 +46,53 @@ $activeNav      = 'mystery';
 require_once __DIR__ . '/partials/app_header.php';
 ?>
 
-<div style="min-width:0;" class="flex-1 flex flex-col gap-6 max-w-2xl w-full mx-auto lg:mx-0">
+<style>
+.ms-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:14px; margin-top:28px; }
+.ms-feat { border-radius:12px; padding:16px; background:var(--bg-section); border:1.5px solid var(--border-light); }
+.ms-feat-icon { font-size:24px; display:block; margin-bottom:8px; }
+.ms-feat-title { font-size:13px; font-weight:700; color:var(--text-1); margin-bottom:4px; }
+.ms-feat-desc { font-size:11px; color:var(--text-3); line-height:1.5; }
+.ms-input {
+    width:100%; border-radius:10px; padding:12px 16px; font-size:13px;
+    outline:none; transition:border-color .2s; resize:vertical;
+    background:var(--bg-section); border:1.5px solid var(--border); color:var(--text-1);
+    font-family:inherit; line-height:1.6; box-sizing:border-box;
+}
+.ms-input:focus { border-color:#4f46e5; }
+</style>
+
+<div style="min-width:0; display:flex; flex-direction:column; gap:20px; max-width:640px; width:100%; padding-bottom:40px;">
 
     <!-- Hero -->
-    <div class="relative rounded-2xl overflow-hidden shadow-[0_4px_16px_rgba(0,0,0,0.04)]" style="background:#fff; border:1.5px solid var(--border);">
-        <!-- Top accent border -->
+    <div style="position:relative; border-radius:16px; overflow:hidden; box-shadow:0 4px 16px rgba(0,0,0,0.04); background:#fff; border:1.5px solid var(--border);">
         <div style="height:4px; background:linear-gradient(90deg, #4f46e5, #818cf8);"></div>
 
-        <div class="relative z-10 p-8 md:p-10">
-            <div class="flex items-start gap-4">
-                <div class="w-16 h-16 rounded-2xl flex items-center justify-center flex-shrink-0" style="background:rgba(79,70,229,0.08); border:1.5px solid rgba(79,70,229,0.15);">
-                    <span class="material-symbols-outlined text-[32px]" style="color:#4F46E5;">person_search</span>
+        <div style="position:relative; z-index:1; padding:28px 28px 24px;">
+            <div style="display:flex; align-items:flex-start; gap:16px;">
+                <div style="width:64px; height:64px; border-radius:16px; display:flex; align-items:center; justify-content:center; flex-shrink:0; background:rgba(79,70,229,0.08); border:1.5px solid rgba(79,70,229,0.15);">
+                    <span class="material-symbols-outlined" style="font-size:32px; color:#4F46E5;">person_search</span>
                 </div>
                 <div>
-                    <h1 class="text-2xl md:text-3xl font-black tracking-tight" style="color:var(--text-1);">Gizli Müşteri Ol</h1>
-                    <p class="mt-1" style="color:var(--text-3);">İşletmeleri anonim olarak değerlendir, topluluğa katkı sağla</p>
+                    <h1 style="font-size:1.6rem; font-weight:900; letter-spacing:-.02em; color:var(--text-1); margin:0 0 6px;">Gizli Müşteri Ol</h1>
+                    <p style="color:var(--text-3); margin:0; font-size:14px;">İşletmeleri anonim olarak değerlendir, topluluğa katkı sağla</p>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8">
-                <div class="rounded-xl p-4" style="background:var(--bg-section); border:1.5px solid var(--border-light);">
-                    <span class="material-symbols-outlined text-[24px] block mb-2" style="color:#4F46E5;">visibility_off</span>
-                    <div class="text-sm font-bold" style="color:var(--text-1);">Gizli Kimlik</div>
-                    <div class="text-xs mt-1" style="color:var(--text-3);">Yorumların "Gizli Müşteri" etiketiyle yayınlanır, kimliğin gizli kalır</div>
+            <div class="ms-grid">
+                <div class="ms-feat">
+                    <span class="material-symbols-outlined ms-feat-icon" style="color:#4F46E5;">visibility_off</span>
+                    <div class="ms-feat-title">Gizli Kimlik</div>
+                    <div class="ms-feat-desc">Yorumların "Gizli Müşteri" etiketiyle yayınlanır, kimliğin gizli kalır</div>
                 </div>
-                <div class="rounded-xl p-4" style="background:var(--bg-section); border:1.5px solid var(--border-light);">
-                    <span class="material-symbols-outlined text-[24px] block mb-2" style="color:#16a34a;">verified</span>
-                    <div class="text-sm font-bold" style="color:var(--text-1);">Admin Onayı</div>
-                    <div class="text-xs mt-1" style="color:var(--text-3);">Başvurular incelenir, seçilen kullanıcılar özel tag kazanır</div>
+                <div class="ms-feat">
+                    <span class="material-symbols-outlined ms-feat-icon" style="color:#16a34a;">verified</span>
+                    <div class="ms-feat-title">Admin Onayı</div>
+                    <div class="ms-feat-desc">Başvurular incelenir, seçilen kullanıcılar özel tag kazanır</div>
                 </div>
-                <div class="rounded-xl p-4" style="background:var(--bg-section); border:1.5px solid var(--border-light);">
-                    <span class="material-symbols-outlined text-[24px] block mb-2" style="color:#f59e0b;">rate_review</span>
-                    <div class="text-sm font-bold" style="color:var(--text-1);">Kalite Raporu</div>
-                    <div class="text-xs mt-1" style="color:var(--text-3);">Mekan kalitesini artırmak için dürüst değerlendirmeler yaparsın</div>
+                <div class="ms-feat">
+                    <span class="material-symbols-outlined ms-feat-icon" style="color:#f59e0b;">rate_review</span>
+                    <div class="ms-feat-title">Kalite Raporu</div>
+                    <div class="ms-feat-desc">Mekan kalitesini artırmak için dürüst değerlendirmeler yaparsın</div>
                 </div>
             </div>
         </div>
@@ -94,24 +108,24 @@ require_once __DIR__ . '/partials/app_header.php';
         ];
         $s = $statusMap[$application['status']] ?? $statusMap['pending'];
     ?>
-    <div class="rounded-xl p-6" style="background:#fff; border:1.5px solid <?php echo $s['border']; ?>; box-shadow:0 1px 3px rgba(0,0,0,.06);">
-        <div class="flex items-center gap-3 mb-3">
-            <span class="material-symbols-outlined text-[24px]" style="color:<?php echo $s['color']; ?>;"><?php echo $s['icon']; ?></span>
-            <span class="font-bold text-sm" style="color:var(--text-1);">Başvuru Durumu: <span style="color:<?php echo $s['color']; ?>;"><?php echo $s['label']; ?></span></span>
+    <div style="border-radius:12px; padding:20px; background:#fff; border:1.5px solid <?php echo $s['border']; ?>; box-shadow:0 1px 3px rgba(0,0,0,.06);">
+        <div style="display:flex; align-items:center; gap:12px; margin-bottom:10px;">
+            <span class="material-symbols-outlined" style="font-size:24px; color:<?php echo $s['color']; ?>;"><?php echo $s['icon']; ?></span>
+            <span style="font-weight:700; font-size:13px; color:var(--text-1);">Başvuru Durumu: <span style="color:<?php echo $s['color']; ?>;"><?php echo $s['label']; ?></span></span>
         </div>
-        <p class="text-sm" style="color:var(--text-2);"><?php echo $s['text']; ?></p>
+        <p style="font-size:13px; color:var(--text-2); margin:0;"><?php echo $s['text']; ?></p>
         <?php if ($application['admin_note']): ?>
-            <div class="mt-3 rounded-lg px-4 py-3 text-sm border" style="background:var(--bg-section); border-color:var(--border); color:var(--text-2);">
-                <span class="text-xs uppercase tracking-widest font-semibold block mb-1" style="color:var(--text-3);">Admin Notu</span>
+            <div style="margin-top:12px; border-radius:8px; padding:12px 16px; font-size:13px; border:1px solid var(--border); background:var(--bg-section); color:var(--text-2);">
+                <span style="font-size:10px; text-transform:uppercase; letter-spacing:.08em; font-weight:700; display:block; margin-bottom:4px; color:var(--text-3);">Admin Notu</span>
                 <?php echo escape($application['admin_note']); ?>
             </div>
         <?php endif; ?>
         <?php if ($application['status'] === 'approved'): ?>
-            <div class="mt-4 rounded-xl p-4 flex items-center gap-3" style="background:rgba(79,70,229,0.08); border:1.5px solid rgba(79,70,229,0.2);">
+            <div style="margin-top:14px; border-radius:12px; padding:14px 16px; display:flex; align-items:center; gap:12px; background:rgba(79,70,229,0.08); border:1.5px solid rgba(79,70,229,0.2);">
                 <span class="material-symbols-outlined" style="color:#4F46E5;">badge</span>
                 <div>
-                    <div class="text-sm font-bold" style="color:#4F46E5;">Gizli Müşteri Rozeti Aktif</div>
-                    <div class="text-xs mt-0.5" style="color:var(--text-3);">Check-in paylaşırken "Gizli Müşteri olarak yayınla" seçeneğini kullanabilirsin</div>
+                    <div style="font-size:13px; font-weight:700; color:#4F46E5;">Gizli Müşteri Rozeti Aktif</div>
+                    <div style="font-size:11px; margin-top:2px; color:var(--text-3);">Check-in paylaşırken "Gizli Müşteri olarak yayınla" seçeneğini kullanabilirsin</div>
                 </div>
             </div>
         <?php endif; ?>
@@ -132,36 +146,35 @@ require_once __DIR__ . '/partials/app_header.php';
     <?php endif; // $application ?>
 
     <!-- ── Başvuru Formu ── -->
-    <div class="rounded-xl overflow-hidden" style="background:#fff; border:1px solid var(--border); box-shadow:0 1px 3px rgba(0,0,0,.08);">
-        <div class="px-6 py-4 flex items-center gap-2" style="border-bottom:1px solid var(--border-light);">
-            <span class="material-symbols-outlined text-[20px]" style="color:#4F46E5;">edit_note</span>
-            <h2 class="text-base font-bold" style="color:var(--text-1);">
+    <div style="border-radius:12px; overflow:hidden; background:#fff; border:1px solid var(--border); box-shadow:0 1px 3px rgba(0,0,0,.08);">
+        <div style="padding:14px 20px; display:flex; align-items:center; gap:8px; border-bottom:1px solid var(--border-light);">
+            <span class="material-symbols-outlined" style="font-size:20px; color:#4F46E5;">edit_note</span>
+            <h2 style="font-size:14px; font-weight:700; color:var(--text-1); margin:0;">
                 <?php echo ($application && $application['status'] === 'rejected') ? 'Yeniden Başvur' : 'Başvuru Formu'; ?>
             </h2>
         </div>
-        <form method="POST" class="p-6 space-y-5">
+        <form method="POST" style="padding:20px; display:flex; flex-direction:column; gap:18px;">
             <?php echo csrfField(); ?>
 
             <div>
-                <label class="block text-sm font-bold mb-1.5" style="color:var(--text-2);">
+                <label style="display:block; font-size:13px; font-weight:700; margin-bottom:6px; color:var(--text-2);">
                     Neden Gizli Müşteri Olmak İstiyorsun?
-                    <span class="text-red-500">*</span>
-                    <span class="ml-1" style="color:var(--text-3); font-weight:normal;">(en az 30 karakter)</span>
+                    <span style="color:#dc2626;">*</span>
+                    <span style="margin-left:4px; color:var(--text-3); font-weight:normal;">(en az 30 karakter)</span>
                 </label>
                 <textarea name="motivation" rows="5" required
                           placeholder="Mekan kalitesini iyileştirmek, topluluğa dürüst değerlendirmeler sunmak ve..."
-                          class="w-full rounded-lg px-4 py-3 text-sm focus:outline-none transition-colors resize-none shadow-inner"
-                          style="background:var(--bg-section); border:1px solid var(--border); color:var(--text-1);"
+                          class="ms-input"
                           id="motivationText"><?php echo escape($application['motivation'] ?? ''); ?></textarea>
-                <div class="flex justify-between mt-1">
-                    <p class="text-xs" style="color:var(--text-3);">Dürüst ve açıklayıcı bir metin yaz</p>
-                    <span class="text-xs" style="color:var(--text-3);" id="charCount">0 / 30+</span>
+                <div style="display:flex; justify-content:space-between; margin-top:4px;">
+                    <p style="font-size:11px; color:var(--text-3); margin:0;">Dürüst ve açıklayıcı bir metin yaz</p>
+                    <span style="font-size:11px; color:var(--text-3);" id="charCount">0 / 30+</span>
                 </div>
             </div>
 
             <!-- Kurallar -->
-            <div class="rounded-xl p-4 space-y-2 border" style="background:var(--bg-section); border-color:var(--border-light);">
-                <div class="text-xs font-bold uppercase tracking-widest mb-2" style="color:var(--text-3);">Kuralları Kabul Ediyorum</div>
+            <div style="border-radius:12px; padding:16px; border:1px solid var(--border-light); background:var(--bg-section); display:flex; flex-direction:column; gap:10px;">
+                <div style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--text-3);">Kuralları Kabul Ediyorum</div>
                 <?php $rules = [
                     'Mekanları tarafsız ve dürüst değerlendireceğim',
                     'Gizli müşteri kimliğimi mekan sahiplerine açıklamayacağım',
@@ -169,18 +182,17 @@ require_once __DIR__ . '/partials/app_header.php';
                     'Admin kararlarına uyacağım',
                 ]; ?>
                 <?php foreach ($rules as $i => $rule): ?>
-                <label class="flex items-start gap-2 cursor-pointer">
-                    <input type="checkbox" name="rule_<?php echo $i; ?>" required
-                           class="mt-0.5 rounded" style="background:#fff; border-color:var(--border); color:#4F46E5;">
-                    <span class="text-xs" style="color:var(--text-2);"><?php echo $rule; ?></span>
+                <label style="display:flex; align-items:flex-start; gap:8px; cursor:pointer;">
+                    <input type="checkbox" name="rule_<?php echo $i; ?>" required style="margin-top:2px; flex-shrink:0; accent-color:#4f46e5;">
+                    <span style="font-size:12px; color:var(--text-2); line-height:1.5;"><?php echo $rule; ?></span>
                 </label>
                 <?php endforeach; ?>
             </div>
 
             <button type="submit"
-                    class="w-full text-white py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 hover:brightness-110 active:scale-95 transition-all shadow-[0_4px_16px_rgba(79,70,229,0.25)]"
-                    style="background:#4F46E5; border:none; cursor:pointer;">
-                <span class="material-symbols-outlined text-[20px]">send</span>
+                    style="width:100%; color:#fff; padding:14px; border-radius:12px; font-weight:700; font-size:14px; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 4px 16px rgba(79,70,229,0.25); transition:opacity .15s; background:#4F46E5; border:none; cursor:pointer; font-family:inherit;"
+                    onmouseover="this.style.opacity='.9'" onmouseout="this.style.opacity='1'">
+                <span class="material-symbols-outlined" style="font-size:20px;">send</span>
                 Başvuruyu Gönder
             </button>
         </form>
@@ -195,7 +207,7 @@ if (ta && cc) {
     const update = () => {
         const len = ta.value.length;
         cc.textContent = len + ' karakter';
-        cc.className = 'text-xs ' + (len >= 30 ? 'text-emerald-500' : 'text-red-500');
+        cc.style.color = len >= 30 ? '#16a34a' : '#ef4444';
     };
     ta.addEventListener('input', update);
     update();

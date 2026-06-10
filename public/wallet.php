@@ -131,7 +131,7 @@ require_once __DIR__ . '/partials/app_header.php';
                 <p>Henüz işlem yok.</p>
             </div>
         <?php else: ?>
-            <div class="flex flex-col">
+            <div style="display:flex; flex-direction:column;">
                 <?php foreach ($transactions as $tx):
                     $isIn = in_array($tx['type'], ['deposit', 'transfer_in']);
                 ?>
@@ -144,9 +144,11 @@ require_once __DIR__ . '/partials/app_header.php';
                         <div style="font-size:11px;color:var(--text-3);display:flex;align-items:center;gap:8px;margin-top:2px;">
                             <span><?php echo formatDate($tx['created_at'], true); ?></span>
                             <?php if ($tx['type'] === 'withdraw'): ?>
-                                <span class="px-1.5 py-0.5 rounded text-[10px] uppercase font-bold <?php 
-                                    echo ($tx['status'] ?? 'approved') === 'pending' ? 'bg-amber-500/20 text-amber-400' : 
-                                        (($tx['status'] ?? 'approved') === 'approved' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'); 
+                                <span style="padding:2px 6px; border-radius:4px; font-size:10px; text-transform:uppercase; font-weight:700; <?php
+                                    $st = $tx['status'] ?? 'approved';
+                                    if ($st === 'pending') echo 'background:rgba(245,158,11,0.15);color:#d97706;border:1px solid rgba(245,158,11,0.3);';
+                                    elseif ($st === 'approved') echo 'background:rgba(16,185,129,0.15);color:#10b981;border:1px solid rgba(16,185,129,0.3);';
+                                    else echo 'background:rgba(220,38,38,0.15);color:#dc2626;border:1px solid rgba(220,38,38,0.3);';
                                 ?>"><?php echo escape($tx['status'] ?? 'approved'); ?></span>
                             <?php endif; ?>
                         </div>
@@ -278,12 +280,12 @@ async function redirectToFleeca() {
         } else {
             App.flash(res.error || 'Token üretilemedi. Lütfen tekrar deneyin.', 'error');
             btn.disabled = false;
-            btn.innerHTML = '<span class="material-symbols-outlined text-[18px]">lock</span> ÖDE';
+            btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px;">lock</span> ÖDE';
         }
     } catch (err) {
         App.flash('Bağlantı hatası. Lütfen tekrar deneyin.', 'error');
         btn.disabled = false;
-        btn.innerHTML = '<span class="material-symbols-outlined text-[18px]">lock</span> ÖDE';
+        btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px;">lock</span> ÖDE';
     }
 }
 
