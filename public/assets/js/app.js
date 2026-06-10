@@ -172,10 +172,22 @@ const App = {
         if (res.ok) {
             const card = btn.closest('.checkin-card') || btn.closest('.post-card') || btn.closest('article');
             if (card) {
-                card.style.transition = 'opacity 0.3s, transform 0.3s';
-                card.style.opacity = '0';
-                card.style.transform = 'scale(0.95)';
-                setTimeout(() => card.remove(), 300);
+                const h = card.offsetHeight;
+                card.style.overflow = 'hidden';
+                card.style.transition = 'opacity 0.25s ease, transform 0.25s ease, max-height 0.35s ease, margin 0.35s ease, padding 0.35s ease';
+                card.style.maxHeight = h + 'px';
+                // Force reflow so the browser registers the initial max-height
+                card.offsetHeight; // eslint-disable-line no-unused-expressions
+                requestAnimationFrame(() => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'scale(0.97)';
+                    card.style.maxHeight = '0';
+                    card.style.marginTop = '0';
+                    card.style.marginBottom = '0';
+                    card.style.paddingTop = '0';
+                    card.style.paddingBottom = '0';
+                });
+                setTimeout(() => card.remove(), 380);
             }
             this.flash('Gönderi silindi.', 'success');
         } else {
