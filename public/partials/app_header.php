@@ -72,20 +72,10 @@ if (Auth::check() && isset($currentUser)) {
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block" rel="stylesheet"/>
 
-<!-- Tailwind CDN (darkMode:class — OS dark mode etkilemez) -->
-<script src="https://cdn.tailwindcss.com?plugins=forms"></script>
-<script>
-tailwind.config = {
-    darkMode: 'class',
-    theme: { extend: {
-        colors: { primary:'#F06D1F', secondary:'#FFA633' },
-        fontFamily: { sans: ['Plus Jakarta Sans','Inter','sans-serif'] }
-    }}
-}
-</script>
 
-<!-- Swarm Design System (stitch.css — Tailwind'den sonra gelir, override eder) -->
+<!-- Swarm Design System -->
 <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/stitch.css?v=<?php echo @filemtime(__DIR__ . '/../assets/css/stitch.css') ?: time(); ?>"/>
+
 
 <!-- CRITICAL INLINE — dış CSS yüklenmese bile çalışır -->
 <style>
