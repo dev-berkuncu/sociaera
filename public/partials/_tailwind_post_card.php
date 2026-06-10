@@ -142,9 +142,10 @@ $cardAvatar = !empty($post['is_mystery_shopper'])
         <form style="display:flex;gap:8px;align-items:center;"
               onsubmit="App.submitInlineComment(this, <?php echo $post['id']; ?>); return false;">
             <input type="text" placeholder="Yorum yaz…" maxlength="500" required
+                   class="comment-input-inline"
                    style="flex:1;background:var(--bg-input);border:1.5px solid transparent;border-radius:20px;padding:7px 14px;font-size:13px;font-family:var(--font);outline:none;color:var(--text-1);"
                    onfocus="this.style.borderColor='var(--color-primary)'" onblur="this.style.borderColor='transparent'">
-            <button type="submit"
+            <button type="submit" class="comment-send-btn"
                     style="width:32px;height:32px;border-radius:50%;background:var(--color-primary);border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                 <span class="material-symbols-outlined" style="font-size:15px;font-variation-settings:'FILL' 1;">send</span>
             </button>

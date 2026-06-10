@@ -215,33 +215,80 @@ function feedDayLabel(string $day): string {
             <?php endif; ?>
 
             <!-- Footer: venue link + actions -->
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 16px 12px;border-top:1px solid #F0EDE8;">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 16px 12px;border-top:1px solid #F0EDE8;">
                 <a href="<?php echo BASE_URL; ?>/venue-detail?id=<?php echo (int)$post['venue_id']; ?>"
-                   class="checkin-action-btn"
                    style="display:inline-flex;align-items:center;gap:5px;font-size:0.75rem;color:var(--text-3);text-decoration:none;font-weight:600;transition:color 0.15s;"
                    onmouseover="this.style.color='var(--color-primary)'" onmouseout="this.style.color='var(--text-3)'">
-                    <span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 1;">storefront</span>
+                    <span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 1;"><?php echo $pMeta['icon']; ?></span>
                     <?php echo escape($post['venue_name']); ?>
-                    <span class="material-symbols-outlined" style="font-size:12px;opacity:0.6;">chevron_right</span>
                 </a>
 
-                <div style="display:flex;align-items:center;gap:12px;">
-                    <?php if (($post['like_count'] ?? 0) > 0): ?>
-                    <span style="display:inline-flex;align-items:center;gap:4px;font-size:0.75rem;color:var(--text-3);font-weight:600;">
-                        <span class="material-symbols-outlined" style="font-size:14px;color:#f43f5e;font-variation-settings:'FILL' 1;">favorite</span>
-                        <?php echo (int)$post['like_count']; ?>
-                    </span>
-                    <?php endif; ?>
-                    <?php if (($post['comment_count'] ?? 0) > 0): ?>
-                    <span style="display:inline-flex;align-items:center;gap:4px;font-size:0.75rem;color:var(--text-3);font-weight:600;">
-                        <span class="material-symbols-outlined" style="font-size:14px;">chat_bubble</span>
-                        <?php echo (int)$post['comment_count']; ?>
-                    </span>
+                <div style="display:flex;align-items:center;gap:4px;">
+                    <!-- Beğeni -->
+                    <button onclick="App.toggleLike(this, <?php echo $post['id']; ?>)"
+                            class="checkin-action-btn <?php echo !empty($post['viewer_liked']) ? 'liked' : ''; ?>"
+                            style="display:inline-flex;align-items:center;gap:4px;padding:5px 9px;border:none;background:none;border-radius:20px;cursor:pointer;font-size:12px;font-weight:700;color:<?php echo !empty($post['viewer_liked']) ? '#F06D1F' : 'var(--text-3)'; ?>;font-family:inherit;transition:all .15s;"
+                            onmouseover="if(!this.classList.contains('liked')){this.style.background='#FFF3EB';this.style.color='#F06D1F';}" 
+                            onmouseout="if(!this.classList.contains('liked')){this.style.background='';this.style.color='var(--text-3)';}">
+                        <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' <?php echo !empty($post['viewer_liked']) ? '1' : '0'; ?>;">favorite</span>
+                        <span class="action-count"><?php echo (int)($post['like_count'] ?? 0); ?></span>
+                    </button>
+
+                    <!-- Yorum -->
+                    <button onclick="App.toggleComments(this, <?php echo $post['id']; ?>)"
+                            class="checkin-action-btn"
+                            style="display:inline-flex;align-items:center;gap:4px;padding:5px 9px;border:none;background:none;border-radius:20px;cursor:pointer;font-size:12px;font-weight:700;color:var(--text-3);font-family:inherit;transition:all .15s;"
+                            onmouseover="this.style.background='#F0F4FF';this.style.color='#4F46E5';" 
+                            onmouseout="if(!this.classList.contains('active-comment')){this.style.background='';this.style.color='var(--text-3)';}">
+                        <span class="material-symbols-outlined" style="font-size:16px;">chat_bubble</span>
+                        <span class="action-count" data-comment-count="<?php echo $post['id']; ?>"><?php echo (int)($post['comment_count'] ?? 0); ?></span>
+                    </button>
+
+                    <!-- Paylaş -->
+                    <button onclick="navigator.clipboard.writeText('<?php echo BASE_URL; ?>/post?id=<?php echo $post['id']; ?>');App.flash('Link kopyalandı!','success')"
+                            style="display:inline-flex;align-items:center;gap:4px;padding:5px 9px;border:none;background:none;border-radius:20px;cursor:pointer;font-size:12px;font-weight:700;color:var(--text-3);font-family:inherit;transition:all .15s;"
+                            onmouseover="this.style.background='#F2F1EE';this.style.color='var(--text-1)';"
+                            onmouseout="this.style.background='';this.style.color='var(--text-3)';">
+                        <span class="material-symbols-outlined" style="font-size:16px;">share</span>
+                    </button>
+
+                    <!-- Sil (sadece kendi gönderileri) -->
+                    <?php if ($isOwn): ?>
+                    <button onclick="App.deletePost(this, <?php echo $post['id']; ?>)"
+                            style="display:inline-flex;align-items:center;gap:4px;padding:5px 9px;border:none;background:none;border-radius:20px;cursor:pointer;font-size:12px;font-weight:700;color:var(--text-3);font-family:inherit;transition:all .15s;"
+                            title="Gönderiyi Sil"
+                            onmouseover="this.style.background='#FEF2F2';this.style.color='#DC2626';"
+                            onmouseout="this.style.background='';this.style.color='var(--text-3)';">
+                        <span class="material-symbols-outlined" style="font-size:16px;">delete</span>
+                    </button>
                     <?php endif; ?>
                 </div>
             </div>
 
+            <!-- Yorumlar (gizli, toggle ile açılır) -->
+            <div class="post-comments-section" id="comments-section-<?php echo $post['id']; ?>"
+                 style="display:none;border-top:1px solid #F0EDE8;padding:12px 16px 14px;background:#FAFAF8;">
+                <div id="comments-list-<?php echo $post['id']; ?>" style="display:flex;flex-direction:column;gap:0;max-height:280px;overflow-y:auto;margin-bottom:10px;">
+                    <div style="text-align:center;font-size:12px;color:var(--text-3);padding:8px;">Yükleniyor...</div>
+                </div>
+                <form style="display:flex;gap:8px;align-items:center;"
+                      onsubmit="App.submitInlineComment(this, <?php echo $post['id']; ?>); return false;">
+                    <img src="<?php echo safeAvatarUrl($currentUser['avatar'] ?? null, $currentUser['username'] ?? 'U'); ?>"
+                         style="width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;">
+                    <input type="text" placeholder="Yorum yaz…" maxlength="500" required
+                           class="comment-input-inline"
+                           style="flex:1;background:#F2F1EE;border:1.5px solid transparent;border-radius:20px;padding:7px 14px;font-size:13px;font-family:var(--font);outline:none;color:var(--text-1);"
+                           onfocus="this.style.borderColor='var(--color-primary)';this.style.background='#fff'" 
+                           onblur="this.style.borderColor='transparent';this.style.background='#F2F1EE'">
+                    <button type="submit" class="comment-send-btn"
+                            style="width:32px;height:32px;border-radius:50%;background:var(--color-primary);border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                        <span class="material-symbols-outlined" style="font-size:15px;font-variation-settings:'FILL' 1;">send</span>
+                    </button>
+                </form>
+            </div>
+
         </div>
+
 
         <?php
             // Insert ad after every 5 posts

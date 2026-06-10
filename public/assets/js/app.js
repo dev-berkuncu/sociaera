@@ -170,7 +170,7 @@ const App = {
         const res = await this.post(this.baseUrl + '/api/interactions', formData);
 
         if (res.ok) {
-            const card = btn.closest('.post-card');
+            const card = btn.closest('.checkin-card') || btn.closest('.post-card') || btn.closest('article');
             if (card) {
                 card.style.transition = 'opacity 0.3s, transform 0.3s';
                 card.style.opacity = '0';
