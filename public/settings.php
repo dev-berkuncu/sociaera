@@ -114,7 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header('Location: ' . $redirectTo); exit;
         }
         $userModel->updateField(Auth::id(), 'bank_account', $bank);
-        Auth::setFlash('success', 'Banka hesap numarası kaydedildi ✓ Ana sayfaya yönlendiriliyorsunuz...');
+        // Flash YOK — direkt dashboard'a yönlendir, overlay çıkmasın
         header('Location: ' . BASE_URL . '/dashboard'); exit;
 
     /* Şifre */

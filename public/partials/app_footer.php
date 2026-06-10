@@ -150,10 +150,15 @@
 <?php endif; ?>
 
 <!-- ── FLASH MESSAGES ─────────────────────────────────────── -->
-<?php if (!empty($_SESSION['flash'])): ?>
-<?php foreach ((array)$_SESSION['flash'] as $fType => $fMsg): ?>
+<?php
+$_footerFlash = $_SESSION['flash'] ?? null;
+unset($_SESSION['flash']);
+if ($_footerFlash && isset($_footerFlash['type'], $_footerFlash['message'])):
+    $fType = $_footerFlash['type'];
+    $fMsg  = $_footerFlash['message'];
+?>
 <div class="flash-message flash-<?php echo htmlspecialchars($fType); ?>" id="flashMsg">
-    <span class="material-symbols-outlined" style="font-size:18px;flex-shrink:0;">
+    <span class="material-symbols-outlined" style="font-size:18px;flex-shrink:0;font-variation-settings:'FILL' 1;">
         <?php echo $fType === 'success' ? 'check_circle' : ($fType === 'error' ? 'error' : 'info'); ?>
     </span>
     <span style="flex:1;"><?php echo htmlspecialchars($fMsg); ?></span>
@@ -162,8 +167,8 @@
     </button>
 </div>
 <script>setTimeout(function(){var f=document.getElementById('flashMsg');if(f)f.classList.add('flash-hide');},4000);</script>
-<?php endforeach; unset($_SESSION['flash']); ?>
 <?php endif; ?>
+
 
 <!-- ── RAPOR MODAL ────────────────────────────────────────── -->
 <?php if (Auth::check()): ?>
