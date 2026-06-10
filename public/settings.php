@@ -16,99 +16,106 @@ Auth::requireLogin();
 
 $userModel = new UserModel();
 $user = $userModel->getById(Auth::id());
-$error = '';
-$success = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     Csrf::requireValid();
     $action = $_POST['action'] ?? '';
+    $redirectTo = BASE_URL . '/settings';
 
     if ($action === 'update_profile') {
         $result = $userModel->updateProfile(Auth::id(), $_POST);
         if ($result['ok']) {
             $user = $userModel->getById(Auth::id());
             Auth::refresh(['username' => $user['username']]);
-            $success = 'Profil güncellendi.';
+            Auth::setFlash('success', 'Profil güncellendi.');
         } else {
-            $error = $result['error'];
+            Auth::setFlash('error', $result['error']);
         }
+        header('Location: ' . $redirectTo); exit;
+
     } elseif ($action === 'update_avatar') {
         if (!empty($_FILES['avatar']['name'])) {
             $uploader = new ImageUploader();
             $old = $user['avatar'];
             $result = $uploader->upload($_FILES['avatar'], 'avatars', [
-                'maxSize' => MAX_AVATAR_SIZE,
-                'maxWidth' => AVATAR_MAX_W,
-                'maxHeight' => AVATAR_MAX_H,
+                'maxSize'      => MAX_AVATAR_SIZE,
+                'maxWidth'     => AVATAR_MAX_W,
+                'maxHeight'    => AVATAR_MAX_H,
                 'outputFormat' => 'webp',
             ]);
             if ($result['success']) {
                 $userModel->updateAvatar(Auth::id(), $result['filename']);
                 if ($old) $uploader->delete('avatars', $old);
                 Auth::refresh(['avatar' => $result['filename']]);
-                $success = 'Avatar güncellendi.';
-                $user = $userModel->getById(Auth::id());
+                Auth::setFlash('success', 'Avatar güncellendi.');
             } else {
-                $error = $result['error'];
+                Auth::setFlash('error', $result['error']);
             }
         }
+        header('Location: ' . $redirectTo); exit;
+
     } elseif ($action === 'update_banner') {
         if (!empty($_FILES['banner']['name'])) {
             $uploader = new ImageUploader();
             $old = $user['banner'];
             $result = $uploader->upload($_FILES['banner'], 'banners', [
-                'maxSize' => MAX_BANNER_SIZE,
-                'maxWidth' => BANNER_MAX_W,
-                'maxHeight' => BANNER_MAX_H,
+                'maxSize'      => MAX_BANNER_SIZE,
+                'maxWidth'     => BANNER_MAX_W,
+                'maxHeight'    => BANNER_MAX_H,
                 'outputFormat' => 'webp',
             ]);
             if ($result['success']) {
                 $userModel->updateBanner(Auth::id(), $result['filename']);
                 if ($old) $uploader->delete('banners', $old);
-                $success = 'Banner güncellendi.';
-                $user = $userModel->getById(Auth::id());
+                Auth::setFlash('success', 'Banner güncellendi.');
             } else {
-                $error = $result['error'];
+                Auth::setFlash('error', $result['error']);
             }
         }
+        header('Location: ' . $redirectTo); exit;
+
     } elseif ($action === 'change_password') {
         $result = $userModel->changePassword(Auth::id(), $_POST['current_password'] ?? '', $_POST['new_password'] ?? '');
-        if ($result['ok']) { $success = 'Şifre değiştirildi.'; }
-        else { $error = $result['error']; }
+        if ($result['ok']) { Auth::setFlash('success', 'Şifre başarıyla değiştirildi.'); }
+        else                { Auth::setFlash('error', $result['error']); }
+        header('Location: ' . $redirectTo); exit;
+
     } elseif ($action === 'update_badge') {
         if (!UserModel::isPremiumActive($user)) {
-            $error = 'Rozet değiştirmek için Premium üye olmanız gerekir.';
+            Auth::setFlash('error', 'Rozet değiştirmek için Premium üye olmanız gerekir.');
         } else {
-            $badge = $_POST['badge'] ?? null;
+            $badge  = $_POST['badge'] ?? null;
             $badges = UserModel::availableBadges();
             if ($badge && !isset($badges[$badge])) {
-                $error = 'Geçersiz rozet seçimi.';
+                Auth::setFlash('error', 'Geçersiz rozet seçimi.');
             } else {
                 $userModel->updateBadge(Auth::id(), $badge ?: null);
-                $success = 'Rozet güncellendi.';
-                $user = $userModel->getById(Auth::id());
+                Auth::setFlash('success', 'Rozet güncellendi.');
             }
         }
+        header('Location: ' . $redirectTo); exit;
+
     } elseif ($action === 'update_theme') {
         if (!UserModel::isPremiumActive($user)) {
-            $error = 'Bu özellik Premium üyelere özeldir.';
+            Auth::setFlash('error', 'Bu özellik Premium üyelere özeldir.');
         } else {
-            $theme = $_POST['theme'] ?? 'default';
+            $theme       = $_POST['theme'] ?? 'default';
             $validThemes = ['default', 'ocean', 'sunset', 'emerald', 'purple', 'crimson'];
             if (!in_array($theme, $validThemes)) $theme = 'default';
             $userModel->updateField(Auth::id(), 'profile_theme', $theme);
-            $success = 'Profil teması güncellendi! 🎨';
-            $user = $userModel->getById(Auth::id());
+            Auth::setFlash('success', 'Profil teması güncellendi! 🎨');
         }
+        header('Location: ' . $redirectTo); exit;
+
     } elseif ($action === 'update_bank') {
         $bank = trim($_POST['bank_account'] ?? '');
         if (empty($bank)) {
-            $error = 'Banka hesap numarası boş bırakılamaz.';
+            Auth::setFlash('error', 'Banka hesap numarası boş bırakılamaz.');
         } else {
             $userModel->updateField(Auth::id(), 'bank_account', $bank);
-            $success = 'Banka hesap numarası güncellendi.';
-            $user = $userModel->getById(Auth::id());
+            Auth::setFlash('success', 'Banka hesap numarası kaydedildi ✓');
         }
+        header('Location: ' . $redirectTo); exit;
     }
 }
 
@@ -125,22 +132,13 @@ require_once __DIR__ . '/partials/app_header.php';
 ?>
 
 <div style="min-width:0;display:flex;flex-direction:column;gap:20px;max-width:680px;">
-    <div class="mb-4">
-        <h1 class="text-3xl font-bold flex items-center gap-2" style="color:var(--text-1);"><span class="material-symbols-outlined text-[32px]" style="color:var(--color-primary);">settings</span> Ayarlar</h1>
+    <!-- Sayfa başlığı -->
+    <div style="margin-bottom:8px;">
+        <h1 style="font-size:1.6rem;font-weight:800;color:var(--text-1);display:flex;align-items:center;gap:8px;">
+            <span class="material-symbols-outlined" style="font-size:28px;color:var(--color-primary);">settings</span>
+            Ayarlar
+        </h1>
     </div>
-
-    <?php if ($error): ?>
-        <div class="bg-error/10 border border-error/50 text-error px-4 py-3 rounded-lg mb-2 flex items-center gap-3">
-            <span class="material-symbols-outlined">error</span>
-            <span><?php echo escape($error); ?></span>
-        </div>
-    <?php endif; ?>
-    <?php if ($success): ?>
-        <div class="bg-[#10b981]/10 border border-[#10b981]/50 text-[#10b981] px-4 py-3 rounded-lg mb-2 flex items-center gap-3">
-            <span class="material-symbols-outlined">check_circle</span>
-            <span><?php echo escape($success); ?></span>
-        </div>
-    <?php endif; ?>
 
     <!-- Avatar -->
     <div class="rounded-2xl p-6 md:p-8" style="background:#fff;border:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.08);">
