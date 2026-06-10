@@ -3,6 +3,7 @@
  * Sociaera — Ayarlar (Settings)
  * Basit PRG: POST → işle → redirect → GET → göster
  */
+ob_start();
 require_once __DIR__ . '/../app/Config/env.php';
 loadEnv(dirname(__DIR__) . '/.env');
 require_once __DIR__ . '/../app/Config/app.php';
@@ -110,11 +111,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $bank = trim($_POST['bank_account'] ?? '');
         if (empty($bank)) {
             Auth::setFlash('error', 'Banka hesap numarası boş bırakılamaz.');
-        } else {
-            $userModel->updateField(Auth::id(), 'bank_account', $bank);
-            Auth::setFlash('success', 'Banka hesap numarası kaydedildi ✓');
+            header('Location: ' . $redirectTo); exit;
         }
-        header('Location: ' . $redirectTo); exit;
+        $userModel->updateField(Auth::id(), 'bank_account', $bank);
+        Auth::setFlash('success', 'Banka hesap numarası kaydedildi ✓ Ana sayfaya yönlendiriliyorsunuz...');
+        header('Location: ' . BASE_URL . '/dashboard'); exit;
 
     /* Şifre */
     } elseif ($action === 'change_password') {
@@ -161,27 +162,21 @@ $maxBio     = UserModel::isPremiumActive($user) ? 500 : 280;
 $pAvatar    = safeAvatarUrl($user['avatar'] ?? null, $user['username']);
 $pBanner    = bannerUrl($user['banner'] ?? null);
 
-/* Flash mesajı göster */
-$flashType = null; $flashMsg = null;
-if (!empty($_SESSION['flash'])) {
-    foreach ((array)$_SESSION['flash'] as $ft => $fm) {
-        $flashType = $ft; $flashMsg = $fm; break;
-    }
-    unset($_SESSION['flash']);
-}
+/* Flash mesajı al */
+$flash = Auth::getFlash();
 ?>
 
 <div style="min-width:0;display:flex;flex-direction:column;gap:16px;padding-bottom:40px;">
 
-    <?php if ($flashMsg): ?>
+    <?php if ($flash): ?>
     <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:12px;font-size:14px;font-weight:600;
-                background:<?php echo $flashType === 'success' ? '#f0fdf4' : '#fef2f2'; ?>;
-                border:1.5px solid <?php echo $flashType === 'success' ? '#86efac' : '#fca5a5'; ?>;
-                color:<?php echo $flashType === 'success' ? '#166534' : '#991b1b'; ?>;">
+                background:<?php echo $flash['type'] === 'success' ? '#f0fdf4' : ($flash['type'] === 'info' ? '#eff6ff' : '#fef2f2'); ?>;
+                border:1.5px solid <?php echo $flash['type'] === 'success' ? '#86efac' : ($flash['type'] === 'info' ? '#93c5fd' : '#fca5a5'); ?>;
+                color:<?php echo $flash['type'] === 'success' ? '#166534' : ($flash['type'] === 'info' ? '#1d4ed8' : '#991b1b'); ?>;">
         <span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 1;">
-            <?php echo $flashType === 'success' ? 'check_circle' : 'error'; ?>
+            <?php echo $flash['type'] === 'success' ? 'check_circle' : ($flash['type'] === 'info' ? 'info' : 'error'); ?>
         </span>
-        <?php echo htmlspecialchars($flashMsg); ?>
+        <?php echo htmlspecialchars($flash['message']); ?>
     </div>
     <?php endif; ?>
 
