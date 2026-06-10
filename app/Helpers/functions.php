@@ -144,19 +144,7 @@ function asset(string $path): string
 function uploadUrl(string $folder, ?string $filename): ?string
 {
     if (!$filename) return null;
-    
-    $filePath = UPLOAD_PATH . '/' . $folder . '/' . $filename;
-    if (!file_exists($filePath)) {
-        if ($folder === 'avatars') {
-            return null; // safeAvatarUrl will handle fallback
-        }
-        // Return 1x1 transparent pixel for missing post/venue images to prevent broken icons
-        return 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
-    }
-    
-    $base = BASE_URL . '/uploads/' . $folder . '/' . $filename;
-    $version = filemtime($filePath);
-    return $base . '?v=' . $version;
+    return BASE_URL . '/uploads/' . $folder . '/' . $filename;
 }
 
 /**
