@@ -140,24 +140,28 @@ class Auth
 
         // Banka hesabı doldurma zorunluluğu kontrolü
         if (!empty($_SESSION['user_id']) && !self::isAdmin()) {
-            require_once __DIR__ . '/../Models/User.php';
-            $userModel = new UserModel();
-            $user = $userModel->getById(self::id());
-            if ($user && empty($user['bank_account'])) {
-                $scriptName = basename($_SERVER['SCRIPT_NAME']);
-                $requestUri = $_SERVER['REQUEST_URI'];
-                
-                $isSettings = ($scriptName === 'settings.php');
-                $isLogout = ($scriptName === 'logout.php');
-                $isCharSelect = ($scriptName === 'character-select.php');
-                $isSwitchChar = ($scriptName === 'switch-character.php');
-                $isApi = (strpos($requestUri, '/api/') !== false);
-                
-                if (!$isSettings && !$isLogout && !$isCharSelect && !$isSwitchChar && !$isApi) {
-                    self::setFlash('info', 'Lütfen devam etmeden önce banka hesap numaranızı (Format: 0300 8108 7) güncelleyin.');
-                    header('Location: ' . BASE_URL . '/settings');
-                    exit;
+            try {
+                require_once __DIR__ . '/../Models/User.php';
+                $userModel = new UserModel();
+                $user = $userModel->getById(self::id());
+                if ($user && isset($user['bank_account']) && empty($user['bank_account'])) {
+                    $scriptName = basename($_SERVER['SCRIPT_NAME']);
+                    $requestUri = $_SERVER['REQUEST_URI'];
+
+                    $exempt = in_array($scriptName, [
+                        'settings.php', 'logout.php', 'character-select.php',
+                        'switch-character.php', 'dashboard.php', 'run-migration.php',
+                    ]);
+                    $isApi = (strpos($requestUri, '/api/') !== false);
+
+                    if (!$exempt && !$isApi) {
+                        self::setFlash('info', 'Lütfen devam etmeden önce banka hesap numaranızı güncelleyin.');
+                        header('Location: ' . BASE_URL . '/settings');
+                        exit;
+                    }
                 }
+            } catch (\Throwable $e) {
+                // bank_account kolonu henüz yoksa sessizce devam et
             }
         }
     }
