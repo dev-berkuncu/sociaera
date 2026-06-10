@@ -157,351 +157,291 @@ $activeNav = 'settings';
 require_once __DIR__ . '/partials/app_header.php';
 ?>
 
-<div style="min-width:0;display:flex;flex-direction:column;gap:20px;max-width:680px;">
-    <!-- Sayfa başlığı -->
-    <div style="margin-bottom:8px;">
-        <h1 style="font-size:1.6rem;font-weight:800;color:var(--text-1);display:flex;align-items:center;gap:8px;">
-            <span class="material-symbols-outlined" style="font-size:28px;color:var(--color-primary);">settings</span>
+<div style="min-width:0;display:flex;flex-direction:column;gap:16px;">
+
+    <!-- Başlık -->
+    <div>
+        <h1 style="font-size:1.5rem;font-weight:800;color:var(--text-1);display:flex;align-items:center;gap:8px;margin:0 0 4px;">
+            <span class="material-symbols-outlined" style="font-size:26px;color:var(--color-primary);">settings</span>
             Ayarlar
         </h1>
     </div>
 
     <!-- Avatar -->
-    <div class="rounded-2xl p-6 md:p-8" style="background:#fff;border:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.08);">
-        <h2 class="text-xl font-bold flex items-center gap-2 mb-6" style="color:var(--text-1);"><span class="material-symbols-outlined text-[24px]" style="color:var(--color-primary);">account_circle</span> Avatar</h2>
-        <div class="flex flex-col sm:flex-row items-center gap-6">
+    <div style="background:#fff;border:1px solid var(--border);border-radius:16px;padding:20px 24px;box-shadow:0 1px 4px rgba(0,0,0,.06);">
+        <h2 style="font-size:15px;font-weight:700;color:var(--text-1);display:flex;align-items:center;gap:6px;margin:0 0 16px;">
+            <span class="material-symbols-outlined" style="font-size:20px;color:var(--color-primary);">account_circle</span>
+            Avatar
+        </h2>
+        <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
             <?php $pAvatar = safeAvatarUrl($user['avatar'] ?? null, $user['username']); ?>
-            <div class="relative group">
-                <img src="<?php echo $pAvatar; ?>" class="w-32 h-32 rounded-full object-cover shadow-xl flex-shrink-0 relative z-10" style="border:4px solid #fff;">
-                <div class="absolute inset-0 rounded-full bg-primary-container blur-md -z-10 opacity-20 group-hover:opacity-40 transition-opacity"></div>
-            </div>
-            
-            <form method="POST" enctype="multipart/form-data" class="flex-1 w-full flex flex-col gap-3">
+            <img src="<?php echo $pAvatar; ?>" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid #fff;box-shadow:0 2px 12px rgba(0,0,0,.12);flex-shrink:0;">
+            <form method="POST" enctype="multipart/form-data" style="flex:1;min-width:200px;">
                 <?php echo csrfField(); ?>
                 <input type="hidden" name="action" value="update_avatar">
-                
-                <label class="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed rounded-xl cursor-pointer transition-colors" style="border-color:var(--border);background:var(--bg-section);">
-                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                        <span class="material-symbols-outlined mb-1" style="color:var(--text-3);">upload</span>
-                        <p class="text-sm" style="color:var(--text-3);"><span class="font-bold" style="color:var(--color-primary);">Tıkla</span> veya sürükle</p>
-                        <p class="text-xs mt-1" style="color:var(--text-3);">Maks. 10MB, JPEG / PNG / WebP</p>
-                    </div>
-                    <input type="file" name="avatar" accept="image/*" required class="hidden" onchange="this.form.submit()">
+                <label style="display:flex;align-items:center;gap:10px;border:1.5px dashed var(--border);border-radius:12px;padding:14px 18px;cursor:pointer;background:var(--bg-section);transition:border-color .15s;" onmouseover="this.style.borderColor='var(--color-primary)'" onmouseout="this.style.borderColor='var(--border)'">
+                    <span class="material-symbols-outlined" style="font-size:22px;color:var(--text-3);">upload</span>
+                    <span style="font-size:13px;color:var(--text-2);">Yeni fotoğraf seç <span style="color:var(--text-3);font-size:11px;">(JPEG/PNG/WebP, max 10MB)</span></span>
+                    <input type="file" name="avatar" accept="image/*" required style="display:none;" onchange="this.form.submit()">
                 </label>
             </form>
         </div>
     </div>
 
     <!-- Banner -->
-    <div class="rounded-2xl p-6 md:p-8" style="background:#fff;border:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.08);">
-        <h2 class="text-xl font-bold flex items-center gap-2 mb-6" style="color:var(--text-1);"><span class="material-symbols-outlined text-[24px]" style="color:var(--color-primary);">image</span> Banner</h2>
-        <div class="h-40 rounded-xl overflow-hidden relative mb-5 shadow-inner group" style="background:var(--bg-section);border:1px solid var(--border);">
+    <div style="background:#fff;border:1px solid var(--border);border-radius:16px;padding:20px 24px;box-shadow:0 1px 4px rgba(0,0,0,.06);">
+        <h2 style="font-size:15px;font-weight:700;color:var(--text-1);display:flex;align-items:center;gap:6px;margin:0 0 14px;">
+            <span class="material-symbols-outlined" style="font-size:20px;color:var(--color-primary);">image</span>
+            Banner
+        </h2>
+        <div style="height:120px;border-radius:10px;overflow:hidden;margin-bottom:14px;background:var(--bg-section);border:1px solid var(--border);">
             <?php if (bannerUrl($user['banner'])): ?>
-                <img src="<?php echo bannerUrl($user['banner']); ?>" class="w-full h-full object-cover">
+                <img src="<?php echo bannerUrl($user['banner']); ?>" style="width:100%;height:100%;object-fit:cover;">
             <?php else: ?>
                 <div style="width:100%;height:100%;background:linear-gradient(135deg,#FFF3EB,#F5F4F0);display:flex;align-items:center;justify-content:center;">
-                    <span class="material-symbols-outlined" style="font-size:36px;color:var(--text-3);opacity:.4;">wallpaper</span>
+                    <span class="material-symbols-outlined" style="font-size:32px;color:var(--text-3);opacity:.4;">wallpaper</span>
                 </div>
             <?php endif; ?>
-            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
-                <span class="material-symbols-outlined text-white text-[32px]">wallpaper</span>
-            </div>
         </div>
-        <form method="POST" enctype="multipart/form-data">
+        <form method="POST" enctype="multipart/form-data" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
             <?php echo csrfField(); ?>
             <input type="hidden" name="action" value="update_banner">
-            
-            <div class="flex flex-col sm:flex-row items-center gap-4">
-                <label class="flex-1 w-full flex items-center justify-center gap-3 h-12 rounded-xl cursor-pointer transition-colors px-4" style="border:1px solid var(--border);background:var(--bg-section);">
-                    <span class="material-symbols-outlined text-[20px]" style="color:var(--text-3);">upload</span>
-                    <span class="text-sm font-medium whitespace-nowrap overflow-hidden text-ellipsis" style="color:var(--text-2);">Yeni Banner Seç...</span>
-                    <input type="file" name="banner" accept="image/*" required class="hidden" onchange="this.nextElementSibling.innerText = this.files[0].name">
-                    <span class="hidden"></span>
-                </label>
-                <button type="submit" class="w-full sm:w-auto h-12 bg-primary-container hover:bg-primary-container/90 text-white px-6 rounded-xl text-sm font-bold transition-all shadow-[0_0_15px_rgba(255,145,0,0.3)] active:scale-95 shrink-0 flex items-center justify-center gap-2">
-                    <span class="material-symbols-outlined text-[18px]">cloud_upload</span> Yükle
-                </button>
-            </div>
-            <div class="text-xs mt-3 text-center sm:text-left" style="color:var(--text-3);">Maks. 10MB, önerilen 1500x500px</div>
-        </form>
-    </div>
-
-    <!-- Rozet Seçimi (Premium) -->
-    <?php if (UserModel::isPremiumActive($user)): ?>
-    <div class="rounded-2xl p-6 md:p-8 relative overflow-hidden" style="background:#fff;border:1px solid rgba(123,208,255,0.4);box-shadow:0 0 30px -5px rgba(123,208,255,0.15);">
-        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-[#7bd0ff]/5 to-transparent pointer-events-none"></div>
-        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-30 mix-blend-overlay pointer-events-none"></div>
-        
-        <h2 class="text-2xl font-black flex items-center gap-2 mb-2 relative z-10" style="color:var(--text-1);">
-            <span class="material-symbols-outlined text-[#7bd0ff] text-[28px]">workspace_premium</span> Profil Rozeti
-            <span class="bg-[#7bd0ff]/20 text-[#7bd0ff] text-[10px] font-black px-2 py-0.5 rounded border border-[#7bd0ff]/30 uppercase tracking-widest ml-2 shadow-[0_0_10px_rgba(123,208,255,0.3)]">Premium</span>
-        </h2>
-        <p class="text-sm mb-6 relative z-10 font-medium" style="color:var(--text-2);">Profilinde adının yanında görünecek özel premium rozetini seç.</p>
-        <form method="POST" class="relative z-10">
-            <?php echo csrfField(); ?>
-            <input type="hidden" name="action" value="update_badge">
-            <div class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-3 mb-6">
-                <!-- Rozet yok seçeneği -->
-                <label class="cursor-pointer">
-                    <input type="radio" name="badge" value="" <?php echo empty($user['badge']) ? 'checked' : ''; ?> class="sr-only peer">
-                    <div class="flex flex-col items-center justify-center gap-1.5 p-3 rounded-xl border transition-all h-20" style="border-color:var(--border);background:var(--bg-section);">
-                        <span class="material-symbols-outlined text-[24px]" style="color:var(--text-3);">block</span>
-                        <span class="text-[9px] font-bold uppercase tracking-wider" style="color:var(--text-3);">Yok</span>
-                    </div>
-                </label>
-                <?php foreach (UserModel::availableBadges() as $key => $badge): ?>
-                <label class="cursor-pointer">
-                    <input type="radio" name="badge" value="<?php echo $key; ?>" <?php echo ($user['badge'] ?? '') === $key ? 'checked' : ''; ?> class="sr-only peer">
-                    <div class="flex flex-col items-center justify-center gap-1.5 p-3 rounded-xl border transition-all h-20" style="border-color:var(--border);background:var(--bg-section);">
-                        <span class="material-symbols-outlined text-[28px]" style="color: <?php echo $badge['color']; ?>; text-shadow: 0 0 10px <?php echo $badge['color']; ?>80;"><?php echo $badge['icon']; ?></span>
-                        <span class="text-[9px] font-bold tracking-wide truncate w-full text-center" style="color:var(--text-2);"><?php echo $badge['label']; ?></span>
-                    </div>
-                </label>
-                <?php endforeach; ?>
-            </div>
-            <button type="submit" class="bg-gradient-to-r from-[#7bd0ff]/20 to-[#7bd0ff]/10 text-[#7bd0ff] px-8 py-3 rounded-xl font-black border border-[#7bd0ff]/40 hover:bg-[#7bd0ff]/30 transition-all active:scale-95 w-full sm:w-auto shadow-[0_0_20px_rgba(123,208,255,0.15)] flex justify-center items-center gap-2">
-                <span class="material-symbols-outlined text-[20px]">save</span> Rozeti Kaydet
+            <label style="flex:1;min-width:180px;display:flex;align-items:center;gap:8px;border:1px solid var(--border);border-radius:10px;padding:10px 14px;cursor:pointer;background:var(--bg-section);">
+                <span class="material-symbols-outlined" style="font-size:18px;color:var(--text-3);">upload</span>
+                <span id="bannerFileName" style="font-size:13px;color:var(--text-2);">Banner seç...</span>
+                <input type="file" name="banner" accept="image/*" required style="display:none;" onchange="document.getElementById('bannerFileName').textContent=this.files[0].name">
+            </label>
+            <button type="submit" style="background:var(--color-primary);color:#fff;border:none;cursor:pointer;padding:10px 20px;border-radius:10px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px;">
+                <span class="material-symbols-outlined" style="font-size:16px;">cloud_upload</span> Yükle
             </button>
         </form>
     </div>
-    <?php else: ?>
-    <div class="rounded-2xl p-6 md:p-8 relative overflow-hidden" style="background:#fff;border:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.08);">
-        <div class="absolute inset-0 bg-gradient-to-br from-transparent via-[#7bd0ff]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-        <h2 class="text-xl font-bold flex items-center gap-2 mb-4" style="color:var(--text-1);">
-            <span class="material-symbols-outlined text-[24px]" style="color:var(--text-3);">workspace_premium</span> Profil Rozeti
-        </h2>
-        <p class="text-sm mb-6 leading-relaxed" style="color:var(--text-3);">Profil rozeti seçmek ve adının yanında havalı bir ikonla görünmek için Premium üye olman gerekir.</p>
-        <a href="<?php echo BASE_URL; ?>/premium" class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#7bd0ff]/20 to-[#7bd0ff]/10 text-[#7bd0ff] px-6 py-3 rounded-xl font-black text-sm border border-[#7bd0ff]/30 hover:bg-[#7bd0ff]/30 transition-all hover:shadow-[0_0_20px_rgba(123,208,255,0.2)]">
-            <span class="material-symbols-outlined text-[18px]">diamond</span> Premium'a Geç
-        </a>
-    </div>
-    <?php endif; ?>
 
-    <!-- Profil Teması (Premium) -->
-    <?php
-    $themes = [
-        'default'  => ['label' => 'Varsayılan', 'colors' => ['#ff9100', '#2a2a2b'], 'gradient' => 'from-[#ff9100] to-[#E05520]'],
-        'ocean'    => ['label' => 'Okyanus', 'colors' => ['#0EA5E9', '#0284C7'], 'gradient' => 'from-[#0EA5E9] to-[#0369A1]'],
-        'sunset'   => ['label' => 'Gün Batımı', 'colors' => ['#F59E0B', '#EF4444'], 'gradient' => 'from-[#F59E0B] to-[#EF4444]'],
-        'emerald'  => ['label' => 'Zümrüt', 'colors' => ['#10B981', '#059669'], 'gradient' => 'from-[#10B981] to-[#047857]'],
-        'purple'   => ['label' => 'Mor', 'colors' => ['#8B5CF6', '#7C3AED'], 'gradient' => 'from-[#8B5CF6] to-[#6D28D9]'],
-        'crimson'  => ['label' => 'Kızıl', 'colors' => ['#E11D48', '#BE123C'], 'gradient' => 'from-[#E11D48] to-[#9F1239]'],
-    ];
-    $currentTheme = $user['profile_theme'] ?? 'default';
-    ?>
-    <?php if (UserModel::isPremiumActive($user)): ?>
-    <div class="rounded-2xl p-6 md:p-8 relative overflow-hidden" style="background:#fff;border:1px solid rgba(123,208,255,0.4);box-shadow:0 0 30px -5px rgba(123,208,255,0.15);">
-        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-[#7bd0ff]/5 to-transparent pointer-events-none"></div>
-        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-30 mix-blend-overlay pointer-events-none"></div>
-        
-        <h2 class="text-2xl font-black flex items-center gap-2 mb-2 relative z-10" style="color:var(--text-1);">
-            <span class="material-symbols-outlined text-[#7bd0ff] text-[28px]">palette</span> Profil Teması
-            <span class="bg-[#7bd0ff]/20 text-[#7bd0ff] text-[10px] font-black px-2 py-0.5 rounded border border-[#7bd0ff]/30 uppercase tracking-widest ml-2 shadow-[0_0_10px_rgba(123,208,255,0.3)]">Premium</span>
+    <!-- Profil Bilgileri — AJAX -->
+    <div style="background:#fff;border:1px solid var(--border);border-radius:16px;padding:20px 24px;box-shadow:0 1px 4px rgba(0,0,0,.06);">
+        <h2 style="font-size:15px;font-weight:700;color:var(--text-1);display:flex;align-items:center;gap:6px;margin:0 0 18px;">
+            <span class="material-symbols-outlined" style="font-size:20px;color:var(--color-primary);">contact_mail</span>
+            Profil Bilgileri
         </h2>
-        <p class="text-sm mb-6 relative z-10 font-medium" style="color:var(--text-2);">Profilinin renk temasını seç. Seçtiğin tema profil sayfanda görünecek.</p>
-        <form method="POST" class="relative z-10">
-            <?php echo csrfField(); ?>
-            <input type="hidden" name="action" value="update_theme">
-            <input type="hidden" name="theme" id="theme_input" value="<?php echo escape($currentTheme); ?>">
-            <div class="grid grid-cols-3 sm:grid-cols-6 gap-3 mb-6">
-                <?php foreach ($themes as $key => $theme): ?>
-                <button type="button" onclick="document.getElementById('theme_input').value='<?php echo $key; ?>';document.querySelectorAll('[data-theme-card]').forEach(c=>c.classList.remove('ring-2','ring-[#7bd0ff]','shadow-[0_0_15px_rgba(123,208,255,0.3)]'));this.querySelector('[data-theme-card]').classList.add('ring-2','ring-[#7bd0ff]','shadow-[0_0_15px_rgba(123,208,255,0.3)]')" class="group">
-                    <div data-theme-card class="flex flex-col items-center gap-2 p-3 rounded-xl border transition-all <?php echo $currentTheme === $key ? 'ring-2 ring-[#7bd0ff] shadow-[0_0_15px_rgba(123,208,255,0.3)]' : ''; ?>" style="border-color:var(--border);background:var(--bg-section);">
-                        <div class="w-10 h-10 rounded-full bg-gradient-to-br <?php echo $theme['gradient']; ?> shadow-lg"></div>
-                        <span class="text-[10px] font-bold tracking-wide" style="color:var(--text-2);"><?php echo $theme['label']; ?></span>
-                    </div>
-                </button>
-                <?php endforeach; ?>
-            </div>
-            <button type="submit" class="bg-gradient-to-r from-[#7bd0ff]/20 to-[#7bd0ff]/10 text-[#7bd0ff] px-8 py-3 rounded-xl font-black border border-[#7bd0ff]/40 hover:bg-[#7bd0ff]/30 transition-all active:scale-95 w-full sm:w-auto shadow-[0_0_20px_rgba(123,208,255,0.15)] flex justify-center items-center gap-2">
-                <span class="material-symbols-outlined text-[20px]">save</span> Temayı Kaydet
-            </button>
-        </form>
-    </div>
-    <?php else: ?>
-    <div class="rounded-2xl p-6 md:p-8 relative overflow-hidden" style="background:#fff;border:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.08);">
-        <div class="absolute inset-0 bg-gradient-to-br from-transparent via-[#7bd0ff]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-        <h2 class="text-xl font-bold flex items-center gap-2 mb-4" style="color:var(--text-1);">
-            <span class="material-symbols-outlined text-[24px]" style="color:var(--text-3);">palette</span> Profil Teması
-        </h2>
-        <p class="text-sm mb-6 leading-relaxed" style="color:var(--text-3);">Profil temanı değiştirmek ve sayfanı kişiselleştirmek için Premium üye olman gerekir.</p>
-        <a href="<?php echo BASE_URL; ?>/premium" class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#7bd0ff]/20 to-[#7bd0ff]/10 text-[#7bd0ff] px-6 py-3 rounded-xl font-black text-sm border border-[#7bd0ff]/30 hover:bg-[#7bd0ff]/30 transition-all hover:shadow-[0_0_20px_rgba(123,208,255,0.2)]">
-            <span class="material-symbols-outlined text-[18px]">diamond</span> Premium'a Geç
-        </a>
-    </div>
-    <?php endif; ?>
-
-    <!-- Profil Bilgileri -->
-    <div class="rounded-2xl p-6 md:p-8" style="background:#fff;border:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.08);">
-        <h2 class="text-xl font-bold flex items-center gap-2 mb-6" style="color:var(--text-1);"><span class="material-symbols-outlined text-[24px]" style="color:var(--color-primary);">contact_mail</span> Profil Bilgileri</h2>
-        <form method="POST" id="profileForm" class="flex flex-col gap-5">
+        <form id="profileForm" action="<?php echo BASE_URL; ?>/settings" method="POST" style="display:flex;flex-direction:column;gap:14px;">
             <?php echo csrfField(); ?>
             <input type="hidden" name="action" value="update_profile">
             <input type="hidden" name="ajax" value="1">
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <div class="flex flex-col gap-2">
-                    <label class="text-sm font-bold ml-1" style="color:var(--text-2);">Kullanıcı Adı</label>
-                    <input type="text" name="username" value="<?php echo escape($user['username']); ?>" required class="w-full rounded-xl px-4 py-3 focus:outline-none transition-all shadow-inner" style="background:var(--bg-section);border:1px solid var(--border);color:var(--text-1);">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+                <div>
+                    <label style="display:block;font-size:12px;font-weight:700;color:var(--text-2);margin-bottom:6px;">Kullanıcı Adı</label>
+                    <input type="text" name="username" value="<?php echo escape($user['username']); ?>"
+                           style="width:100%;box-sizing:border-box;background:var(--bg-section);border:1.5px solid var(--border);border-radius:10px;padding:10px 14px;font-size:14px;color:var(--text-1);outline:none;"
+                           onfocus="this.style.borderColor='var(--color-primary)'" onblur="this.style.borderColor='var(--border)'">
                 </div>
-                
-                <div class="flex flex-col gap-2">
-                    <label class="text-sm font-bold ml-1" style="color:var(--text-2);">Etiket (@tag)</label>
-                    <div class="relative">
-                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-primary-container font-black">@</span>
-                        <input type="text" name="tag" value="<?php echo escape($user['tag'] ?? ''); ?>" pattern="[a-zA-Z0-9_]{3,30}" class="w-full rounded-xl pl-10 pr-4 py-3 focus:outline-none transition-all shadow-inner" style="background:var(--bg-section);border:1px solid var(--border);color:var(--text-1);">
+                <div>
+                    <label style="display:block;font-size:12px;font-weight:700;color:var(--text-2);margin-bottom:6px;">Etiket (@tag)</label>
+                    <div style="position:relative;">
+                        <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-weight:800;color:var(--color-primary);font-size:14px;">@</span>
+                        <input type="text" name="tag" value="<?php echo escape($user['tag'] ?? ''); ?>" pattern="[a-zA-Z0-9_]{3,30}"
+                               style="width:100%;box-sizing:border-box;background:var(--bg-section);border:1.5px solid var(--border);border-radius:10px;padding:10px 14px 10px 28px;font-size:14px;color:var(--text-1);outline:none;"
+                               onfocus="this.style.borderColor='var(--color-primary)'" onblur="this.style.borderColor='var(--border)'">
                     </div>
                 </div>
             </div>
-            
-            <div class="flex flex-col gap-2">
-                <label class="text-sm font-bold ml-1" style="color:var(--text-2);">E-posta</label>
-                <div class="relative">
-                    <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-[18px]" style="color:var(--text-3);">mail</span>
-                    <?php if (!empty($user['gta_user_id'])): ?>
-                    <!-- GTA karakterleri için email readonly, space içerebilir -->
-                    <input type="text" name="email" value="<?php echo escape($user['email']); ?>" readonly
-                           class="w-full rounded-xl pl-12 pr-4 py-3 focus:outline-none"
-                           style="background:var(--bg-input);border:1px solid var(--border);color:var(--text-3);cursor:not-allowed;">
-                    <?php else: ?>
-                    <input type="email" name="email" value="<?php echo escape($user['email']); ?>" required
-                           class="w-full rounded-xl pl-12 pr-4 py-3 focus:outline-none transition-all shadow-inner"
-                           style="background:var(--bg-section);border:1px solid var(--border);color:var(--text-1);">
-                    <?php endif; ?>
-                </div>
+
+            <div>
+                <label style="display:block;font-size:12px;font-weight:700;color:var(--text-2);margin-bottom:6px;">E-posta</label>
                 <?php if (!empty($user['gta_user_id'])): ?>
-                <p class="text-[11px] ml-1" style="color:var(--text-3);">GTA karakterleri için e-posta değiştirilemez.</p>
+                <input type="text" name="email" value="<?php echo escape($user['email']); ?>" readonly
+                       style="width:100%;box-sizing:border-box;background:var(--bg-input);border:1.5px solid var(--border);border-radius:10px;padding:10px 14px;font-size:14px;color:var(--text-3);cursor:not-allowed;">
+                <p style="font-size:11px;color:var(--text-3);margin:4px 0 0;">GTA karakterleri için e-posta değiştirilemez.</p>
+                <?php else: ?>
+                <input type="email" name="email" value="<?php echo escape($user['email']); ?>"
+                       style="width:100%;box-sizing:border-box;background:var(--bg-section);border:1.5px solid var(--border);border-radius:10px;padding:10px 14px;font-size:14px;color:var(--text-1);outline:none;"
+                       onfocus="this.style.borderColor='var(--color-primary)'" onblur="this.style.borderColor='var(--border)'">
                 <?php endif; ?>
             </div>
 
-
-            
-            <div class="flex flex-col gap-2">
-                <label class="text-sm font-bold ml-1" style="color:var(--text-2);">Biyografi</label>
+            <div>
+                <label style="display:block;font-size:12px;font-weight:700;color:var(--text-2);margin-bottom:6px;">Biyografi</label>
                 <?php $maxBio = UserModel::isPremiumActive($user) ? 500 : 280; ?>
-                <textarea name="bio" rows="3" maxlength="<?php echo $maxBio; ?>" class="w-full rounded-xl px-4 py-3 focus:outline-none transition-all shadow-inner resize-y" style="background:var(--bg-section);border:1px solid var(--border);color:var(--text-1);"><?php echo escape($user['bio'] ?? ''); ?></textarea>
-                <div class="text-xs font-medium ml-1 flex items-center justify-between" style="color:var(--text-3);">
-                    <span>Kendinizden kısaca bahsedin.</span>
-                    <span><?php echo $maxBio === 500 ? 'Maks 500 karakter (Premium 💎)' : 'Maks 280 karakter'; ?></span>
-                </div>
+                <textarea name="bio" rows="3" maxlength="<?php echo $maxBio; ?>"
+                          style="width:100%;box-sizing:border-box;background:var(--bg-section);border:1.5px solid var(--border);border-radius:10px;padding:10px 14px;font-size:14px;color:var(--text-1);outline:none;resize:vertical;font-family:inherit;"
+                          onfocus="this.style.borderColor='var(--color-primary)'" onblur="this.style.borderColor='var(--border)'"><?php echo escape($user['bio'] ?? ''); ?></textarea>
+                <div style="font-size:11px;color:var(--text-3);margin-top:4px;">Maks. <?php echo $maxBio; ?> karakter<?php echo $maxBio===500?' (Premium 💎)':''; ?></div>
             </div>
-            
-            <button type="submit" id="profileSaveBtn"
-                    style="margin-top:16px;background:var(--color-primary);color:#fff;border:none;cursor:pointer;
-                           padding:12px 28px;border-radius:12px;font-size:14px;font-weight:700;
-                           display:inline-flex;align-items:center;gap:8px;transition:opacity .15s;"
-                    onmouseover="this.style.opacity='.88'" onmouseout="this.style.opacity='1'">
-                <span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:'FILL' 1;">save</span>
-                Bilgileri Kaydet
-            </button>
+
+            <div>
+                <button type="submit" id="profileSaveBtn"
+                        style="background:var(--color-primary);color:#fff;border:none;cursor:pointer;padding:11px 24px;border-radius:10px;font-size:14px;font-weight:700;display:inline-flex;align-items:center;gap:7px;">
+                    <span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:'FILL' 1;">save</span>
+                    Bilgileri Kaydet
+                </button>
+            </div>
         </form>
     </div>
 
-    <!-- Banka Hesabı (ayrı form) -->
-    <div class="rounded-2xl p-6 md:p-8" style="background:#fff;border:1.5px solid var(--color-primary);box-shadow:0 4px 20px rgba(240,109,31,.12);">
-        <h2 class="text-xl font-bold flex items-center gap-2 mb-2" style="color:var(--text-1);">
-            <span class="material-symbols-outlined text-[24px]" style="color:var(--color-primary);">account_balance</span>
+    <!-- Banka Hesabı — AJAX -->
+    <div style="background:#fff;border:2px solid var(--color-primary);border-radius:16px;padding:20px 24px;box-shadow:0 4px 20px rgba(240,109,31,.10);">
+        <h2 style="font-size:15px;font-weight:700;color:var(--text-1);display:flex;align-items:center;gap:6px;margin:0 0 6px;">
+            <span class="material-symbols-outlined" style="font-size:20px;color:var(--color-primary);">account_balance</span>
             Banka Hesap Numarası
         </h2>
-        <p class="text-sm mb-5" style="color:var(--text-3);">Bakiye çekim işlemlerinizin gönderileceği banka hesap numarası.</p>
-        <form method="POST" id="bankForm">
+        <p style="font-size:13px;color:var(--text-3);margin:0 0 14px;">Bakiye çekim işlemlerinin gönderileceği hesap numarası.</p>
+        <form id="bankForm" action="<?php echo BASE_URL; ?>/settings" method="POST" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
             <?php echo csrfField(); ?>
             <input type="hidden" name="action" value="update_bank">
             <input type="hidden" name="ajax" value="1">
-            <div class="relative mb-4">
-                <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-[18px]" style="color:var(--text-3);">account_balance</span>
-                <input type="text" name="bank_account"
-                       value="<?php echo escape($user['bank_account'] ?? ''); ?>"
-                       placeholder="0300 8108 7"
-                       class="w-full rounded-xl pl-12 pr-4 py-3 focus:outline-none transition-all font-mono"
-                       style="background:var(--bg-section);border:1.5px solid var(--border);color:var(--text-1);font-size:16px;letter-spacing:.05em;"
-                       onfocus="this.style.borderColor='var(--color-primary)'" onblur="this.style.borderColor='var(--border)'">
-            </div>
-            <button type="submit" class="btn btn-primary">
-                <span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:'FILL' 1;">save</span>
-                Banka Hesabını Kaydet
+            <input type="text" name="bank_account"
+                   value="<?php echo escape($user['bank_account'] ?? ''); ?>"
+                   placeholder="0300 8108 7"
+                   style="flex:1;min-width:160px;background:var(--bg-section);border:1.5px solid var(--border);border-radius:10px;padding:10px 14px;font-size:15px;font-family:monospace;color:var(--text-1);outline:none;letter-spacing:.08em;"
+                   onfocus="this.style.borderColor='var(--color-primary)'" onblur="this.style.borderColor='var(--border)'">
+            <button type="submit" id="bankSaveBtn"
+                    style="background:var(--color-primary);color:#fff;border:none;cursor:pointer;padding:11px 20px;border-radius:10px;font-size:14px;font-weight:700;display:inline-flex;align-items:center;gap:7px;white-space:nowrap;">
+                <span class="material-symbols-outlined" style="font-size:17px;font-variation-settings:'FILL' 1;">save</span>
+                Kaydet
             </button>
         </form>
     </div>
 
     <!-- Şifre Değiştir -->
-    <div class="rounded-2xl p-6 md:p-8" style="background:#fff;border:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.08);">
-        <h2 class="text-xl font-bold flex items-center gap-2 mb-6" style="color:var(--text-1);"><span class="material-symbols-outlined text-[24px]" style="color:var(--color-primary);">lock</span> Şifre Değiştir</h2>
-        <form method="POST" class="flex flex-col gap-5">
+    <?php if (empty($user['gta_user_id'])): ?>
+    <div style="background:#fff;border:1px solid var(--border);border-radius:16px;padding:20px 24px;box-shadow:0 1px 4px rgba(0,0,0,.06);">
+        <h2 style="font-size:15px;font-weight:700;color:var(--text-1);display:flex;align-items:center;gap:6px;margin:0 0 18px;">
+            <span class="material-symbols-outlined" style="font-size:20px;color:var(--color-primary);">lock</span>
+            Şifre Değiştir
+        </h2>
+        <form method="POST" action="<?php echo BASE_URL; ?>/settings" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
             <?php echo csrfField(); ?>
             <input type="hidden" name="action" value="change_password">
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <div class="flex flex-col gap-2">
-                    <label class="text-sm font-bold ml-1" style="color:var(--text-2);">Mevcut Şifre</label>
-                    <div class="relative">
-                        <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-[18px]" style="color:var(--text-3);">key</span>
-                        <input type="password" name="current_password" required class="w-full rounded-xl pl-12 pr-4 py-3 focus:outline-none transition-all shadow-inner" style="background:var(--bg-section);border:1px solid var(--border);color:var(--text-1);">
-                    </div>
-                </div>
-                
-                <div class="flex flex-col gap-2">
-                    <label class="text-sm font-bold ml-1" style="color:var(--text-2);">Yeni Şifre</label>
-                    <div class="relative">
-                        <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-[18px]" style="color:var(--text-3);">lock_reset</span>
-                        <input type="password" name="new_password" required minlength="6" class="w-full rounded-xl pl-12 pr-4 py-3 focus:outline-none transition-all shadow-inner" style="background:var(--bg-section);border:1px solid var(--border);color:var(--text-1);">
-                    </div>
-                </div>
+            <div>
+                <label style="display:block;font-size:12px;font-weight:700;color:var(--text-2);margin-bottom:6px;">Mevcut Şifre</label>
+                <input type="password" name="current_password" required
+                       style="width:100%;box-sizing:border-box;background:var(--bg-section);border:1.5px solid var(--border);border-radius:10px;padding:10px 14px;font-size:14px;color:var(--text-1);outline:none;">
             </div>
-            
-            <button type="submit" class="mt-2 border px-8 py-3 rounded-xl font-bold transition-all active:scale-95 w-full sm:w-auto flex justify-center items-center gap-2" style="background:var(--bg-section);color:var(--text-1);border-color:var(--border);">
-                <span class="material-symbols-outlined text-[20px]">update</span> Şifreyi Güncelle
-            </button>
+            <div>
+                <label style="display:block;font-size:12px;font-weight:700;color:var(--text-2);margin-bottom:6px;">Yeni Şifre</label>
+                <input type="password" name="new_password" required minlength="6"
+                       style="width:100%;box-sizing:border-box;background:var(--bg-section);border:1.5px solid var(--border);border-radius:10px;padding:10px 14px;font-size:14px;color:var(--text-1);outline:none;">
+            </div>
+            <div style="grid-column:1/-1;">
+                <button type="submit"
+                        style="background:var(--bg-section);color:var(--text-1);border:1.5px solid var(--border);cursor:pointer;padding:10px 22px;border-radius:10px;font-size:14px;font-weight:700;display:inline-flex;align-items:center;gap:7px;">
+                    <span class="material-symbols-outlined" style="font-size:17px;">update</span>
+                    Şifreyi Güncelle
+                </button>
+            </div>
         </form>
     </div>
+    <?php endif; ?>
+
+    <!-- Rozet (Premium) -->
+    <?php if (UserModel::isPremiumActive($user)): ?>
+    <div style="background:#fff;border:1.5px solid rgba(123,208,255,.5);border-radius:16px;padding:20px 24px;box-shadow:0 4px 20px rgba(123,208,255,.10);">
+        <h2 style="font-size:15px;font-weight:700;color:var(--text-1);display:flex;align-items:center;gap:6px;margin:0 0 6px;">
+            <span class="material-symbols-outlined" style="font-size:20px;color:#7bd0ff;">workspace_premium</span>
+            Profil Rozeti
+            <span style="background:rgba(123,208,255,.2);color:#7bd0ff;font-size:10px;font-weight:800;border-radius:99px;padding:2px 8px;border:1px solid rgba(123,208,255,.4);">PREMIUM</span>
+        </h2>
+        <p style="font-size:13px;color:var(--text-2);margin:0 0 14px;">Adının yanında görünecek özel rozeti seç.</p>
+        <form method="POST" action="<?php echo BASE_URL; ?>/settings" style="display:flex;flex-direction:column;gap:14px;">
+            <?php echo csrfField(); ?>
+            <input type="hidden" name="action" value="update_badge">
+            <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                <label style="cursor:pointer;">
+                    <input type="radio" name="badge" value="" <?php echo empty($user['badge']) ? 'checked' : ''; ?> style="display:none;" class="badgeRadio">
+                    <div class="badgeCard" style="padding:10px 14px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg-section);text-align:center;font-size:12px;font-weight:700;color:var(--text-3);">Yok</div>
+                </label>
+                <?php foreach (UserModel::availableBadges() as $key => $badge): ?>
+                <label style="cursor:pointer;">
+                    <input type="radio" name="badge" value="<?php echo $key; ?>" <?php echo ($user['badge'] ?? '') === $key ? 'checked' : ''; ?> style="display:none;" class="badgeRadio">
+                    <div class="badgeCard" style="padding:10px 14px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg-section);display:flex;flex-direction:column;align-items:center;gap:4px;min-width:60px;">
+                        <span class="material-symbols-outlined" style="font-size:24px;color:<?php echo $badge['color']; ?>;"><?php echo $badge['icon']; ?></span>
+                        <span style="font-size:10px;font-weight:700;color:var(--text-2);"><?php echo $badge['label']; ?></span>
+                    </div>
+                </label>
+                <?php endforeach; ?>
+            </div>
+            <div>
+                <button type="submit" style="background:rgba(123,208,255,.15);color:#7bd0ff;border:1.5px solid rgba(123,208,255,.4);cursor:pointer;padding:10px 22px;border-radius:10px;font-size:14px;font-weight:700;display:inline-flex;align-items:center;gap:7px;">
+                    <span class="material-symbols-outlined" style="font-size:17px;">save</span> Rozeti Kaydet
+                </button>
+            </div>
+        </form>
+    </div>
+    <?php else: ?>
+    <div style="background:#fff;border:1px solid var(--border);border-radius:16px;padding:20px 24px;box-shadow:0 1px 4px rgba(0,0,0,.06);">
+        <h2 style="font-size:15px;font-weight:700;color:var(--text-2);display:flex;align-items:center;gap:6px;margin:0 0 8px;">
+            <span class="material-symbols-outlined" style="font-size:20px;color:var(--text-3);">workspace_premium</span>
+            Profil Rozeti
+        </h2>
+        <p style="font-size:13px;color:var(--text-3);margin:0 0 12px;">Rozet seçmek için Premium üye olman gerekir.</p>
+        <a href="<?php echo BASE_URL; ?>/premium" style="display:inline-flex;align-items:center;gap:6px;background:rgba(123,208,255,.15);color:#7bd0ff;border:1.5px solid rgba(123,208,255,.4);padding:9px 18px;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none;">
+            <span class="material-symbols-outlined" style="font-size:16px;">diamond</span> Premium'a Geç
+        </a>
+    </div>
+    <?php endif; ?>
+
 </div>
 
 <script>
-// ── Profil formu AJAX ──────────────────────────────────────
-document.getElementById('profileForm')?.addEventListener('submit', async function(e) {
-    e.preventDefault();
-    const btn = document.getElementById('profileSaveBtn');
-    const orig = btn.innerHTML;
-    btn.disabled = true;
-    btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px;animation:spin 1s linear infinite;">autorenew</span> Kaydediliyor...';
-
-    try {
-        const res = await fetch(location.href, { method:'POST', body: new FormData(this) });
-        const data = await res.json();
-        if (data.ok) {
-            App.flash(data.message || 'Profil güncellendi.', 'success');
-        } else {
-            App.flash(data.error || 'Bir hata oluştu.', 'error');
-        }
-    } catch(err) {
-        App.flash('Bağlantı hatası. Tekrar deneyin.', 'error');
-    } finally {
-        btn.disabled = false;
-        btn.innerHTML = orig;
+// Rozet seçim efekti
+document.querySelectorAll('.badgeRadio').forEach(function(r){
+    r.addEventListener('change', function(){
+        document.querySelectorAll('.badgeCard').forEach(function(c){
+            c.style.borderColor='var(--border)';
+            c.style.background='var(--bg-section)';
+        });
+        var card = this.parentElement.querySelector('.badgeCard');
+        if(card){ card.style.borderColor='#7bd0ff'; card.style.background='rgba(123,208,255,.1)'; }
+    });
+    // Sayfa yüklendiğinde seçili olanı işaretle
+    if(r.checked){
+        var card = r.parentElement.querySelector('.badgeCard');
+        if(card){ card.style.borderColor='#7bd0ff'; card.style.background='rgba(123,208,255,.1)'; }
     }
 });
 
-// ── Banka formu AJAX ──────────────────────────────────────
-document.getElementById('bankForm')?.addEventListener('submit', async function(e) {
-    e.preventDefault();
-    const btn = this.querySelector('button[type="submit"]');
-    const orig = btn.innerHTML;
-    btn.disabled = true;
+// AJAX toast helper (App bağımsız)
+function showToast(msg, type){
+    if(window.App && App.flash){ App.flash(msg, type); return; }
+    var t = document.createElement('div');
+    t.style.cssText = 'position:fixed;top:80px;right:20px;z-index:9999;background:'+(type==='success'?'#22c55e':'#ef4444')+';color:#fff;padding:12px 20px;border-radius:12px;font-size:14px;font-weight:700;box-shadow:0 4px 20px rgba(0,0,0,.2);display:flex;align-items:center;gap:8px;';
+    t.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px;">'+(type==='success'?'check_circle':'error')+'</span>'+msg;
+    document.body.appendChild(t);
+    setTimeout(function(){ t.style.opacity='0'; t.style.transition='opacity .4s'; setTimeout(function(){ t.remove(); },400); }, 3500);
+}
 
-    try {
-        const res = await fetch(location.href, { method:'POST', body: new FormData(this) });
-        const data = await res.json();
-        if (data.ok) {
-            App.flash(data.message || 'Banka hesabı kaydedildi.', 'success');
-        } else {
-            App.flash(data.error || 'Bir hata oluştu.', 'error');
-        }
-    } catch(err) {
-        App.flash('Bağlantı hatası. Tekrar deneyin.', 'error');
-    } finally {
-        btn.disabled = false;
-        btn.innerHTML = orig;
-    }
+// Profil formu AJAX
+document.getElementById('profileForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    var btn = document.getElementById('profileSaveBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px;">hourglass_top</span> Kaydediliyor...';
+    fetch(this.action, { method:'POST', body: new FormData(this) })
+        .then(function(r){ return r.json(); })
+        .then(function(d){
+            if(d.ok){ showToast(d.message||'Profil güncellendi.','success'); }
+            else     { showToast(d.error||'Bir hata oluştu.','error'); }
+        })
+        .catch(function(){ showToast('Bağlantı hatası.','error'); })
+        .finally(function(){
+            btn.disabled = false;
+            btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:\'FILL\' 1;">save</span> Bilgileri Kaydet';
+        });
+});
+
+// Banka formu AJAX
+document.getElementById('bankForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    var btn = document.getElementById('bankSaveBtn');
+    btn.disabled = true;
+    fetch(this.action, { method:'POST', body: new FormData(this) })
+        .then(function(r){ return r.json(); })
+        .then(function(d){
+            if(d.ok){ showToast(d.message||'Banka hesabı kaydedildi.','success'); }
+            else     { showToast(d.error||'Hata: '+d.error,'error'); }
+        })
+        .catch(function(){ showToast('Bağlantı hatası.','error'); })
+        .finally(function(){ btn.disabled = false; });
 });
 </script>
 
