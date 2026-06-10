@@ -19,8 +19,21 @@ $userModel = new UserModel();
 $user = $userModel->getById(Auth::id());
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    Csrf::requireValid();
-    $action = $_POST['action'] ?? '';
+    $isAjax = !empty($_POST['ajax']);
+
+    // CSRF kontrolü — AJAX isteklerde JSON hata dön, normal isteklerde redirect
+    if (!Csrf::verifyRequest()) {
+        if ($isAjax) {
+            ob_clean();
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['ok' => false, 'error' => 'Güvenlik hatası (CSRF). Sayfayı yenileyip tekrar deneyin.']);
+            exit;
+        }
+        Auth::setFlash('error', 'Güvenlik hatası. Lütfen sayfayı yenileyip tekrar deneyin.');
+        header('Location: ' . BASE_URL . '/settings'); exit;
+    }
+
+    $action     = $_POST['action'] ?? '';
     $redirectTo = BASE_URL . '/settings';
 
     if ($action === 'update_profile') {
