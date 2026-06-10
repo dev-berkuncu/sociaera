@@ -1,4 +1,5 @@
 <?php
+ob_start(); // Output buffering — header() her zaman çalışsın
 require_once __DIR__ . '/../app/Config/env.php';
 loadEnv(dirname(__DIR__) . '/.env');
 require_once __DIR__ . '/../app/Config/app.php';
@@ -23,6 +24,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $redirectTo = BASE_URL . '/settings';
 
     if ($action === 'update_profile') {
+        // GTA hesaplarında email değiştirilemesin
+        if (!empty($user['gta_user_id'])) {
+            $_POST['email'] = $user['email']; // mevcut email'i zorla
+        }
         $result = $userModel->updateProfile(Auth::id(), $_POST);
         if ($result['ok']) {
             $user = $userModel->getById(Auth::id());

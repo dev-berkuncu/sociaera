@@ -251,14 +251,6 @@ class UserModel
             return ['ok' => false, 'error' => 'Kullanıcı adı ve e-posta gereklidir.'];
         }
 
-        if (empty($bankAccount)) {
-            return ['ok' => false, 'error' => 'Banka hesap numarası zorunludur.'];
-        }
-
-        if (!preg_match('/^\d{4} \d{4} \d{1}$/', $bankAccount)) {
-            return ['ok' => false, 'error' => 'Banka hesap numarası formatı geçersiz. (Örn: 0300 8108 7)'];
-        }
-
         if (!empty($tag) && !preg_match('/^[a-zA-Z0-9_]{3,30}$/', $tag)) {
             return ['ok' => false, 'error' => 'Etiket 3-30 karakter, harf/rakam/alt çizgi olmalıdır.'];
         }
@@ -272,8 +264,8 @@ class UserModel
             return ['ok' => false, 'error' => 'Bu kullanıcı adı, etiket veya e-posta zaten kullanılıyor.'];
         }
 
-        $stmt = $this->db->prepare("UPDATE users SET username = ?, tag = ?, email = ?, bio = ?, bank_account = ? WHERE id = ?");
-        $stmt->execute([$username, $tag ?: null, $email, $bio, $bankAccount, $userId]);
+        $stmt = $this->db->prepare("UPDATE users SET username = ?, tag = ?, email = ?, bio = ? WHERE id = ?");
+        $stmt->execute([$username, $tag ?: null, $email, $bio, $userId]);
 
         return ['ok' => true];
     }
