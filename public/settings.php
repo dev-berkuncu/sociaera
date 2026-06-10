@@ -26,9 +26,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($action === 'update_profile') {
         // GTA hesaplarında email değiştirilemesin
         if (!empty($user['gta_user_id'])) {
-            $_POST['email'] = $user['email']; // mevcut email'i zorla
+            $_POST['email'] = $user['email'];
         }
         $result = $userModel->updateProfile(Auth::id(), $_POST);
+        if (!empty($_POST['ajax'])) {
+            header('Content-Type: application/json');
+            if ($result['ok']) {
+                $u = $userModel->getById(Auth::id());
+                Auth::refresh(['username' => $u['username']]);
+                echo json_encode(['ok' => true,  'message' => 'Profil güncellendi.']);
+            } else {
+                echo json_encode(['ok' => false, 'error'   => $result['error']]);
+            }
+            exit;
+        }
         if ($result['ok']) {
             $user = $userModel->getById(Auth::id());
             Auth::refresh(['username' => $user['username']]);
@@ -114,6 +125,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     } elseif ($action === 'update_bank') {
         $bank = trim($_POST['bank_account'] ?? '');
+        if (!empty($_POST['ajax'])) {
+            header('Content-Type: application/json');
+            if (empty($bank)) {
+                echo json_encode(['ok' => false, 'error' => 'Banka hesap numarası boş bırakılamaz.']);
+            } else {
+                $userModel->updateField(Auth::id(), 'bank_account', $bank);
+                echo json_encode(['ok' => true, 'message' => 'Banka hesap numarası kaydedildi ✓']);
+            }
+            exit;
+        }
         if (empty($bank)) {
             Auth::setFlash('error', 'Banka hesap numarası boş bırakılamaz.');
         } else {
@@ -313,10 +334,11 @@ require_once __DIR__ . '/partials/app_header.php';
     <!-- Profil Bilgileri -->
     <div class="rounded-2xl p-6 md:p-8" style="background:#fff;border:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.08);">
         <h2 class="text-xl font-bold flex items-center gap-2 mb-6" style="color:var(--text-1);"><span class="material-symbols-outlined text-[24px]" style="color:var(--color-primary);">contact_mail</span> Profil Bilgileri</h2>
-        <form method="POST" class="flex flex-col gap-5">
+        <form method="POST" id="profileForm" class="flex flex-col gap-5">
             <?php echo csrfField(); ?>
             <input type="hidden" name="action" value="update_profile">
-            
+            <input type="hidden" name="ajax" value="1">
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div class="flex flex-col gap-2">
                     <label class="text-sm font-bold ml-1" style="color:var(--text-2);">Kullanıcı Adı</label>
@@ -364,8 +386,13 @@ require_once __DIR__ . '/partials/app_header.php';
                 </div>
             </div>
             
-            <button type="submit" class="mt-4 bg-primary-container text-white px-8 py-3 rounded-xl font-bold shadow-[0_0_20px_rgba(255,145,0,0.3)] hover:bg-primary-container/90 transition-all active:scale-95 w-full sm:w-auto flex justify-center items-center gap-2">
-                <span class="material-symbols-outlined text-[20px]">save</span> Bilgileri Kaydet
+            <button type="submit" id="profileSaveBtn"
+                    style="margin-top:16px;background:var(--color-primary);color:#fff;border:none;cursor:pointer;
+                           padding:12px 28px;border-radius:12px;font-size:14px;font-weight:700;
+                           display:inline-flex;align-items:center;gap:8px;transition:opacity .15s;"
+                    onmouseover="this.style.opacity='.88'" onmouseout="this.style.opacity='1'">
+                <span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:'FILL' 1;">save</span>
+                Bilgileri Kaydet
             </button>
         </form>
     </div>
@@ -377,9 +404,10 @@ require_once __DIR__ . '/partials/app_header.php';
             Banka Hesap Numarası
         </h2>
         <p class="text-sm mb-5" style="color:var(--text-3);">Bakiye çekim işlemlerinizin gönderileceği banka hesap numarası.</p>
-        <form method="POST">
+        <form method="POST" id="bankForm">
             <?php echo csrfField(); ?>
             <input type="hidden" name="action" value="update_bank">
+            <input type="hidden" name="ajax" value="1">
             <div class="relative mb-4">
                 <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-[18px]" style="color:var(--text-3);">account_balance</span>
                 <input type="text" name="bank_account"
@@ -427,5 +455,54 @@ require_once __DIR__ . '/partials/app_header.php';
         </form>
     </div>
 </div>
+
+<script>
+// ── Profil formu AJAX ──────────────────────────────────────
+document.getElementById('profileForm')?.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const btn = document.getElementById('profileSaveBtn');
+    const orig = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px;animation:spin 1s linear infinite;">autorenew</span> Kaydediliyor...';
+
+    try {
+        const res = await fetch(location.href, { method:'POST', body: new FormData(this) });
+        const data = await res.json();
+        if (data.ok) {
+            App.flash(data.message || 'Profil güncellendi.', 'success');
+        } else {
+            App.flash(data.error || 'Bir hata oluştu.', 'error');
+        }
+    } catch(err) {
+        App.flash('Bağlantı hatası. Tekrar deneyin.', 'error');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = orig;
+    }
+});
+
+// ── Banka formu AJAX ──────────────────────────────────────
+document.getElementById('bankForm')?.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const btn = this.querySelector('button[type="submit"]');
+    const orig = btn.innerHTML;
+    btn.disabled = true;
+
+    try {
+        const res = await fetch(location.href, { method:'POST', body: new FormData(this) });
+        const data = await res.json();
+        if (data.ok) {
+            App.flash(data.message || 'Banka hesabı kaydedildi.', 'success');
+        } else {
+            App.flash(data.error || 'Bir hata oluştu.', 'error');
+        }
+    } catch(err) {
+        App.flash('Bağlantı hatası. Tekrar deneyin.', 'error');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = orig;
+    }
+});
+</script>
 
 <?php require_once __DIR__ . '/partials/app_footer.php'; ?>
