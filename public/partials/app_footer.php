@@ -5,7 +5,7 @@
  */
 ?>
 
-    <?php if (Auth::check() && isset($currentUser)): ?>
+    <?php if (Auth::check() && isset($currentUser) && empty($hideSidebar)): ?>
     <!-- ── SAĞ PANEL (Desktop) ──────────────────────────── -->
     <aside class="swarm-right-panel">
 
@@ -109,7 +109,7 @@
     </aside>
     <?php endif; ?>
 
-</div><!-- /swarm-layout -->
+</div><!-- /swarm-layout or hideSidebar wrapper -->
 
 <?php if (Auth::check() && isset($currentUser)): ?>
 

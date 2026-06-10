@@ -474,6 +474,10 @@ nav.swarm-topnav{
 
 </nav>
 
+<?php if (!empty($hideSidebar)): ?>
+<!-- Full-width centered layout (no sidebars) -->
+<div style="max-width:720px;margin:0 auto;padding:24px 16px 100px;">
+<?php else: ?>
 <!-- ── MAIN LAYOUT ────────────────────────────────────────── -->
 <div class="swarm-layout">
     
@@ -547,6 +551,8 @@ nav.swarm-topnav{
             </a>
         </div>
     </aside>
+
+<?php endif; // hideSidebar ?>
 
     <!-- Feed area starts — page content renders directly here -->
 
