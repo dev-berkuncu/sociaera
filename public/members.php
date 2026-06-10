@@ -29,9 +29,9 @@ try {
 
 $pageTitle = 'Üyeler';
 $activeNav = 'members';
-require_once __DIR__ . '/partials/app_header.php';
-?>
+<?php require_once __DIR__ . '/partials/app_header.php'; ?>
 
+<div style="min-width:0;">
 <style>
 /* Members page responsive grid */
 .members-grid {
@@ -54,18 +54,23 @@ require_once __DIR__ . '/partials/app_header.php';
     flex-direction: column;
     align-items: center;
     text-align: center;
-    transition: transform .2s;
+    transition: transform .2s, box-shadow .2s;
     position: relative;
     overflow: hidden;
+    padding-top: 80px; /* banner alanı için yer bırak */
+    padding-bottom: 0;
 }
-.member-card:hover { transform: translateY(-2px); }
+.member-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+}
 .member-card.premium {
     border: 2px solid rgba(79,70,229,0.3);
     box-shadow: 0 4px 20px rgba(79,70,229,0.12);
 }
 </style>
 
-<div style="min-width:0; display:flex; flex-direction:column; gap:20px; padding-bottom:40px;">
+<div style="display:flex; flex-direction:column; gap:20px; padding-bottom:40px;">
     <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
         <h1 style="font-size:1.75rem; font-weight:900; display:flex; align-items:center; gap:8px; color:var(--text-1); margin:0;">
             <span class="material-symbols-outlined" style="color:var(--color-primary); font-size:32px; font-variation-settings:'FILL' 1;">groups</span>
@@ -107,7 +112,7 @@ require_once __DIR__ . '/partials/app_header.php';
                 <div style="width:100%; height:80px; position:absolute; top:0; left:0; z-index:0; background:<?php echo $mIsPremium ? 'linear-gradient(135deg,#EEF2FF,#FAF5FF)' : 'var(--bg-section)'; ?>;"></div>
 
                 <!-- Avatar -->
-                <a href="<?php echo BASE_URL; ?>/profile?u=<?php echo escape($m['tag'] ?: $m['username']); ?>" style="position:relative; margin-top:32px; margin-bottom:12px; display:inline-block; z-index:1; text-decoration:none;">
+                <a href="<?php echo BASE_URL; ?>/profile?u=<?php echo escape($m['tag'] ?: $m['username']); ?>" style="position:relative; margin-top:-40px; margin-bottom:12px; display:inline-block; z-index:1; text-decoration:none;">
                     <?php $mAvatar = safeAvatarUrl($m['avatar'] ?? null, $m['username']); ?>
                     <div style="position:relative; display:inline-block;">
                         <img alt="<?php echo escape($m['username']); ?>"
@@ -177,6 +182,7 @@ require_once __DIR__ . '/partials/app_header.php';
         </div>
         <?php endif; ?>
     <?php endif; ?>
+</div><!-- /content -->
 </div><!-- /grid cell -->
 
 <?php require_once __DIR__ . '/partials/app_footer.php'; ?>
