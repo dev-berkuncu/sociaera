@@ -29,7 +29,8 @@ try {
 
 $pageTitle = 'Üyeler';
 $activeNav = 'members';
-<?php require_once __DIR__ . '/partials/app_header.php'; ?>
+require_once __DIR__ . '/partials/app_header.php';
+?>
 
 <div style="min-width:0;">
 <style>
