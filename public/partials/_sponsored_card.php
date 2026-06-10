@@ -1,27 +1,28 @@
 <?php
 /**
- * Sponsorlu İçerik — Feed Kartı (Tailwind)
+ * Sponsorlu İçerik — Feed Kartı (inline styles, light theme)
  * Kullanım: $sponsoredAd değişkeniyle include edilir
  */
 if (empty($sponsoredAd)) return;
 ?>
-<div class="post-card bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl shadow-[0_15px_30px_-15px_rgba(19,19,20,0.3)] overflow-hidden">
+<div class="post-card" style="background:#fff; border:1px solid var(--border); border-radius:14px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,.08);">
     <!-- Sponsored Badge -->
-    <div class="px-5 pt-4 pb-2 flex items-center justify-between">
-        <span class="inline-flex items-center gap-1.5 bg-primary-container/10 text-primary-container text-label-sm font-semibold px-3 py-1 rounded-full border border-primary-container/20">
-            <span class="material-symbols-outlined text-[14px]">campaign</span>
+    <div style="padding:14px 18px 8px; display:flex; align-items:center; justify-content:space-between;">
+        <span style="display:inline-flex; align-items:center; gap:6px; background:rgba(240,109,31,0.08); color:var(--color-primary); font-size:11px; font-weight:700; padding:4px 10px; border-radius:999px; border:1px solid rgba(240,109,31,0.2);">
+            <span class="material-symbols-outlined" style="font-size:14px;">campaign</span>
             Sponsorlu İçerik
         </span>
     </div>
 
     <!-- Content -->
-    <a href="<?php echo escape($sponsoredAd['link_url'] ?? '#'); ?>" target="_blank" rel="noopener" class="block group">
+    <a href="<?php echo escape($sponsoredAd['link_url'] ?? '#'); ?>" target="_blank" rel="noopener" style="display:block; text-decoration:none;">
         <?php if (!empty($sponsoredAd['image_url'])): ?>
-        <div class="px-5 pb-3">
-            <div class="rounded-xl overflow-hidden border border-white/5">
-                <img src="<?php echo BASE_URL . '/' . escape($sponsoredAd['image_url']); ?>" 
-                     alt="<?php echo escape($sponsoredAd['title']); ?>" 
-                     class="w-full h-auto object-cover group-hover:scale-[1.02] transition-transform duration-300"
+        <div style="padding:0 16px 12px;">
+            <div style="border-radius:10px; overflow:hidden; border:1px solid var(--border);">
+                <img src="<?php echo BASE_URL . '/' . escape($sponsoredAd['image_url']); ?>"
+                     alt="<?php echo escape($sponsoredAd['title']); ?>"
+                     style="width:100%; height:auto; object-fit:cover; display:block; transition:transform .3s;"
+                     onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'"
                      width="640" height="320"
                      loading="lazy">
             </div>
@@ -29,10 +30,11 @@ if (empty($sponsoredAd)) return;
         <?php endif; ?>
 
         <?php if (!empty($sponsoredAd['title'])): ?>
-        <div class="px-5 pb-4">
-            <h3 class="text-on-surface font-semibold text-base group-hover:text-primary-container transition-colors"><?php echo escape($sponsoredAd['title']); ?></h3>
+        <div style="padding:0 18px 16px;">
+            <h3 style="font-weight:600; font-size:14px; color:var(--text-1); margin:0 0 4px; transition:color .15s;"
+                onmouseover="this.style.color='var(--color-primary)'" onmouseout="this.style.color='var(--text-1)'"><?php echo escape($sponsoredAd['title']); ?></h3>
             <?php if (!empty($sponsoredAd['link_url'])): ?>
-            <p class="text-slate-500 text-xs mt-1 truncate"><?php echo parse_url($sponsoredAd['link_url'], PHP_URL_HOST) ?? ''; ?></p>
+            <p style="color:var(--text-3); font-size:11px; margin:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"><?php echo parse_url($sponsoredAd['link_url'], PHP_URL_HOST) ?? ''; ?></p>
             <?php endif; ?>
         </div>
         <?php endif; ?>
