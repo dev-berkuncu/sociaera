@@ -30,7 +30,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         $result = $userModel->updateProfile(Auth::id(), $_POST);
         if (!empty($_POST['ajax'])) {
-            header('Content-Type: application/json');
+            ob_clean();
+            header('Content-Type: application/json; charset=utf-8');
             if ($result['ok']) {
                 $u = $userModel->getById(Auth::id());
                 Auth::refresh(['username' => $u['username']]);
@@ -126,7 +127,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif ($action === 'update_bank') {
         $bank = trim($_POST['bank_account'] ?? '');
         if (!empty($_POST['ajax'])) {
-            header('Content-Type: application/json');
+            ob_clean();
+            header('Content-Type: application/json; charset=utf-8');
             if (empty($bank)) {
                 echo json_encode(['ok' => false, 'error' => 'Banka hesap numarası boş bırakılamaz.']);
             } else {
@@ -416,13 +418,19 @@ document.getElementById('profileForm').addEventListener('submit', function(e){
     var btn = document.getElementById('profileSaveBtn');
     btn.disabled = true;
     btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px;">hourglass_top</span> Kaydediliyor...';
-    fetch(this.action, { method:'POST', body: new FormData(this) })
-        .then(function(r){ return r.json(); })
+    var formData = new FormData(this);
+    fetch(this.action, { method:'POST', body: formData })
+        .then(function(r){
+            return r.text().then(function(txt){
+                try { return JSON.parse(txt); }
+                catch(e) { throw new Error('Sunucu yanıtı geçersiz. ('+txt.substring(0,80)+')'); }
+            });
+        })
         .then(function(d){
             if(d.ok){ showToast(d.message||'Profil güncellendi.','success'); }
             else     { showToast(d.error||'Bir hata oluştu.','error'); }
         })
-        .catch(function(){ showToast('Bağlantı hatası.','error'); })
+        .catch(function(err){ showToast(err.message||'Bağlantı hatası.','error'); })
         .finally(function(){
             btn.disabled = false;
             btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:\'FILL\' 1;">save</span> Bilgileri Kaydet';
@@ -435,12 +443,17 @@ document.getElementById('bankForm').addEventListener('submit', function(e){
     var btn = document.getElementById('bankSaveBtn');
     btn.disabled = true;
     fetch(this.action, { method:'POST', body: new FormData(this) })
-        .then(function(r){ return r.json(); })
+        .then(function(r){
+            return r.text().then(function(txt){
+                try { return JSON.parse(txt); }
+                catch(e) { throw new Error('Sunucu yanıtı geçersiz. ('+txt.substring(0,80)+')'); }
+            });
+        })
         .then(function(d){
             if(d.ok){ showToast(d.message||'Banka hesabı kaydedildi.','success'); }
-            else     { showToast(d.error||'Hata: '+d.error,'error'); }
+            else     { showToast(d.error||'Hata oluştu.','error'); }
         })
-        .catch(function(){ showToast('Bağlantı hatası.','error'); })
+        .catch(function(err){ showToast(err.message||'Bağlantı hatası.','error'); })
         .finally(function(){ btn.disabled = false; });
 });
 </script>
