@@ -72,7 +72,7 @@ $activeNav = 'premium';
 require_once __DIR__ . '/partials/app_header.php';
 ?>
 
-<div style="min-width:0;" class="flex-1 flex flex-col gap-6 max-w-xl w-full mx-auto mt-4">
+<div style="min-width:0; display:flex; flex-direction:column; gap:20px; max-width:560px; width:100%; margin:0 auto; padding:16px 0 40px;">
 
     <?php if ($isPremiumActive): ?>
     <!-- Aktif Premium -->
@@ -119,18 +119,19 @@ require_once __DIR__ . '/partials/app_header.php';
                     ['icon' => 'military_tech', 'text' => 'Premium-only rozetler (4 rozet)'],
                     ['icon' => 'leaderboard', 'text' => 'Sıralama tablosunda öne çıkma'],
                 ];
-                foreach ($premiumFeatures as $pf):
-                ?>
-                <div class="flex items-center gap-3" style="color:#16a34a;">
-                    <span class="material-symbols-outlined text-[18px]">check_circle</span>
-                    <span class="text-sm" style="color:var(--text-2);"><?php echo $pf['text']; ?></span>
-                    <span class="ml-auto text-[10px] font-bold">AKTİF</span>
+                foreach ($premiumFeatures as $pf): ?>
+                <div style="display:flex; align-items:center; gap:10px; color:#16a34a;">
+                    <span class="material-symbols-outlined" style="font-size:18px;">check_circle</span>
+                    <span style="font-size:13px; color:var(--text-2);"><?php echo $pf['text']; ?></span>
+                    <span style="margin-left:auto; font-size:10px; font-weight:700;">AKTİF</span>
                 </div>
                 <?php endforeach; ?>
             </div>
 
-            <div class="flex flex-col sm:flex-row gap-3 justify-center">
-                <a href="<?php echo BASE_URL; ?>/settings" class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-bold border hover:bg-gray-50 transition-colors" style="background:#fff; color:var(--text-2); border-color:var(--border); text-decoration:none;">
+            <div style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center;">
+                <a href="<?php echo BASE_URL; ?>/settings"
+                   style="display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:10px 20px; border-radius:12px; font-weight:700; font-size:13px; border:1px solid var(--border); background:#fff; color:var(--text-2); text-decoration:none; transition:background .15s;"
+                   onmouseover="this.style.background='var(--bg-section)'" onmouseout="this.style.background='#fff'">
                     <span class="material-symbols-outlined">tune</span> Rozet Ayarları
                 </a>
                 <?php if ($balance >= $premiumPrice): ?>
@@ -161,12 +162,11 @@ require_once __DIR__ . '/partials/app_header.php';
             <div class="rounded-xl p-6 text-left space-y-3 mb-8 border" style="background:var(--bg-section); border-color:var(--border);">
                 <?php
                 $expiredFeatures = ['Reklamsız deneyim','Profil rozeti seçimi','Özel profil temaları','Yüksek yükleme limiti (20MB)','Yarı cooldown & 2.5x rate limit','2x check-in ödülü','Uzun bio','Kampanya erken erişim','Mekan favorileri','Detaylı istatistikler','Profilime kim baktı','Premium rozetler','Sıralama öne çıkma'];
-                foreach ($expiredFeatures as $ef):
-                ?>
-                <div class="flex items-center gap-3" style="color:#ef4444;">
-                    <span class="material-symbols-outlined text-[18px]">cancel</span>
-                    <span class="line-through text-sm" style="color:var(--text-3);"><?php echo $ef; ?></span>
-                    <span class="ml-auto text-[10px] font-bold">PASİF</span>
+                foreach ($expiredFeatures as $ef): ?>
+                <div style="display:flex; align-items:center; gap:10px; color:#ef4444;">
+                    <span class="material-symbols-outlined" style="font-size:18px;">cancel</span>
+                    <span style="text-decoration:line-through; font-size:13px; color:var(--text-3);"><?php echo $ef; ?></span>
+                    <span style="margin-left:auto; font-size:10px; font-weight:700;">PASİF</span>
                 </div>
                 <?php endforeach; ?>
             </div>
@@ -178,7 +178,7 @@ require_once __DIR__ . '/partials/app_header.php';
 
             <div class="rounded-xl p-4 mb-4 flex items-center justify-between border" style="background:var(--bg-section); border-color:var(--border-light);">
                 <span class="text-sm" style="color:var(--text-3);">Cüzdan Bakiyen</span>
-                <span class="font-black text-xl <?php echo $balance >= $premiumPrice ? 'text-emerald-500' : 'text-red-500'; ?>">$<?php echo number_format($balance, 2, ',', '.'); ?></span>
+                <span style="font-weight:900; font-size:1.3rem; color:<?php echo $balance >= $premiumPrice ? '#16a34a' : '#ef4444'; ?>;">$<?php echo number_format($balance, 2, ',', '.'); ?></span>
             </div>
 
             <?php if ($balance >= $premiumPrice): ?>
@@ -189,8 +189,8 @@ require_once __DIR__ . '/partials/app_header.php';
                 </button>
             </form>
             <?php else: ?>
-            <div class="space-y-3">
-                <button disabled class="w-full py-4 rounded-xl font-bold flex items-center justify-center gap-2 cursor-not-allowed border" style="background:var(--bg-section); color:var(--text-3); border-color:var(--border);">
+            <div style="display:flex; flex-direction:column; gap:10px;">
+                <button disabled style="width:100%; padding:14px; border-radius:12px; font-weight:700; display:flex; align-items:center; justify-content:center; gap:8px; cursor:not-allowed; border:1px solid var(--border); background:var(--bg-section); color:var(--text-3); font-family:inherit; font-size:14px;">
                     <span class="material-symbols-outlined">account_balance_wallet</span> Yetersiz Bakiye
                 </button>
                 <a href="<?php echo BASE_URL; ?>/wallet" class="block text-center font-bold text-sm hover:underline" style="color:var(--color-primary); text-decoration:none;">Cüzdana git ve bakiye yükle →</a>
@@ -217,7 +217,7 @@ require_once __DIR__ . '/partials/app_header.php';
                 <span class="text-lg ml-1" style="color:var(--text-3);">/ 7 gün</span>
             </div>
 
-            <ul class="flex flex-col gap-3 text-left max-w-md mx-auto mb-8">
+            <ul style="display:flex; flex-direction:column; gap:10px; text-align:left; max-width:440px; margin:0 auto 28px; list-style:none; padding:0;">
                 <?php
                 $newFeatures = [
                     ['icon' => 'block', 'text' => 'Reklamsız deneyim'],
@@ -236,7 +236,7 @@ require_once __DIR__ . '/partials/app_header.php';
                 ];
                 foreach ($newFeatures as $nf):
                 ?>
-                <li class="flex items-center gap-3" style="color:var(--text-1);">
+                <li style="display:flex; align-items:center; gap:10px; color:var(--text-1);">
                     <span class="material-symbols-outlined text-[20px]" style="color:var(--color-primary);"><?php echo $nf['icon']; ?></span>
                     <span class="text-sm" style="color:var(--text-2);"><?php echo $nf['text']; ?></span>
                 </li>
@@ -245,7 +245,7 @@ require_once __DIR__ . '/partials/app_header.php';
 
             <div class="rounded-xl p-4 mb-4 flex items-center justify-between border" style="background:var(--bg-section); border-color:var(--border-light);">
                 <span class="text-sm" style="color:var(--text-3);">Cüzdan Bakiyen</span>
-                <span class="font-black text-xl <?php echo $balance >= $premiumPrice ? 'text-emerald-500' : 'text-red-500'; ?>">$<?php echo number_format($balance, 2, ',', '.'); ?></span>
+                <span style="font-weight:900; font-size:1.3rem; color:<?php echo $balance >= $premiumPrice ? '#16a34a' : '#ef4444'; ?>;">$<?php echo number_format($balance, 2, ',', '.'); ?></span>
             </div>
 
             <?php if ($balance >= $premiumPrice): ?>
@@ -256,7 +256,7 @@ require_once __DIR__ . '/partials/app_header.php';
                 </button>
             </form>
             <?php else: ?>
-            <div class="space-y-3">
+            <div style="display:flex; flex-direction:column; gap:10px;">
                 <button disabled class="w-full py-4 rounded-xl font-bold flex items-center justify-center gap-2 cursor-not-allowed border" style="background:var(--bg-section); color:var(--text-3); border-color:var(--border);">
                     <span class="material-symbols-outlined">account_balance_wallet</span> Yetersiz Bakiye
                 </button>

@@ -38,9 +38,11 @@ $activeNav = '';
 require_once __DIR__ . '/partials/app_header.php';
 ?>
 
-<div style="min-width:0;" class="flex-1 flex flex-col gap-stack-md max-w-3xl w-full mx-auto lg:mx-0">
-    <a href="<?php echo BASE_URL; ?>/dashboard" class="flex items-center gap-2 hover:opacity-70 transition-opacity w-fit mb-2" style="color:var(--text-3);text-decoration:none;">
-        <span class="material-symbols-outlined text-[20px]">arrow_back</span> Geri Dön
+<div style="min-width:0; display:flex; flex-direction:column; gap:16px; max-width:768px; width:100%; padding-bottom:40px;">
+    <a href="<?php echo BASE_URL; ?>/dashboard"
+       style="display:inline-flex; align-items:center; gap:6px; color:var(--text-3); text-decoration:none; font-size:13px; font-weight:600; margin-bottom:4px; transition:color .15s;"
+       onmouseover="this.style.color='var(--color-primary)'" onmouseout="this.style.color='var(--text-3)'">
+        <span class="material-symbols-outlined" style="font-size:20px;">arrow_back</span> Geri Dön
     </a>
 
     <!-- Ana Gönderi -->
@@ -49,16 +51,18 @@ require_once __DIR__ . '/partials/app_header.php';
     </div>
 
     <!-- Yorum Formu -->
-    <div class="rounded-xl p-6 mb-4" id="comment-form-card" style="background:#fff;border:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.08);">
-        <h3 class="font-bold text-lg mb-4" style="color:var(--text-1);">Yorum Yap</h3>
-        <form onsubmit="App.submitComment(this, <?php echo $post['id']; ?>); return false;" class="flex items-start gap-4">
+    <div style="border-radius:12px; padding:20px; margin-bottom:4px; background:#fff; border:1px solid var(--border); box-shadow:0 1px 3px rgba(0,0,0,.08);" id="comment-form-card">
+        <h3 style="font-weight:700; font-size:1.1rem; margin:0 0 16px; color:var(--text-1);">Yorum Yap</h3>
+        <form onsubmit="App.submitComment(this, <?php echo $post['id']; ?>); return false;" style="display:flex; align-items:flex-start; gap:16px;">
             <?php $myAvatarUrl = safeAvatarUrl($_SESSION['avatar'] ?? null, Auth::username()); ?>
-            <img src="<?php echo $myAvatarUrl; ?>" class="w-10 h-10 rounded-full object-cover flex-shrink-0" style="border:1px solid var(--border);" width="40" height="40">
-            <div class="flex-grow">
-                <textarea class="w-full rounded-xl px-4 py-3 focus:outline-none transition-colors resize-y min-h-[80px]" style="background:var(--bg-section);border:1px solid var(--border);color:var(--text-1);" placeholder="Yorumunu yaz..." maxlength="500"></textarea>
-                <div class="flex justify-end mt-3">
-                    <button type="submit" class="bg-primary-container text-white px-6 py-2 rounded-lg font-bold shadow-[0_0_10px_rgba(255,145,0,0.2)] hover:bg-primary-container/90 transition-all active:scale-95 flex items-center gap-2">
-                        <span class="material-symbols-outlined text-[18px]">send</span> Gönder
+            <img src="<?php echo $myAvatarUrl; ?>" style="width:40px; height:40px; border-radius:50%; object-fit:cover; flex-shrink:0; border:1px solid var(--border);" width="40" height="40">
+            <div style="flex:1; min-width:0;">
+                <textarea style="width:100%; border-radius:12px; padding:12px 16px; outline:none; transition:border-color .2s; resize:vertical; min-height:80px; background:var(--bg-section); border:1px solid var(--border); color:var(--text-1); font-family:inherit; font-size:14px; line-height:1.5; box-sizing:border-box;" placeholder="Yorumunu yaz..." maxlength="500"></textarea>
+                <div style="display:flex; justify-content:flex-end; margin-top:10px;">
+                    <button type="submit"
+                            style="background:var(--color-primary); color:#fff; padding:8px 20px; border-radius:10px; font-weight:700; font-size:13px; box-shadow:0 2px 10px rgba(240,109,31,0.2); transition:opacity .15s; display:flex; align-items:center; gap:8px; border:none; cursor:pointer; font-family:inherit;"
+                            onmouseover="this.style.opacity='.9'" onmouseout="this.style.opacity='1'">
+                        <span class="material-symbols-outlined" style="font-size:18px;">send</span> Gönder
                     </button>
                 </div>
             </div>
@@ -66,29 +70,29 @@ require_once __DIR__ . '/partials/app_header.php';
     </div>
 
     <!-- Yorumlar Listesi -->
-    <h2 class="text-xl font-bold flex items-center gap-2 mb-2 font-mono" style="color:var(--text-1);"><span class="material-symbols-outlined" style="color:var(--color-primary);">terminal</span> Telsiz Anonsları</h2>
+    <h2 style="font-size:1.25rem; font-weight:800; display:flex; align-items:center; gap:8px; margin:0 0 8px; color:var(--text-1); font-family:monospace;"><span class="material-symbols-outlined" style="color:var(--color-primary);">terminal</span> Telsiz Anonsları</h2>
     <div class="radio-log-container shadow-[0_15px_30px_-15px_rgba(19,19,20,0.3)]">
         <?php if (empty($comments)): ?>
-            <div class="p-8 text-center font-mono text-xs" style="color:var(--text-3);">
-                [TELSİZ KAYDI] Henüz telsiz anonsu alınmadı.
+            <div style="padding:32px; text-align:center; font-family:monospace; font-size:12px; color:var(--text-3);">
+                [TELSIİZ KAYDI] Henüz telsiz anonsu alınmadı.
             </div>
         <?php else: ?>
-            <div class="flex flex-col">
+            <div style="display:flex; flex-direction:column;">
                 <?php foreach ($comments as $c): ?>
                 <div class="radio-log-item py-3">
-                    <span class="flex-shrink-0" style="color:var(--text-3);">[RADIO]</span>
-                    <a href="<?php echo BASE_URL; ?>/profile?u=<?php echo escape($c['tag'] ?: $c['username']); ?>" class="radio-tag hover:underline">@<?php echo escape($c['tag'] ?: $c['username']); ?></a>
-                    <span class="font-bold flex-shrink-0" style="color:var(--text-3);">:</span>
-                    <div class="flex-grow min-w-0">
+                    <span style="flex-shrink:0; color:var(--text-3);">[RADIO]</span>
+                    <a href="<?php echo BASE_URL; ?>/profile?u=<?php echo escape($c['tag'] ?: $c['username']); ?>" class="radio-tag" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">@<?php echo escape($c['tag'] ?: $c['username']); ?></a>
+                    <span style="font-weight:700; flex-shrink:0; color:var(--text-3);">:</span>
+                    <div style="flex:1; min-width:0;">
                         <span class="radio-msg"><?php echo linkify(parseMentions($c['comment'])); ?></span>
-                        
+
                         <?php if (!empty($c['image'])): ?>
-                            <div class="mt-3 rounded-lg overflow-hidden max-w-sm" style="border:1px solid var(--border);background:var(--bg-section);">
-                                <img src="<?php echo uploadUrl('posts', $c['image']); ?>" loading="lazy" class="block w-full max-w-full h-auto max-h-[250px] object-contain" width="400" height="250">
+                            <div style="margin-top:12px; border-radius:8px; overflow:hidden; max-width:360px; border:1px solid var(--border); background:var(--bg-section);">
+                                <img src="<?php echo uploadUrl('posts', $c['image']); ?>" loading="lazy" style="display:block; width:100%; max-width:100%; height:auto; max-height:250px; object-fit:contain;" width="400" height="250">
                             </div>
                         <?php endif; ?>
                     </div>
-                    <span class="radio-time text-[10px]"><?php echo strtoupper(timeAgo($c['created_at'])); ?></span>
+                    <span class="radio-time" style="font-size:10px;"><?php echo strtoupper(timeAgo($c['created_at'])); ?></span>
                 </div>
                 <?php endforeach; ?>
             </div>
