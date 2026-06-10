@@ -55,22 +55,42 @@ const App = {
         const existing = document.querySelector('.flash-message');
         if (existing) existing.remove();
 
+        const bgMap = { success: '#16a34a', error: '#ef4444', info: '#2563EB' };
         const iconMap = { success: 'check_circle', error: 'error', info: 'info' };
         const div = document.createElement('div');
-        div.className = `flash-message flash-${type}`;
         div.id = 'flashMessage';
+        div.style.cssText = [
+            'position:fixed',
+            'top:76px',
+            'right:20px',
+            'z-index:99999',
+            `background:${bgMap[type] || '#1a1a1a'}`,
+            'color:#fff',
+            'padding:12px 16px',
+            'border-radius:12px',
+            'display:flex',
+            'align-items:center',
+            'gap:10px',
+            'max-width:340px',
+            'width:auto',
+            'min-width:160px',
+            'font-size:13px',
+            'font-weight:600',
+            'font-family:inherit',
+            'box-shadow:0 8px 24px rgba(0,0,0,0.22)',
+            'animation:slideInRight 0.3s ease forwards',
+            'transition:opacity .3s',
+        ].join(';');
         div.innerHTML = `
-            <div class="flash-content">
-                <span class="material-symbols-outlined" style="font-size:18px;">${escapeHtml(iconMap[type] || 'info')}</span>
-                <span>${escapeHtml(message)}</span>
-            </div>
-            <button class="flash-close" onclick="this.closest('.flash-message').remove()">
-                <span class="material-symbols-outlined" style="font-size:16px;">close</span>
+            <span class="material-symbols-outlined" style="font-size:18px;flex-shrink:0;font-variation-settings:'FILL' 1;">${escapeHtml(iconMap[type] || 'info')}</span>
+            <span style="flex:1;line-height:1.4;">${escapeHtml(message)}</span>
+            <button onclick="this.parentElement.remove()" style="background:none;border:none;color:rgba(255,255,255,0.8);cursor:pointer;padding:0;margin-left:4px;display:flex;align-items:center;flex-shrink:0;">
+                <span class="material-symbols-outlined" style="font-size:18px;">close</span>
             </button>
         `;
         document.body.appendChild(div);
-        setTimeout(() => div.classList.add('flash-hide'), 4000);
-        setTimeout(() => div.remove(), 4500);
+        setTimeout(() => { div.style.opacity = '0'; }, 4000);
+        setTimeout(() => div.remove(), 4400);
     },
 
     // ── Like Toggle ───────────────────────────────────────

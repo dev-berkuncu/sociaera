@@ -156,17 +156,27 @@ unset($_SESSION['flash']);
 if ($_footerFlash && isset($_footerFlash['type'], $_footerFlash['message'])):
     $fType = $_footerFlash['type'];
     $fMsg  = $_footerFlash['message'];
+    $fBg   = $fType === 'success' ? '#16a34a' : ($fType === 'error' ? '#ef4444' : '#2563EB');
+    $fIcon = $fType === 'success' ? 'check_circle' : ($fType === 'error' ? 'error' : 'info');
 ?>
-<div class="flash-message flash-<?php echo htmlspecialchars($fType); ?>" id="flashMsg">
-    <span class="material-symbols-outlined" style="font-size:18px;flex-shrink:0;font-variation-settings:'FILL' 1;">
-        <?php echo $fType === 'success' ? 'check_circle' : ($fType === 'error' ? 'error' : 'info'); ?>
-    </span>
-    <span style="flex:1;"><?php echo htmlspecialchars($fMsg); ?></span>
-    <button class="flash-close" onclick="this.closest('.flash-message').classList.add('flash-hide')">
+<div id="flashMsg" style="
+    position:fixed; top:76px; right:20px; z-index:99999;
+    background:<?php echo $fBg; ?>; color:#fff;
+    padding:12px 16px; border-radius:12px;
+    display:flex; align-items:center; gap:10px;
+    max-width:340px; width:auto; min-width:160px;
+    font-size:13px; font-weight:600; font-family:inherit;
+    box-shadow:0 8px 24px rgba(0,0,0,0.22);
+    animation:slideInRight 0.3s ease forwards;
+    transition:opacity .3s;
+">
+    <span class="material-symbols-outlined" style="font-size:18px;flex-shrink:0;font-variation-settings:'FILL' 1;"><?php echo $fIcon; ?></span>
+    <span style="flex:1;line-height:1.4;"><?php echo htmlspecialchars($fMsg); ?></span>
+    <button onclick="this.parentElement.remove()" style="background:none;border:none;color:rgba(255,255,255,0.8);cursor:pointer;padding:0;margin-left:4px;display:flex;align-items:center;flex-shrink:0;">
         <span class="material-symbols-outlined" style="font-size:18px;">close</span>
     </button>
 </div>
-<script>setTimeout(function(){var f=document.getElementById('flashMsg');if(f)f.classList.add('flash-hide');},4000);</script>
+<script>setTimeout(function(){var f=document.getElementById('flashMsg');if(f){f.style.opacity='0';setTimeout(function(){f.remove();},350);}},4000);</script>
 <?php endif; ?>
 
 
