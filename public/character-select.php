@@ -86,117 +86,277 @@ $pageTitle   = $isSwitching ? 'Karakter Değiştir' : 'Karakter Seçimi';
 $hideSidebar = true;
 require_once __DIR__ . '/partials/app_header.php';
 ?>
+<style>
+/* ── Character Select Page ─────────────────────── */
+.cs-page {
+  min-height: calc(100vh - 60px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px 80px;
+}
+.cs-wrap {
+  width: 100%;
+  max-width: 660px;
+}
+.cs-header {
+  text-align: center;
+  margin-bottom: 36px;
+}
+.cs-icon-ring {
+  width: 72px; height: 72px;
+  border-radius: 22px;
+  background: linear-gradient(135deg, #F06D1F 0%, #FF9D4D 100%);
+  display: inline-flex; align-items: center; justify-content: center;
+  box-shadow: 0 12px 32px rgba(240,109,31,.30);
+  margin-bottom: 18px;
+  animation: floatBob 3s ease-in-out infinite;
+}
+@keyframes floatBob {
+  0%,100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+.cs-title {
+  font-size: 1.75rem; font-weight: 900;
+  color: var(--text-1); letter-spacing: -.5px;
+  margin: 0 0 8px;
+}
+.cs-sub {
+  font-size: 14px; color: var(--text-3);
+  margin: 0; font-weight: 500;
+}
 
-<!-- Page header -->
-<div style="text-align:center;margin-bottom:28px;padding-top:16px;">
-    <div style="display:inline-flex;align-items:center;justify-content:center;width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,#F06D1F,#FFA633);margin-bottom:14px;box-shadow:0 8px 20px rgba(240,109,31,.25);">
-        <span class="material-symbols-outlined" style="font-size:28px;color:#fff;font-variation-settings:'FILL' 1;">manage_accounts</span>
-    </div>
-    <h1 style="font-size:1.5rem;font-weight:800;color:var(--text-1);margin:0 0 6px;letter-spacing:-.4px;">
+/* ── Character Cards ─── */
+.cs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 14px;
+  margin-bottom: 28px;
+}
+.cs-label { cursor: pointer; display: block; }
+.cs-label input[type="radio"] { display: none; }
+
+.cs-card {
+  background: #fff;
+  border: 2px solid #EAE9E5;
+  border-radius: 20px;
+  padding: 28px 16px 22px;
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center;
+  transition: all .2s cubic-bezier(.34,1.56,.64,1);
+  position: relative;
+  overflow: hidden;
+  user-select: none;
+}
+.cs-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(240,109,31,.06) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity .2s;
+}
+.cs-card:hover { border-color: rgba(240,109,31,.4); transform: translateY(-3px); box-shadow: 0 8px 28px rgba(240,109,31,.12); }
+.cs-card:hover::before { opacity: 1; }
+
+/* Selected state */
+.cs-label input:checked ~ .cs-card {
+  border-color: var(--color-primary) !important;
+  background: #FFFAF7 !important;
+  box-shadow: 0 0 0 4px rgba(240,109,31,.15), 0 8px 28px rgba(240,109,31,.18) !important;
+  transform: translateY(-4px) scale(1.02) !important;
+}
+.cs-label input:checked ~ .cs-card::before { opacity: 1 !important; }
+
+/* Avatar */
+.cs-avatar {
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px; font-weight: 900;
+  color: #fff;
+  margin-bottom: 14px;
+  position: relative;
+  box-shadow: 0 6px 20px rgba(0,0,0,.15);
+  transition: transform .2s;
+  flex-shrink: 0;
+}
+.cs-label input:checked ~ .cs-card .cs-avatar {
+  transform: scale(1.08);
+  box-shadow: 0 8px 24px rgba(240,109,31,.3);
+}
+
+.cs-checkmark {
+  position: absolute;
+  bottom: -4px; right: -4px;
+  width: 24px; height: 24px;
+  background: var(--color-primary);
+  border-radius: 50%;
+  border: 3px solid #fff;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transform: scale(0);
+  transition: all .2s cubic-bezier(.34,1.56,.64,1);
+}
+.cs-label input:checked ~ .cs-card .cs-checkmark {
+  opacity: 1; transform: scale(1);
+}
+
+.cs-name {
+  font-size: 15px; font-weight: 800;
+  color: var(--text-1); line-height: 1.2;
+  margin-bottom: 5px;
+}
+.cs-id {
+  font-size: 11px; font-weight: 600;
+  color: var(--text-3);
+  background: var(--bg-section);
+  border-radius: 99px;
+  padding: 3px 10px;
+}
+
+/* Selected badge */
+.cs-badge {
+  position: absolute; top: 12px; right: 12px;
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 10px; font-weight: 800;
+  border-radius: 99px;
+  padding: 3px 8px;
+  opacity: 0; transform: translateY(-4px);
+  transition: all .2s;
+  letter-spacing: .3px;
+}
+.cs-label input:checked ~ .cs-card .cs-badge {
+  opacity: 1; transform: translateY(0);
+}
+
+/* Actions */
+.cs-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.cs-btn-submit {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: linear-gradient(135deg, #F06D1F 0%, #FF8C3A 100%);
+  color: #fff;
+  border: none; cursor: pointer;
+  font-size: 15px; font-weight: 800;
+  padding: 14px 36px;
+  border-radius: 99px;
+  box-shadow: 0 8px 24px rgba(240,109,31,.35);
+  transition: all .2s;
+  letter-spacing: -.2px;
+}
+.cs-btn-submit:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(240,109,31,.45); }
+.cs-btn-submit:active { transform: scale(.97); }
+
+.cs-btn-cancel {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: transparent;
+  color: var(--text-3);
+  border: 1.5px solid var(--border);
+  font-size: 14px; font-weight: 700;
+  padding: 13px 22px;
+  border-radius: 99px;
+  text-decoration: none;
+  transition: all .15s;
+}
+.cs-btn-cancel:hover { border-color: var(--text-3); color: var(--text-2); }
+</style>
+
+<div class="cs-page">
+  <div class="cs-wrap">
+
+    <!-- Header -->
+    <div class="cs-header">
+      <div class="cs-icon-ring">
+        <span class="material-symbols-outlined" style="font-size:34px;color:#fff;font-variation-settings:'FILL' 1;">manage_accounts</span>
+      </div>
+      <h1 class="cs-title">
         <?php echo $isSwitching ? 'Karakter Değiştir' : 'Karakter Seçimi'; ?>
-    </h1>
-    <p style="font-size:13px;color:var(--text-3);margin:0;">
+      </h1>
+      <p class="cs-sub">
         <?php echo $isSwitching
-            ? 'Aynı UCP hesabına bağlı diğer karakterlere hızlıca geçiş yapın.'
-            : 'Hangi karakter ile devam etmek istiyorsunuz?'; ?>
-    </p>
-</div>
-
-<!-- Card -->
-<div style="background:#fff;border:1.5px solid var(--border);border-radius:20px;padding:28px 24px;box-shadow:0 4px 24px rgba(0,0,0,.07);">
+          ? 'Aynı UCP hesabına bağlı diğer karakterlere geçiş yap'
+          : 'Hangi karakter ile devam etmek istiyorsun?'; ?>
+      </p>
+    </div>
 
     <?php if (empty($characters)): ?>
-    <!-- Karakter bulunamadı -->
-    <div style="text-align:center;padding:32px 16px;">
-        <span class="material-symbols-outlined" style="font-size:52px;color:var(--text-3);opacity:.45;display:block;margin-bottom:12px;">person_off</span>
-        <div style="font-size:15px;font-weight:700;color:var(--text-2);margin-bottom:8px;">
-            <?php echo $isSwitching ? 'Başka karakter bulunamadı' : 'Hiç karakter bulunamadı'; ?>
-        </div>
-        <p style="font-size:13px;color:var(--text-3);margin:0 0 20px;">
-            <?php echo $isSwitching
-                ? 'Aynı UCP hesabına bağlı geçiş yapabileceğiniz aktif başka karakter yok.'
-                : 'UCP hesabınıza bağlı kayıtlı karakter bulunamadı.'; ?>
-        </p>
-        <?php if ($isSwitching): ?>
-            <a href="<?php echo BASE_URL; ?>/dashboard" class="btn btn-ghost">← Ana Sayfaya Dön</a>
-        <?php else: ?>
-            <a href="<?php echo BASE_URL; ?>/login" class="btn btn-ghost">← Giriş Sayfasına Dön</a>
-        <?php endif; ?>
+    <!-- Boş durum -->
+    <div style="background:#fff;border-radius:24px;padding:48px 24px;text-align:center;border:1.5px solid var(--border);box-shadow:0 4px 24px rgba(0,0,0,.06);">
+      <span class="material-symbols-outlined" style="font-size:56px;color:var(--text-3);opacity:.4;display:block;margin-bottom:16px;">person_off</span>
+      <div style="font-size:17px;font-weight:800;color:var(--text-2);margin-bottom:8px;">
+        <?php echo $isSwitching ? 'Başka karakter bulunamadı' : 'Karakter bulunamadı'; ?>
+      </div>
+      <p style="font-size:13px;color:var(--text-3);margin:0 0 24px;">
+        <?php echo $isSwitching
+          ? 'Hesabına bağlı başka aktif karakter yok.'
+          : 'UCP hesabına kayıtlı karakter bulunamadı.'; ?>
+      </p>
+      <a href="<?php echo BASE_URL; ?>/<?php echo $isSwitching ? 'dashboard' : 'login'; ?>" class="cs-btn-cancel">
+        ← <?php echo $isSwitching ? 'Ana Sayfaya Dön' : 'Giriş Sayfasına Dön'; ?>
+      </a>
     </div>
 
     <?php else: ?>
     <!-- Karakter seçim formu -->
-    <form method="POST" action="<?php echo $isSwitching ? BASE_URL . '/switch-character' : ''; ?>"
-          style="display:flex;flex-direction:column;gap:24px;">
-        <?php echo csrfField(); ?>
+    <form method="POST" action="<?php echo $isSwitching ? BASE_URL . '/switch-character' : ''; ?>">
+      <?php echo csrfField(); ?>
 
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;">
-            <?php foreach ($characters as $char):
-                $name      = $char['name'];
-                $cid       = (int)$char['id'];
-                $radioName = $isSwitching ? 'target_user_id' : 'character_id';
-            ?>
-            <label class="char-opt" style="cursor:pointer;display:block;">
-                <input type="radio" name="<?php echo $radioName; ?>" value="<?php echo $cid; ?>" required
-                       style="display:none;">
-                <div class="char-card"
-                     style="background:var(--bg-section);border:2px solid var(--border);border-radius:16px;padding:24px 16px;display:flex;flex-direction:column;align-items:center;gap:8px;transition:all .15s;text-align:center;">
-                    <div style="width:60px;height:60px;border-radius:50%;background:#FFF3EB;border:2px solid #F06D1F22;display:flex;align-items:center;justify-content:center;margin-bottom:4px;">
-                        <span class="material-symbols-outlined" style="font-size:30px;color:var(--color-primary);font-variation-settings:'FILL' 1;">account_circle</span>
-                    </div>
-                    <div style="font-size:15px;font-weight:800;color:var(--text-1);line-height:1.2;"><?php echo escape($name); ?></div>
-                    <div style="font-size:11px;font-weight:600;color:var(--text-3);">ID: <?php echo $cid; ?></div>
-                    <div class="char-check" style="display:none;margin-top:4px;">
-                        <span style="background:var(--color-primary);color:#fff;border-radius:99px;padding:2px 10px;font-size:11px;font-weight:700;">✓ Seçildi</span>
-                    </div>
-                </div>
-            </label>
-            <?php endforeach; ?>
-        </div>
+      <div class="cs-grid">
+        <?php
+        // Renkler — her karakter farklı bir ton alsın
+        $avatarColors = [
+          'linear-gradient(135deg,#F06D1F,#FF9D4D)',
+          'linear-gradient(135deg,#7C3AED,#A855F7)',
+          'linear-gradient(135deg,#0D9488,#2DD4BF)',
+          'linear-gradient(135deg,#2563EB,#60A5FA)',
+          'linear-gradient(135deg,#DC2626,#F87171)',
+          'linear-gradient(135deg,#D97706,#FCD34D)',
+        ];
+        foreach ($characters as $i => $char):
+          $name      = $char['name'];
+          $cid       = (int)$char['id'];
+          $radioName = $isSwitching ? 'target_user_id' : 'character_id';
+          $initials  = strtoupper(implode('', array_map(fn($w) => $w[0], array_slice(explode(' ', trim($name)), 0, 2))));
+          $color     = $avatarColors[$i % count($avatarColors)];
+        ?>
+        <label class="cs-label">
+          <input type="radio" name="<?php echo $radioName; ?>" value="<?php echo $cid; ?>" required>
+          <div class="cs-card">
+            <span class="cs-badge">✓ Seçildi</span>
+            <div class="cs-avatar" style="background:<?php echo $color; ?>;">
+              <?php echo htmlspecialchars($initials); ?>
+              <div class="cs-checkmark">
+                <span class="material-symbols-outlined" style="font-size:12px;color:#fff;font-variation-settings:'FILL' 1;">check</span>
+              </div>
+            </div>
+            <div class="cs-name"><?php echo escape($name); ?></div>
+            <div class="cs-id">ID <?php echo $cid; ?></div>
+          </div>
+        </label>
+        <?php endforeach; ?>
+      </div>
 
-        <div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap;">
-            <?php if ($isSwitching): ?>
-            <a href="<?php echo BASE_URL; ?>/dashboard" class="btn btn-ghost">İptal</a>
-            <?php endif; ?>
-            <button type="submit" class="btn btn-primary btn-lg" style="gap:10px;padding:12px 32px;">
-                <span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 1;">sync_alt</span>
-                Seçili Karakterle Devam Et
-            </button>
-        </div>
+      <div class="cs-actions">
+        <?php if ($isSwitching): ?>
+        <a href="<?php echo BASE_URL; ?>/dashboard" class="cs-btn-cancel">
+          <span class="material-symbols-outlined" style="font-size:16px;">arrow_back</span>
+          İptal
+        </a>
+        <?php endif; ?>
+        <button type="submit" class="cs-btn-submit">
+          <span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 1;">sync_alt</span>
+          Seçili Karakterle Devam Et
+        </button>
+      </div>
     </form>
     <?php endif; ?>
 
+  </div>
 </div>
-
-<style>
-.char-opt input[type="radio"]:checked ~ .char-card {
-    border-color: var(--color-primary) !important;
-    background: #FFF3EB !important;
-    box-shadow: 0 0 0 4px rgba(240,109,31,.12);
-}
-.char-card:hover { border-color: rgba(240,109,31,.5) !important; background: #FFFAF7 !important; }
-.char-opt input[type="radio"]:checked ~ .char-card .char-check { display:block; }
-</style>
-<script>
-// Immediate visual feedback on selection
-document.querySelectorAll('.char-opt input[type="radio"]').forEach(function(r) {
-    r.addEventListener('change', function() {
-        document.querySelectorAll('.char-card').forEach(function(c) {
-            c.style.borderColor = '';
-            c.style.background = '';
-            c.style.boxShadow = '';
-        });
-        document.querySelectorAll('.char-check').forEach(function(c) { c.style.display = 'none'; });
-        var card = this.parentElement.querySelector('.char-card');
-        if (card) {
-            card.style.borderColor = 'var(--color-primary)';
-            card.style.background = '#FFF3EB';
-            card.style.boxShadow = '0 0 0 4px rgba(240,109,31,.12)';
-            var chk = card.querySelector('.char-check');
-            if (chk) chk.style.display = 'block';
-        }
-    });
-});
-</script>
 
 <?php require_once __DIR__ . '/partials/app_footer.php'; ?>
