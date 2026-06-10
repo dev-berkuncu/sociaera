@@ -85,7 +85,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$isSwitching) {
 $pageTitle   = $isSwitching ? 'Karakter Değiştir' : 'Karakter Seçimi';
 $hideSidebar = true;
 require_once __DIR__ . '/partials/app_header.php';
-require_once __DIR__ . '/partials/flash.php';
 ?>
 
 <!-- Page header -->

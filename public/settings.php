@@ -115,7 +115,7 @@ $activeNav = 'settings';
 require_once __DIR__ . '/partials/app_header.php';
 ?>
 
-<div style="min-width:0;" class="flex-1 flex flex-col gap-stack-md max-w-2xl w-full mx-auto lg:mx-0">
+<div style="min-width:0;display:flex;flex-direction:column;gap:20px;max-width:680px;">
     <div class="mb-4">
         <h1 class="text-3xl font-bold flex items-center gap-2" style="color:var(--text-1);"><span class="material-symbols-outlined text-[32px]" style="color:var(--color-primary);">settings</span> Ayarlar</h1>
     </div>
