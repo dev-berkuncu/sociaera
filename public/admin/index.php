@@ -51,6 +51,15 @@ $adminPage = 'dashboard';
 require_once __DIR__ . '/_header.php';
 ?>
 
+<!-- Page header -->
+<div class="admin-section-header">
+    <h1 class="admin-page-title">
+        <span class="material-symbols-outlined" style="color:var(--cp);font-size:22px;" data-fill="1">dashboard</span>
+        Dashboard
+    </h1>
+    <span style="font-size:12px;color:var(--t3);"><?php echo date('d M Y, H:i'); ?></span>
+</div>
+
 <!-- Stats Grid -->
 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 mb-8">
     <?php
@@ -69,10 +78,10 @@ require_once __DIR__ . '/_header.php';
     ];
     foreach ($statCards as $s):
     ?>
-    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-5 shadow-[0_10px_20px_-10px_rgba(15,23,42,0.3)] hover:border-white/20 transition-colors">
-        <span class="material-symbols-outlined <?php echo $s['color']; ?> text-[28px] mb-2"><?php echo $s['icon']; ?></span>
-        <div class="text-2xl font-black text-on-surface"><?php echo $s['value']; ?></div>
-        <div class="text-label-sm text-slate-400 mt-1"><?php echo $s['label']; ?></div>
+    <div class="admin-stat-card">
+        <span class="material-symbols-outlined" style="font-size:28px;color:var(--cp);margin-bottom:4px;display:block;" data-fill="1"><?php echo $s['icon']; ?></span>
+        <div class="admin-stat-value"><?php echo $s['value']; ?></div>
+        <div class="admin-stat-label"><?php echo $s['label']; ?></div>
     </div>
     <?php endforeach; ?>
 </div>
@@ -80,72 +89,66 @@ require_once __DIR__ . '/_header.php';
 <!-- Charts -->
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
     <!-- Kayıt Grafiği -->
-    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-6 shadow-[0_10px_20px_-10px_rgba(15,23,42,0.3)]">
-        <h3 class="text-lg font-bold text-on-surface mb-4 flex items-center gap-2">
-            <span class="material-symbols-outlined text-blue-400 text-[20px]">person_add</span> Son 7 Gün — Kayıtlar
-        </h3>
-        <div class="relative" style="height:200px"><canvas id="regChart"></canvas></div>
+    <div class="admin-chart-card">
+        <div class="admin-chart-title">
+            <span class="material-symbols-outlined" style="color:#3B82F6;font-size:20px;">person_add</span> Son 7 Gün — Kayıtlar
+        </div>
+        <div style="height:200px;position:relative;"><canvas id="regChart"></canvas></div>
     </div>
     <!-- Check-in Grafiği -->
-    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-6 shadow-[0_10px_20px_-10px_rgba(15,23,42,0.3)]">
-        <h3 class="text-lg font-bold text-on-surface mb-4 flex items-center gap-2">
-            <span class="material-symbols-outlined text-purple-400 text-[20px]">edit_note</span> Son 7 Gün — Check-in'ler
-        </h3>
-        <div class="relative" style="height:200px"><canvas id="checkinChart"></canvas></div>
+    <div class="admin-chart-card">
+        <div class="admin-chart-title">
+            <span class="material-symbols-outlined" style="color:#8B5CF6;font-size:20px;">edit_note</span> Son 7 Gün — Check-in'ler
+        </div>
+        <div style="height:200px;position:relative;"><canvas id="checkinChart"></canvas></div>
     </div>
 </div>
 
 <!-- Top Lists -->
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
     <!-- En Popüler Mekanlar -->
-    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl shadow-[0_10px_20px_-10px_rgba(15,23,42,0.3)] overflow-hidden">
-        <div class="px-6 py-4 border-b border-white/5">
-            <h3 class="text-lg font-bold text-on-surface flex items-center gap-2">
-                <span class="material-symbols-outlined text-green-400 text-[20px]">trending_up</span> En Popüler Mekanlar
-            </h3>
+    <div class="admin-table-card">
+        <div class="admin-table-head">
+            <div class="admin-table-title">
+                <span class="material-symbols-outlined" style="color:#16A34A;font-size:18px;">trending_up</span> En Popüler Mekanlar
+            </div>
         </div>
         <?php if (empty($topVenues)): ?>
-            <div class="p-6 text-center text-slate-400">Henüz veri yok.</div>
+            <div style="padding:24px;text-align:center;color:var(--t3);">Henüz veri yok.</div>
         <?php else: ?>
-        <div class="divide-y divide-white/5">
-            <?php foreach ($topVenues as $i => $tv): ?>
-            <div class="flex items-center gap-4 px-6 py-3 hover:bg-white/[0.02] transition-colors">
-                <span class="text-slate-500 font-bold w-6 text-center"><?php echo $i + 1; ?></span>
-                <div class="flex-grow min-w-0">
-                    <div class="font-semibold text-on-surface truncate"><?php echo escape($tv['name']); ?></div>
-                    <span class="text-xs text-slate-500"><?php echo escape(VenueModel::categories()[$tv['category']] ?? $tv['category']); ?></span>
-                </div>
-                <span class="text-sm font-bold text-primary-container"><?php echo $tv['checkin_count']; ?></span>
+        <?php foreach ($topVenues as $i => $tv): ?>
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--border-l);" onmouseover="this.style.background='var(--section)'" onmouseout="this.style.background=''"> 
+            <span style="font-size:13px;font-weight:800;color:var(--t3);width:20px;text-align:center;flex-shrink:0;"><?php echo $i + 1; ?></span>
+            <div style="flex:1;min-width:0;">
+                <div style="font-size:13px;font-weight:700;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><?php echo escape($tv['name']); ?></div>
+                <div style="font-size:11px;color:var(--t3);"><?php echo escape(VenueModel::categories()[$tv['category']] ?? $tv['category']); ?></div>
             </div>
-            <?php endforeach; ?>
+            <span style="font-size:13px;font-weight:800;color:var(--cp);flex-shrink:0;"><?php echo $tv['checkin_count']; ?> ✓</span>
         </div>
+        <?php endforeach; ?>
         <?php endif; ?>
     </div>
 
     <!-- En Aktif Kullanıcılar -->
-    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl shadow-[0_10px_20px_-10px_rgba(15,23,42,0.3)] overflow-hidden">
-        <div class="px-6 py-4 border-b border-white/5">
-            <h3 class="text-lg font-bold text-on-surface flex items-center gap-2">
-                <span class="material-symbols-outlined text-amber-400 text-[20px]">emoji_events</span> En Aktif Kullanıcılar
-            </h3>
+    <div class="admin-table-card">
+        <div class="admin-table-head">
+            <div class="admin-table-title">
+                <span class="material-symbols-outlined" style="color:#F59E0B;font-size:18px;">emoji_events</span> En Aktif Kullanıcılar
+            </div>
         </div>
         <?php if (empty($topUsers)): ?>
-            <div class="p-6 text-center text-slate-400">Henüz veri yok.</div>
+            <div style="padding:24px;text-align:center;color:var(--t3);">Henüz veri yok.</div>
         <?php else: ?>
-        <div class="divide-y divide-white/5">
-            <?php foreach ($topUsers as $i => $tu): ?>
-            <div class="flex items-center gap-4 px-6 py-3 hover:bg-white/[0.02] transition-colors">
-                <span class="text-slate-500 font-bold w-6 text-center"><?php echo $i + 1; ?></span>
-                <div class="flex items-center gap-3 flex-grow min-w-0">
-                    <?php echo avatarHtml($tu['avatar'] ?? null, $tu['username'], '28'); ?>
-                    <div class="truncate">
-                        <a href="<?php echo BASE_URL; ?>/admin/user-detail?id=<?php echo $tu['id']; ?>" class="font-semibold text-on-surface hover:text-primary-container transition-colors"><?php echo escape($tu['username']); ?></a>
-                    </div>
-                </div>
-                <span class="text-sm font-bold text-primary-container"><?php echo $tu['checkin_count']; ?></span>
+        <?php foreach ($topUsers as $i => $tu): ?>
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--border-l);" onmouseover="this.style.background='var(--section)'" onmouseout="this.style.background=''"> 
+            <span style="font-size:13px;font-weight:800;color:var(--t3);width:20px;text-align:center;flex-shrink:0;"><?php echo $i + 1; ?></span>
+            <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:0;">
+                <?php echo avatarHtml($tu['avatar'] ?? null, $tu['username'], '28'); ?>
+                <a href="<?php echo BASE_URL; ?>/admin/user-detail?id=<?php echo $tu['id']; ?>" style="font-size:13px;font-weight:700;color:var(--t1);text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" onmouseover="this.style.color='var(--cp)'" onmouseout="this.style.color='var(--t1)'"><?php echo escape($tu['username']); ?></a>
             </div>
-            <?php endforeach; ?>
+            <span style="font-size:13px;font-weight:800;color:var(--cp);flex-shrink:0;"><?php echo $tu['checkin_count']; ?> ✓</span>
         </div>
+        <?php endforeach; ?>
         <?php endif; ?>
     </div>
 </div>
@@ -153,60 +156,54 @@ require_once __DIR__ . '/_header.php';
 <!-- Recent Transactions & Reports -->
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
     <!-- Son Ödeme İşlemleri -->
-    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl shadow-[0_10px_20px_-10px_rgba(15,23,42,0.3)] overflow-hidden">
-        <div class="px-6 py-4 border-b border-white/5">
-            <h3 class="text-lg font-bold text-on-surface flex items-center gap-2">
-                <span class="material-symbols-outlined text-yellow-400 text-[20px]">payments</span> Son Ödemeler
-            </h3>
+    <div class="admin-table-card">
+        <div class="admin-table-head">
+            <div class="admin-table-title"><span class="material-symbols-outlined" style="color:#F59E0B;font-size:18px;">payments</span> Son Ödemeler</div>
+            <a href="<?php echo BASE_URL; ?>/admin/wallet" class="admin-table-link">Tümü →</a>
         </div>
         <?php if (empty($recentTransactions)): ?>
-            <div class="p-6 text-center text-slate-400">Henüz ödeme yok.</div>
+            <div style="padding:24px;text-align:center;color:var(--t3);">Henüz ödeme yok.</div>
         <?php else: ?>
-        <div class="divide-y divide-white/5">
-            <?php foreach ($recentTransactions as $rt): ?>
-            <div class="flex items-center gap-4 px-6 py-3 hover:bg-white/[0.02] transition-colors">
-                <span class="material-symbols-outlined text-[18px] <?php echo $rt['type'] === 'deposit' ? 'text-emerald-400' : 'text-red-400'; ?>">
-                    <?php echo $rt['type'] === 'deposit' ? 'arrow_downward' : 'arrow_upward'; ?>
-                </span>
-                <div class="flex-grow min-w-0">
-                    <div class="font-semibold text-on-surface"><?php echo escape($rt['username']); ?></div>
-                    <span class="text-xs text-slate-500"><?php echo escape(truncate($rt['description'] ?? '', 40)); ?></span>
-                </div>
-                <div class="text-right">
-                    <span class="font-bold <?php echo $rt['type'] === 'deposit' ? 'text-emerald-400' : 'text-red-400'; ?>">$<?php echo number_format($rt['amount'], 2); ?></span>
-                    <div class="text-[10px] text-slate-500"><?php echo timeAgo($rt['created_at']); ?></div>
-                </div>
+        <?php foreach ($recentTransactions as $rt): ?>
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border-l);" onmouseover="this.style.background='var(--section)'" onmouseout="this.style.background=''">
+            <span class="material-symbols-outlined" style="font-size:18px;color:<?php echo $rt['type']==='deposit'?'#16A34A':'#DC2626'; ?>;flex-shrink:0;">
+                <?php echo $rt['type']==='deposit' ? 'arrow_downward' : 'arrow_upward'; ?>
+            </span>
+            <div style="flex:1;min-width:0;">
+                <div style="font-size:13px;font-weight:700;color:var(--t1);"><?php echo escape($rt['username']); ?></div>
+                <div style="font-size:11px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><?php echo escape(truncate($rt['description']??'',40)); ?></div>
             </div>
-            <?php endforeach; ?>
+            <div style="text-align:right;flex-shrink:0;">
+                <div style="font-size:13px;font-weight:800;color:<?php echo $rt['type']==='deposit'?'#16A34A':'#DC2626'; ?>;"><?php echo ($rt['type']==='deposit'?'+':'-').'$'.number_format($rt['amount'],2); ?></div>
+                <div style="font-size:10px;color:var(--t3);"><?php echo timeAgo($rt['created_at']); ?></div>
+            </div>
         </div>
+        <?php endforeach; ?>
         <?php endif; ?>
     </div>
 
     <!-- Son Raporlar -->
-    <div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl shadow-[0_10px_20px_-10px_rgba(15,23,42,0.3)] overflow-hidden">
-        <div class="px-6 py-4 border-b border-white/5">
-            <h3 class="text-lg font-bold text-on-surface flex items-center gap-2">
-                <span class="material-symbols-outlined text-red-400 text-[20px]">flag</span> Bekleyen Raporlar
-            </h3>
+    <div class="admin-table-card">
+        <div class="admin-table-head">
+            <div class="admin-table-title"><span class="material-symbols-outlined" style="color:#DC2626;font-size:18px;">flag</span> Bekleyen Raporlar</div>
+            <a href="<?php echo BASE_URL; ?>/admin/reports" class="admin-table-link">Tümü →</a>
         </div>
         <?php if (empty($recentReports)): ?>
-            <div class="p-6 text-center text-slate-400">Bekleyen rapor yok.</div>
+            <div style="padding:24px;text-align:center;color:var(--t3);">Bekleyen rapor yok. ✓</div>
         <?php else: ?>
-        <div class="divide-y divide-white/5">
-            <?php foreach ($recentReports as $rr): ?>
-            <div class="flex items-center gap-4 px-6 py-3 hover:bg-white/[0.02] transition-colors">
-                <span class="material-symbols-outlined text-[18px] text-red-400">report</span>
-                <div class="flex-grow min-w-0">
-                    <div class="font-semibold text-on-surface"><?php echo escape($rr['entity_type']); ?> #<?php echo $rr['entity_id']; ?></div>
-                    <span class="text-xs text-slate-500"><?php echo escape($rr['reason']); ?> — <?php echo escape($rr['reporter_name']); ?></span>
-                </div>
-                <div class="text-right">
-                    <a href="<?php echo BASE_URL; ?>/admin/report-detail?id=<?php echo $rr['id']; ?>" class="text-xs text-primary-container hover:underline">İncele</a>
-                    <div class="text-[10px] text-slate-500"><?php echo timeAgo($rr['created_at']); ?></div>
-                </div>
+        <?php foreach ($recentReports as $rr): ?>
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border-l);" onmouseover="this.style.background='var(--section)'" onmouseout="this.style.background=''">
+            <span class="material-symbols-outlined" style="font-size:18px;color:#DC2626;flex-shrink:0;">report</span>
+            <div style="flex:1;min-width:0;">
+                <div style="font-size:13px;font-weight:700;color:var(--t1);"><?php echo escape($rr['entity_type']); ?> #<?php echo $rr['entity_id']; ?></div>
+                <div style="font-size:11px;color:var(--t3);"><?php echo escape($rr['reason']); ?> — <?php echo escape($rr['reporter_name']); ?></div>
             </div>
-            <?php endforeach; ?>
+            <div style="text-align:right;flex-shrink:0;">
+                <a href="<?php echo BASE_URL; ?>/admin/report-detail?id=<?php echo $rr['id']; ?>" style="font-size:12px;font-weight:700;color:var(--cp);text-decoration:none;">İncele →</a>
+                <div style="font-size:10px;color:var(--t3);"><?php echo timeAgo($rr['created_at']); ?></div>
+            </div>
         </div>
+        <?php endforeach; ?>
         <?php endif; ?>
     </div>
 </div>
@@ -220,51 +217,46 @@ try { $mysteryPending = (new MysteryShopperModel())->countPending(); } catch (\T
 ?>
 
 <!-- Mystery Shopper Kart -->
-<div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-indigo-500/20 rounded-xl p-6 flex items-center gap-4 mb-6 hover:border-indigo-500/40 transition-colors">
-    <div class="w-14 h-14 rounded-xl bg-indigo-500/15 flex items-center justify-center flex-shrink-0">
-        <span class="material-symbols-outlined text-indigo-400 text-[28px]">person_search</span>
+<div style="background:#fff;border:1.5px solid #E0E7FF;border-radius:14px;padding:18px 20px;display:flex;align-items:center;gap:14px;margin-bottom:20px;box-shadow:var(--shadow);">
+    <div style="width:50px;height:50px;border-radius:12px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <span class="material-symbols-outlined" style="font-size:26px;color:#4F46E5;" data-fill="1">person_search</span>
     </div>
-    <div class="flex-grow">
-        <div class="font-bold text-on-surface">Gizli Müşteri Başvuruları</div>
-        <div class="text-sm text-slate-400 mt-0.5">
+    <div style="flex:1;">
+        <div style="font-size:14px;font-weight:700;color:var(--t1);">Gizli Müşteri Başvuruları</div>
+        <div style="font-size:12px;color:var(--t3);margin-top:2px;">
             <?php if ($mysteryPending > 0): ?>
-                <span class="text-amber-400 font-semibold"><?php echo $mysteryPending; ?> başvuru</span> inceleme bekliyor
+                <span style="color:#D97706;font-weight:700;"><?php echo $mysteryPending; ?> başvuru</span> inceleme bekliyor
             <?php else: ?>
                 Bekleyen başvuru yok
             <?php endif; ?>
         </div>
     </div>
-    <a href="<?php echo BASE_URL; ?>/admin/mystery"
-       class="flex-shrink-0 px-4 py-2 rounded-lg bg-indigo-500/15 text-indigo-400 border border-indigo-500/20 hover:bg-indigo-500/25 text-sm font-semibold transition-colors flex items-center gap-1">
+    <a href="<?php echo BASE_URL; ?>/admin/mystery" class="btn-admin btn-admin-ghost" style="color:#4F46E5;border-color:#C7D2FE;background:#EEF2FF;gap:6px;">
         <?php if ($mysteryPending > 0): ?>
-            <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+            <span style="width:7px;height:7px;border-radius:50%;background:#F59E0B;display:inline-block;"></span>
         <?php endif; ?>
         İncele →
     </a>
 </div>
 
-<div class="bg-[#1E293B]/80 backdrop-blur-[20px] border border-white/10 rounded-xl shadow-[0_10px_20px_-10px_rgba(15,23,42,0.3)] overflow-hidden">
-    <div class="px-6 py-4 border-b border-white/5 flex items-center justify-between">
-        <h2 class="text-lg font-bold text-on-surface flex items-center gap-2">
-            <span class="material-symbols-outlined text-primary-container text-[20px]">history</span> Son İşlemler
-        </h2>
-        <a href="<?php echo BASE_URL; ?>/admin/audit" class="text-xs text-primary-container hover:underline">Tümünü Gör →</a>
+<div class="admin-table-card">
+    <div class="admin-table-head">
+        <div class="admin-table-title"><span class="material-symbols-outlined" style="color:var(--cp);font-size:18px;">history</span> Son Admin İşlemleri</div>
+        <a href="<?php echo BASE_URL; ?>/admin/audit" class="admin-table-link">Tümünü Gör →</a>
     </div>
     <?php if (empty($logs)): ?>
-        <div class="p-8 text-center text-slate-400">Henüz log yok.</div>
+        <div style="padding:32px;text-align:center;color:var(--t3);">Henüz log yok.</div>
     <?php else: ?>
-    <div class="overflow-x-auto">
-        <table class="w-full text-left">
-            <thead class="bg-white/[0.03] text-slate-400 text-label-sm uppercase">
-                <tr><th class="px-6 py-3">Admin</th><th class="px-6 py-3">İşlem</th><th class="px-6 py-3">Hedef</th><th class="px-6 py-3">Tarih</th></tr>
-            </thead>
-            <tbody class="divide-y divide-white/5">
+    <div class="admin-table-overflow">
+        <table class="admin-table">
+            <thead><tr><th>Admin</th><th>İşlem</th><th>Hedef</th><th>Tarih</th></tr></thead>
+            <tbody>
                 <?php foreach ($logs as $log): ?>
-                <tr class="hover:bg-white/[0.02] transition-colors">
-                    <td class="px-6 py-3 font-medium"><?php echo escape($log['username']); ?></td>
-                    <td class="px-6 py-3 text-slate-300"><?php echo escape($log['action_type']); ?></td>
-                    <td class="px-6 py-3 text-slate-400"><?php echo escape($log['target_type']); ?> #<?php echo $log['target_id']; ?></td>
-                    <td class="px-6 py-3 text-slate-500 text-xs"><?php echo formatDate($log['created_at'], true); ?></td>
+                <tr>
+                    <td style="font-weight:700;"><?php echo escape($log['username']); ?></td>
+                    <td><?php echo escape($log['action_type']); ?></td>
+                    <td style="color:var(--t2);"><?php echo escape($log['target_type']); ?> #<?php echo $log['target_id']; ?></td>
+                    <td style="font-size:11px;color:var(--t3);"><?php echo formatDate($log['created_at'], true); ?></td>
                 </tr>
                 <?php endforeach; ?>
             </tbody>
@@ -281,8 +273,8 @@ document.addEventListener('DOMContentLoaded', function() {
         maintainAspectRatio: false,
         plugins: { legend: { display: false } },
         scales: {
-            x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#64748b', font: { size: 11 } } },
-            y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#64748b', font: { size: 11 }, beginAtZero: true } }
+            x: { grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { color: '#A0A0A0', font: { size: 11, family: 'Plus Jakarta Sans' } } },
+            y: { grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { color: '#A0A0A0', font: { size: 11, family: 'Plus Jakarta Sans' }, beginAtZero: true } }
         }
     };
 
@@ -293,9 +285,9 @@ document.addEventListener('DOMContentLoaded', function() {
             labels: <?php echo json_encode($regChart['labels']); ?>,
             datasets: [{
                 data: <?php echo json_encode($regChart['data']); ?>,
-                backgroundColor: 'rgba(96, 165, 250, 0.4)',
-                borderColor: '#60a5fa',
-                borderWidth: 1,
+                backgroundColor: 'rgba(240,109,31,0.15)',
+                borderColor: '#F06D1F',
+                borderWidth: 2,
                 borderRadius: 6
             }]
         },
@@ -309,12 +301,14 @@ document.addEventListener('DOMContentLoaded', function() {
             labels: <?php echo json_encode($checkinChart['labels']); ?>,
             datasets: [{
                 data: <?php echo json_encode($checkinChart['data']); ?>,
-                borderColor: '#a78bfa',
-                backgroundColor: 'rgba(167, 139, 250, 0.1)',
+                borderColor: '#8B5CF6',
+                backgroundColor: 'rgba(139,92,246,0.08)',
                 fill: true,
                 tension: 0.4,
                 pointRadius: 4,
-                pointBackgroundColor: '#a78bfa'
+                pointBackgroundColor: '#8B5CF6',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2
             }]
         },
         options: chartDefaults

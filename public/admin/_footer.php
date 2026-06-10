@@ -1,10 +1,11 @@
 <?php
 /**
- * Admin Panel — Tailwind Footer (V1)
+ * Admin Panel — Footer (Light Design System)
  */
 ?>
-    </div> <!-- p-6 md:p-8 -->
-</main>
+    </div><!-- /admin-page -->
+</main><!-- /admin-main -->
+</div><!-- /admin-wrap -->
 
 <script src="<?php echo asset('js/app.js'); ?>?v=<?php echo time(); ?>"></script>
 </body>
