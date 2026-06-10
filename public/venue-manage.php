@@ -1,7 +1,7 @@
 <?php
 /**
- * Sociaera — İşletme Paneli (Venue Management)
- * Mekan sahibi kendi mekanını yönetir
+ * Sociaera â€” Ä°ÅŸletme Paneli (Venue Management)
+ * Mekan sahibi kendi mekanÄ±nÄ± yÃ¶netir
  */
 require_once __DIR__ . '/../app/Config/env.php';
 loadEnv(dirname(__DIR__) . '/.env');
@@ -31,11 +31,11 @@ $venue = $venueModel->getById($venueId);
 
 // Mekan sahibi mi kontrol et
 if (!$venue || (int)$venue['created_by'] !== Auth::id()) {
-    Auth::setFlash('error', 'Bu mekanı yönetme yetkiniz yok.');
+    Auth::setFlash('error', 'Bu mekanÄ± yÃ¶netme yetkiniz yok.');
     header('Location: ' . BASE_URL . '/venues'); exit;
 }
 
-// POST: Güncelleme
+// POST: GÃ¼ncelleme
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     Csrf::requireValid();
     $action = $_POST['action'] ?? 'update';
@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'is_open'     => isset($_POST['is_open']) ? 1 : 0,
         ];
 
-        // Kapak görseli yükleme
+        // Kapak gÃ¶rseli yÃ¼kleme
         if (!empty($_FILES['cover_image']['name'])) {
             $uploader = new ImageUploader();
             $result = $uploader->upload($_FILES['cover_image'], 'venues', ['maxWidth' => 1200, 'quality' => 85]);
@@ -62,192 +62,239 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $venueModel->update($venueId, $updateData);
-        Auth::setFlash('success', 'İşletme bilgileri güncellendi.');
+        Auth::setFlash('success', 'Ä°ÅŸletme bilgileri gÃ¼ncellendi.');
         header('Location: ' . BASE_URL . '/venue-manage?id=' . $venueId); exit;
 
     } elseif ($action === 'toggle_open') {
-        // Düzeltme: varsayılan 0 (kapalı) — NULL durumu açık kabul edilirse ilk toggle kapanıyordu
+        // DÃ¼zeltme: varsayÄ±lan 0 (kapalÄ±) â€” NULL durumu aÃ§Ä±k kabul edilirse ilk toggle kapanÄ±yordu
         $newStatus = ($venue['is_open'] ?? 0) ? 0 : 1;
         $venueModel->update($venueId, ['is_open' => $newStatus]);
-        Auth::setFlash('success', $newStatus ? 'İşletme açık olarak işaretlendi.' : 'İşletme kapalı olarak işaretlendi.');
+        Auth::setFlash('success', $newStatus ? 'Ä°ÅŸletme aÃ§Ä±k olarak iÅŸaretlendi.' : 'Ä°ÅŸletme kapalÄ± olarak iÅŸaretlendi.');
         header('Location: ' . BASE_URL . '/venue-manage?id=' . $venueId); exit;
     }
 }
 
-// Verileri yeniden çek
+// Verileri yeniden Ã§ek
 $venue = $venueModel->getById($venueId);
 $checkinCount = $venueModel->getCheckinCount($venueId);
 $categories = VenueModel::categories();
 
-// Bu sayfada right sidebar gösterme
+// Bu sayfada right sidebar gÃ¶sterme
 $trendVenues = [];
 $miniLeaderboard = [];
 $hideSidebar = true;
 
-$pageTitle = $venue['name'] . ' — İşletme Paneli';
+$pageTitle = $venue['name'] . ' â€” Ä°ÅŸletme Paneli';
 $activeNav = 'venue_manage_' . $venueId;
 
 require_once __DIR__ . '/partials/app_header.php';
 ?>
 
-<section class="flex-1 flex flex-col gap-6 max-w-3xl w-full">
+<style>
+.vm-input {
+    width:100%; border-radius:10px; padding:10px 14px; font-size:13px;
+    outline:none; transition:border-color .2s;
+    background:var(--bg-section); border:1.5px solid var(--border); color:var(--text-1);
+    font-family:inherit; box-sizing:border-box; appearance:none;
+}
+.vm-input:focus { border-color:var(--color-primary); }
+.vm-card {
+    background:#fff; border:1px solid var(--border); border-radius:14px;
+    overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,.08);
+}
+</style>
+
+<section style="min-width:0; display:flex; flex-direction:column; gap:20px; max-width:768px; width:100%; padding-bottom:40px;">
 
     <!-- Header -->
-    <div class="flex items-center gap-4">
-        <a href="<?php echo BASE_URL; ?>/venues" class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors border border-white/10">
-            <span class="material-symbols-outlined text-slate-400">arrow_back</span>
+    <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+        <a href="<?php echo BASE_URL; ?>/venues"
+           style="width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:var(--bg-section); border:1px solid var(--border); flex-shrink:0;"
+           onmouseover="this.style.background='var(--border)'" onmouseout="this.style.background='var(--bg-section)'">
+            <span class="material-symbols-outlined" style="color:var(--text-3);">arrow_back</span>
         </a>
-        <div class="flex-grow">
-            <h1 class="text-2xl font-black text-on-surface tracking-tight"><?php echo escape($venue['name']); ?></h1>
-            <p class="text-slate-400 text-sm">İşletme Paneli</p>
+        <div style="flex:1; min-width:0;">
+            <h1 style="font-size:1.4rem; font-weight:900; color:var(--text-1); letter-spacing:-.02em; margin:0 0 2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"><?php echo escape($venue['name']); ?></h1>
+            <p style="color:var(--text-3); font-size:12px; margin:0;">Ä°ÅŸletme Paneli</p>
         </div>
-        <!-- Açık/Kapalı Toggle + Kampanyalar -->
-        <div class="flex gap-2">
+        <!-- Kampanyalar + AÃ§Ä±k/KapalÄ± Toggle -->
+        <div style="display:flex; gap:8px; flex-shrink:0;">
             <a href="<?php echo BASE_URL; ?>/campaigns?venue_id=<?php echo $venueId; ?>"
-               class="flex items-center gap-2 px-4 py-2 rounded-lg text-label-md font-semibold transition-all border bg-purple-500/10 text-purple-400 border-purple-500/20 hover:bg-purple-500/20">
-                <span class="material-symbols-outlined text-[18px]">campaign</span>
-                <span class="hidden sm:inline">Kampanyalar</span>
+               style="display:flex; align-items:center; gap:6px; padding:8px 14px; border-radius:10px; font-weight:700; font-size:13px; border:1px solid rgba(168,85,247,0.3); background:rgba(168,85,247,0.08); color:#a855f7; text-decoration:none; white-space:nowrap; transition:background .15s;"
+               onmouseover="this.style.background='rgba(168,85,247,0.15)'" onmouseout="this.style.background='rgba(168,85,247,0.08)'">
+                <span class="material-symbols-outlined" style="font-size:18px;">campaign</span>
+                Kampanyalar
             </a>
-            <form method="POST">
+            <form method="POST" style="display:inline;">
                 <?php echo csrfField(); ?>
                 <input type="hidden" name="action" value="toggle_open">
                 <?php $isOpen = $venue['is_open'] ?? 1; ?>
-                <button type="submit" class="flex items-center gap-2 px-4 py-2 rounded-lg text-label-md font-semibold transition-all border <?php echo $isOpen ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20' : 'bg-red-500/10 text-red-400 border-red-500/20 hover:bg-red-500/20'; ?>">
-                    <span class="w-2.5 h-2.5 rounded-full <?php echo $isOpen ? 'bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.5)]' : 'bg-red-400'; ?>"></span>
-                    <?php echo $isOpen ? 'Açık' : 'Kapalı'; ?>
+                <button type="submit"
+                        style="display:flex; align-items:center; gap:8px; padding:8px 14px; border-radius:10px; font-weight:700; font-size:13px; border:1px solid <?php echo $isOpen ? 'rgba(16,185,129,0.3)' : 'rgba(239,68,68,0.3)'; ?>; background:<?php echo $isOpen ? 'rgba(16,185,129,0.08)' : 'rgba(239,68,68,0.08)'; ?>; color:<?php echo $isOpen ? '#10b981' : '#ef4444'; ?>; cursor:pointer; font-family:inherit; transition:background .15s; white-space:nowrap;">
+                    <span style="width:10px; height:10px; border-radius:50%; background:<?php echo $isOpen ? '#10b981' : '#ef4444'; ?>; <?php echo $isOpen ? 'box-shadow:0 0 6px rgba(16,185,129,0.5);' : ''; ?>"></span>
+                    <?php echo $isOpen ? 'AÃ§Ä±k' : 'KapalÄ±'; ?>
                 </button>
             </form>
         </div>
     </div>
 
     <!-- Stats -->
-    <div class="grid grid-cols-3 gap-4">
-        <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-4 text-center">
-            <div class="text-2xl font-black text-on-surface"><?php echo $checkinCount; ?></div>
-            <div class="text-label-sm text-slate-400 mt-1">Check-in</div>
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;">
+        <div style="background:#fff; border:1px solid var(--border); border-radius:12px; padding:16px; text-align:center; box-shadow:0 1px 3px rgba(0,0,0,.06);">
+            <div style="font-size:1.6rem; font-weight:900; color:var(--text-1);"><?php echo $checkinCount; ?></div>
+            <div style="font-size:11px; color:var(--text-3); margin-top:4px;">Check-in</div>
         </div>
-        <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-4 text-center">
-            <div class="text-2xl font-black text-on-surface"><?php echo escape($categories[$venue['category']] ?? '-'); ?></div>
-            <div class="text-label-sm text-slate-400 mt-1">Kategori</div>
+        <div style="background:#fff; border:1px solid var(--border); border-radius:12px; padding:16px; text-align:center; box-shadow:0 1px 3px rgba(0,0,0,.06);">
+            <div style="font-size:1rem; font-weight:900; color:var(--text-1); word-break:break-word;"><?php echo escape($categories[$venue['category']] ?? '-'); ?></div>
+            <div style="font-size:11px; color:var(--text-3); margin-top:4px;">Kategori</div>
         </div>
-        <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-4 text-center">
+        <div style="background:#fff; border:1px solid var(--border); border-radius:12px; padding:16px; text-align:center; box-shadow:0 1px 3px rgba(0,0,0,.06);">
             <?php
-            $statusBadge = match($venue['status']) {
-                'approved' => ['text' => 'Onaylı', 'class' => 'text-emerald-400'],
-                'pending' => ['text' => 'Bekliyor', 'class' => 'text-amber-400'],
-                default => ['text' => ucfirst($venue['status']), 'class' => 'text-slate-400']
+            $statusColor = match($venue['status']) {
+                'approved' => '#10b981',
+                'pending' => '#f59e0b',
+                default => 'var(--text-3)'
+            };
+            $statusText = match($venue['status']) {
+                'approved' => 'OnaylÄ±',
+                'pending' => 'Bekliyor',
+                default => ucfirst($venue['status'])
             };
             ?>
-            <div class="text-2xl font-black <?php echo $statusBadge['class']; ?>"><?php echo $statusBadge['text']; ?></div>
-            <div class="text-label-sm text-slate-400 mt-1">Durum</div>
+            <div style="font-size:1rem; font-weight:900; color:<?php echo $statusColor; ?>;"><?php echo $statusText; ?></div>
+            <div style="font-size:11px; color:var(--text-3); margin-top:4px;">Durum</div>
         </div>
     </div>
 
     <!-- Edit Form -->
-    <form method="POST" enctype="multipart/form-data" class="space-y-6">
+    <form method="POST" enctype="multipart/form-data" style="display:flex; flex-direction:column; gap:16px;">
         <?php echo csrfField(); ?>
         <input type="hidden" name="action" value="update">
 
-        <!-- Kapak Görseli -->
-        <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl overflow-hidden">
-            <div class="h-48 bg-surface-container relative group">
+        <!-- Kapak GÃ¶rseli -->
+        <div class="vm-card">
+            <!-- Image cover -->
+            <div style="height:192px; position:relative; overflow:hidden; background:var(--bg-section);" id="coverWrap">
                 <?php if (!empty($venue['cover_image'])): ?>
-                    <img src="<?php echo BASE_URL . '/uploads/venues/' . escape($venue['cover_image']); ?>" class="w-full h-full object-cover">
+                    <img src="<?php echo BASE_URL . '/uploads/venues/' . escape($venue['cover_image']); ?>" style="width:100%; height:100%; object-fit:cover;">
                 <?php elseif (!empty($venue['image'])): ?>
-                    <img src="<?php echo uploadUrl('posts', $venue['image']); ?>" class="w-full h-full object-cover">
+                    <img src="<?php echo uploadUrl('posts', $venue['image']); ?>" style="width:100%; height:100%; object-fit:cover;">
                 <?php else: ?>
-                    <div class="w-full h-full flex items-center justify-center text-slate-600 bg-surface-container-high">
-                        <span class="material-symbols-outlined text-[64px]">add_photo_alternate</span>
+                    <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:var(--text-3);">
+                        <span class="material-symbols-outlined" style="font-size:64px;">add_photo_alternate</span>
                     </div>
                 <?php endif; ?>
-                <label class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
-                    <span class="text-white text-sm font-semibold flex items-center gap-2">
-                        <span class="material-symbols-outlined">camera_alt</span> Kapak Değiştir
+                <label id="coverLabel" style="position:absolute; inset:0; background:rgba(0,0,0,0.4); opacity:0; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:opacity .2s;">
+                    <span style="color:#fff; font-size:13px; font-weight:700; display:flex; align-items:center; gap:6px;">
+                        <span class="material-symbols-outlined">camera_alt</span> Kapak DeÄŸiÅŸtir
                     </span>
-                    <input type="file" name="cover_image" accept="image/*" class="hidden">
+                    <input type="file" name="cover_image" accept="image/*" style="display:none;" id="coverInput">
                 </label>
             </div>
-            <div class="p-6 space-y-5">
-                <!-- İşletme Adı -->
+            <div style="padding:20px; display:flex; flex-direction:column; gap:14px;">
+                <!-- Ä°ÅŸletme AdÄ± -->
                 <div>
-                    <label class="block text-label-md text-slate-400 mb-1.5">İşletme Adı</label>
-                    <input type="text" name="name" value="<?php echo escape($venue['name']); ?>" required
-                           class="w-full bg-white/5 border border-white/10 text-on-surface rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-primary-container/40 transition-colors">
+                    <label style="display:block; font-size:12px; font-weight:700; color:var(--text-2); margin-bottom:6px;">Ä°ÅŸletme AdÄ±</label>
+                    <input type="text" name="name" value="<?php echo escape($venue['name']); ?>" required class="vm-input">
                 </div>
-
-                <!-- Açıklama -->
+                <!-- AÃ§Ä±klama -->
                 <div>
-                    <label class="block text-label-md text-slate-400 mb-1.5">Açıklama</label>
-                    <textarea name="description" rows="3"
-                              class="w-full bg-white/5 border border-white/10 text-on-surface rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-primary-container/40 transition-colors resize-none"><?php echo escape($venue['description'] ?? ''); ?></textarea>
+                    <label style="display:block; font-size:12px; font-weight:700; color:var(--text-2); margin-bottom:6px;">AÃ§Ä±klama</label>
+                    <textarea name="description" rows="3" class="vm-input" style="resize:none;"><?php echo escape($venue['description'] ?? ''); ?></textarea>
                 </div>
-
                 <!-- Kategori -->
                 <div>
-                    <label class="block text-label-md text-slate-400 mb-1.5">Kategori</label>
-                    <select name="category" class="w-full bg-white/5 border border-white/10 text-on-surface rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-primary-container/40 transition-colors">
+                    <label style="display:block; font-size:12px; font-weight:700; color:var(--text-2); margin-bottom:6px;">Kategori</label>
+                    <select name="category" class="vm-input">
                         <?php foreach ($categories as $key => $label): ?>
-                            <option value="<?php echo $key; ?>" class="bg-background" <?php echo $venue['category'] === $key ? 'selected' : ''; ?>><?php echo escape($label); ?></option>
+                            <option value="<?php echo $key; ?>" <?php echo $venue['category'] === $key ? 'selected' : ''; ?>><?php echo escape($label); ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
             </div>
         </div>
 
-        <!-- Konum & İletişim -->
-        <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-6 space-y-5">
-            <h2 class="text-lg font-bold text-on-surface flex items-center gap-2">
-                <span class="material-symbols-outlined text-primary-container text-[20px]">pin_drop</span> Konum & İletişim
+        <!-- Konum & Ä°letiÅŸim -->
+        <div class="vm-card" style="padding:20px; display:flex; flex-direction:column; gap:14px;">
+            <h2 style="font-size:15px; font-weight:700; color:var(--text-1); display:flex; align-items:center; gap:8px; margin:0;">
+                <span class="material-symbols-outlined" style="color:var(--color-primary); font-size:20px;">pin_drop</span> Konum &amp; Ä°letiÅŸim
             </h2>
-
             <div>
-                <label class="block text-label-md text-slate-400 mb-1.5">Adres</label>
-                <input type="text" name="address" value="<?php echo escape($venue['address'] ?? ''); ?>" placeholder="İşletme adresi..."
-                       class="w-full bg-white/5 border border-white/10 text-on-surface rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-primary-container/40 transition-colors">
+                <label style="display:block; font-size:12px; font-weight:700; color:var(--text-2); margin-bottom:6px;">Adres</label>
+                <input type="text" name="address" value="<?php echo escape($venue['address'] ?? ''); ?>" placeholder="Ä°ÅŸletme adresi..." class="vm-input">
             </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
                 <div>
-                    <label class="block text-label-md text-slate-400 mb-1.5">Telefon</label>
-                    <input type="text" name="phone" value="<?php echo escape($venue['phone'] ?? ''); ?>" placeholder="555-XXX-XXXX"
-                           class="w-full bg-white/5 border border-white/10 text-on-surface rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-primary-container/40 transition-colors">
+                    <label style="display:block; font-size:12px; font-weight:700; color:var(--text-2); margin-bottom:6px;">Telefon</label>
+                    <input type="text" name="phone" value="<?php echo escape($venue['phone'] ?? ''); ?>" placeholder="555-XXX-XXXX" class="vm-input">
                 </div>
                 <div>
-                    <label class="block text-label-md text-slate-400 mb-1.5">Web Sitesi</label>
-                    <input type="url" name="website" value="<?php echo escape($venue['website'] ?? ''); ?>" placeholder="https://..."
-                           class="w-full bg-white/5 border border-white/10 text-on-surface rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-primary-container/40 transition-colors">
+                    <label style="display:block; font-size:12px; font-weight:700; color:var(--text-2); margin-bottom:6px;">Web Sitesi</label>
+                    <input type="url" name="website" value="<?php echo escape($venue['website'] ?? ''); ?>" placeholder="https://..." class="vm-input">
                 </div>
             </div>
         </div>
 
-        <!-- Çalışma Saatleri -->
-        <div class="bg-[#2a2a2b]/80 backdrop-blur-[20px] border border-white/10 rounded-xl p-6 space-y-5">
-            <h2 class="text-lg font-bold text-on-surface flex items-center gap-2">
-                <span class="material-symbols-outlined text-primary-container text-[20px]">schedule</span> Çalışma Saatleri
+        <!-- Ã‡alÄ±ÅŸma Saatleri -->
+        <div class="vm-card" style="padding:20px; display:flex; flex-direction:column; gap:14px;">
+            <h2 style="font-size:15px; font-weight:700; color:var(--text-1); display:flex; align-items:center; gap:8px; margin:0;">
+                <span class="material-symbols-outlined" style="color:var(--color-primary); font-size:20px;">schedule</span> Ã‡alÄ±ÅŸma Saatleri
             </h2>
-
             <div>
-                <label class="block text-label-md text-slate-400 mb-1.5">Saatler</label>
-                <input type="text" name="hours" value="<?php echo escape($venue['hours'] ?? ''); ?>" placeholder="Örn: Hafta içi 09:00-22:00, Hafta sonu 10:00-00:00"
-                       class="w-full bg-white/5 border border-white/10 text-on-surface rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-primary-container/40 transition-colors">
-                <p class="text-xs text-slate-500 mt-1">Çalışma saatlerinizi yazın</p>
+                <label style="display:block; font-size:12px; font-weight:700; color:var(--text-2); margin-bottom:6px;">Saatler</label>
+                <input type="text" name="hours" value="<?php echo escape($venue['hours'] ?? ''); ?>"
+                       placeholder="Ã–rn: Hafta iÃ§i 09:00-22:00, Hafta sonu 10:00-00:00" class="vm-input">
+                <p style="font-size:11px; color:var(--text-3); margin:4px 0 0;">Ã‡alÄ±ÅŸma saatlerinizi yazÄ±n</p>
             </div>
 
-            <div class="flex items-center gap-3">
-                <label class="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" name="is_open" value="1" <?php echo ($venue['is_open'] ?? 1) ? 'checked' : ''; ?> class="sr-only peer">
-                    <div class="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-white/10 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
+            <!-- Toggle: Ä°ÅŸletme aÃ§Ä±k mÄ±? -->
+            <div style="display:flex; align-items:center; gap:10px;">
+                <label style="position:relative; display:inline-flex; align-items:center; cursor:pointer;">
+                    <input type="checkbox" name="is_open" value="1" <?php echo ($venue['is_open'] ?? 1) ? 'checked' : ''; ?> id="isOpenChk"
+                           style="position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0);">
+                    <span id="openKnob" style="display:inline-block; width:44px; height:24px; border-radius:999px; background:#e2e8f0; border:1px solid var(--border); position:relative; transition:background .2s;">
+                        <span id="openDot" style="position:absolute; top:3px; left:3px; width:16px; height:16px; border-radius:50%; background:#fff; box-shadow:0 1px 3px rgba(0,0,0,.2); transition:transform .2s;"></span>
+                    </span>
                 </label>
-                <span class="text-sm text-on-surface">İşletme şu an açık</span>
+                <span style="font-size:13px; color:var(--text-1);">Ä°ÅŸletme ÅŸu an aÃ§Ä±k</span>
             </div>
         </div>
 
         <!-- Kaydet -->
-        <button type="submit" class="w-full bg-primary-container text-white py-3.5 rounded-xl text-label-md font-semibold hover:bg-primary-container/90 transition-colors shadow-[0_0_15px_rgba(255,145,0,0.3)] flex items-center justify-center gap-2">
-            <span class="material-symbols-outlined text-[20px]">save</span> Değişiklikleri Kaydet
+        <button type="submit"
+                style="width:100%; background:var(--color-primary); color:#fff; padding:14px; border-radius:12px; font-weight:700; font-size:14px; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; font-family:inherit; box-shadow:0 4px 14px rgba(240,109,31,0.2); transition:opacity .15s;"
+                onmouseover="this.style.opacity='.9'" onmouseout="this.style.opacity='1'">
+            <span class="material-symbols-outlined" style="font-size:20px;">save</span> DeÄŸiÅŸiklikleri Kaydet
         </button>
     </form>
 
 </section>
+
+<script>
+// Cover image hover
+(function() {
+    const wrap = document.getElementById('coverWrap');
+    const label = document.getElementById('coverLabel');
+    if (wrap && label) {
+        wrap.addEventListener('mouseover', () => label.style.opacity = '1');
+        wrap.addEventListener('mouseout', () => label.style.opacity = '0');
+    }
+})();
+
+// Toggle open checkbox
+(function() {
+    const chk = document.getElementById('isOpenChk');
+    const knob = document.getElementById('openKnob');
+    const dot = document.getElementById('openDot');
+    if (!chk) return;
+    function update() {
+        knob.style.background = chk.checked ? 'var(--color-primary)' : '#e2e8f0';
+        dot.style.transform = chk.checked ? 'translateX(20px)' : 'translateX(0)';
+    }
+    chk.addEventListener('change', update);
+    update();
+    knob.addEventListener('click', () => { chk.checked = !chk.checked; update(); });
+})();
+</script>
 
 <?php require_once __DIR__ . '/partials/app_footer.php'; ?>

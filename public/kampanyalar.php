@@ -76,27 +76,27 @@ $activeNav = 'kampanyalar';
 require_once __DIR__ . '/partials/app_header.php';
 ?>
 
-<div style="min-width:0;" class="flex-1 flex flex-col gap-6 max-w-3xl w-full mx-auto lg:mx-0">
+<div style="min-width:0; display:flex; flex-direction:column; gap:20px; max-width:768px; width:100%; padding-bottom:40px;">
 
     <!-- Header -->
-    <div class="flex items-center justify-between flex-wrap gap-3 mb-2">
+    <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:4px;">
         <div>
-            <h1 class="text-3xl font-black tracking-tight flex items-center gap-3" style="color:var(--text-1);">
-                <span class="material-symbols-outlined text-purple-400 text-[32px]">campaign</span>
+            <h1 style="font-size:1.8rem; font-weight:900; letter-spacing:-.02em; display:flex; align-items:center; gap:10px; color:var(--text-1); margin:0 0 4px;">
+                <span class="material-symbols-outlined" style="color:#a855f7; font-size:32px;">campaign</span>
                 Kampanyalar
             </h1>
-            <p class="text-sm mt-1" style="color:var(--text-3);">Mekanların sunduğu fırsatları keşfet</p>
+            <p style="font-size:13px; margin:0; color:var(--text-3);">Mekanların sunduğu fırsatları keşfet</p>
         </div>
     </div>
 
     <!-- ── Aktif Kampanyalar ── -->
     <?php if (!empty($activeCampaigns)): ?>
     <div>
-        <h2 class="text-base font-bold flex items-center gap-2 mb-3" style="color:var(--text-1);">
-            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <h2 style="font-size:14px; font-weight:700; display:flex; align-items:center; gap:8px; margin:0 0 10px; color:var(--text-1);">
+            <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#10b981;"></span>
             Aktif Kampanyalar (<?php echo count($activeCampaigns); ?>)
         </h2>
-        <div class="flex flex-col gap-3">
+        <div style="display:flex; flex-direction:column; gap:10px;">
             <?php foreach ($activeCampaigns as $c):
                 $hasEarned = in_array($c['id'], $earnedCampaignIds);
                 $myRedemption = $earnedCodes[$c['id']] ?? null;
@@ -112,19 +112,20 @@ require_once __DIR__ . '/partials/app_header.php';
             <div class="rounded-xl overflow-hidden transition-colors" style="background:#fff; border:1.5px solid <?php echo $hasEarned ? 'rgba(16,185,129,0.3)' : 'var(--border)'; ?>; box-shadow:0 1px 3px rgba(0,0,0,.08);">
                 <div class="flex items-start gap-4 p-5">
                     <!-- Mekan logo -->
-                    <a href="<?php echo BASE_URL; ?>/venue-detail?id=<?php echo $c['venue_id']; ?>" class="w-14 h-14 rounded-xl overflow-hidden flex items-center justify-center flex-shrink-0 transition-colors" style="background:var(--bg-section); border:1px solid var(--border);">
+                    <a href="<?php echo BASE_URL; ?>/venue-detail?id=<?php echo $c['venue_id']; ?>"
+                       style="width:56px; height:56px; border-radius:12px; overflow:hidden; display:flex; align-items:center; justify-content:center; flex-shrink:0; background:var(--bg-section); border:1px solid var(--border); text-decoration:none;">
                         <?php if (!empty($c['cover_image'])): ?>
-                            <img src="<?php echo BASE_URL . '/uploads/venues/' . escape($c['cover_image']); ?>" class="w-full h-full object-contain p-1" width="56" height="56" loading="lazy">
+                            <img src="<?php echo BASE_URL . '/uploads/venues/' . escape($c['cover_image']); ?>" style="width:100%; height:100%; object-fit:contain; padding:4px; box-sizing:border-box;" width="56" height="56" loading="lazy">
                         <?php elseif (!empty($c['venue_image'])): ?>
-                            <img src="<?php echo uploadUrl('posts', $c['venue_image']); ?>" class="w-full h-full object-contain p-1" width="56" height="56" loading="lazy">
+                            <img src="<?php echo uploadUrl('posts', $c['venue_image']); ?>" style="width:100%; height:100%; object-fit:contain; padding:4px; box-sizing:border-box;" width="56" height="56" loading="lazy">
                         <?php else: ?>
                             <span class="material-symbols-outlined text-[24px]" style="color:var(--text-3);">store</span>
                         <?php endif; ?>
                     </a>
 
                     <!-- Kampanya bilgisi -->
-                    <div class="flex-grow min-w-0">
-                        <div class="flex items-start gap-2 flex-wrap">
+                    <div style="flex:1; min-width:0;">
+                        <div style="display:flex; align-items:flex-start; gap:8px; flex-wrap:wrap; margin-bottom:2px;">
                             <h3 class="font-bold" style="color:var(--text-1);"><?php echo escape($c['title']); ?></h3>
                             <?php if ($hasEarned): ?>
                                 <span class="text-[10px] px-2 py-0.5 rounded-full font-bold" style="background:rgba(22,163,74,0.08); color:#16a34a; border:1px solid rgba(22,163,74,0.25);">✓ Kazanıldı</span>
@@ -137,47 +138,47 @@ require_once __DIR__ . '/partials/app_header.php';
                         <a href="<?php echo BASE_URL; ?>/venue-detail?id=<?php echo $c['venue_id']; ?>" class="text-xs font-semibold hover:underline" style="color:var(--color-primary);"><?php echo escape($c['venue_name']); ?></a>
 
                         <!-- Kural -->
-                        <div class="text-sm mt-1.5" style="color:var(--text-2);">
-                            <span class="font-bold text-purple-400"><?php echo CampaignModel::formatReward($c); ?></span>
+                        <div style="font-size:13px; margin-top:6px; color:var(--text-2);">
+                            <span style="font-weight:700; color:#a855f7;"><?php echo CampaignModel::formatReward($c); ?></span>
                             <span style="color:var(--text-3);"> — </span>
                             <?php echo escape(CampaignModel::formatTrigger($c)); ?>
                         </div>
 
                         <?php if ($c['description']): ?>
-                            <p class="text-xs mt-1" style="color:var(--text-3);"><?php echo escape($c['description']); ?></p>
+                            <p style="font-size:12px; margin-top:4px; color:var(--text-3);"><?php echo escape($c['description']); ?></p>
                         <?php endif; ?>
 
                         <!-- İlerleme çubuğu -->
                         <?php if (!$hasEarned && $c['trigger_type'] !== 'first_checkin'): ?>
-                        <div class="mt-2.5">
-                            <div class="flex justify-between text-xs mb-1" style="color:var(--text-3);">
+                        <div style="margin-top:10px;">
+                            <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:4px; color:var(--text-3);">
                                 <span><?php echo $userCheckins; ?> / <?php echo $target; ?> check-in</span>
                                 <span><?php echo $progress; ?>%</span>
                             </div>
-                            <div class="h-1.5 rounded-full overflow-hidden" style="background:var(--bg-section);">
-                                <div class="h-full rounded-full transition-all duration-700" style="width:<?php echo $progress; ?>%; background:var(--color-primary);"></div>
+                            <div style="height:6px; border-radius:999px; overflow:hidden; background:var(--bg-section);">
+                                <div style="height:100%; border-radius:999px; transition:width .7s; width:<?php echo $progress; ?>%; background:var(--color-primary);"></div>
                             </div>
                         </div>
                         <?php endif; ?>
 
                         <!-- Kazanılmış kod -->
                         <?php if ($hasEarned && $myRedemption): ?>
-                        <div class="mt-2.5 flex items-center gap-2 rounded-lg px-3 py-2 flex-wrap" style="background:rgba(22,163,74,0.08); border:1px solid rgba(22,163,74,0.2);">
-                            <span class="material-symbols-outlined text-[16px]" style="color:#16a34a;">confirmation_number</span>
-                            <span class="text-xs" style="color:var(--text-2);">Kodun:</span>
-                            <code class="font-mono font-bold tracking-widest" style="color:#16a34a;"><?php echo escape($myRedemption['code'] ?? '——'); ?></code>
-                            <span class="text-xs" style="color:var(--text-3);">— kasaya göster</span>
+                        <div style="margin-top:10px; display:flex; align-items:center; gap:8px; border-radius:8px; padding:8px 12px; flex-wrap:wrap; background:rgba(22,163,74,0.08); border:1px solid rgba(22,163,74,0.2);">
+                            <span class="material-symbols-outlined" style="font-size:16px; color:#16a34a;">confirmation_number</span>
+                            <span style="font-size:12px; color:var(--text-2);">Kodun:</span>
+                            <code style="font-family:monospace; font-weight:700; letter-spacing:.1em; color:#16a34a;"><?php echo escape($myRedemption['code'] ?? '——'); ?></code>
+                            <span style="font-size:12px; color:var(--text-3);">— kasaya göster</span>
                         </div>
                         <?php endif; ?>
 
                         <!-- Meta -->
-                        <div class="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-xs" style="color:var(--text-3);">
-                            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">redeem</span> <?php echo (int)$c['redemption_count']; ?> kazanım</span>
+                        <div style="display:flex; flex-wrap:wrap; column-gap:16px; row-gap:4px; margin-top:8px; font-size:11px; color:var(--text-3);">
+                            <span style="display:flex; align-items:center; gap:4px;"><span class="material-symbols-outlined" style="font-size:14px;">redeem</span> <?php echo (int)$c['redemption_count']; ?> kazanım</span>
                             <?php if ($c['max_redemptions']): ?>
                                 <span>/ <?php echo $c['max_redemptions']; ?> max</span>
                             <?php endif; ?>
                             <?php if ($c['ends_at']): ?>
-                                <span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">schedule</span> <?php echo formatDate($c['ends_at']); ?>'e kadar</span>
+                                <span style="display:flex; align-items:center; gap:4px;"><span class="material-symbols-outlined" style="font-size:14px;">schedule</span> <?php echo formatDate($c['ends_at']); ?>'e kadar</span>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -197,11 +198,11 @@ require_once __DIR__ . '/partials/app_header.php';
     <!-- ── Sona Eren Kampanyalar ── -->
     <?php if (!empty($endedCampaigns)): ?>
     <div>
-        <h2 class="text-base font-bold flex items-center gap-2 mb-3" style="color:var(--text-2);">
-            <span class="material-symbols-outlined text-[18px]">history</span>
+        <h2 style="font-size:14px; font-weight:700; display:flex; align-items:center; gap:8px; margin:0 0 10px; color:var(--text-2);">
+            <span class="material-symbols-outlined" style="font-size:18px;">history</span>
             Sona Eren Kampanyalar
         </h2>
-        <div class="flex flex-col gap-2">
+        <div style="display:flex; flex-direction:column; gap:8px;">
             <?php foreach ($endedCampaigns as $c):
                 $hasEarned = in_array($c['id'], $earnedCampaignIds);
                 $myRedemption = $earnedCodes[$c['id']] ?? null;
@@ -215,8 +216,8 @@ require_once __DIR__ . '/partials/app_header.php';
                 </div>
 
                 <!-- Bilgi -->
-                <div class="flex-grow min-w-0">
-                    <div class="flex items-center gap-2">
+                <div style="flex:1; min-width:0;">
+                    <div style="display:flex; align-items:center; gap:8px;">
                         <h3 class="font-bold text-sm truncate" style="color:var(--text-2);"><?php echo escape($c['title']); ?></h3>
                         <span class="text-[10px] px-2 py-0.5 rounded-full font-bold" style="<?php echo $hasEarned ? 'background:rgba(22,163,74,0.08); color:#16a34a;' : 'background:var(--bg-section); color:var(--text-3);'; ?>">
                             <?php echo $hasEarned ? '✓ Kazanıldı' : 'Sona Erdi'; ?>
