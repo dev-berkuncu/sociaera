@@ -2,6 +2,11 @@
 /**
  * Sociaera — Debug Photos
  */
+// Force display errors at the very start
+ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
+error_reporting(E_ALL);
+
 require_once __DIR__ . '/../app/Config/env.php';
 loadEnv(dirname(__DIR__) . '/.env');
 require_once __DIR__ . '/../app/Config/app.php';
@@ -19,13 +24,21 @@ echo "HTTP_HOST: " . ($_SERVER['HTTP_HOST'] ?? 'N/A') . "\n";
 echo "DOCUMENT_ROOT: " . ($_SERVER['DOCUMENT_ROOT'] ?? 'N/A') . "\n";
 
 echo "\n=== Directory Contents (ROOT/uploads) ===\n";
-listDir(ROOT_PATH . '/uploads');
-listDir(ROOT_PATH . '/uploads/posts');
-listDir(ROOT_PATH . '/uploads/avatars');
-listDir(ROOT_PATH . '/uploads/banners');
+try {
+    listDir(ROOT_PATH . '/uploads');
+    listDir(ROOT_PATH . '/uploads/posts');
+    listDir(ROOT_PATH . '/uploads/avatars');
+    listDir(ROOT_PATH . '/uploads/banners');
+} catch (Throwable $t) {
+    echo "Error listing ROOT/uploads: " . $t->getMessage() . "\n" . $t->getTraceAsString() . "\n";
+}
 
 echo "\n=== Directory Contents (PUBLIC/uploads) ===\n";
-listDir(PUBLIC_PATH . '/uploads');
+try {
+    listDir(PUBLIC_PATH . '/uploads');
+} catch (Throwable $t) {
+    echo "Error listing PUBLIC/uploads: " . $t->getMessage() . "\n";
+}
 
 echo "\n=== Non-HTTP/HTTPS Images in Database ===\n";
 try {
@@ -38,8 +51,8 @@ try {
     foreach ($checkins as $c) {
         $img = $c['image'];
         $resolvedUrl = uploadUrl('posts', $img);
-        $existsInRoot = $img ? file_exists(ROOT_PATH . '/uploads/posts/' . $img) : false;
-        $existsInPublic = $img ? file_exists(PUBLIC_PATH . '/uploads/posts/' . $img) : false;
+        $existsInRoot = $img ? @file_exists(ROOT_PATH . '/uploads/posts/' . $img) : false;
+        $existsInPublic = $img ? @file_exists(PUBLIC_PATH . '/uploads/posts/' . $img) : false;
         
         echo "ID: {$c['id']} | Note: " . substr($c['note'] ?? '', 0, 30) . "\n";
         echo "  DB Image: " . $img . "\n";
@@ -47,27 +60,29 @@ try {
         echo "  Exists in ROOT/uploads: " . ($existsInRoot ? "YES" : "NO") . "\n";
         echo "  Exists in PUBLIC/uploads: " . ($existsInPublic ? "YES" : "NO") . "\n";
     }
-} catch (Exception $e) {
-    echo "DB Error: " . $e->getMessage() . "\n";
+} catch (Throwable $t) {
+    echo "DB Error: " . $t->getMessage() . "\n";
 }
 
 function listDir($dir) {
-    if (!is_dir($dir)) {
+    if (!@is_dir($dir)) {
         echo "Directory does not exist: $dir\n";
         return;
     }
     echo "Listing $dir:\n";
-    $files = scandir($dir);
+    $files = @scandir($dir);
+    if ($files === false) {
+        echo "  Failed to scan directory.\n";
+        return;
+    }
     foreach ($files as $file) {
         if ($file === '.' || $file === '..') continue;
         $path = $dir . '/' . $file;
-        if (is_dir($path)) {
+        if (@is_dir($path)) {
             echo "  [DIR] $file\n";
         } else {
-            $size = filesize($path);
+            $size = @filesize($path);
             echo "  [FILE] $file ($size bytes)\n";
         }
     }
 }
-
-
