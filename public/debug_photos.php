@@ -20,48 +20,34 @@ echo "BASE_URL: " . BASE_URL . "\n";
 echo "ROOT_PATH: " . ROOT_PATH . "\n";
 echo "PUBLIC_PATH: " . PUBLIC_PATH . "\n";
 echo "UPLOAD_PATH: " . UPLOAD_PATH . "\n";
-echo "HTTP_HOST: " . ($_SERVER['HTTP_HOST'] ?? 'N/A') . "\n";
-echo "DOCUMENT_ROOT: " . ($_SERVER['DOCUMENT_ROOT'] ?? 'N/A') . "\n";
 
-echo "\n=== Directory Contents (ROOT/uploads) ===\n";
-try {
-    listDir(ROOT_PATH . '/uploads');
-    listDir(ROOT_PATH . '/uploads/posts');
-    listDir(ROOT_PATH . '/uploads/avatars');
-    listDir(ROOT_PATH . '/uploads/banners');
-} catch (Throwable $t) {
-    echo "Error listing ROOT/uploads: " . $t->getMessage() . "\n" . $t->getTraceAsString() . "\n";
-}
-
-echo "\n=== Directory Contents (PUBLIC/uploads) ===\n";
-try {
-    listDir(PUBLIC_PATH . '/uploads');
-} catch (Throwable $t) {
-    echo "Error listing PUBLIC/uploads: " . $t->getMessage() . "\n";
-}
-
-echo "\n=== Non-HTTP/HTTPS Images in Database ===\n";
+echo "\n=== Database Check-ins with Images ===\n";
 try {
     $db = Database::getConnection();
-    $stmt = $db->query("SELECT id, user_id, venue_id, note, image, created_at FROM checkins WHERE image IS NOT NULL AND image != '' AND image NOT LIKE 'http%' ORDER BY id DESC LIMIT 50");
-    $checkins = $stmt->fetchAll(PDO::class === 'PDO' ? PDO::FETCH_ASSOC : 2);
+    $stmt = $db->query("SELECT id, user_id, venue_id, note, image, created_at FROM checkins WHERE image IS NOT NULL AND image != '' ORDER BY id DESC LIMIT 50");
+    $checkins = $stmt->fetchAll(PDO::FETCH_ASSOC);
     if (empty($checkins)) {
-        echo "No non-HTTP check-in images found in database.\n";
+        echo "No check-ins with images found in database.\n";
     }
     foreach ($checkins as $c) {
         $img = $c['image'];
         $resolvedUrl = uploadUrl('posts', $img);
-        $existsInRoot = $img ? @file_exists(ROOT_PATH . '/uploads/posts/' . $img) : false;
-        $existsInPublic = $img ? @file_exists(PUBLIC_PATH . '/uploads/posts/' . $img) : false;
+        $existsInRoot = $img && !str_starts_with($img, 'http') ? @file_exists(ROOT_PATH . '/uploads/posts/' . $img) : false;
         
-        echo "ID: {$c['id']} | Note: " . substr($c['note'] ?? '', 0, 30) . "\n";
+        echo "ID: {$c['id']} | Note: " . substr(trim($c['note'] ?? ''), 0, 40) . "\n";
         echo "  DB Image: " . $img . "\n";
         echo "  Resolved URL: " . $resolvedUrl . "\n";
-        echo "  Exists in ROOT/uploads: " . ($existsInRoot ? "YES" : "NO") . "\n";
-        echo "  Exists in PUBLIC/uploads: " . ($existsInPublic ? "YES" : "NO") . "\n";
+        echo "  Exists in ROOT/uploads/posts: " . ($existsInRoot ? "YES" : "NO") . "\n";
     }
 } catch (Throwable $t) {
-    echo "DB Error: " . $t->getMessage() . "\n";
+    echo "DB Error: " . $t->getMessage() . "\n" . $t->getTraceAsString() . "\n";
+}
+
+echo "\n=== Directory Contents (ROOT/uploads) ===\n";
+try {
+    listDir(ROOT_PATH . '/uploads');
+} catch (Throwable $t) {
+    echo "Error: " . $t->getMessage() . "\n";
 }
 
 function listDir($dir) {
