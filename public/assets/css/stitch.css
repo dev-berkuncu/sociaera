@@ -441,9 +441,14 @@ body {
 
 .checkin-card-photo {
   width: 100%;
+  max-width: 100%;
   aspect-ratio: 16/9;
   object-fit: cover;
+  object-position: center;
   display: block;
+  min-height: 160px;
+  max-height: 420px;
+  background: var(--bg-section);
 }
 
 .checkin-card-note {

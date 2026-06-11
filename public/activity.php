@@ -210,7 +210,8 @@ function feedDayLabel(string $day): string {
             <?php if (!empty($post['image'])): ?>
             <div style="padding:0 16px 10px;">
                 <img src="<?php echo uploadUrl('posts', $post['image']); ?>"
-                     style="width:100%;max-height:320px;object-fit:cover;border-radius:12px;display:block;border:1px solid #EEECE8;" loading="lazy">
+                     style="width:100%;max-width:100%;aspect-ratio:16/9;object-fit:cover;object-position:center;border-radius:12px;display:block;border:1px solid #EEECE8;background:var(--bg-section);min-height:160px;max-height:380px;" loading="lazy"
+                     onerror="this.closest('div').style.display='none'">
             </div>
             <?php endif; ?>
 

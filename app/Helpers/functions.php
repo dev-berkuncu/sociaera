@@ -140,10 +140,15 @@ function asset(string $path): string
 
 /**
  * Upload URL üret
+ * Eğer filename zaten tam URL ise (http/https) direkt döndür.
+ * Demo görselleri ve harici CDN URL'leri için.
  */
 function uploadUrl(string $folder, ?string $filename): ?string
 {
     if (!$filename) return null;
+    if (str_starts_with($filename, 'http://') || str_starts_with($filename, 'https://')) {
+        return $filename;
+    }
     return BASE_URL . '/uploads/' . $folder . '/' . $filename;
 }
 
