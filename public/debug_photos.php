@@ -24,11 +24,14 @@ listDirRecursive(ROOT_PATH . '/uploads');
 echo "\n=== Directory Contents (PUBLIC/uploads) ===\n";
 listDirRecursive(PUBLIC_PATH . '/uploads');
 
-echo "\n=== Latest Check-ins ===\n";
+echo "\n=== Non-HTTP/HTTPS Images in Database ===\n";
 try {
     $db = Database::getConnection();
-    $stmt = $db->query("SELECT id, user_id, venue_id, note, image, created_at FROM checkins ORDER BY id DESC LIMIT 20");
+    $stmt = $db->query("SELECT id, user_id, venue_id, note, image, created_at FROM checkins WHERE image IS NOT NULL AND image != '' AND image NOT LIKE 'http%' ORDER BY id DESC LIMIT 50");
     $checkins = $stmt->fetchAll(PDO::class === 'PDO' ? PDO::FETCH_ASSOC : 2);
+    if (empty($checkins)) {
+        echo "No non-HTTP check-in images found in database.\n";
+    }
     foreach ($checkins as $c) {
         $img = $c['image'];
         $resolvedUrl = uploadUrl('posts', $img);
@@ -36,8 +39,8 @@ try {
         $existsInPublic = $img ? file_exists(PUBLIC_PATH . '/uploads/posts/' . $img) : false;
         
         echo "ID: {$c['id']} | Note: " . substr($c['note'] ?? '', 0, 30) . "\n";
-        echo "  DB Image: " . ($img ? $img : "[NULL/EMPTY]") . "\n";
-        echo "  Resolved URL: " . ($resolvedUrl ? $resolvedUrl : "[NULL]") . "\n";
+        echo "  DB Image: " . $img . "\n";
+        echo "  Resolved URL: " . $resolvedUrl . "\n";
         echo "  Exists in ROOT/uploads: " . ($existsInRoot ? "YES" : "NO") . "\n";
         echo "  Exists in PUBLIC/uploads: " . ($existsInPublic ? "YES" : "NO") . "\n";
     }
@@ -63,3 +66,4 @@ function listDirRecursive($dir, $prefix = '') {
         }
     }
 }
+
