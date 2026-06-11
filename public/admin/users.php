@@ -42,7 +42,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && Auth::canWrite()) {
 
 $search = trim($_GET['q'] ?? '');
 $page = max(1, (int)($_GET['page'] ?? 1));
-$result = $userModel->getAll($page, 30, $search);
+$filter = trim($_GET['filter'] ?? 'all');
+$result = $userModel->getAll($page, 30, $search, $filter);
 $pendingVenues = (new VenueModel())->getPendingCount();
 
 $pageTitle = 'Kullanıcı Yönetimi';
@@ -55,9 +56,18 @@ require_once __DIR__ . '/_header.php';
         <span class="material-symbols-outlined text-primary-container">people</span> Kullanıcılar (<?php echo $result['total']; ?>)
     </h1>
     <form method="GET" class="relative">
+        <?php if ($filter !== 'all'): ?>
+            <input type="hidden" name="filter" value="<?php echo escape($filter); ?>">
+        <?php endif; ?>
         <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">search</span>
         <input type="text" name="q" placeholder="Kullanıcı ara..." value="<?php echo escape($search); ?>" class="bg-white/5 border border-white/10 text-on-surface rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-primary-container/40 w-64 transition-colors">
     </form>
+</div>
+
+<div class="flex gap-2 mb-4 flex-wrap">
+    <a href="?filter=all&q=<?php echo escape($search); ?>" class="px-4 py-2 text-xs font-bold rounded-lg border transition-all duration-150 <?php echo $filter === 'all' ? 'bg-primary text-white border-primary shadow-sm shadow-primary/20' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-950'; ?>">Tümü</a>
+    <a href="?filter=users&q=<?php echo escape($search); ?>" class="px-4 py-2 text-xs font-bold rounded-lg border transition-all duration-150 <?php echo $filter === 'users' ? 'bg-primary text-white border-primary shadow-sm shadow-primary/20' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-950'; ?>">Normal Üyeler</a>
+    <a href="?filter=admins&q=<?php echo escape($search); ?>" class="px-4 py-2 text-xs font-bold rounded-lg border transition-all duration-150 <?php echo $filter === 'admins' ? 'bg-primary text-white border-primary shadow-sm shadow-primary/20' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-950'; ?>">Yetkililer</a>
 </div>
 
 <div class="bg-[#1E293B]/80 border border-white/10 rounded-xl overflow-hidden">
@@ -129,8 +139,8 @@ require_once __DIR__ . '/_header.php';
 <?php if ($result['pages'] > 1): ?>
 <div class="flex justify-center gap-2 mt-6">
     <?php for ($p = 1; $p <= $result['pages']; $p++):
-        $pgCls = $p === $page ? 'bg-primary-container text-white' : 'bg-white/5 text-slate-400 hover:bg-white/10'; ?>
-    <a href="?q=<?php echo escape($search); ?>&page=<?php echo $p; ?>" class="<?php echo $pgCls; ?> px-3 py-1.5 rounded-lg text-label-md"><?php echo $p; ?></a>
+        $pgCls = $p === $page ? 'bg-primary text-white' : 'bg-white/5 text-slate-400 hover:bg-white/10'; ?>
+    <a href="?q=<?php echo escape($search); ?>&filter=<?php echo escape($filter); ?>&page=<?php echo $p; ?>" class="<?php echo $pgCls; ?> px-3 py-1.5 rounded-lg text-label-md"><?php echo $p; ?></a>
     <?php endfor; ?>
 </div>
 <?php endif; ?>

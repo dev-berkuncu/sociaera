@@ -42,6 +42,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && Auth::canWrite()) {
             Auth::setFlash('success', 'Ban kaldırıldı.');
             break;
         case 'set_role':
+            if (!Auth::hasRole('super_admin')) {
+                Auth::setFlash('error', 'Bu işlem için Super Admin yetkisine sahip olmalısınız.');
+                header('Location: ' . BASE_URL . '/admin/user-detail?id=' . $userId); exit;
+            }
             $role = $_POST['role'] ?? null;
             $valid = ['super_admin','moderator','finance_admin','business_admin','readonly_admin',''];
             if (in_array($role, $valid)) {
@@ -134,15 +138,23 @@ require_once __DIR__ . '/_header.php';
     </div>
     <div class="bg-[#1E293B]/80 border border-white/10 rounded-xl p-5">
         <h4 class="text-sm font-bold text-on-surface mb-3"><span class="material-symbols-outlined text-[16px] text-purple-400">shield</span> Rol</h4>
+        <?php if (Auth::hasRole('super_admin')): ?>
         <form method="POST" class="flex gap-2"><input type="hidden" name="csrf_token" value="<?php echo csrfToken();?>"><input type="hidden" name="action" value="set_role">
             <select name="role" class="flex-grow bg-white/5 border border-white/10 text-on-surface rounded-lg px-3 py-2 text-sm">
                 <option value="" class="bg-background" <?php echo empty($user['admin_role'])?'selected':'';?>>Kullanıcı</option>
                 <option value="super_admin" class="bg-background" <?php echo ($user['admin_role']??'')==='super_admin'?'selected':'';?>>Super Admin</option>
                 <option value="moderator" class="bg-background" <?php echo ($user['admin_role']??'')==='moderator'?'selected':'';?>>Moderatör</option>
                 <option value="finance_admin" class="bg-background" <?php echo ($user['admin_role']??'')==='finance_admin'?'selected':'';?>>Finans</option>
+                <option value="business_admin" class="bg-background" <?php echo ($user['admin_role']??'')==='business_admin'?'selected':'';?>>İşletme</option>
                 <option value="readonly_admin" class="bg-background" <?php echo ($user['admin_role']??'')==='readonly_admin'?'selected':'';?>>Read-only</option>
             </select>
             <button class="bg-purple-500/10 text-purple-400 border border-purple-500/20 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-purple-500/20">Kaydet</button></form>
+        <?php else: ?>
+        <div class="text-sm text-slate-400">
+            Rol: <span class="font-semibold text-on-surface"><?php echo empty($user['admin_role']) ? 'Kullanıcı' : escape(ucfirst(str_replace('_',' ',$user['admin_role']))); ?></span>
+            <p class="text-xs text-slate-500 mt-2">Rol değiştirmek için Super Admin olmalısınız.</p>
+        </div>
+        <?php endif; ?>
     </div>
     <div class="bg-[#1E293B]/80 border border-white/10 rounded-xl p-5">
         <h4 class="text-sm font-bold text-on-surface mb-3"><span class="material-symbols-outlined text-[16px] text-amber-400">workspace_premium</span> Premium</h4>

@@ -470,11 +470,16 @@ class UserModel
 
     // ── Admin ─────────────────────────────────────────────
 
-    public function getAll(int $page = 1, int $perPage = 20, string $search = ''): array
+    public function getAll(int $page = 1, int $perPage = 20, string $search = '', string $filter = 'all'): array
     {
         $offset = ($page - 1) * $perPage;
 
-        $where = "WHERE username != 'SYSTEM' AND (is_admin = 0 OR is_admin IS NULL)";
+        $where = "WHERE username != 'SYSTEM'";
+        if ($filter === 'users') {
+            $where .= " AND (is_admin = 0 OR is_admin IS NULL)";
+        } elseif ($filter === 'admins') {
+            $where .= " AND (is_admin = 1 OR admin_role IS NOT NULL)";
+        }
         $params = [];
 
         if ($search) {
