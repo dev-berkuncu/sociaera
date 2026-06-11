@@ -66,6 +66,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && Auth::canWrite()) {
             Logger::adminAudit('premium_remove','user',$userId);
             Auth::setFlash('success','Premium kaldırıldı.');
             break;
+        case 'change_password':
+            if (!Auth::hasRole('super_admin')) {
+                Auth::setFlash('error', 'Bu işlem için Super Admin yetkisine sahip olmalısınız.');
+                header('Location: ' . BASE_URL . '/admin/user-detail?id=' . $userId); exit;
+            }
+            $newPassword = $_POST['new_password'] ?? '';
+            if (strlen($newPassword) < 6) {
+                Auth::setFlash('error', 'Şifre en az 6 karakter olmalıdır.');
+            } else {
+                $hash = password_hash($newPassword, PASSWORD_DEFAULT);
+                $db->prepare("UPDATE users SET password_hash = ? WHERE id = ?")->execute([$hash, $userId]);
+                Logger::adminAudit('change_password', 'user', $userId, 'Şifre değiştirildi');
+                Auth::setFlash('success', 'Kullanıcının şifresi başarıyla değiştirildi.');
+            }
+            break;
     }
     header('Location: ' . BASE_URL . '/admin/user-detail?id=' . $userId); exit;
 }
@@ -124,7 +139,7 @@ require_once __DIR__ . '/_header.php';
 </div>
 
 <?php if(Auth::canWrite()):?>
-<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
     <div class="bg-[#1E293B]/80 border border-white/10 rounded-xl p-5">
         <h4 class="text-sm font-bold text-on-surface mb-3"><span class="material-symbols-outlined text-[16px] text-red-400">block</span> Ban</h4>
         <?php if($isBanned):?>
@@ -167,6 +182,19 @@ require_once __DIR__ . '/_header.php';
                 <button class="bg-red-500/10 text-red-400 border border-red-500/20 px-3 py-2 rounded-lg text-sm font-semibold hover:bg-red-500/20">Kaldır</button></form>
             <?php endif;?>
         </div>
+    </div>
+    <div class="bg-[#1E293B]/80 border border-white/10 rounded-xl p-5">
+        <h4 class="text-sm font-bold text-on-surface mb-3"><span class="material-symbols-outlined text-[16px] text-blue-400">key</span> Şifre Değiştir</h4>
+        <?php if (Auth::hasRole('super_admin')): ?>
+        <form method="POST" class="flex gap-2"><input type="hidden" name="csrf_token" value="<?php echo csrfToken();?>"><input type="hidden" name="action" value="change_password">
+            <input type="password" name="new_password" placeholder="Yeni şifre" required class="flex-grow bg-white/5 border border-white/10 text-on-surface rounded-lg px-3 py-2 text-sm w-full">
+            <button class="bg-blue-500/10 text-blue-400 border border-blue-500/20 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-500/20">Değiştir</button></form>
+        <?php else: ?>
+        <div class="text-sm text-slate-400">
+            Şifre Değiştir: <span class="text-slate-500">-</span>
+            <p class="text-xs text-slate-500 mt-2">Şifre değiştirmek için Super Admin olmalısınız.</p>
+        </div>
+        <?php endif; ?>
     </div>
 </div>
 <?php endif;?>
