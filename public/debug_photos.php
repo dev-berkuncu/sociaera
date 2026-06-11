@@ -19,10 +19,13 @@ echo "HTTP_HOST: " . ($_SERVER['HTTP_HOST'] ?? 'N/A') . "\n";
 echo "DOCUMENT_ROOT: " . ($_SERVER['DOCUMENT_ROOT'] ?? 'N/A') . "\n";
 
 echo "\n=== Directory Contents (ROOT/uploads) ===\n";
-listDirRecursive(ROOT_PATH . '/uploads');
+listDir(ROOT_PATH . '/uploads');
+listDir(ROOT_PATH . '/uploads/posts');
+listDir(ROOT_PATH . '/uploads/avatars');
+listDir(ROOT_PATH . '/uploads/banners');
 
 echo "\n=== Directory Contents (PUBLIC/uploads) ===\n";
-listDirRecursive(PUBLIC_PATH . '/uploads');
+listDir(PUBLIC_PATH . '/uploads');
 
 echo "\n=== Non-HTTP/HTTPS Images in Database ===\n";
 try {
@@ -48,22 +51,23 @@ try {
     echo "DB Error: " . $e->getMessage() . "\n";
 }
 
-function listDirRecursive($dir, $prefix = '') {
+function listDir($dir) {
     if (!is_dir($dir)) {
         echo "Directory does not exist: $dir\n";
         return;
     }
+    echo "Listing $dir:\n";
     $files = scandir($dir);
     foreach ($files as $file) {
         if ($file === '.' || $file === '..') continue;
         $path = $dir . '/' . $file;
         if (is_dir($path)) {
-            echo "{$prefix}[DIR] $file\n";
-            listDirRecursive($path, $prefix . '  ');
+            echo "  [DIR] $file\n";
         } else {
             $size = filesize($path);
-            echo "{$prefix}[FILE] $file ($size bytes)\n";
+            echo "  [FILE] $file ($size bytes)\n";
         }
     }
 }
+
 
