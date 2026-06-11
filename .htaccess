@@ -1,3 +1,10 @@
-# Root .htaccess — Tüm istekleri public/ klasörüne yönlendir
+# Root .htaccess — Gerçek dosya/klasör varsa direkt sun, yoksa public/'a yönlendir
 RewriteEngine On
+
+# Uploads, storage gibi root-level gerçek klasörler/dosyalar bypass edilsin
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Diğer her istek public/'a gider
 RewriteRule ^(.*)$ public/$1 [L]
