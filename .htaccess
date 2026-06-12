@@ -1,6 +1,10 @@
 # Root .htaccess — Gerçek dosya/klasör varsa direkt sun, yoksa public/'a yönlendir
 RewriteEngine On
 
+# HTTPS yönlendirme (production) — burada yapılmalı, döngü oluşmaması için
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
 # Uploads, storage gibi root-level gerçek klasörler/dosyalar bypass edilsin
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
