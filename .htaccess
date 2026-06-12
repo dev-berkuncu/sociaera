@@ -5,10 +5,10 @@ RewriteEngine On
 RewriteCond %{HTTPS} off
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
-# Uploads, storage gibi root-level gerçek klasörler/dosyalar bypass edilsin
-RewriteCond %{REQUEST_FILENAME} -f [OR]
-RewriteCond %{REQUEST_FILENAME} -d
+# Sadece gerçek DOSYALAR (uploads, vb.) bypass edilsin
+# Klasörler bypass edilmemeli — kök dizin de dahil, aksi halde / 403 verir
+RewriteCond %{REQUEST_FILENAME} -f
 RewriteRule ^ - [L]
 
-# Diğer her istek public/'a gider
+# Her şey public/'a yönlendir
 RewriteRule ^(.*)$ public/$1 [L]
