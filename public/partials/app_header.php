@@ -362,31 +362,49 @@ nav.swarm-topnav{
     <!-- Ana Menü Linkleri (desktop) -->
     <?php
     $navLinks = [
-        'dashboard'   => ['icon'=>'home',            'label'=>'Ana Sayfa',  'url'=>'/dashboard'],
-        'activity'    => ['icon'=>'explore',          'label'=>'Keşfet',     'url'=>'/activity'],
-        'venues'      => ['icon'=>'place',            'label'=>'Mekanlar',   'url'=>'/venues'],
-        'leaderboard' => ['icon'=>'leaderboard',      'label'=>'Sıralama',   'url'=>'/leaderboard'],
-        'members'     => ['icon'=>'group',            'label'=>'Üyeler',     'url'=>'/members'],
-        'missions'    => ['icon'=>'military_tech',    'label'=>'Görevler',   'url'=>'/missions'],
-        'kampanyalar' => ['icon'=>'campaign',         'label'=>'Kampanyalar','url'=>'/kampanyalar'],
-        'wallet'      => ['icon'=>'account_balance_wallet', 'label'=>'Cüzdan', 'url'=>'/wallet'],
+        'dashboard'   => ['icon'=>'home',                    'label'=>'Ana Sayfa',     'url'=>'/dashboard'],
+        'activity'    => ['icon'=>'explore',                  'label'=>'Keşfet',        'url'=>'/activity'],
+        'venues'      => ['icon'=>'place',                    'label'=>'Mekanlar',      'url'=>'/venues'],
+        'leaderboard' => ['icon'=>'leaderboard',              'label'=>'Sıralama',      'url'=>'/leaderboard'],
+        'members'     => ['icon'=>'group',                    'label'=>'Üyeler',        'url'=>'/members'],
+        'missions'    => ['icon'=>'military_tech',            'label'=>'Görevler',      'url'=>'/missions'],
+        'kampanyalar' => ['icon'=>'campaign',                 'label'=>'Kampanyalar',   'url'=>'/kampanyalar'],
+        'wallet'      => ['icon'=>'account_balance_wallet',   'label'=>'Cüzdan',        'url'=>'/wallet'],
+        'premium'     => ['icon'=>'workspace_premium',        'label'=>'Premium',       'url'=>'/premium'],
     ];
     $currentNav = $activeNav ?? '';
     foreach ($navLinks as $key => $nl):
         $isActive = ($currentNav === $key);
+        $isPremiumLink = ($key === 'premium');
     ?>
     <a href="<?php echo BASE_URL . $nl['url']; ?>"
        style="display:flex;align-items:center;gap:6px;padding:0 11px;height:58px;
               font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap;
               border-bottom:3px solid <?php echo $isActive ? '#F06D1F' : 'transparent'; ?>;
-              color:<?php echo $isActive ? '#F06D1F' : '#5C5C5C'; ?>;
+              color:<?php echo $isPremiumLink ? '#F59E0B' : ($isActive ? '#F06D1F' : '#5C5C5C'); ?>;
               transition:color .15s,border-color .15s;"
-       onmouseover="if(!this.style.borderBottomColor.includes('F06D1F')){this.style.color='#F06D1F';}"
-       onmouseout="<?php echo $isActive ? '' : "this.style.color='#5C5C5C';"; ?>">
-        <span class="material-symbols-outlined" style="font-size:18px;"><?php echo $nl['icon']; ?></span>
+       onmouseover="if(!this.style.borderBottomColor.includes('F06D1F')){this.style.color='<?php echo $isPremiumLink ? '#D97706' : '#F06D1F'; ?>';}"
+       onmouseout="<?php echo $isActive ? '' : "this.style.color='" . ($isPremiumLink ? '#F59E0B' : '#5C5C5C') . "';"; ?>">
+        <span class="material-symbols-outlined" style="font-size:18px;<?php echo $isPremiumLink ? "font-variation-settings:'FILL' 1;" : ''; ?>"><?php echo $nl['icon']; ?></span>
         <span class="nav-label" style="display:none;"><?php echo $nl['label']; ?></span>
     </a>
     <?php endforeach; ?>
+
+    <?php /* ── Yakında: Gizli Müşteri ── */ ?>
+    <span title="Yakında geliyor!"
+          style="display:flex;align-items:center;gap:6px;padding:0 11px;height:58px;
+                 font-size:13px;font-weight:700;white-space:nowrap;cursor:not-allowed;
+                 color:#C0C0C0;border-bottom:3px solid transparent;position:relative;"
+          onmouseover="this.querySelector('.nav-coming-soon').style.display='block'"
+          onmouseout="this.querySelector('.nav-coming-soon').style.display='none'">
+        <span class="material-symbols-outlined" style="font-size:18px;">person_search</span>
+        <span class="nav-label" style="display:none;">Gizli Müşteri</span>
+        <span class="nav-coming-soon" style="display:none;position:absolute;top:46px;left:50%;transform:translateX(-50%);
+               background:#1A1A1A;color:#fff;font-size:11px;font-weight:600;padding:5px 10px;
+               border-radius:8px;white-space:nowrap;z-index:999;pointer-events:none;
+               box-shadow:0 4px 12px rgba(0,0,0,.2);">🚧 Yakında geliyor!</span>
+    </span>
+
     <style>
     @media(min-width:1100px){ nav.swarm-topnav .nav-label, #swarm-topnav .nav-label { display:inline!important; } }
     </style>
