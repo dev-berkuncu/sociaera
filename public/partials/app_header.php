@@ -499,63 +499,68 @@ nav.swarm-topnav{
     } catch (Exception $e) {}
     ?>
     <aside class="swarm-left-sidebar">
-        <!-- Sponsor ve Reklam Grid Kartı -->
-        <div class="right-panel-card" style="padding:14px; display:flex; flex-direction:column; gap:12px;">
-            <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1.5px solid #F2F1EE; padding-bottom:8px; margin-bottom:4px;">
-                <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-3); display:flex; align-items:center; gap:4px;">
-                    <span class="material-symbols-outlined" style="font-size:16px; color:var(--color-primary);">campaign</span>
-                    Sponsorlar
+        <!-- ═══ Sponsor Widget — Deep Blue ═══ -->
+        <div class="sidebar-widget sidebar-widget--sponsors">
+            <div class="sidebar-widget-decor"></div>
+            <div class="sidebar-widget-decor-2"></div>
+            <div class="sidebar-widget-header">
+                <div class="widget-icon">
+                    <span class="material-symbols-outlined" style="font-size:18px; color:#ffd54f; font-variation-settings:'FILL' 1;">campaign</span>
                 </div>
-                <a href="mailto:reklam@sociaera.online" style="font-size:10px; font-weight:700; color:var(--color-primary); text-decoration:none;">Reklam</a>
+                <span class="widget-title">Sponsorlar</span>
+                <a href="mailto:reklam@sociaera.online" class="widget-action">Reklam →</a>
             </div>
 
-            <!-- Sponsor Grid (2 columns) -->
-            <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:8px;">
-                <?php 
-                if (!empty($leftAds)):
-                    foreach ($leftAds as $lAd): 
-                ?>
-                    <a href="<?php echo escape($lAd['link_url'] ?? '#'); ?>" target="_blank" rel="noopener" 
-                       style="display:flex; flex-direction:column; background:var(--bg-section); border:1px solid var(--border); border-radius:10px; overflow:hidden; text-decoration:none; color:inherit; transition:transform 0.15s; position:relative;"
-                       onmouseover="this.style.transform='scale(1.03)'"
-                       onmouseout="this.style.transform='scale(1)'">
-                        <span style="position:absolute; top:4px; left:4px; font-size:7px; font-weight:800; background:rgba(240,109,31,0.9); color:#fff; padding:1px 4px; border-radius:3px; text-transform:uppercase;">Reklam</span>
-                        <div style="aspect-ratio:1; background:#fff; display:flex; align-items:center; justify-content:center; padding:6px; border-bottom:1px solid var(--border-light);">
-                            <img src="<?php echo escape($lAd['image_url']); ?>" alt="<?php echo escape($lAd['title']); ?>" style="max-width:100%; max-height:100%; object-fit:contain; border-radius:4px;" loading="lazy">
-                        </div>
-                        <div style="padding:6px; font-size:10px; font-weight:700; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:var(--text-2);">
-                            <?php echo escape($lAd['title']); ?>
-                        </div>
-                    </a>
-                <?php 
-                    endforeach;
-                else:
-                    // Gerçek Sponsorlarımız (Colosseum & Paradise Group)
-                    $mockSponsors = [
-                        ['name' => 'COLOSSEUM', 'logo' => BASE_URL . '/assets/img/sponsors/colosseum.png', 'desc' => 'Resmi Sponsor', 'url' => 'https://face-tr.gta.world/page/colosseum'],
-                        ['name' => 'Paradise Group', 'logo' => BASE_URL . '/assets/img/sponsors/paradise-group.png', 'desc' => 'Resmi Sponsor', 'url' => 'https://face-tr.gta.world/page/paradise'],
-                    ];
-                    foreach ($mockSponsors as $mock):
-                ?>
-                    <a href="<?php echo $mock['url']; ?>" target="_blank" rel="noopener"
-                       style="display:flex; flex-direction:column; background:var(--bg-section); border:1.5px solid var(--border); border-radius:12px; overflow:hidden; text-decoration:none; color:inherit; transition:all 0.15s; padding:10px 6px; align-items:center; justify-content:center; text-align:center; min-height:80px;"
-                       onmouseover="this.style.borderColor='var(--color-primary)'; this.style.transform='translateY(-2px)'"
-                       onmouseout="this.style.borderColor='var(--border)'; this.style.transform='translateY(0)'">
-                        <img src="<?php echo $mock['logo']; ?>" alt="<?php echo $mock['name']; ?>" style="width:40px; height:40px; object-fit:contain; margin-bottom:4px;" loading="lazy">
-                        <div style="font-size:10px; font-weight:800; color:var(--text-1); line-height:1.2; white-space:nowrap; overflow:hidden; width:100%; text-overflow:ellipsis;"><?php echo $mock['name']; ?></div>
-                        <div style="font-size:9px; font-weight:700; color:var(--color-primary); margin-top:2px;"><?php echo $mock['desc']; ?></div>
-                    </a>
-                <?php 
-                    endforeach; 
-                endif;
-                ?>
+            <?php if (!empty($leftAds)): ?>
+            <!-- Aktif Reklamlar -->
+            <div class="sponsor-grid">
+                <?php foreach ($leftAds as $lAd): ?>
+                <a href="<?php echo escape($lAd['link_url'] ?? '#'); ?>" target="_blank" rel="noopener" class="ad-item">
+                    <span class="ad-badge">Reklam</span>
+                    <div class="ad-image">
+                        <img src="<?php echo escape($lAd['image_url']); ?>" alt="<?php echo escape($lAd['title']); ?>" loading="lazy">
+                    </div>
+                    <div class="ad-title"><?php echo escape($lAd['title']); ?></div>
+                </a>
+                <?php endforeach; ?>
             </div>
+            <?php else: ?>
+            <!-- Gerçek Sponsorlarımız -->
+            <div class="sponsor-grid">
+                <?php
+                $mockSponsors = [
+                    ['name' => 'COLOSSEUM', 'logo' => BASE_URL . '/assets/img/sponsors/colosseum.png', 'desc' => 'Resmi Sponsor', 'url' => 'https://face-tr.gta.world/page/colosseum'],
+                    ['name' => 'Paradise Group', 'logo' => BASE_URL . '/assets/img/sponsors/paradise-group.png', 'desc' => 'Resmi Sponsor', 'url' => 'https://face-tr.gta.world/page/paradise'],
+                ];
+                foreach ($mockSponsors as $mock):
+                ?>
+                <a href="<?php echo $mock['url']; ?>" target="_blank" rel="noopener" class="sponsor-item">
+                    <img src="<?php echo $mock['logo']; ?>" alt="<?php echo $mock['name']; ?>" loading="lazy">
+                    <span class="sponsor-name"><?php echo $mock['name']; ?></span>
+                    <span class="sponsor-badge"><?php echo $mock['desc']; ?></span>
+                </a>
+                <?php endforeach; ?>
+            </div>
+            <?php endif; ?>
+        </div>
 
-            <!-- Alt Öne Çıkan Reklam Banner Alanı -->
-            <a href="mailto:reklam@sociaera.online" style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding:14px 10px; background:var(--bg-section); border-radius:10px; border:1.5px dashed var(--border); text-decoration:none; color:var(--text-3); gap:6px; text-align:center; transition:background .12s;" onmouseover="this.style.background='#FFF3EB'; this.style.borderColor='var(--color-primary)';" onmouseout="this.style.background='var(--bg-section)'; this.style.borderColor='var(--border)';">
-                <span class="material-symbols-outlined" style="font-size:24px; color:var(--color-primary);">ads_click</span>
-                <span style="font-size:11px; font-weight:700; color:var(--text-1);">Sponsorluk & Reklam</span>
-                <span style="font-size:9px; color:var(--text-3);">Tıklayın ve Reklam Verin</span>
+        <!-- ═══ CTA Widget — Deep Green ═══ -->
+        <div class="sidebar-widget sidebar-widget--cta">
+            <div class="sidebar-widget-decor"></div>
+            <div class="sidebar-widget-header">
+                <div class="widget-icon">
+                    <span class="material-symbols-outlined" style="font-size:18px; color:#a5d6a7; font-variation-settings:'FILL' 1;">ads_click</span>
+                </div>
+                <span class="widget-title">Reklam Ver</span>
+            </div>
+            <p style="color:rgba(255,255,255,0.7); font-size:11px; margin:0; line-height:1.5;">Markanı binlerce oyuncuya tanıt!</p>
+            <a href="mailto:reklam@sociaera.online" class="sidebar-cta-btn">
+                <span class="material-symbols-outlined">mail</span>
+                İletişime Geç
+            </a>
+            <a href="<?php echo BASE_URL; ?>/sponsors" class="sidebar-cta-btn" style="background:rgba(255,255,255,0.08); border-color:rgba(255,255,255,0.06);">
+                <span class="material-symbols-outlined">storefront</span>
+                Tüm Sponsorlar
             </a>
         </div>
     </aside>
