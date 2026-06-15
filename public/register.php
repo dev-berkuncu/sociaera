@@ -21,8 +21,8 @@ require_once __DIR__ . '/partials/flash.php';
     <div style="width:100%; max-width:420px; position:relative; z-index:1;">
         <div style="background:#fff; border:1.5px solid var(--border); border-radius:20px; padding:36px 32px; box-shadow:0 20px 60px rgba(0,0,0,.1);">
             <div style="text-align:center; margin-bottom:28px;">
-                <div style="width:64px; height:64px; margin:0 auto 16px; background:linear-gradient(135deg, var(--color-primary), #ff9e7d); border-radius:18px; display:flex; align-items:center; justify-content:center; transform:rotate(-6deg); box-shadow:0 10px 20px rgba(240,109,31,0.3);">
-                    <span class="material-symbols-outlined" style="font-size:32px; color:#fff;">person_add</span>
+                <div style="width:64px; height:64px; margin:0 auto 16px; background:#fff; border-radius:18px; display:flex; align-items:center; justify-content:center; transform:rotate(-6deg); box-shadow:0 10px 25px rgba(0,0,0,0.08); overflow:hidden; border:1.5px solid var(--border-light);">
+                    <img src="<?php echo BASE_URL; ?>/assets/images/logo.png" alt="Logo" style="width:100%; height:100%; object-fit:cover;">
                 </div>
                 <h1 style="font-size:1.6rem; font-weight:900; color:var(--text-1); margin:0 0 6px;"><?php echo APP_NAME; ?>'ya Katıl</h1>
                 <p style="color:var(--text-3); font-size:13px; margin:0;">GTA World hesabınla hemen kayıt ol ve topluluğa katıl</p>

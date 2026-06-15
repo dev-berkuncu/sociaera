@@ -352,10 +352,10 @@ nav.swarm-topnav{
     <!-- Logo -->
     <a href="<?php echo BASE_URL; ?>/dashboard" style="
       font-weight:800;font-size:18px;color:#F06D1F;
-      text-decoration:none;display:flex;align-items:center;gap:6px;
+      text-decoration:none;display:flex;align-items:center;gap:8px;
       flex-shrink:0;letter-spacing:-0.3px;white-space:nowrap;
       padding-right:20px;margin-right:4px;border-right:1.5px solid #F2F1EE;">
-        <span class="material-symbols-outlined" style="font-size:22px;color:#F06D1F;font-variation-settings:'FILL' 1;">hive</span>
+        <img src="<?php echo BASE_URL; ?>/assets/images/logo.png" alt="Sociaera Logo" style="height:28px; width:28px; object-fit:contain;" height="28" width="28">
         Sociaera
     </a>
 
