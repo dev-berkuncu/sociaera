@@ -499,7 +499,7 @@ nav.swarm-topnav{
     } catch (Exception $e) {}
     ?>
     <aside class="swarm-left-sidebar">
-        <!-- ═══ Sponsor Widget — Deep Blue ═══ -->
+        <!-- ═══ Sponsor Widget — Deep Blue (Sequential Slide) ═══ -->
         <div class="sidebar-widget sidebar-widget--sponsors">
             <div class="sidebar-widget-decor"></div>
             <div class="sidebar-widget-decor-2"></div>
@@ -508,40 +508,67 @@ nav.swarm-topnav{
                     <span class="material-symbols-outlined" style="font-size:18px; color:#ffd54f; font-variation-settings:'FILL' 1;">campaign</span>
                 </div>
                 <span class="widget-title">Sponsorlar</span>
-                <a href="mailto:reklam@sociaera.online" class="widget-action">Reklam →</a>
+                <a href="<?php echo BASE_URL; ?>/sponsors" class="widget-action">Tümü →</a>
             </div>
 
-            <?php if (!empty($leftAds)): ?>
-            <!-- Aktif Reklamlar -->
-            <div class="sponsor-grid">
-                <?php foreach ($leftAds as $lAd): ?>
-                <a href="<?php echo escape($lAd['link_url'] ?? '#'); ?>" target="_blank" rel="noopener" class="ad-item">
-                    <span class="ad-badge">Reklam</span>
-                    <div class="ad-image">
-                        <img src="<?php echo escape($lAd['image_url']); ?>" alt="<?php echo escape($lAd['title']); ?>" loading="lazy">
-                    </div>
-                    <div class="ad-title"><?php echo escape($lAd['title']); ?></div>
-                </a>
-                <?php endforeach; ?>
-            </div>
-            <?php else: ?>
-            <!-- Gerçek Sponsorlarımız -->
-            <div class="sponsor-grid">
-                <?php
+            <?php
+            // Collect all items to slide (either ads or mock sponsors)
+            $sliderItems = [];
+            if (!empty($leftAds)) {
+                foreach ($leftAds as $lAd) {
+                    $sliderItems[] = [
+                        'type' => 'ad',
+                        'title' => $lAd['title'],
+                        'image' => $lAd['image_url'],
+                        'url' => $lAd['link_url'],
+                        'badge' => 'Reklam'
+                    ];
+                }
+            } else {
                 $mockSponsors = [
-                    ['name' => 'COLOSSEUM', 'logo' => BASE_URL . '/assets/img/sponsors/colosseum.png', 'desc' => 'Resmi Sponsor', 'url' => 'https://face-tr.gta.world/page/colosseum'],
-                    ['name' => 'Paradise Group', 'logo' => BASE_URL . '/assets/img/sponsors/paradise-group.png', 'desc' => 'Resmi Sponsor', 'url' => 'https://face-tr.gta.world/page/paradise'],
+                    ['name' => 'COLOSSEUM', 'logo' => BASE_URL . '/assets/img/sponsors/colosseum.png', 'desc' => 'Sponsor', 'url' => 'https://face-tr.gta.world/page/colosseum'],
+                    ['name' => 'Paradise Group', 'logo' => BASE_URL . '/assets/img/sponsors/paradise-group.png', 'desc' => 'Sponsor', 'url' => 'https://face-tr.gta.world/page/paradise'],
                 ];
-                foreach ($mockSponsors as $mock):
-                ?>
-                <a href="<?php echo $mock['url']; ?>" target="_blank" rel="noopener" class="sponsor-item">
-                    <img src="<?php echo $mock['logo']; ?>" alt="<?php echo $mock['name']; ?>" loading="lazy">
-                    <span class="sponsor-name"><?php echo $mock['name']; ?></span>
-                    <span class="sponsor-badge"><?php echo $mock['desc']; ?></span>
-                </a>
+                foreach ($mockSponsors as $mock) {
+                    $sliderItems[] = [
+                        'type' => 'sponsor',
+                        'title' => $mock['name'],
+                        'image' => $mock['logo'],
+                        'url' => $mock['url'],
+                        'badge' => $mock['desc']
+                    ];
+                }
+            }
+            ?>
+
+            <div class="sponsor-slider">
+                <?php foreach ($sliderItems as $index => $item): ?>
+                <div class="sponsor-slide <?php echo $index === 0 ? 'active' : ''; ?>">
+                    <a href="<?php echo escape($item['url'] ?? '#'); ?>" target="_blank" rel="noopener" class="ad-item" style="display: flex;">
+                        <span class="ad-badge" style="background: <?php echo $item['type'] === 'ad' ? '#f06d1f' : '#7c3aed'; ?>;"><?php echo escape($item['badge']); ?></span>
+                        <div class="ad-image" style="aspect-ratio: 1.5; background: #ffffff;">
+                            <img src="<?php echo escape($item['image']); ?>" alt="<?php echo escape($item['title']); ?>" style="object-fit: contain; width: 100%; height: 100%;" loading="lazy">
+                        </div>
+                        <div class="ad-title">
+                            <?php echo escape($item['title']); ?>
+                        </div>
+                    </a>
+                </div>
                 <?php endforeach; ?>
             </div>
-            <?php endif; ?>
+
+            <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                const slides = document.querySelectorAll(".sponsor-slide");
+                if (slides.length <= 1) return;
+                let current = 0;
+                setInterval(() => {
+                    slides[current].classList.remove("active");
+                    current = (current + 1) % slides.length;
+                    slides[current].classList.add("active");
+                }, 4000);
+            });
+            </script>
         </div>
 
         <!-- ═══ CTA Widget — Deep Green ═══ -->
@@ -562,6 +589,54 @@ nav.swarm-topnav{
                 <span class="material-symbols-outlined">storefront</span>
                 Tüm Sponsorlar
             </a>
+        </div>
+
+        <!-- ═══ Purple Support/Account Card Widget ═══ -->
+        <div class="sidebar-widget sidebar-widget--support">
+            <div class="sidebar-widget-decor"></div>
+            <div class="sidebar-widget-decor-2"></div>
+            <div class="sidebar-widget-header">
+                <div class="widget-icon">
+                    <span class="material-symbols-outlined" style="font-size:18px; color:#e040fb; font-variation-settings:'FILL' 1;">contact_mail</span>
+                </div>
+                <span class="widget-title">Reklam İletişim</span>
+            </div>
+            
+            <div class="account-list">
+                <!-- Account 1: Email Support -->
+                <a href="mailto:reklam@sociaera.online" class="account-item">
+                    <div class="account-avatar-wrapper">
+                        <span class="material-symbols-outlined account-avatar-icon">mail</span>
+                    </div>
+                    <div class="account-info">
+                        <div class="account-name-container">
+                            <span class="account-name">Sociaera Reklam</span>
+                            <span class="material-symbols-outlined account-badge-icon" style="color: #ffd54f; font-variation-settings:'FILL' 1;">verified</span>
+                        </div>
+                        <div class="account-username">reklam@sociaera.online</div>
+                    </div>
+                    <div class="account-action">
+                        <span class="material-symbols-outlined">send</span>
+                    </div>
+                </a>
+
+                <!-- Account 2: Discord Support -->
+                <a href="https://discord.gg/sociaera" target="_blank" rel="noopener" class="account-item">
+                    <div class="account-avatar-wrapper" style="background: #5865F2;">
+                        <span class="material-symbols-outlined account-avatar-icon">forum</span>
+                    </div>
+                    <div class="account-info">
+                        <div class="account-name-container">
+                            <span class="account-name">Discord Destek</span>
+                            <span class="material-symbols-outlined account-badge-icon" style="color: #ffd54f; font-variation-settings:'FILL' 1;">star</span>
+                        </div>
+                        <div class="account-username">discord.gg/sociaera</div>
+                    </div>
+                    <div class="account-action">
+                        <span class="material-symbols-outlined">open_in_new</span>
+                    </div>
+                </a>
+            </div>
         </div>
     </aside>
 
