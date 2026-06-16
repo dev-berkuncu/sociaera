@@ -498,7 +498,7 @@ nav.swarm-topnav{
         }
     } catch (Exception $e) {}
     ?>
-    <aside class="swarm-left-sidebar" style="display:flex; flex-direction:column; gap:16px; width:260px; box-sizing:border-box;">
+    <aside class="swarm-left-sidebar" style="display:flex; flex-direction:column; gap:16px; box-sizing:border-box;">
         <!-- ═══ Modern Sponsor Carousel (White Card) ═══ -->
         <div class="right-panel-card" style="padding:16px; background:#ffffff; border:1.5px solid var(--border); border-radius:16px; display:flex; flex-direction:column; gap:12px; position:relative; box-sizing:border-box; overflow:hidden;">
             <div style="font-size:12px; font-weight:800; color:var(--text-1); letter-spacing:-0.2px; font-family:var(--font); padding-left:2px;">
