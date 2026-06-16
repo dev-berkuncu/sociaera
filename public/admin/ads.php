@@ -24,19 +24,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && Auth::canWrite()) {
         $linkUrl  = trim($_POST['link_url'] ?? '');
         $position = $_POST['position'] ?? 'carousel';
         $sort     = (int)($_POST['sort_order'] ?? 0);
+        $mediaType= $_POST['media_type'] ?? 'image';
+        if (!in_array($mediaType, ['image', 'video', 'youtube'])) $mediaType = 'image';
 
-        if (!empty($_FILES['image']['name'])) {
-            $uploader = new ImageUploader();
-            $result = $uploader->upload($_FILES['image'], 'ads', ['maxSize' => MAX_AD_SIZE]);
-            if ($result['success']) {
-                $adModel->create($title, $result['path'], $linkUrl, $position, $sort);
-                Logger::adminAudit('create', 'ad', null, $title);
-                Auth::setFlash('success', 'Reklam eklendi.');
-            } else {
-                Auth::setFlash('error', $result['error']);
+        $imagePath = '';
+        if ($mediaType === 'youtube') {
+            $youtubeUrl = trim($_POST['youtube_url'] ?? '');
+            if (empty($youtubeUrl) || !filter_var($youtubeUrl, FILTER_VALIDATE_URL)) {
+                Auth::setFlash('error', 'Lütfen geçerli bir YouTube linki girin.');
+                header('Location: ' . BASE_URL . '/admin/ads'); exit;
             }
+            $imagePath = $youtubeUrl;
+            $adModel->create($title, $imagePath, $linkUrl, $position, $sort, $mediaType);
+            Logger::adminAudit('create', 'ad', null, $title);
+            Auth::setFlash('success', 'Sponsorlu içerik eklendi.');
         } else {
-            Auth::setFlash('error', 'Resim dosyası gerekli.');
+            if (!empty($_FILES['image']['name'])) {
+                $uploader = new ImageUploader();
+                $result = $uploader->upload($_FILES['image'], 'ads', [
+                    'outputFormat' => 'webp',
+                    'maxSize' => ($mediaType === 'video') ? 20 * 1024 * 1024 : 5 * 1024 * 1024
+                ]);
+                if ($result['success']) {
+                    $adModel->create($title, $result['path'], $linkUrl, $position, $sort, $mediaType);
+                    Logger::adminAudit('create', 'ad', null, $title);
+                    Auth::setFlash('success', 'Sponsorlu içerik eklendi.');
+                } else {
+                    Auth::setFlash('error', $result['error']);
+                }
+            } else {
+                Auth::setFlash('error', 'Resim/Video dosyası gerekli.');
+            }
         }
     } elseif ($action === 'toggle') {
         $adModel->toggleActive((int)($_POST['ad_id'] ?? 0));
@@ -100,7 +118,8 @@ require_once __DIR__ . '/_header.php';
                 <select name="position" class="w-full bg-white/5 border border-white/10 text-on-surface rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary-container/40 transition-colors font-sans">
                     <option value="carousel" class="bg-background">🎟️ Sponsorlarımız (Logo Slider)</option>
                     <option value="sidebar_left" class="bg-background">👈 Sol Sidebar (Grid Reklamı)</option>
-                    <option value="sidebar_right" class="bg-background">🗺️ Reklam Alanı (300x600 Sidebar)</option>
+                    <option value="sidebar_right" class="bg-background">🗺️ Sağ Sidebar (300x500 Alanı)</option>
+                    <option value="feed" class="bg-background">📰 Akış Arası (Feed Reklamı)</option>
                 </select>
             </div>
             <div>
@@ -113,9 +132,44 @@ require_once __DIR__ . '/_header.php';
             </div>
         </div>
         <div>
-            <label class="block text-label-md text-slate-400 mb-1">Resim</label>
-            <input type="file" name="image" accept="image/*" required class="w-full bg-white/5 border border-white/10 text-on-surface rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary-container/40 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-sm file:bg-primary-container file:text-white transition-colors">
+            <label class="block text-label-md text-slate-400 mb-1">Medya Türü</label>
+            <div class="flex gap-4 mb-3">
+                <label class="flex items-center gap-2 text-sm text-slate-300 cursor-pointer">
+                    <input type="radio" name="media_type" value="image" checked onchange="toggleAdminMedia()"> Görsel
+                </label>
+                <label class="flex items-center gap-2 text-sm text-slate-300 cursor-pointer">
+                    <input type="radio" name="media_type" value="video" onchange="toggleAdminMedia()"> Video
+                </label>
+                <label class="flex items-center gap-2 text-sm text-slate-300 cursor-pointer">
+                    <input type="radio" name="media_type" value="youtube" onchange="toggleAdminMedia()"> YouTube Linki
+                </label>
+            </div>
+            
+            <div id="adminFileContainer">
+                <input type="file" name="image" id="adminImage" accept="image/*" class="w-full bg-white/5 border border-white/10 text-on-surface rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary-container/40 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-sm file:bg-primary-container file:text-white transition-colors">
+            </div>
+            <div id="adminYtContainer" style="display:none;">
+                <input type="url" name="youtube_url" id="adminYtUrl" placeholder="https://youtube.com/watch?v=..." class="w-full bg-white/5 border border-white/10 text-on-surface rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary-container/40 transition-colors">
+            </div>
         </div>
+        <script>
+        function toggleAdminMedia() {
+            const type = document.querySelector('input[name="media_type"]:checked').value;
+            const fileCont = document.getElementById('adminFileContainer');
+            const ytCont = document.getElementById('adminYtContainer');
+            const fileInp = document.getElementById('adminImage');
+            const ytInp = document.getElementById('adminYtUrl');
+            
+            if(type === 'youtube') {
+                fileCont.style.display = 'none'; ytCont.style.display = 'block';
+                fileInp.removeAttribute('required');
+            } else {
+                fileCont.style.display = 'block'; ytCont.style.display = 'none';
+                if(type === 'video') fileInp.setAttribute('accept', 'video/mp4,video/webm');
+                else fileInp.setAttribute('accept', 'image/*');
+            }
+        }
+        </script>
         <button type="submit" class="bg-primary-container text-white px-6 py-2.5 rounded-lg text-label-md font-semibold hover:bg-primary-container/90 transition-colors shadow-[0_0_10px_rgba(255,107,53,0.2)]">Sponsorlu İçerik Ekle</button>
     </form>
 </div>
@@ -138,7 +192,8 @@ require_once __DIR__ . '/_header.php';
                             echo match($ad['position']) {
                                 'carousel' => 'Sponsorlarımız (Slider)',
                                 'sidebar_left' => 'Sol Sidebar (Grid)',
-                                'sidebar_right' => 'Reklam Alanı (Sidebar)',
+                                'sidebar_right' => 'Sağ Sidebar (300x500)',
+                                'feed' => 'Akış Arası (Feed)',
                                 default => escape($ad['position'])
                             };
                             ?>

@@ -34,12 +34,12 @@ class AdModel
         return $stmt->fetch() ?: null;
     }
 
-    public function create(string $title, string $imageUrl, ?string $linkUrl, string $position, int $sortOrder = 0): int
+    public function create(string $title, string $imageUrl, ?string $linkUrl, string $position, int $sortOrder = 0, string $mediaType = 'image'): int
     {
         $stmt = $this->db->prepare("
-            INSERT INTO ads (title, image_url, link_url, position, sort_order) VALUES (?, ?, ?, ?, ?)
+            INSERT INTO ads (title, image_url, link_url, position, sort_order, media_type) VALUES (?, ?, ?, ?, ?, ?)
         ");
-        $stmt->execute([$title, $imageUrl, $linkUrl, $position, $sortOrder]);
+        $stmt->execute([$title, $imageUrl, $linkUrl, $position, $sortOrder, $mediaType]);
         return (int) $this->db->lastInsertId();
     }
 
