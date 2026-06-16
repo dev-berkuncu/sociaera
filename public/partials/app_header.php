@@ -638,38 +638,19 @@ nav.swarm-topnav{
 
             <!-- List Section -->
             <div style="display:flex; flex-direction:column; gap:8px; width:100%; z-index:2; position:relative;">
-                <!-- Header: Reklam İletişim -->
-                <div style="display:flex; align-items:center; gap:6px; opacity:0.9; color:#ffffff; font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:0.8px; padding-bottom:6px; border-bottom:1px solid rgba(255,255,255,0.15);">
-                    <span class="material-symbols-outlined" style="font-size:14px;">contact_mail</span>
-                    REKLAM İLETİŞİM
-                </div>
-
-                <!-- Account 1: Email -->
-                <a href="mailto:reklam@sociaera.online" style="display:flex; align-items:center; gap:8px; text-decoration:none; color:#ffffff; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.05); border-radius:10px; padding:8px 10px; transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.15)'; this.style.transform='translateX(3px)';" onmouseout="this.style.background='rgba(255,255,255,0.08)'; this.style.transform='translateX(0)';">
-                    <div style="width:28px; height:28px; border-radius:50%; background:rgba(255,255,255,0.15); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                        <span class="material-symbols-outlined" style="font-size:14px; color:#ffffff;">mail</span>
+                <!-- Single Clickable Facebrowser Card -->
+                <a href="https://face.gta.world/pages/sociaera" target="_blank" rel="noopener" style="display:flex; align-items:center; gap:8px; text-decoration:none; color:#ffffff; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); border-radius:10px; padding:10px; transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.15)'; this.style.transform='translateX(3px)';" onmouseout="this.style.background='rgba(255,255,255,0.08)'; this.style.transform='translateX(0)';">
+                    <div style="width:32px; height:32px; border-radius:50%; background:rgba(255,255,255,0.15); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                        <span class="material-symbols-outlined" style="font-size:16px; color:#ffffff;">language</span>
                     </div>
                     <div style="flex:1; min-width:0;">
                         <div style="display:flex; align-items:center; gap:3px;">
-                            <span style="font-size:10px; font-weight:800; color:#ffffff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Sociaera Reklam</span>
-                            <span class="material-symbols-outlined" style="font-size:11px; color:#ffd54f; font-variation-settings:'FILL' 1;">verified</span>
+                            <span style="font-size:11px; font-weight:800; color:#ffffff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Sociaera Facebrowser</span>
+                            <span class="material-symbols-outlined" style="font-size:12px; color:#ffd54f; font-variation-settings:'FILL' 1;">verified</span>
                         </div>
-                        <div style="font-size:8px; color:rgba(255,255,255,0.7); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin-top:1px;">reklam@sociaera.online</div>
+                        <div style="font-size:9px; font-weight:500; color:rgba(255,255,255,0.8); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin-top:2px;">Bize ulaşın & destek alın</div>
                     </div>
-                </a>
-
-                <!-- Account 2: Discord -->
-                <a href="https://discord.gg/sociaera" target="_blank" rel="noopener" style="display:flex; align-items:center; gap:8px; text-decoration:none; color:#ffffff; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.05); border-radius:10px; padding:8px 10px; transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.15)'; this.style.transform='translateX(3px)';" onmouseout="this.style.background='rgba(255,255,255,0.08)'; this.style.transform='translateX(0)';">
-                    <div style="width:28px; height:28px; border-radius:50%; background:rgba(255,255,255,0.15); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                        <span class="material-symbols-outlined" style="font-size:14px; color:#ffffff;">forum</span>
-                    </div>
-                    <div style="flex:1; min-width:0;">
-                        <div style="display:flex; align-items:center; gap:3px;">
-                            <span style="font-size:10px; font-weight:800; color:#ffffff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Discord Destek</span>
-                            <span class="material-symbols-outlined" style="font-size:11px; color:#ffd54f; font-variation-settings:'FILL' 1;">star</span>
-                        </div>
-                        <div style="font-size:8px; color:rgba(255,255,255,0.7); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin-top:1px;">discord.gg/sociaera</div>
-                    </div>
+                    <span class="material-symbols-outlined" style="font-size:14px; color:rgba(255,255,255,0.5);">open_in_new</span>
                 </a>
             </div>
         </div>
