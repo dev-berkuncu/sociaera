@@ -171,14 +171,14 @@ require_once __DIR__ . '/partials/app_header.php';
             <div>
                 <div style="font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">Mevcut Bakiyeniz</div>
                 <div style="font-size:2rem; font-weight:900; color:var(--text-1); line-height:1;">
-                    $<?php echo number_format($userBalance, 2); ?>
+                    $<?php echo number_format($userBalance, 0, ',', '.'); ?>
                 </div>
             </div>
             <div style="margin-top:16px;">
                 <?php if ($userBalance < $adPrice): ?>
                     <div style="display:flex; align-items:center; gap:6px; background:#FEF2F2; border:1px solid #FCA5A5; border-radius:10px; padding:8px 12px; font-size:12px; color:var(--color-danger); margin-bottom:12px; font-weight:600;">
                         <span class="material-symbols-outlined" style="font-size:16px;">warning</span>
-                        Bakiye yetersiz ($<?php echo number_format($adPrice, 2); ?> gerekli)
+                        Bakiye yetersiz ($<?php echo number_format($adPrice, 0, ',', '.'); ?> gerekli)
                     </div>
                 <?php endif; ?>
                 <a href="<?php echo BASE_URL; ?>/wallet.php" style="display:inline-flex; align-items:center; gap:8px; background:var(--color-primary); color:#fff; padding:10px 18px; border-radius:10px; font-weight:700; font-size:13px; text-decoration:none; transition:opacity .15s; width:100%; justify-content:center; box-shadow:0 4px 12px rgba(240,109,31,0.2);"
@@ -194,7 +194,7 @@ require_once __DIR__ . '/partials/app_header.php';
             <div>
                 <div style="font-size:11px; font-weight:700; color:var(--color-primary); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">Reklam Tarifesi</div>
                 <div style="font-size:2rem; font-weight:900; color:var(--text-1); line-height:1; display:flex; align-items:baseline; gap:4px;">
-                    $<?php echo number_format($adPrice, 2); ?>
+                    $<?php echo number_format($adPrice, 0, ',', '.'); ?>
                     <span style="font-size:12px; font-weight:600; color:var(--text-3);">/ 1 Haftalık</span>
                 </div>
             </div>
@@ -254,7 +254,7 @@ require_once __DIR__ . '/partials/app_header.php';
                     style="width:100%; border:none; background:<?php echo ($userBalance < $adPrice) ? 'var(--text-3)' : 'var(--color-primary)'; ?>; color:#fff; padding:12px 24px; border-radius:12px; font-weight:700; font-size:14px; cursor:<?php echo ($userBalance < $adPrice) ? 'not-allowed' : 'pointer'; ?>; transition:opacity .15s; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:<?php echo ($userBalance < $adPrice) ? 'none' : '0 4px 16px rgba(240,109,31,0.25)'; ?>;"
                     <?php if ($userBalance >= $adPrice): ?>onmouseover="this.style.opacity='.9'" onmouseout="this.style.opacity='1'"<?php endif; ?>>
                 <span class="material-symbols-outlined" style="font-size:20px;">send</span>
-                Ödeme Yap ve Reklamı Yayınla ($<?php echo number_format($adPrice, 2); ?>)
+                Ödeme Yap ve Reklamı Yayınla ($<?php echo number_format($adPrice, 0, ',', '.'); ?>)
             </button>
         </form>
     </div>
