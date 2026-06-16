@@ -4,6 +4,13 @@
  */
 require_once __DIR__ . '/../app/Config/env.php';
 loadEnv(dirname(__DIR__) . '/.env');
+
+set_exception_handler(function($e) {
+    http_response_code(500);
+    echo "<h1>CRASH LOG (sponsors.php)</h1><pre>" . $e->getMessage() . "\n" . $e->getFile() . " on line " . $e->getLine() . "\n\n" . $e->getTraceAsString() . "</pre>";
+    exit;
+});
+
 require_once __DIR__ . '/../app/Config/app.php';
 require_once __DIR__ . '/../app/Core/View.php';
 require_once __DIR__ . '/../app/Models/User.php';
