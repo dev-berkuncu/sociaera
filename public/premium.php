@@ -23,7 +23,7 @@ $user = $userModel->getById(Auth::id());
 if (!$user) { Auth::logout(); header('Location: ' . BASE_URL . '/login'); exit; }
 
 $balance = $walletModel->getBalance(Auth::id());
-$premiumPrice = 20.00; // 7 günlük fiyat
+$premiumPrice = 10000.00; // Aylık fiyat
 
 $isPremiumActive = UserModel::isPremiumActive($user);
 $hadPremium      = !empty($user['premium_until']);
@@ -36,20 +36,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($balance < $premiumPrice) {
             Auth::setFlash('error', 'Cüzdanınızda yeterli bakiye bulunmuyor.');
         } else {
-            $walletModel->withdraw(Auth::id(), $premiumPrice, 'Sociaera Premium süresi uzatıldı (7 gün)');
-            $userModel->extendPremium(Auth::id(), 7);
-            Auth::setFlash('success', 'Premium süreniz 7 gün daha uzatıldı! 💎');
+            $walletModel->withdraw(Auth::id(), $premiumPrice, 'Sociaera Premium süresi uzatıldı (Aylık)');
+            $userModel->extendPremium(Auth::id(), 30);
+            Auth::setFlash('success', 'Premium süreniz 30 gün daha uzatıldı! 💎');
         }
     } else {
         if ($balance < $premiumPrice) {
             Auth::setFlash('error', 'Cüzdanınızda yeterli bakiye bulunmuyor.');
         } else {
-            $walletModel->withdraw(Auth::id(), $premiumPrice, 'Sociaera Premium satın alındı (7 gün)');
-            $userModel->setPremium(Auth::id(), 7);
+            $walletModel->withdraw(Auth::id(), $premiumPrice, 'Sociaera Premium satın alındı (Aylık)');
+            $userModel->setPremium(Auth::id(), 30);
             if (!$hadPremium) {
                 $userModel->updateBadge(Auth::id(), 'diamond');
             }
-            Auth::setFlash('success', 'Tebrikler! 7 günlük Premium aktif! 🎉');
+            Auth::setFlash('success', 'Tebrikler! Aylık Premium aktif! 🎉');
         }
         $isPremiumActive = true;
         $user = $userModel->getById(Auth::id());
@@ -134,10 +134,10 @@ require_once __DIR__ . '/partials/app_header.php';
                 <?php if ($balance >= $premiumPrice): ?>
                 <form method="POST" style="display:inline;">
                     <?php echo csrfField(); ?>
-                    <button type="submit" onclick="return confirm('$<?php echo number_format($premiumPrice,0,',','.'); ?> karşılığında 7 gün daha eklenmesini onaylıyor musunuz?')"
+                    <button type="submit" onclick="return confirm('$<?php echo number_format($premiumPrice,0,',','.'); ?> karşılığında 30 gün daha eklenmesini onaylıyor musunuz?')"
                         style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; border-radius:12px; font-weight:700; font-size:13px; background:rgba(22,163,74,0.08); color:#16a34a; border:1px solid rgba(22,163,74,0.25); cursor:pointer; font-family:inherit;"
                         onmouseover="this.style.background='rgba(22,163,74,0.15)'" onmouseout="this.style.background='rgba(22,163,74,0.08)'">
-                        <span class="material-symbols-outlined" style="font-size:18px;">add_circle</span> Süre Uzat (+7 gün)
+                        <span class="material-symbols-outlined" style="font-size:18px;">add_circle</span> Süre Uzat (+30 gün)
                     </button>
                 </form>
                 <?php endif; ?>
@@ -172,7 +172,7 @@ require_once __DIR__ . '/partials/app_header.php';
 
             <div style="margin-bottom:16px;">
                 <span style="font-size:3rem; font-weight:900; color:var(--text-1);">$<?php echo number_format($premiumPrice,0,',','.'); ?></span>
-                <span style="font-size:1rem; color:var(--text-3); margin-left:4px;">/ 7 gün</span>
+                <span style="font-size:1rem; color:var(--text-3); margin-left:4px;">/ Aylık</span>
             </div>
 
             <div style="background:var(--bg-section); border:1px solid var(--border); border-radius:14px; padding:14px 18px; display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
@@ -183,7 +183,7 @@ require_once __DIR__ . '/partials/app_header.php';
             <?php if ($balance >= $premiumPrice): ?>
             <form method="POST">
                 <?php echo csrfField(); ?>
-                <button type="submit" onclick="return confirm('$<?php echo number_format($premiumPrice,0,',','.'); ?> ile 7 günlük Premium\'u yeniden aktifleştirmek istiyor musunuz?')"
+                <button type="submit" onclick="return confirm('$<?php echo number_format($premiumPrice,0,',','.'); ?> ile Aylık Premium\'u yeniden aktifleştirmek istiyor musunuz?')"
                     style="width:100%; padding:14px; border-radius:14px; font-weight:900; font-size:1rem; background:var(--color-primary); color:#fff; border:none; cursor:pointer; font-family:inherit; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 4px 16px rgba(240,109,31,0.25);"
                     onmouseover="this.style.filter='brightness(1.1)'" onmouseout="this.style.filter='brightness(1)'">
                     <span class="material-symbols-outlined">restart_alt</span> Premium'u Yenile
@@ -215,7 +215,7 @@ require_once __DIR__ . '/partials/app_header.php';
 
             <div style="margin-bottom:24px;">
                 <span style="font-size:3rem; font-weight:900; color:var(--text-1);">$<?php echo number_format($premiumPrice,0,',','.'); ?></span>
-                <span style="font-size:1rem; color:var(--text-3); margin-left:4px;">/ 7 gün</span>
+                <span style="font-size:1rem; color:var(--text-3); margin-left:4px;">/ Aylık</span>
             </div>
 
             <ul style="display:flex; flex-direction:column; gap:10px; text-align:left; max-width:440px; margin:0 auto 28px; list-style:none; padding:0;">
@@ -251,10 +251,10 @@ require_once __DIR__ . '/partials/app_header.php';
             <?php if ($balance >= $premiumPrice): ?>
             <form method="POST">
                 <?php echo csrfField(); ?>
-                <button type="submit" onclick="return confirm('$<?php echo number_format($premiumPrice,0,',','.'); ?> cüzdanınızdan çekilecek. 7 günlük Premium başlayacak. Onaylıyor musunuz?')"
+                <button type="submit" onclick="return confirm('$<?php echo number_format($premiumPrice,0,',','.'); ?> cüzdanınızdan çekilecek. Aylık Premium başlayacak. Onaylıyor musunuz?')"
                     style="width:100%; padding:14px; border-radius:14px; font-weight:900; font-size:1rem; background:var(--color-primary); color:#fff; border:none; cursor:pointer; font-family:inherit; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 4px 16px rgba(240,109,31,0.25);"
                     onmouseover="this.style.filter='brightness(1.1)'" onmouseout="this.style.filter='brightness(1)'">
-                    <span class="material-symbols-outlined">diamond</span> Premium'a Geç (7 Gün)
+                    <span class="material-symbols-outlined">diamond</span> Premium'a Geç (Aylık)
                 </button>
             </form>
             <?php else: ?>
