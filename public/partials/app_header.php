@@ -229,19 +229,7 @@ nav.swarm-topnav{
 .scanlines,.map-grid,.cybermap-marker-pulse{display:none!important;}
 .backdrop-blur-xl,.backdrop-blur-sm,.backdrop-blur{backdrop-filter:none!important;}
 
-/* ── FLASH MESSAGES ── */
-.flash-message{
-  position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
-  background:#fff;border:1px solid #E8E7E3;border-radius:12px;
-  padding:12px 16px;display:flex;align-items:center;gap:10px;
-  box-shadow:0 4px 16px rgba(0,0,0,.12);z-index:1000;
-  font-size:13px;font-weight:600;min-width:260px;max-width:90vw;
-  animation:slideUp .2s ease-out;}
-.flash-success{border-color:#16A34A;color:#15803D;}
-.flash-error{border-color:#EF4444;color:#DC2626;}
-.flash-close{background:none;border:none;cursor:pointer;color:#A0A0A0;margin-left:auto;}
-.flash-hide{opacity:0;transition:opacity .3s;pointer-events:none;}
-@keyframes slideUp{from{opacity:0;transform:translateX(-50%) translateY(10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+
 
 /* ── PROGRESS BAR ── */
 .progress-bar-track{height:6px;background:#F2F1EE;border-radius:99px;overflow:hidden;}
