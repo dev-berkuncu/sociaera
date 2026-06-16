@@ -536,11 +536,11 @@ nav.swarm-topnav{
             ?>
 
             <!-- Carousel Container (Padded to isolate arrows) -->
-            <div class="carousel-container" style="position:relative; width:100%; overflow:hidden; padding:0 24px; box-sizing:border-box;">
+            <div class="carousel-container" style="position:relative; width:100%; overflow:hidden;">
                 <!-- Track -->
                 <div class="carousel-track" style="display:flex; transition:transform 0.4s ease-in-out; width:100%;">
                     <?php foreach ($sliderItems as $index => $item): ?>
-                    <div class="carousel-slide-item" style="flex:0 0 100%; width:100%; box-sizing:border-box; padding:0 2px;">
+                    <div class="carousel-slide-item" style="flex:0 0 100%; width:100%; box-sizing:border-box; padding:0 24px;">
                         <a href="<?php echo escape($item['url'] ?? '#'); ?>" target="_blank" rel="noopener" 
                            style="display:block; background:linear-gradient(135deg, #0f2b46, #1a365d); border-radius:12px; height:120px; padding:16px; box-sizing:border-box; text-decoration:none; position:relative; overflow:hidden;">
                             <!-- Reklam Badge -->
@@ -575,7 +575,7 @@ nav.swarm-topnav{
         </div>
 
         <!-- ═══ Tall Vertical Banner (Reklam Alanı) ═══ -->
-        <div class="right-panel-card" style="background:linear-gradient(150deg, #0f2b46 0%, #1a365d 35%, #0f172a 100%); border:none; border-radius:16px; padding:28px 20px; box-sizing:border-box; min-height:300px; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; position:relative; overflow:hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+        <div class="right-panel-card" style="background:linear-gradient(150deg, #0f2b46 0%, #1a365d 35%, #0f172a 100%) !important; border:none; border-radius:16px; padding:28px 20px; box-sizing:border-box; min-height:300px; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; position:relative; overflow:hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
             <!-- Pattern overlays -->
             <div style="position:absolute; inset:0; background: linear-gradient(90deg, transparent 49%, rgba(255,255,255,0.02) 50%, transparent 51%); background-size: 30px 30px; pointer-events:none;"></div>
             <div style="position:absolute; top:-20%; right:-20%; width:60%; height:60%; border-radius:50%; background:radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%); pointer-events:none;"></div>
