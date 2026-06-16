@@ -182,7 +182,7 @@ require_once __DIR__ . '/partials/app_header.php';
             
             <div style="background:var(--bg-section);border-radius:10px;padding:12px;margin-bottom:24px;display:flex;justify-content:space-between;align-items:center;border:1.5px solid var(--border-light);">
                 <span style="color:var(--text-3);font-size:.875rem;">Yüklenecek Tutar</span>
-                <span style="font-weight:800;color:var(--text-1);font-size:1.1rem;">$<span id="amountValue">0.00</span></span>
+                <span style="font-weight:800;color:var(--text-1);font-size:1.1rem;">$<span id="amountValue">0</span></span>
             </div>
             
             <div style="display:flex;gap:12px;">
@@ -221,7 +221,7 @@ require_once __DIR__ . '/partials/app_header.php';
             
             <div style="background:var(--bg-section);border-radius:10px;padding:12px;margin-bottom:24px;display:flex;justify-content:space-between;align-items:center;border:1.5px solid var(--border-light);">
                 <span style="color:var(--text-3);font-size:.875rem;">Çekilecek Tutar</span>
-                <span style="font-weight:800;color:var(--text-1);font-size:1.1rem;">$<span id="withdrawValue">0.00</span></span>
+                <span style="font-weight:800;color:var(--text-1);font-size:1.1rem;">$<span id="withdrawValue">0</span></span>
             </div>
             
             <div style="display:flex;gap:12px;">
@@ -254,8 +254,8 @@ function closeTopupModal(e) {
 }
 
 function updateAmount() {
-    const amount = parseFloat(document.getElementById('topupAmount').value) || 0;
-    document.getElementById('amountValue').textContent = amount.toFixed(2);
+    const amount = parseInt(document.getElementById('topupAmount').value) || 0;
+    document.getElementById('amountValue').textContent = amount.toLocaleString('tr-TR');
     document.getElementById('topupPayBtn').disabled = amount <= 0;
 }
 
@@ -303,9 +303,9 @@ function closeWithdrawModal(e) {
 }
 
 function updateWithdrawAmount() {
-    const amount = parseFloat(document.getElementById('withdrawAmount').value) || 0;
-    const maxVal = parseFloat(document.getElementById('withdrawAmount').max) || 0;
-    document.getElementById('withdrawValue').textContent = amount.toFixed(2);
+    const amount = parseInt(document.getElementById('withdrawAmount').value) || 0;
+    const maxVal = parseInt(document.getElementById('withdrawAmount').max) || 0;
+    document.getElementById('withdrawValue').textContent = amount.toLocaleString('tr-TR');
     document.getElementById('withdrawBtn').disabled = amount <= 0 || amount > maxVal;
 }
 
