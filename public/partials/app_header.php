@@ -632,7 +632,7 @@ nav.swarm-topnav{
                     İletişime Geç
                 </a>
                 <a href="<?php echo BASE_URL; ?>/sponsors" style="flex:1; display:flex; align-items:center; justify-content:center; background:transparent; color:#ffffff; border:1px solid rgba(255,255,255,0.4); padding:8px 4px; border-radius:8px; font-size:10px; font-weight:800; text-decoration:none; text-align:center; transition:all 0.15s;" onmouseover="this.style.background='rgba(255,255,255,0.08)';" onmouseout="this.style.background='transparent';">
-                    Tüm Sponsorlar
+                    Reklam Ver
                 </a>
             </div>
 
