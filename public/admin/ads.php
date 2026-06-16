@@ -11,7 +11,7 @@ require_once __DIR__ . '/../../app/Models/User.php';
 require_once __DIR__ . '/../../app/Models/Venue.php';
 require_once __DIR__ . '/../../app/Models/Ad.php';
 require_once __DIR__ . '/../../app/Models/Notification.php';
-
+require_once __DIR__ . '/../../app/Models/Wallet.php';
 Auth::requireAdmin();
 $adModel = new AdModel();
 
@@ -46,6 +46,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && Auth::canWrite()) {
         $adModel->delete($adId);
         Logger::adminAudit('delete', 'ad', $adId);
         Auth::setFlash('success', 'Reklam silindi.');
+    } elseif ($action === 'approve') {
+        $adId = (int)($_POST['ad_id'] ?? 0);
+        $ad = $adModel->getById($adId);
+        if ($ad && $ad['status'] === 'pending') {
+            $wallet = new WalletModel();
+            if ($wallet->getBalance($ad['user_id']) >= 10000.00) {
+                if ($wallet->pay($ad['user_id'], 10000.00, 'Feed Reklam Onayı: ' . $ad['title'])) {
+                    $adModel->approve($adId);
+                    Auth::setFlash('success', 'Reklam onaylandı ve bakiye düşüldü.');
+                } else {
+                    Auth::setFlash('error', 'Ödeme alınamadı.');
+                }
+            } else {
+                Auth::setFlash('error', 'Kullanıcının bakiyesi yetersiz ($10.000 gerekli).');
+            }
+        }
+    } elseif ($action === 'reject') {
+        $adId = (int)($_POST['ad_id'] ?? 0);
+        $adModel->reject($adId);
+        Auth::setFlash('success', 'Reklam reddedildi.');
     }
     header('Location: ' . BASE_URL . '/admin/ads'); exit;
 }
@@ -125,14 +145,24 @@ require_once __DIR__ . '/_header.php';
                         </span>
                     </td>
                     <td class="px-6 py-3">
-                        <?php if ($ad['is_active']): ?>
-                            <span class="text-xs font-semibold px-2 py-1 rounded border bg-emerald-500/10 text-emerald-400 border-emerald-500/20">Aktif</span>
+                        <?php if ($ad['status'] === 'pending'): ?>
+                            <span class="text-xs font-semibold px-2 py-1 rounded border bg-yellow-500/10 text-yellow-400 border-yellow-500/20">Bekliyor</span>
+                        <?php elseif ($ad['status'] === 'rejected'): ?>
+                            <span class="text-xs font-semibold px-2 py-1 rounded border bg-red-500/10 text-red-400 border-red-500/20">Reddedildi</span>
                         <?php else: ?>
-                            <span class="text-xs font-semibold px-2 py-1 rounded border bg-red-500/10 text-red-400 border-red-500/20">Pasif</span>
+                            <?php if ($ad['is_active']): ?>
+                                <span class="text-xs font-semibold px-2 py-1 rounded border bg-emerald-500/10 text-emerald-400 border-emerald-500/20">Aktif</span>
+                            <?php else: ?>
+                                <span class="text-xs font-semibold px-2 py-1 rounded border bg-slate-500/10 text-slate-400 border-slate-500/20">Pasif</span>
+                            <?php endif; ?>
                         <?php endif; ?>
                     </td>
                     <td class="px-6 py-3">
                         <div class="flex gap-1">
+                            <?php if ($ad['status'] === 'pending'): ?>
+                                <form method="POST" class="inline" onsubmit="return confirm('Reklamı onaylamak istiyor musunuz? Kullanıcıdan $10.000 çekilecek.')"><input type="hidden" name="csrf_token" value="<?php echo csrfToken(); ?>"><input type="hidden" name="ad_id" value="<?php echo $ad['id']; ?>"><input type="hidden" name="action" value="approve"><button class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 flex items-center justify-center transition-colors" title="Onayla"><span class="material-symbols-outlined text-[18px]">check</span></button></form>
+                                <form method="POST" class="inline" onsubmit="return confirm('Reklamı reddetmek istiyor musunuz?')"><input type="hidden" name="csrf_token" value="<?php echo csrfToken(); ?>"><input type="hidden" name="ad_id" value="<?php echo $ad['id']; ?>"><input type="hidden" name="action" value="reject"><button class="w-8 h-8 rounded-lg bg-orange-500/10 text-orange-400 hover:bg-orange-500/20 flex items-center justify-center transition-colors" title="Reddet"><span class="material-symbols-outlined text-[18px]">close</span></button></form>
+                            <?php endif; ?>
                             <form method="POST" class="inline"><input type="hidden" name="csrf_token" value="<?php echo csrfToken(); ?>"><input type="hidden" name="ad_id" value="<?php echo $ad['id']; ?>"><input type="hidden" name="action" value="toggle"><button class="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 flex items-center justify-center transition-colors" title="Aktif/Pasif"><span class="material-symbols-outlined text-[18px]">toggle_on</span></button></form>
                             <form method="POST" class="inline" onsubmit="return confirm('Silmek?')"><input type="hidden" name="csrf_token" value="<?php echo csrfToken(); ?>"><input type="hidden" name="ad_id" value="<?php echo $ad['id']; ?>"><input type="hidden" name="action" value="delete"><button class="w-8 h-8 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 flex items-center justify-center transition-colors" title="Sil"><span class="material-symbols-outlined text-[18px]">delete</span></button></form>
                         </div>

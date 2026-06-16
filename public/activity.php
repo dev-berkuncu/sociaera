@@ -313,20 +313,43 @@ function feedDayLabel(string $day): string {
                 }
         ?>
         <!-- AD CARD -->
-        <div style="background:#fff;border-radius:16px;border:1.5px dashed #E8E6E1;overflow:hidden;padding:14px 16px;display:flex;align-items:center;gap:12px;">
-            <?php if (!empty($adImage)): ?>
-            <img src="<?php echo escape($adImage); ?>" style="width:56px;height:56px;border-radius:10px;object-fit:cover;flex-shrink:0;" loading="lazy">
+        <div style="background:#fff;border-radius:16px;border:1.5px dashed var(--border);overflow:hidden;padding:16px;display:flex;flex-direction:column;gap:12px;box-shadow:0 2px 10px rgba(0,0,0,0.02);">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+                <div style="display:flex;align-items:center;gap:6px;">
+                    <span class="material-symbols-outlined" style="font-size:16px;color:var(--color-primary);">campaign</span>
+                    <span style="font-size:11px;font-weight:800;color:var(--color-primary);text-transform:uppercase;letter-spacing:0.5px;">Sponsorlu İçerik</span>
+                </div>
+            </div>
+            
+            <?php 
+                $mType = $ad['media_type'] ?? 'image';
+            ?>
+            <?php if ($mType === 'youtube' && !empty($adImage)): 
+                preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i', $adImage, $match);
+                $ytId = $match[1] ?? '';
+                if ($ytId):
+            ?>
+                <iframe width="100%" height="220" src="https://www.youtube.com/embed/<?php echo $ytId; ?>" frameborder="0" allowfullscreen style="border-radius:12px;"></iframe>
+                <?php endif; ?>
+            <?php elseif ($mType === 'video' && !empty($adImage)): ?>
+                <video src="<?php echo escape($adImage); ?>" autoplay muted loop controls playsinline style="width:100%; max-height:220px; object-fit:cover; border-radius:12px; background:#000;"></video>
+            <?php elseif (!empty($adImage)): ?>
+                <img src="<?php echo escape($adImage); ?>" style="width:100%;max-height:220px;border-radius:12px;object-fit:cover;" loading="lazy">
             <?php endif; ?>
-            <div style="flex:1;min-width:0;">
-                <div style="font-size:0.6875rem;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:2px;">Sponsorlu</div>
-                <div style="font-size:0.875rem;font-weight:700;color:var(--text-1);"><?php echo escape($ad['title'] ?? ''); ?></div>
+
+            <div>
+                <div style="font-size:1rem;font-weight:800;color:var(--text-1);"><?php echo escape($ad['title'] ?? ''); ?></div>
                 <?php if (!empty($ad['description'])): ?>
-                <div style="font-size:0.75rem;color:var(--text-3);margin-top:2px;"><?php echo escape($ad['description']); ?></div>
+                <div style="font-size:0.875rem;color:var(--text-2);margin-top:4px;line-height:1.4;"><?php echo escape($ad['description']); ?></div>
                 <?php endif; ?>
             </div>
+            
             <?php if (!empty($adUrl)): ?>
             <a href="<?php echo escape($adUrl); ?>" target="_blank" rel="noopener"
-               class="btn btn-primary btn-sm" style="flex-shrink:0;text-decoration:none;">İncele</a>
+               style="display:flex;align-items:center;justify-content:center;gap:6px;width:100%;background:var(--bg-section);color:var(--text-1);padding:10px;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none;transition:background 0.2s;"
+               onmouseover="this.style.background='var(--border)'" onmouseout="this.style.background='var(--bg-section)'">
+               İncele <span class="material-symbols-outlined" style="font-size:16px;">open_in_new</span>
+            </a>
             <?php endif; ?>
         </div>
         <?php endif; ?>

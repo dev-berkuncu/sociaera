@@ -12,6 +12,8 @@ class ImageUploader
         'image/png'  => 'png',
         'image/gif'  => 'gif',
         'image/webp' => 'webp',
+        'video/mp4'  => 'mp4',
+        'video/webm' => 'webm',
     ];
 
     /**
@@ -50,10 +52,13 @@ class ImageUploader
             return $this->fail('Desteklenmeyen dosya formatı. (JPEG, PNG, GIF, WebP)');
         }
 
-        // Gerçekten bir resim mi?
-        $imageInfo = @getimagesize($file['tmp_name']);
-        if ($imageInfo === false) {
-            return $this->fail('Geçersiz resim dosyası.');
+        // Resimse doğrulama yap
+        $isImage = str_starts_with($mime, 'image/');
+        if ($isImage) {
+            $imageInfo = @getimagesize($file['tmp_name']);
+            if ($imageInfo === false) {
+                return $this->fail('Geçersiz resim dosyası.');
+            }
         }
 
         // Hedef klasörü oluştur
@@ -72,7 +77,7 @@ class ImageUploader
 
         // WebP dönüştürme veya direkt taşıma
         $uploadSuccess = false;
-        if ($outputFormat === 'webp' && function_exists('imagewebp') && $mime !== 'image/gif') {
+        if ($isImage && $outputFormat === 'webp' && function_exists('imagewebp') && $mime !== 'image/gif') {
             try {
                 $uploadSuccess = $this->convertToWebP(
                     $file['tmp_name'],
@@ -96,7 +101,7 @@ class ImageUploader
             }
         } else {
             // Boyut sınırlama (WebP olmadan)
-            if (!empty($options['maxWidth']) || !empty($options['maxHeight'])) {
+            if ($isImage && (!empty($options['maxWidth']) || !empty($options['maxHeight']))) {
                 try {
                     $uploadSuccess = $this->resize(
                         $file['tmp_name'],

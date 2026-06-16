@@ -60,11 +60,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
 
-        if (!isset($_FILES['image']) || $_FILES['image']['error'] === UPLOAD_ERR_NO_FILE) {
-            Auth::setFlash('error', 'Lütfen reklam görseli yükleyin.');
-            header('Location: ' . BASE_URL . '/sponsors.php');
-            exit;
-        }
+        $mediaType = $_POST['media_type'] ?? 'image';
+        if (!in_array($mediaType, ['image', 'video', 'youtube'])) $mediaType = 'image';
 
         // Bakiye kontrolü
         if ($userBalance < $adPrice) {
@@ -73,38 +70,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
 
-        // Dosya yükleme
-        $uploader = new ImageUploader();
-        $uploadResult = $uploader->upload($_FILES['image'], 'ads', [
-            'outputFormat' => 'webp',
-            'maxSize' => 5 * 1024 * 1024,
-            'maxWidth' => 1200,
-            'maxHeight' => 800,
-            'quality' => 85
-        ]);
+        $imagePath = '';
+        if ($mediaType === 'youtube') {
+            $youtubeUrl = trim($_POST['youtube_url'] ?? '');
+            if (empty($youtubeUrl) || !filter_var($youtubeUrl, FILTER_VALIDATE_URL)) {
+                Auth::setFlash('error', 'Lütfen geçerli bir YouTube linki girin.');
+                header('Location: ' . BASE_URL . '/sponsors.php');
+                exit;
+            }
+            $imagePath = $youtubeUrl;
+        } else {
+            if (!isset($_FILES['image']) || $_FILES['image']['error'] === UPLOAD_ERR_NO_FILE) {
+                Auth::setFlash('error', 'Lütfen reklam görseli/videosu yükleyin.');
+                header('Location: ' . BASE_URL . '/sponsors.php');
+                exit;
+            }
 
-        if (!$uploadResult['success']) {
-            Auth::setFlash('error', 'Görsel yüklenemedi: ' . ($uploadResult['error'] ?? 'Bilinmeyen hata'));
-            header('Location: ' . BASE_URL . '/sponsors.php');
-            exit;
+            // Dosya yükleme
+            $uploader = new ImageUploader();
+            $uploadResult = $uploader->upload($_FILES['image'], 'ads', [
+                'outputFormat' => 'webp', // Sadece resimlerde uygulanır
+                'maxSize' => ($mediaType === 'video') ? 20 * 1024 * 1024 : 5 * 1024 * 1024,
+                'maxWidth' => 1200,
+                'maxHeight' => 800,
+                'quality' => 85
+            ]);
+
+            if (!$uploadResult['success']) {
+                Auth::setFlash('error', 'Medya yüklenemedi: ' . ($uploadResult['error'] ?? 'Bilinmeyen hata'));
+                header('Location: ' . BASE_URL . '/sponsors.php');
+                exit;
+            }
+            $imagePath = $uploadResult['path'];
         }
 
-        $imagePath = $uploadResult['path'];
-
-        // Ödeme işlemi
-        $payDescription = "Feed Sponsorlu Reklamı Satın Alındı: " . $title;
-        if (!$walletModel->pay($userId, $adPrice, $payDescription)) {
-            // Yüklenen resmi temizle
-            $uploader->delete('ads', $uploadResult['filename']);
-            Auth::setFlash('error', 'Ödeme işlemi gerçekleştirilemedi. Cüzdan bakiyenizi kontrol edin.');
-            header('Location: ' . BASE_URL . '/sponsors.php');
-            exit;
-        }
-
-        // Reklamı veritabanında oluştur
+        // Reklamı bekleyen (pending) durumda veritabanında oluştur
         try {
-            $adModel->createSponsored($title, $imagePath, empty($linkUrl) ? null : $linkUrl, $userId);
-            Auth::setFlash('success', 'Reklamınız başarıyla oluşturuldu ve yayına alındı! 🎉');
+            $adModel->createSponsored($title, $imagePath, empty($linkUrl) ? null : $linkUrl, $userId, $mediaType);
+            Auth::setFlash('success', 'Reklamınız onay için gönderildi. Onaylandığında bakiyenizden düşülecek ve yayına girecektir. 🎉');
         } catch (Exception $e) {
             Auth::setFlash('error', 'Reklam oluşturulurken bir veritabanı hatası oluştu.');
         }
@@ -237,24 +240,77 @@ require_once __DIR__ . '/partials/app_header.php';
             </div>
             
             <div>
-                <label style="display:block; font-size:13px; font-weight:700; color:var(--text-2); margin-bottom:6px;">Reklam Görseli (Banner) <span style="color:var(--color-danger);">*</span></label>
-                <div style="border:1.5px dashed var(--border); border-radius:10px; padding:20px; text-align:center; background:var(--bg-section); cursor:pointer; position:relative; transition:border-color .15s;"
+                <label style="display:block; font-size:13px; font-weight:700; color:var(--text-2); margin-bottom:6px;">Medya Türü <span style="color:var(--color-danger);">*</span></label>
+                <div style="display:flex; gap:12px; margin-bottom:12px;">
+                    <label style="display:flex; align-items:center; gap:4px; font-size:13px; cursor:pointer;">
+                        <input type="radio" name="media_type" value="image" checked onchange="toggleMediaInput()"> Görsel
+                    </label>
+                    <label style="display:flex; align-items:center; gap:4px; font-size:13px; cursor:pointer;">
+                        <input type="radio" name="media_type" value="video" onchange="toggleMediaInput()"> Video (MP4)
+                    </label>
+                    <label style="display:flex; align-items:center; gap:4px; font-size:13px; cursor:pointer;">
+                        <input type="radio" name="media_type" value="youtube" onchange="toggleMediaInput()"> YouTube Linki
+                    </label>
+                </div>
+
+                <!-- Dosya Yükleme (Görsel/Video) -->
+                <div id="fileUploadContainer" style="border:1.5px dashed var(--border); border-radius:10px; padding:20px; text-align:center; background:var(--bg-section); cursor:pointer; position:relative; transition:border-color .15s;"
                      onmouseover="this.style.borderColor='var(--color-primary)'" onmouseout="this.style.borderColor='var(--border)'"
                      onclick="document.getElementById('image').click();">
                     <span class="material-symbols-outlined" style="font-size:36px; color:var(--text-3); margin-bottom:8px; display:block;">upload_file</span>
-                    <span style="font-size:13px; font-weight:600; color:var(--text-2); display:block; margin-bottom:4px;">Görsel yüklemek için tıklayın</span>
-                    <span style="font-size:11px; color:var(--text-3); display:block;">Önerilen boyut: 600x300. Maksimum: 5MB (JPEG, PNG, WebP)</span>
+                    <span style="font-size:13px; font-weight:600; color:var(--text-2); display:block; margin-bottom:4px;" id="uploadTitle">Görsel yüklemek için tıklayın</span>
+                    <span style="font-size:11px; color:var(--text-3); display:block;" id="uploadDesc">Önerilen boyut: 600x300. Maksimum: 5MB (JPEG, PNG, WebP)</span>
                     <input type="file" name="image" id="image" required accept="image/jpeg,image/png,image/webp" style="display:none;"
                            onchange="document.getElementById('fileNameSpan').innerText = this.files[0] ? this.files[0].name : '';">
                 </div>
                 <span id="fileNameSpan" style="font-size:12px; font-weight:700; color:var(--color-primary); margin-top:8px; display:block; text-align:center;"></span>
+
+                <!-- YouTube Link -->
+                <div id="youtubeUrlContainer" style="display:none;">
+                    <input type="url" name="youtube_url" id="youtube_url" placeholder="Örn: https://www.youtube.com/watch?v=..."
+                           style="width:100%; border:1.5px solid var(--border); border-radius:10px; padding:10px 14px; font-size:13px; font-family:var(--font); outline:none; background:var(--bg-section); color:var(--text-1); transition:border-color .15s;">
+                </div>
             </div>
+
+            <script>
+                function toggleMediaInput() {
+                    const type = document.querySelector('input[name="media_type"]:checked').value;
+                    const fileContainer = document.getElementById('fileUploadContainer');
+                    const ytContainer = document.getElementById('youtubeUrlContainer');
+                    const fileInput = document.getElementById('image');
+                    const ytInput = document.getElementById('youtube_url');
+                    const uploadTitle = document.getElementById('uploadTitle');
+                    const uploadDesc = document.getElementById('uploadDesc');
+
+                    if (type === 'youtube') {
+                        fileContainer.style.display = 'none';
+                        ytContainer.style.display = 'block';
+                        fileInput.removeAttribute('required');
+                        ytInput.setAttribute('required', 'required');
+                    } else {
+                        fileContainer.style.display = 'block';
+                        ytContainer.style.display = 'none';
+                        ytInput.removeAttribute('required');
+                        fileInput.setAttribute('required', 'required');
+
+                        if (type === 'video') {
+                            fileInput.setAttribute('accept', 'video/mp4,video/webm');
+                            uploadTitle.innerText = 'Video yüklemek için tıklayın';
+                            uploadDesc.innerText = 'Maksimum: 20MB (MP4, WebM)';
+                        } else {
+                            fileInput.setAttribute('accept', 'image/jpeg,image/png,image/webp');
+                            uploadTitle.innerText = 'Görsel yüklemek için tıklayın';
+                            uploadDesc.innerText = 'Önerilen boyut: 600x300. Maksimum: 5MB (JPEG, PNG, WebP)';
+                        }
+                    }
+                }
+            </script>
             
             <button type="submit" <?php echo ($userBalance < $adPrice) ? 'disabled' : ''; ?>
                     style="width:100%; border:none; background:<?php echo ($userBalance < $adPrice) ? 'var(--text-3)' : 'var(--color-primary)'; ?>; color:#fff; padding:12px 24px; border-radius:12px; font-weight:700; font-size:14px; cursor:<?php echo ($userBalance < $adPrice) ? 'not-allowed' : 'pointer'; ?>; transition:opacity .15s; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:<?php echo ($userBalance < $adPrice) ? 'none' : '0 4px 16px rgba(240,109,31,0.25)'; ?>;"
                     <?php if ($userBalance >= $adPrice): ?>onmouseover="this.style.opacity='.9'" onmouseout="this.style.opacity='1'"<?php endif; ?>>
                 <span class="material-symbols-outlined" style="font-size:20px;">send</span>
-                Ödeme Yap ve Reklamı Yayınla ($<?php echo number_format($adPrice, 0, ',', '.'); ?>)
+                Onaya Gönder ($<?php echo number_format($adPrice, 0, ',', '.'); ?>)
             </button>
         </form>
     </div>

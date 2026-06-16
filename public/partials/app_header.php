@@ -514,6 +514,7 @@ nav.swarm-topnav{
                         'type' => 'ad',
                         'title' => $lAd['title'],
                         'image' => $lAd['image_url'],
+                        'media_type' => $lAd['media_type'] ?? 'image',
                         'url' => $lAd['link_url'],
                         'badge' => 'Reklam'
                     ];
@@ -528,6 +529,7 @@ nav.swarm-topnav{
                         'type' => 'sponsor',
                         'title' => $mock['name'],
                         'image' => $mock['logo'],
+                        'media_type' => 'image',
                         'url' => $mock['url'],
                         'badge' => $mock['desc']
                     ];
@@ -543,12 +545,31 @@ nav.swarm-topnav{
                     <div class="carousel-slide-item" style="flex:0 0 100%; width:100%; box-sizing:border-box; padding:0 24px;">
                         <a href="<?php echo escape($item['url'] ?? '#'); ?>" target="_blank" rel="noopener" 
                            style="display:block; background:linear-gradient(135deg, #0f2b46, #1a365d); border-radius:12px; height:120px; padding:16px; box-sizing:border-box; text-decoration:none; position:relative; overflow:hidden;">
-                            <!-- Reklam Badge -->
-                            <span style="position:absolute; top:12px; left:12px; font-size:7px; font-weight:800; background:#f06d1f; color:#fff; padding:3px 6px; border-radius:10px; text-transform:uppercase; letter-spacing:0.5px;">REKLAM</span>
                             
+                            <!-- Media Background -->
+                            <?php 
+                            $bgUrl = escape($item['image'] ?? '');
+                            $mType = $item['media_type'] ?? 'image';
+                            if ($mType === 'youtube' && $bgUrl): 
+                                preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i', $bgUrl, $match);
+                                $ytId = $match[1] ?? '';
+                                if ($ytId):
+                            ?>
+                                <iframe width="100%" height="100%" src="https://www.youtube.com/embed/<?php echo $ytId; ?>?autoplay=1&mute=1&controls=0&loop=1&playlist=<?php echo $ytId; ?>" frameborder="0" style="position:absolute; inset:0; pointer-events:none;"></iframe>
+                            <?php endif; elseif ($mType === 'video' && $bgUrl): ?>
+                                <video src="<?php echo $bgUrl; ?>" autoplay muted loop playsinline style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover;"></video>
+                            <?php elseif ($bgUrl): ?>
+                                <div style="position:absolute; inset:0; background:url('<?php echo $bgUrl; ?>') center/cover no-repeat;"></div>
+                            <?php endif; ?>
+                            
+                            <!-- Gradient Overlay -->
+                            <div style="position:absolute; inset:0; background:linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 100%);"></div>
+
                             <!-- Content -->
-                            <div style="margin-top:24px; color:#ffffff; font-family:var(--font);">
-                                <div style="font-size:12px; font-weight:800; line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; text-overflow:ellipsis;">
+                            <span style="position:absolute; top:12px; left:12px; font-size:7px; font-weight:800; background:#f06d1f; color:#fff; padding:3px 6px; border-radius:10px; text-transform:uppercase; letter-spacing:0.5px; z-index:2;">REKLAM</span>
+                            
+                            <div style="position:absolute; bottom:16px; left:16px; right:16px; z-index:2; color:#ffffff; font-family:var(--font);">
+                                <div style="font-size:12px; font-weight:800; line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; text-overflow:ellipsis; text-shadow:0 1px 4px rgba(0,0,0,0.8);">
                                     <?php echo escape($item['title']); ?>
                                 </div>
                             </div>
@@ -575,27 +596,39 @@ nav.swarm-topnav{
         </div>
 
         <!-- ═══ Tall Vertical Banner (Reklam Alanı) ═══ -->
-        <div class="right-panel-card" style="background:linear-gradient(150deg, #0f2b46 0%, #1a365d 35%, #0f172a 100%) !important; border:none; border-radius:16px; padding:28px 20px; box-sizing:border-box; min-height:300px; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; position:relative; overflow:hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-            <!-- Pattern overlays -->
-            <div style="position:absolute; inset:0; background: linear-gradient(90deg, transparent 49%, rgba(255,255,255,0.02) 50%, transparent 51%); background-size: 30px 30px; pointer-events:none;"></div>
-            <div style="position:absolute; top:-20%; right:-20%; width:60%; height:60%; border-radius:50%; background:radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%); pointer-events:none;"></div>
-            
-            <div style="position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; gap:16px; width:100%;">
-                <div style="color:#ffffff; font-size:12px; font-weight:900; letter-spacing:1px; text-transform:uppercase; opacity:0.9; font-family:var(--font);">
-                    LONG ADVERTISEMENT:
-                </div>
-                <!-- Size Badge -->
-                <div style="color:rgba(255,255,255,0.6); font-size:10px; font-weight:700; background:rgba(255,255,255,0.08); padding:3px 8px; border-radius:12px; font-family:var(--font); border:1px solid rgba(255,255,255,0.05); margin-top:-4px;">
-                    300x500 px
-                </div>
-                <div style="color:#ffffff; font-size:16px; font-weight:800; line-height:1.4; max-width:180px; font-family:var(--font);">
-                    Featured Content & Opportunities
-                </div>
-                <a href="mailto:reklam@sociaera.online" style="display:inline-block; margin-top:8px; background:#1976d2; color:#ffffff; padding:8px 18px; border-radius:20px; font-size:11px; font-weight:800; text-decoration:none; box-shadow:0 4px 12px rgba(25,118,210,0.3); border:1px solid rgba(255,255,255,0.1); transition:all 0.2s;" onmouseover="this.style.background='#1565c0'; this.style.transform='translateY(-1px)';" onmouseout="this.style.background='#1976d2'; this.style.transform='translateY(0)';">
-                    Conern the now
+        <?php if (!empty($sidebarRightAds)): $rAd = $sidebarRightAds[0]; ?>
+            <div class="right-panel-card" style="background:linear-gradient(150deg, #0f2b46 0%, #1a365d 35%, #0f172a 100%) !important; border:none; border-radius:16px; padding:0; box-sizing:border-box; min-height:300px; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; position:relative; overflow:hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                <?php 
+                $bgUrl = escape($rAd['image_url'] ?? '');
+                $mType = $rAd['media_type'] ?? 'image';
+                if ($mType === 'youtube' && $bgUrl): 
+                    preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i', $bgUrl, $match);
+                    $ytId = $match[1] ?? '';
+                    if ($ytId):
+                ?>
+                    <iframe width="100%" height="100%" src="https://www.youtube.com/embed/<?php echo $ytId; ?>?autoplay=1&mute=1&controls=0&loop=1&playlist=<?php echo $ytId; ?>" frameborder="0" style="position:absolute; inset:0; pointer-events:none;"></iframe>
+                <?php endif; elseif ($mType === 'video' && $bgUrl): ?>
+                    <video src="<?php echo $bgUrl; ?>" autoplay muted loop playsinline style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover;"></video>
+                <?php elseif ($bgUrl): ?>
+                    <div style="position:absolute; inset:0; background:url('<?php echo $bgUrl; ?>') center/cover no-repeat;"></div>
+                <?php endif; ?>
+
+                <a href="<?php echo escape($rAd['link_url'] ?? '#'); ?>" target="_blank" rel="noopener" style="position:absolute; inset:0; z-index:10; display:flex; flex-direction:column; justify-content:flex-end; padding:20px; background:linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 60%); text-decoration:none;">
+                    <span style="position:absolute; top:12px; left:12px; font-size:9px; font-weight:800; background:var(--color-primary); color:#fff; padding:4px 8px; border-radius:12px; text-transform:uppercase; letter-spacing:0.5px; box-shadow:0 2px 4px rgba(0,0,0,0.5);">REKLAM</span>
+                    <div style="color:#ffffff; font-size:16px; font-weight:800; text-align:left; text-shadow:0 2px 6px rgba(0,0,0,0.9);"><?php echo escape($rAd['title'] ?? ''); ?></div>
                 </a>
             </div>
-        </div>
+        <?php else: ?>
+            <div class="right-panel-card" style="border:none; border-radius:16px; padding:0; box-sizing:border-box; min-height:300px; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; position:relative; overflow:hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                <!-- Fallback SparkLS Image -->
+                <div style="position:absolute; inset:0; background:url('<?php echo BASE_URL; ?>/assets/img/sponsors/sparkls.jpg') center/cover no-repeat;"></div>
+                
+                <!-- Link Overlay -->
+                <a href="https://sparkls.online" target="_blank" rel="noopener" style="position:absolute; inset:0; z-index:10; display:flex; flex-direction:column; justify-content:flex-end; padding:20px; background:linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 50%); text-decoration:none;">
+                    <span style="position:absolute; top:12px; left:12px; font-size:9px; font-weight:800; background:var(--color-primary); color:#fff; padding:4px 8px; border-radius:12px; text-transform:uppercase; letter-spacing:0.5px; box-shadow:0 2px 4px rgba(0,0,0,0.5);">SPONSOR</span>
+                </a>
+            </div>
+        <?php endif; ?>
 
         <!-- ═══ Brand Contact / Support Widget (Sitenin Renklerinde Orange) ═══ -->
         <div class="sidebar-widget" style="background:linear-gradient(135deg, #F06D1F 0%, #d8570e 100%); box-shadow: 0 4px 16px rgba(240,109,31,0.22); border:none; border-radius:16px; padding:18px; box-sizing:border-box; display:flex; flex-direction:column; gap:16px; position:relative; overflow:hidden;">

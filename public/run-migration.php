@@ -24,6 +24,10 @@ $migrations = [
         "ALTER TABLE ads ADD CONSTRAINT fk_ads_user_id FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE",
     'ads.expires_at kolonu' =>
         "ALTER TABLE ads ADD COLUMN IF NOT EXISTS expires_at DATETIME DEFAULT NULL AFTER is_active",
+    'ads.media_type kolonu' =>
+        "ALTER TABLE ads ADD COLUMN IF NOT EXISTS media_type ENUM('image', 'video', 'youtube') NOT NULL DEFAULT 'image' AFTER title",
+    'ads.status kolonu' =>
+        "ALTER TABLE ads ADD COLUMN IF NOT EXISTS status ENUM('pending', 'approved', 'rejected') NOT NULL DEFAULT 'approved' AFTER is_active",
 ];
 
 foreach ($migrations as $label => $sql) {
