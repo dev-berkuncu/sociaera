@@ -494,7 +494,7 @@ nav.swarm-topnav{
     $leftAds = [];
     try {
         if (class_exists('AdModel')) {
-            $leftAds = (new AdModel())->getByPosition('sidebar_left', 6);
+            $leftAds = (new AdModel())->getByPosition('carousel', 6);
         }
     } catch (Exception $e) {}
     ?>
