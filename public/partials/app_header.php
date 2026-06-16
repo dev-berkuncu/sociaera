@@ -498,17 +498,11 @@ nav.swarm-topnav{
         }
     } catch (Exception $e) {}
     ?>
-    <aside class="swarm-left-sidebar">
-        <!-- ═══ Sponsor Widget — Deep Blue (Sequential Slide) ═══ -->
-        <div class="sidebar-widget sidebar-widget--sponsors">
-            <div class="sidebar-widget-decor"></div>
-            <div class="sidebar-widget-decor-2"></div>
-            <div class="sidebar-widget-header">
-                <div class="widget-icon">
-                    <span class="material-symbols-outlined" style="font-size:18px; color:#ffd54f; font-variation-settings:'FILL' 1;">campaign</span>
-                </div>
-                <span class="widget-title">Sponsorlar</span>
-                <a href="<?php echo BASE_URL; ?>/sponsors" class="widget-action">Tümü →</a>
+    <aside class="swarm-left-sidebar" style="display:flex; flex-direction:column; gap:16px; width:220px; box-sizing:border-box;">
+        <!-- ═══ Modern Sponsor Carousel (White Card) ═══ -->
+        <div class="right-panel-card" style="padding:16px; background:#ffffff; border:1.5px solid var(--border); border-radius:16px; display:flex; flex-direction:column; gap:12px; position:relative; box-sizing:border-box; overflow:hidden;">
+            <div style="font-size:12px; font-weight:800; color:var(--text-1); letter-spacing:-0.2px; font-family:var(--font); padding-left:2px;">
+                Modern Sponsor Carousel
             </div>
 
             <?php
@@ -526,8 +520,8 @@ nav.swarm-topnav{
                 }
             } else {
                 $mockSponsors = [
-                    ['name' => 'COLOSSEUM', 'logo' => BASE_URL . '/assets/img/sponsors/colosseum.png', 'desc' => 'Sponsor', 'url' => 'https://face-tr.gta.world/page/colosseum'],
-                    ['name' => 'Paradise Group', 'logo' => BASE_URL . '/assets/img/sponsors/paradise-group.png', 'desc' => 'Sponsor', 'url' => 'https://face-tr.gta.world/page/paradise'],
+                    ['name' => 'Tequi-la-la — Cuma Geceleri Özel Kampanyası', 'logo' => BASE_URL . '/assets/img/sponsors/colosseum.png', 'desc' => 'Sponsor', 'url' => 'https://face-tr.gta.world/page/colosseum'],
+                    ['name' => 'Paradise Group — Lüks ve Eğlence Sponsoru', 'logo' => BASE_URL . '/assets/img/sponsors/paradise-group.png', 'desc' => 'Sponsor', 'url' => 'https://face-tr.gta.world/page/paradise'],
                 ];
                 foreach ($mockSponsors as $mock) {
                     $sliderItems[] = [
@@ -541,103 +535,185 @@ nav.swarm-topnav{
             }
             ?>
 
-            <div class="sponsor-slider">
-                <?php foreach ($sliderItems as $index => $item): ?>
-                <div class="sponsor-slide <?php echo $index === 0 ? 'active' : ''; ?>">
-                    <a href="<?php echo escape($item['url'] ?? '#'); ?>" target="_blank" rel="noopener" class="ad-item" style="display: flex;">
-                        <span class="ad-badge" style="background: <?php echo $item['type'] === 'ad' ? '#f06d1f' : '#7c3aed'; ?>;"><?php echo escape($item['badge']); ?></span>
-                        <div class="ad-image" style="aspect-ratio: 1.5; background: #ffffff;">
-                            <img src="<?php echo escape($item['image']); ?>" alt="<?php echo escape($item['title']); ?>" style="object-fit: contain; width: 100%; height: 100%;" loading="lazy">
-                        </div>
-                        <div class="ad-title">
-                            <?php echo escape($item['title']); ?>
-                        </div>
-                    </a>
+            <!-- Carousel Container -->
+            <div class="carousel-container" style="position:relative; width:100%; overflow:hidden;">
+                <!-- Track -->
+                <div class="carousel-track" style="display:flex; transition:transform 0.4s ease-in-out; width:100%;">
+                    <?php foreach ($sliderItems as $index => $item): ?>
+                    <div class="carousel-slide-item" style="flex:0 0 100%; width:100%; box-sizing:border-box; padding:0 2px;">
+                        <a href="<?php echo escape($item['url'] ?? '#'); ?>" target="_blank" rel="noopener" 
+                           style="display:block; background:linear-gradient(135deg, #0f2b46, #1a365d); border-radius:12px; height:120px; padding:16px; box-sizing:border-box; text-decoration:none; position:relative; overflow:hidden;">
+                            <!-- Reklam Badge -->
+                            <span style="position:absolute; top:12px; left:12px; font-size:7px; font-weight:800; background:#f06d1f; color:#fff; padding:3px 6px; border-radius:10px; text-transform:uppercase; letter-spacing:0.5px;">REKLAM</span>
+                            
+                            <!-- Content -->
+                            <div style="margin-top:24px; color:#ffffff; font-family:var(--font);">
+                                <div style="font-size:12px; font-weight:800; line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; text-overflow:ellipsis;">
+                                    <?php echo escape($item['title']); ?>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <?php endforeach; ?>
                 </div>
+
+                <!-- Navigation Arrows -->
+                <button type="button" class="carousel-nav-btn prev" style="position:absolute; left:2px; top:50%; transform:translateY(-50%); width:24px; height:24px; border-radius:50%; background:#ffffff; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 2px 6px rgba(0,0,0,0.15); z-index:10; color:var(--text-2); padding:0;">
+                    <span class="material-symbols-outlined" style="font-size:14px; font-weight:bold;">chevron_left</span>
+                </button>
+                <button type="button" class="carousel-nav-btn next" style="position:absolute; right:2px; top:50%; transform:translateY(-50%); width:24px; height:24px; border-radius:50%; background:#ffffff; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 2px 6px rgba(0,0,0,0.15); z-index:10; color:var(--text-2); padding:0;">
+                    <span class="material-symbols-outlined" style="font-size:14px; font-weight:bold;">chevron_right</span>
+                </button>
+            </div>
+
+            <!-- Dots -->
+            <div class="carousel-dots" style="display:flex; justify-content:center; gap:6px; margin-top:2px;">
+                <?php foreach ($sliderItems as $index => $item): ?>
+                <span class="carousel-dot" data-slide-index="<?php echo $index; ?>" style="width:6px; height:6px; border-radius:50%; background:#dcdcdc; cursor:pointer; transition:all 0.2s;"></span>
                 <?php endforeach; ?>
             </div>
-
-            <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                const slides = document.querySelectorAll(".sponsor-slide");
-                if (slides.length <= 1) return;
-                let current = 0;
-                setInterval(() => {
-                    slides[current].classList.remove("active");
-                    current = (current + 1) % slides.length;
-                    slides[current].classList.add("active");
-                }, 4000);
-            });
-            </script>
         </div>
 
-        <!-- ═══ CTA Widget — Deep Green ═══ -->
-        <div class="sidebar-widget sidebar-widget--cta">
-            <div class="sidebar-widget-decor"></div>
-            <div class="sidebar-widget-header">
-                <div class="widget-icon">
-                    <span class="material-symbols-outlined" style="font-size:18px; color:#a5d6a7; font-variation-settings:'FILL' 1;">ads_click</span>
-                </div>
-                <span class="widget-title">Reklam Ver</span>
-            </div>
-            <p style="color:rgba(255,255,255,0.7); font-size:11px; margin:0; line-height:1.5;">Markanı binlerce oyuncuya tanıt!</p>
-            <a href="mailto:reklam@sociaera.online" class="sidebar-cta-btn">
-                <span class="material-symbols-outlined">mail</span>
-                İletişime Geç
-            </a>
-            <a href="<?php echo BASE_URL; ?>/sponsors" class="sidebar-cta-btn" style="background:rgba(255,255,255,0.08); border-color:rgba(255,255,255,0.06);">
-                <span class="material-symbols-outlined">storefront</span>
-                Tüm Sponsorlar
-            </a>
-        </div>
-
-        <!-- ═══ Purple Support/Account Card Widget ═══ -->
-        <div class="sidebar-widget sidebar-widget--support">
-            <div class="sidebar-widget-decor"></div>
-            <div class="sidebar-widget-decor-2"></div>
-            <div class="sidebar-widget-header">
-                <div class="widget-icon">
-                    <span class="material-symbols-outlined" style="font-size:18px; color:#e040fb; font-variation-settings:'FILL' 1;">contact_mail</span>
-                </div>
-                <span class="widget-title">Reklam İletişim</span>
-            </div>
+        <!-- ═══ Tall Vertical Banner (Reklam Alanı) ═══ -->
+        <div class="right-panel-card" style="background:linear-gradient(150deg, #0f2b46 0%, #1a365d 35%, #0f172a 100%); border:none; border-radius:16px; padding:28px 20px; box-sizing:border-box; min-height:300px; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; position:relative; overflow:hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+            <!-- Pattern overlays -->
+            <div style="position:absolute; inset:0; background: linear-gradient(90deg, transparent 49%, rgba(255,255,255,0.02) 50%, transparent 51%); background-size: 30px 30px; pointer-events:none;"></div>
+            <div style="position:absolute; top:-20%; right:-20%; width:60%; height:60%; border-radius:50%; background:radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%); pointer-events:none;"></div>
             
-            <div class="account-list">
-                <!-- Account 1: Email Support -->
-                <a href="mailto:reklam@sociaera.online" class="account-item">
-                    <div class="account-avatar-wrapper">
-                        <span class="material-symbols-outlined account-avatar-icon">mail</span>
+            <div style="position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; gap:16px; width:100%;">
+                <div style="color:#ffffff; font-size:12px; font-weight:900; letter-spacing:1px; text-transform:uppercase; opacity:0.9; font-family:var(--font);">
+                    LONG ADVERTISEMENT:
+                </div>
+                <div style="color:#ffffff; font-size:16px; font-weight:800; line-height:1.4; max-width:180px; font-family:var(--font);">
+                    Featured Content & Opportunities
+                </div>
+                <a href="mailto:reklam@sociaera.online" style="display:inline-block; margin-top:8px; background:#1976d2; color:#ffffff; padding:8px 18px; border-radius:20px; font-size:11px; font-weight:800; text-decoration:none; box-shadow:0 4px 12px rgba(25,118,210,0.3); border:1px solid rgba(255,255,255,0.1); transition:all 0.2s;" onmouseover="this.style.background='#1565c0'; this.style.transform='translateY(-1px)';" onmouseout="this.style.background='#1976d2'; this.style.transform='translateY(0)';">
+                    Conern the now
+                </a>
+            </div>
+        </div>
+
+        <!-- ═══ Brand Contact / Support Widget (Sitenin Renklerinde Orange) ═══ -->
+        <div class="sidebar-widget" style="background:linear-gradient(135deg, #F06D1F 0%, #d8570e 100%); box-shadow: 0 4px 16px rgba(240,109,31,0.22); border:none; border-radius:16px; padding:18px; box-sizing:border-box; display:flex; flex-direction:column; gap:16px; position:relative; overflow:hidden;">
+            <!-- Subtle background circle decorator -->
+            <div style="position:absolute; right:-15px; top:-15px; width:60px; height:60px; border-radius:50%; background:rgba(255,255,255,0.08); pointer-events:none;"></div>
+            
+            <!-- Buttons Header Row -->
+            <div style="display:flex; gap:8px; width:100%; box-sizing:border-box; z-index:2; position:relative;">
+                <a href="mailto:reklam@sociaera.online" style="flex:1; display:flex; align-items:center; justify-content:center; background:#ffffff; color:#F06D1F; border:none; padding:8px 4px; border-radius:8px; font-size:10px; font-weight:800; text-decoration:none; text-align:center; box-shadow:0 2px 5px rgba(0,0,0,0.06); transition:transform 0.15s;" onmouseover="this.style.transform='translateY(-1px)';" onmouseout="this.style.transform='translateY(0)';">
+                    İletişime Geç
+                </a>
+                <a href="<?php echo BASE_URL; ?>/sponsors" style="flex:1; display:flex; align-items:center; justify-content:center; background:transparent; color:#ffffff; border:1px solid rgba(255,255,255,0.4); padding:8px 4px; border-radius:8px; font-size:10px; font-weight:800; text-decoration:none; text-align:center; transition:all 0.15s;" onmouseover="this.style.background='rgba(255,255,255,0.08)';" onmouseout="this.style.background='transparent';">
+                    Tüm Sponsorlar
+                </a>
+            </div>
+
+            <!-- List Section -->
+            <div style="display:flex; flex-direction:column; gap:8px; width:100%; z-index:2; position:relative;">
+                <!-- Header: Reklam İletişim -->
+                <div style="display:flex; align-items:center; gap:6px; opacity:0.9; color:#ffffff; font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:0.8px; padding-bottom:6px; border-bottom:1px solid rgba(255,255,255,0.15);">
+                    <span class="material-symbols-outlined" style="font-size:14px;">contact_mail</span>
+                    REKLAM İLETİŞİM
+                </div>
+
+                <!-- Account 1: Email -->
+                <a href="mailto:reklam@sociaera.online" style="display:flex; align-items:center; gap:8px; text-decoration:none; color:#ffffff; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.05); border-radius:10px; padding:8px 10px; transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.15)'; this.style.transform='translateX(3px)';" onmouseout="this.style.background='rgba(255,255,255,0.08)'; this.style.transform='translateX(0)';">
+                    <div style="width:28px; height:28px; border-radius:50%; background:rgba(255,255,255,0.15); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                        <span class="material-symbols-outlined" style="font-size:14px; color:#ffffff;">mail</span>
                     </div>
-                    <div class="account-info">
-                        <div class="account-name-container">
-                            <span class="account-name">Sociaera Reklam</span>
-                            <span class="material-symbols-outlined account-badge-icon" style="color: #ffd54f; font-variation-settings:'FILL' 1;">verified</span>
+                    <div style="flex:1; min-width:0;">
+                        <div style="display:flex; align-items:center; gap:3px;">
+                            <span style="font-size:10px; font-weight:800; color:#ffffff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Sociaera Reklam</span>
+                            <span class="material-symbols-outlined" style="font-size:11px; color:#ffd54f; font-variation-settings:'FILL' 1;">verified</span>
                         </div>
-                        <div class="account-username">reklam@sociaera.online</div>
-                    </div>
-                    <div class="account-action">
-                        <span class="material-symbols-outlined">send</span>
+                        <div style="font-size:8px; color:rgba(255,255,255,0.7); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin-top:1px;">reklam@sociaera.online</div>
                     </div>
                 </a>
 
-                <!-- Account 2: Discord Support -->
-                <a href="https://discord.gg/sociaera" target="_blank" rel="noopener" class="account-item">
-                    <div class="account-avatar-wrapper" style="background: #5865F2;">
-                        <span class="material-symbols-outlined account-avatar-icon">forum</span>
+                <!-- Account 2: Discord -->
+                <a href="https://discord.gg/sociaera" target="_blank" rel="noopener" style="display:flex; align-items:center; gap:8px; text-decoration:none; color:#ffffff; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.05); border-radius:10px; padding:8px 10px; transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.15)'; this.style.transform='translateX(3px)';" onmouseout="this.style.background='rgba(255,255,255,0.08)'; this.style.transform='translateX(0)';">
+                    <div style="width:28px; height:28px; border-radius:50%; background:rgba(255,255,255,0.15); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                        <span class="material-symbols-outlined" style="font-size:14px; color:#ffffff;">forum</span>
                     </div>
-                    <div class="account-info">
-                        <div class="account-name-container">
-                            <span class="account-name">Discord Destek</span>
-                            <span class="material-symbols-outlined account-badge-icon" style="color: #ffd54f; font-variation-settings:'FILL' 1;">star</span>
+                    <div style="flex:1; min-width:0;">
+                        <div style="display:flex; align-items:center; gap:3px;">
+                            <span style="font-size:10px; font-weight:800; color:#ffffff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Discord Destek</span>
+                            <span class="material-symbols-outlined" style="font-size:11px; color:#ffd54f; font-variation-settings:'FILL' 1;">star</span>
                         </div>
-                        <div class="account-username">discord.gg/sociaera</div>
-                    </div>
-                    <div class="account-action">
-                        <span class="material-symbols-outlined">open_in_new</span>
+                        <div style="font-size:8px; color:rgba(255,255,255,0.7); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin-top:1px;">discord.gg/sociaera</div>
                     </div>
                 </a>
             </div>
         </div>
+
+        <!-- Carousel Script -->
+        <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const track = document.querySelector(".carousel-track");
+            const slides = Array.from(track.children);
+            const dots = document.querySelectorAll(".carousel-dot");
+            const nextBtn = document.querySelector(".carousel-nav-btn.next");
+            const prevBtn = document.querySelector(".carousel-nav-btn.prev");
+            
+            if (slides.length <= 1) {
+                if (nextBtn) nextBtn.style.display = "none";
+                if (prevBtn) prevBtn.style.display = "none";
+                return;
+            }
+            
+            let currentIndex = 0;
+            let autoPlayTimer = null;
+            
+            function updateCarousel(index) {
+                if (index < 0) index = slides.length - 1;
+                if (index >= slides.length) index = 0;
+                
+                currentIndex = index;
+                track.style.transform = `translateX(-${currentIndex * 100}%)`;
+                
+                dots.forEach(dot => dot.style.background = "#dcdcdc");
+                if (dots[currentIndex]) {
+                    dots[currentIndex].style.background = "#F06D1F";
+                }
+            }
+            
+            function startAutoPlay() {
+                stopAutoPlay();
+                autoPlayTimer = setInterval(() => {
+                    updateCarousel(currentIndex + 1);
+                }, 5000);
+            }
+            
+            function stopAutoPlay() {
+                if (autoPlayTimer) clearInterval(autoPlayTimer);
+            }
+            
+            if (nextBtn) {
+                nextBtn.addEventListener("click", () => {
+                    updateCarousel(currentIndex + 1);
+                    startAutoPlay();
+                });
+            }
+            
+            if (prevBtn) {
+                prevBtn.addEventListener("click", () => {
+                    updateCarousel(currentIndex - 1);
+                    startAutoPlay();
+                });
+            }
+            
+            dots.forEach(dot => {
+                dot.addEventListener("click", (e) => {
+                    const index = parseInt(e.target.getAttribute("data-slide-index"));
+                    updateCarousel(index);
+                    startAutoPlay();
+                });
+            });
+            
+            updateCarousel(0);
+            startAutoPlay();
+        });
+        </script>
     </aside>
 
 <?php endif; // hideSidebar ?>

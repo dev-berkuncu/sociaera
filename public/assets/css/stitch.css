@@ -1624,4 +1624,12 @@ body.bg-obsidian, body.font-body-sm { /* noop — overridden by body {} */ }
   font-size: 16px;
 }
 
-
+/* Carousel nav button states */
+.carousel-nav-btn:hover {
+  background: var(--color-primary-bg) !important;
+  color: var(--color-primary) !important;
+  transform: translateY(-50%) scale(1.08) !important;
+}
+.carousel-nav-btn:active {
+  transform: translateY(-50%) scale(0.95) !important;
+}
