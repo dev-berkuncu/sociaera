@@ -59,6 +59,31 @@ class AdModel
             ORDER BY sort_order ASC, id DESC LIMIT ?
         ");
         $stmt->execute([$limit]);
+    }
+
+    /**
+     * Kullanıcı sponsorlu reklamı oluştur
+     */
+    public function createSponsored(string $title, string $imageUrl, ?string $linkUrl, int $userId): int
+    {
+        $stmt = $this->db->prepare("
+            INSERT INTO ads (title, image_url, link_url, position, is_active, user_id) 
+            VALUES (?, ?, ?, 'feed', 1, ?)
+        ");
+        $stmt->execute([$title, $imageUrl, $linkUrl, $userId]);
+        return (int) $this->db->lastInsertId();
+    }
+
+    /**
+     * Kullanıcının oluşturduğu reklamları getir
+     */
+    public function getByUserId(int $userId): array
+    {
+        $stmt = $this->db->prepare("
+            SELECT * FROM ads WHERE user_id = ? ORDER BY id DESC
+        ");
+        $stmt->execute([$userId]);
         return $stmt->fetchAll();
     }
 }
+

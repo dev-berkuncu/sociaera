@@ -1,6 +1,6 @@
 <?php
 /**
- * Sociaera — Sponsorlarımız Sayfası
+ * Sociaera — Sponsorlu Reklamlar Sayfası
  */
 require_once __DIR__ . '/../app/Config/env.php';
 loadEnv(dirname(__DIR__) . '/.env');
@@ -8,8 +8,16 @@ require_once __DIR__ . '/../app/Config/app.php';
 require_once __DIR__ . '/../app/Core/View.php';
 require_once __DIR__ . '/../app/Models/User.php';
 require_once __DIR__ . '/../app/Models/Notification.php';
+require_once __DIR__ . '/../app/Models/Wallet.php';
+require_once __DIR__ . '/../app/Models/Ad.php';
+require_once __DIR__ . '/../app/Services/ImageUploader.php';
 
 Auth::requireLogin();
+
+$userId = Auth::id();
+$walletModel = new WalletModel();
+$adModel = new AdModel();
+$userModel = new UserModel();
 
 $trendVenues = [];
 $miniLeaderboard = [];
@@ -18,18 +26,130 @@ try {
     $miniLeaderboard = (new LeaderboardModel())->getTopUsers(5);
 } catch (Exception $e) {}
 
-// Sponsor verileri — ileride DB'den çekilebilir
-$sponsors = [
-    ['name' => 'COLOSSEUM', 'logo' => 'assets/img/sponsors/colosseum.png', 'url' => 'https://face-tr.gta.world/page/colosseum'],
-    ['name' => 'Paradise Group', 'logo' => 'assets/img/sponsors/paradise-group.png', 'url' => 'https://face-tr.gta.world/page/paradise'],
-];
+$adPrice = 150.00;
+$userBalance = $walletModel->getBalance($userId);
 
-$pageTitle = 'Sponsorlarımız';
+// POST İstekleri (Reklam Oluşturma veya Silme)
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    Csrf::requireValid();
+
+    $action = $_POST['action'] ?? 'create';
+
+    if ($action === 'create') {
+        $title = trim($_POST['title'] ?? '');
+        $linkUrl = trim($_POST['link_url'] ?? '');
+
+        // Validasyonlar
+        if (empty($title)) {
+            Auth::setFlash('error', 'Reklam başlığı/marka adı boş bırakılamaz.');
+            header('Location: ' . BASE_URL . '/sponsors.php');
+            exit;
+        }
+
+        if (strlen($title) < 3 || strlen($title) > 100) {
+            Auth::setFlash('error', 'Reklam başlığı en az 3, en fazla 100 karakter olmalıdır.');
+            header('Location: ' . BASE_URL . '/sponsors.php');
+            exit;
+        }
+
+        if (!empty($linkUrl) && !filter_var($linkUrl, FILTER_VALIDATE_URL)) {
+            Auth::setFlash('error', 'Geçersiz yönlendirme adresi/URL formatı.');
+            header('Location: ' . BASE_URL . '/sponsors.php');
+            exit;
+        }
+
+        if (!isset($_FILES['image']) || $_FILES['image']['error'] === UPLOAD_ERR_NO_FILE) {
+            Auth::setFlash('error', 'Lütfen reklam görseli yükleyin.');
+            header('Location: ' . BASE_URL . '/sponsors.php');
+            exit;
+        }
+
+        // Bakiye kontrolü
+        if ($userBalance < $adPrice) {
+            Auth::setFlash('error', 'Cüzdanınızda yeterli bakiye bulunmuyor. Lütfen bakiye yükleyin.');
+            header('Location: ' . BASE_URL . '/sponsors.php');
+            exit;
+        }
+
+        // Dosya yükleme
+        $uploader = new ImageUploader();
+        $uploadResult = $uploader->upload($_FILES['image'], 'ads', [
+            'outputFormat' => 'webp',
+            'maxSize' => 5 * 1024 * 1024,
+            'maxWidth' => 1200,
+            'maxHeight' => 800,
+            'quality' => 85
+        ]);
+
+        if (!$uploadResult['success']) {
+            Auth::setFlash('error', 'Görsel yüklenemedi: ' . ($uploadResult['error'] ?? 'Bilinmeyen hata'));
+            header('Location: ' . BASE_URL . '/sponsors.php');
+            exit;
+        }
+
+        $imagePath = $uploadResult['path'];
+
+        // Ödeme işlemi
+        $payDescription = "Feed Sponsorlu Reklamı Satın Alındı: " . $title;
+        if (!$walletModel->pay($userId, $adPrice, $payDescription)) {
+            // Yüklenen resmi temizle
+            $uploader->delete('ads', $uploadResult['filename']);
+            Auth::setFlash('error', 'Ödeme işlemi gerçekleştirilemedi. Cüzdan bakiyenizi kontrol edin.');
+            header('Location: ' . BASE_URL . '/sponsors.php');
+            exit;
+        }
+
+        // Reklamı veritabanında oluştur
+        try {
+            $adModel->createSponsored($title, $imagePath, empty($linkUrl) ? null : $linkUrl, $userId);
+            Auth::setFlash('success', 'Reklamınız başarıyla oluşturuldu ve yayına alındı! 🎉');
+        } catch (Exception $e) {
+            Auth::setFlash('error', 'Reklam oluşturulurken bir veritabanı hatası oluştu.');
+        }
+
+        header('Location: ' . BASE_URL . '/sponsors.php');
+        exit;
+    } elseif ($action === 'delete') {
+        $adId = (int)($_POST['ad_id'] ?? 0);
+        $ad = $adModel->getById($adId);
+
+        if (!$ad || (int)$ad['user_id'] !== $userId) {
+            Auth::setFlash('error', 'Bu reklamı silme yetkiniz bulunmuyor.');
+            header('Location: ' . BASE_URL . '/sponsors.php');
+            exit;
+        }
+
+        try {
+            // Görseli sunucudan sil
+            if (!empty($ad['image_url'])) {
+                $filename = basename($ad['image_url']);
+                $uploader = new ImageUploader();
+                $uploader->delete('ads', $filename);
+            }
+            
+            $adModel->delete($adId);
+            Auth::setFlash('success', 'Reklamınız başarıyla silindi.');
+        } catch (Exception $e) {
+            Auth::setFlash('error', 'Reklam silinirken bir hata oluştu.');
+        }
+
+        header('Location: ' . BASE_URL . '/sponsors.php');
+        exit;
+    }
+}
+
+// Kullanıcının kendi reklamlarını getir
+$userAds = $adModel->getByUserId($userId);
+
+$pageTitle = 'Sponsorlu Reklamlar';
 $activeNav = 'sponsors';
 require_once __DIR__ . '/partials/app_header.php';
 ?>
 
 <section style="min-width:0; display:flex; flex-direction:column; gap:20px; max-width:768px; width:100%; padding-bottom:40px;">
+
+    <!-- Flash Mesajları -->
+    <?php require_once __DIR__ . '/partials/flash.php'; ?>
 
     <!-- Page Header -->
     <div style="display:flex; align-items:center; gap:16px; margin-bottom:4px;">
@@ -37,71 +157,166 @@ require_once __DIR__ . '/partials/app_header.php';
             <span class="material-symbols-outlined" style="font-size:28px; color:#fff;">campaign</span>
         </div>
         <div>
-            <h1 style="font-size:1.8rem; font-weight:900; color:var(--text-1); letter-spacing:-.02em; margin:0 0 4px;">Sponsorlarımız</h1>
-            <p style="color:var(--text-3); font-size:13px; margin:0;"><?php echo APP_NAME; ?>'yı destekleyen markalar</p>
+            <h1 style="font-size:1.8rem; font-weight:900; color:var(--text-1); letter-spacing:-.02em; margin:0 0 4px;">Sponsorlu Reklamlar</h1>
+            <p style="color:var(--text-3); font-size:13px; margin:0;">Feed akışında markanızın reklamını yapın ve binlerce oyuncuya ulaşın.</p>
         </div>
     </div>
 
-    <!-- Sponsors Grid -->
-    <?php if (!empty($sponsors)): ?>
-    <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:16px;">
-        <?php foreach ($sponsors as $sp): ?>
-        <a href="<?php echo escape($sp['url'] ?? '#'); ?>" target="_blank" rel="noopener"
-           style="background:#fff; border:1.5px solid var(--border); border-radius:16px; overflow:hidden; display:block; aspect-ratio:1; position:relative; box-shadow:0 2px 8px rgba(0,0,0,.06); transition:border-color .2s, box-shadow .2s;"
-           onmouseover="this.style.borderColor='var(--color-primary)'; this.style.boxShadow='0 6px 20px rgba(0,0,0,.1)';"
-           onmouseout="this.style.borderColor='var(--border)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,.06)';">
-            <?php if (!empty($sp['logo'])): ?>
-                <img src="<?php echo BASE_URL . '/' . escape($sp['logo']); ?>" alt="<?php echo escape($sp['name']); ?>"
-                     style="position:absolute; inset:0; width:100%; height:100%; object-fit:contain; padding:12px; box-sizing:border-box;"
-                     width="300" height="300" loading="lazy">
-            <?php else: ?>
-                <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center;">
-                    <span class="material-symbols-outlined" style="color:var(--text-3); font-size:48px;">store</span>
+    <!-- Info & Wallet Card Row -->
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px;">
+        <!-- Wallet Card -->
+        <div style="background:#fff; border:1.5px solid var(--border); border-radius:16px; padding:20px; display:flex; flex-direction:column; justify-content:space-between; box-shadow:0 2px 8px rgba(0,0,0,.04);">
+            <div>
+                <div style="font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">Mevcut Bakiyeniz</div>
+                <div style="font-size:2rem; font-weight:900; color:var(--text-1); line-height:1;">
+                    $<?php echo number_format($userBalance, 2); ?>
                 </div>
-            <?php endif; ?>
-            <span style="position:absolute; bottom:0; left:0; right:0; background:linear-gradient(to top, rgba(0,0,0,0.6), transparent); padding:8px 10px 8px; font-size:11px; font-weight:700; color:#fff; text-align:center; display:block;">
-                <?php echo escape($sp['name']); ?>
-            </span>
-        </a>
-        <?php endforeach; ?>
-    </div>
-    <?php else: ?>
-    <!-- Empty State -->
-    <div style="background:#fff; border:1px solid var(--border); border-radius:16px; padding:40px; text-align:center; box-shadow:0 1px 3px rgba(0,0,0,.08);">
-        <div style="width:80px; height:80px; margin:0 auto 16px; border-radius:20px; background:var(--bg-section); border:1px solid var(--border); display:flex; align-items:center; justify-content:center;">
-            <span class="material-symbols-outlined" style="color:var(--text-3); font-size:40px;">storefront</span>
-        </div>
-        <h3 style="font-size:1.1rem; font-weight:800; color:var(--text-1); margin:0 0 8px;">Henüz Sponsor Bulunmuyor</h3>
-        <p style="color:var(--text-3); font-size:13px; max-width:320px; margin:0 auto; line-height:1.6;">İlk sponsor sen ol! Markanı binlerce oyuncuya tanıtmak için bizimle iletişime geç.</p>
-    </div>
-    <?php endif; ?>
-
-    <!-- CTA: Sponsor Ol -->
-    <div style="background:linear-gradient(135deg, #fff8f5, #fff); border:1.5px solid rgba(240,109,31,0.2); border-radius:16px; padding:28px; text-align:center; position:relative; overflow:hidden; box-shadow:0 4px 20px rgba(240,109,31,0.08);">
-        <div style="position:absolute; right:-20px; top:-20px; opacity:.05; line-height:1; pointer-events:none; user-select:none;">
-            <span class="material-symbols-outlined" style="font-size:120px; color:var(--color-primary);">handshake</span>
-        </div>
-        <div style="position:relative; z-index:1;">
-            <div style="width:64px; height:64px; margin:0 auto 16px; background:linear-gradient(135deg, var(--color-primary), #ff9e7d); border-radius:18px; display:flex; align-items:center; justify-content:center; box-shadow:0 10px 25px -5px rgba(240,109,31,0.4); transform:rotate(3deg);">
-                <span class="material-symbols-outlined" style="font-size:32px; color:#fff;">rocket_launch</span>
             </div>
-            <h2 style="font-size:1.5rem; font-weight:900; color:var(--text-1); margin:0 0 8px; letter-spacing:-.01em;">Sponsor Olmak İster Misin?</h2>
-            <p style="color:var(--text-3); font-size:13px; max-width:360px; margin:0 auto 24px; line-height:1.6;">Markanı binlerce oyuncuya tanıt. Reklam alanlarımız hakkında bilgi almak için bizimle iletişime geç.</p>
-            <div style="display:flex; flex-wrap:wrap; gap:12px; justify-content:center; align-items:center; max-width:400px; margin:0 auto;">
-                <a href="mailto:info@sociaera.online"
-                   style="display:inline-flex; align-items:center; justify-content:center; gap:8px; background:var(--color-primary); color:#fff; padding:12px 28px; border-radius:12px; font-weight:700; font-size:14px; text-decoration:none; box-shadow:0 4px 20px rgba(240,109,31,0.25); transition:opacity .15s;"
+            <div style="margin-top:16px;">
+                <?php if ($userBalance < $adPrice): ?>
+                    <div style="display:flex; align-items:center; gap:6px; background:#FEF2F2; border:1px solid #FCA5A5; border-radius:10px; padding:8px 12px; font-size:12px; color:var(--color-danger); margin-bottom:12px; font-weight:600;">
+                        <span class="material-symbols-outlined" style="font-size:16px;">warning</span>
+                        Bakiye yetersiz ($<?php echo number_format($adPrice, 2); ?> gerekli)
+                    </div>
+                <?php endif; ?>
+                <a href="<?php echo BASE_URL; ?>/wallet.php" style="display:inline-flex; align-items:center; gap:8px; background:var(--color-primary); color:#fff; padding:10px 18px; border-radius:10px; font-weight:700; font-size:13px; text-decoration:none; transition:opacity .15s; width:100%; justify-content:center; box-shadow:0 4px 12px rgba(240,109,31,0.2);"
                    onmouseover="this.style.opacity='.9'" onmouseout="this.style.opacity='1'">
-                    <span class="material-symbols-outlined" style="font-size:20px;">mail</span>
-                    İletişime Geç
-                </a>
-                <a href="https://discord.gg/sociaera" target="_blank" rel="noopener"
-                   style="display:inline-flex; align-items:center; justify-content:center; gap:8px; background:#fff; color:var(--text-1); border:1.5px solid var(--border); padding:12px 28px; border-radius:12px; font-weight:700; font-size:14px; text-decoration:none; transition:background .15s;"
-                   onmouseover="this.style.background='var(--bg-section)'" onmouseout="this.style.background='#fff'">
-                    <span class="material-symbols-outlined" style="font-size:20px;">forum</span>
-                    Discord
+                    <span class="material-symbols-outlined" style="font-size:18px;">account_balance_wallet</span>
+                    Bakiye Yükle / Cüzdanım
                 </a>
             </div>
         </div>
+        
+        <!-- Pricing Info Card -->
+        <div style="background:linear-gradient(135deg, #FFF3EB, #fff); border:1.5px solid rgba(240,109,31,0.2); border-radius:16px; padding:20px; display:flex; flex-direction:column; justify-content:space-between; box-shadow:0 4px 20px rgba(240,109,31,0.05);">
+            <div>
+                <div style="font-size:11px; font-weight:700; color:var(--color-primary); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">Reklam Tarifesi</div>
+                <div style="font-size:2rem; font-weight:900; color:var(--text-1); line-height:1; display:flex; align-items:baseline; gap:4px;">
+                    $<?php echo number_format($adPrice, 2); ?>
+                    <span style="font-size:12px; font-weight:600; color:var(--text-3);">/ Tek Seferlik</span>
+                </div>
+            </div>
+            <div style="margin-top:16px; font-size:12px; color:var(--text-2); line-height:1.5; display:flex; flex-direction:column; gap:6px;">
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <span class="material-symbols-outlined" style="font-size:16px; color:var(--color-success);">check_circle</span>
+                    Akış içerisinde (feed) gösterim
+                </div>
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <span class="material-symbols-outlined" style="font-size:16px; color:var(--color-success);">check_circle</span>
+                    Aktif edildiği andan itibaren yayına girer
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ad Creation Form -->
+    <div style="background:#fff; border:1.5px solid var(--border); border-radius:16px; padding:24px; box-shadow:0 2px 8px rgba(0,0,0,.04);">
+        <h2 style="font-size:1.2rem; font-weight:800; color:var(--text-1); margin:0 0 16px; display:flex; align-items:center; gap:8px;">
+            <span class="material-symbols-outlined" style="color:var(--color-primary);">add_photo_alternate</span>
+            Yeni Reklam Kampanyası Başlat
+        </h2>
+        
+        <form action="<?php echo BASE_URL; ?>/sponsors.php" method="POST" enctype="multipart/form-data" style="display:flex; flex-direction:column; gap:16px;">
+            <input type="hidden" name="csrf_token" value="<?php echo escape(Csrf::token()); ?>">
+            <input type="hidden" name="action" value="create">
+            
+            <div>
+                <label for="title" style="display:block; font-size:13px; font-weight:700; color:var(--text-2); margin-bottom:6px;">Reklam Başlığı / Marka Adı <span style="color:var(--color-danger);">*</span></label>
+                <input type="text" name="title" id="title" required maxlength="100" placeholder="Örn: Pillbox Grand Casino — VIP Geceniz Sizi Bekliyor"
+                       style="width:100%; border:1.5px solid var(--border); border-radius:10px; padding:10px 14px; font-size:13px; font-family:var(--font); outline:none; background:var(--bg-section); color:var(--text-1); transition:border-color .15s;"
+                       onfocus="this.style.borderColor='var(--color-primary)'" onblur="this.style.borderColor='var(--border)'">
+            </div>
+            
+            <div>
+                <label for="link_url" style="display:block; font-size:13px; font-weight:700; color:var(--text-2); margin-bottom:6px;">Yönlendirme Adresi (URL) <span style="font-size:11px; font-weight:500; color:var(--text-3);">(Opsiyonel)</span></label>
+                <input type="url" name="link_url" id="link_url" placeholder="Örn: https://face.gta.world/pages/pillbox-casino"
+                       style="width:100%; border:1.5px solid var(--border); border-radius:10px; padding:10px 14px; font-size:13px; font-family:var(--font); outline:none; background:var(--bg-section); color:var(--text-1); transition:border-color .15s;"
+                       onfocus="this.style.borderColor='var(--color-primary)'" onblur="this.style.borderColor='var(--border)'">
+            </div>
+            
+            <div>
+                <label style="display:block; font-size:13px; font-weight:700; color:var(--text-2); margin-bottom:6px;">Reklam Görseli (Banner) <span style="color:var(--color-danger);">*</span></label>
+                <div style="border:1.5px dashed var(--border); border-radius:10px; padding:20px; text-align:center; background:var(--bg-section); cursor:pointer; position:relative; transition:border-color .15s;"
+                     onmouseover="this.style.borderColor='var(--color-primary)'" onmouseout="this.style.borderColor='var(--border)'"
+                     onclick="document.getElementById('image').click();">
+                    <span class="material-symbols-outlined" style="font-size:36px; color:var(--text-3); margin-bottom:8px; display:block;">upload_file</span>
+                    <span style="font-size:13px; font-weight:600; color:var(--text-2); display:block; margin-bottom:4px;">Görsel yüklemek için tıklayın</span>
+                    <span style="font-size:11px; color:var(--text-3); display:block;">Önerilen boyut: 600x300. Maksimum: 5MB (JPEG, PNG, WebP)</span>
+                    <input type="file" name="image" id="image" required accept="image/jpeg,image/png,image/webp" style="display:none;"
+                           onchange="document.getElementById('fileNameSpan').innerText = this.files[0] ? this.files[0].name : '';">
+                </div>
+                <span id="fileNameSpan" style="font-size:12px; font-weight:700; color:var(--color-primary); margin-top:8px; display:block; text-align:center;"></span>
+            </div>
+            
+            <button type="submit" <?php echo ($userBalance < $adPrice) ? 'disabled' : ''; ?>
+                    style="width:100%; border:none; background:<?php echo ($userBalance < $adPrice) ? 'var(--text-3)' : 'var(--color-primary)'; ?>; color:#fff; padding:12px 24px; border-radius:12px; font-weight:700; font-size:14px; cursor:<?php echo ($userBalance < $adPrice) ? 'not-allowed' : 'pointer'; ?>; transition:opacity .15s; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:<?php echo ($userBalance < $adPrice) ? 'none' : '0 4px 16px rgba(240,109,31,0.25)'; ?>;"
+                    <?php if ($userBalance >= $adPrice): ?>onmouseover="this.style.opacity='.9'" onmouseout="this.style.opacity='1'"<?php endif; ?>>
+                <span class="material-symbols-outlined" style="font-size:20px;">send</span>
+                Ödeme Yap ve Reklamı Yayınla ($<?php echo number_format($adPrice, 2); ?>)
+            </button>
+        </form>
+    </div>
+
+    <!-- Active/Previous Ads List -->
+    <div style="background:#fff; border:1.5px solid var(--border); border-radius:16px; padding:24px; box-shadow:0 2px 8px rgba(0,0,0,.04);">
+        <h2 style="font-size:1.2rem; font-weight:800; color:var(--text-1); margin:0 0 16px; display:flex; align-items:center; gap:8px;">
+            <span class="material-symbols-outlined" style="color:var(--color-primary);">list_alt</span>
+            Aktif Reklamlarım
+        </h2>
+        
+        <?php if (empty($userAds)): ?>
+            <div style="text-align:center; padding:32px 16px; background:var(--bg-section); border-radius:12px; border:1px solid var(--border);">
+                <span class="material-symbols-outlined" style="font-size:40px; color:var(--text-3); margin-bottom:8px; display:block;">campaign</span>
+                <p style="margin:0; font-size:13px; color:var(--text-2); font-weight:600;">Henüz oluşturduğunuz bir sponsorlu reklam bulunmuyor.</p>
+            </div>
+        <?php else: ?>
+            <div style="display:flex; flex-direction:column; gap:12px;">
+                <?php foreach ($userAds as $ad): ?>
+                    <div style="display:flex; align-items:center; gap:16px; background:var(--bg-section); border:1px solid var(--border); border-radius:12px; padding:12px; position:relative; overflow:hidden;">
+                        <!-- Image Thumbnail -->
+                        <div style="width:64px; height:64px; border-radius:8px; overflow:hidden; flex-shrink:0; background:#fff; border:1px solid var(--border);">
+                            <img src="<?php echo BASE_URL . '/' . escape($ad['image_url']); ?>" style="width:100%; height:100%; object-fit:cover;" loading="lazy">
+                        </div>
+                        
+                        <!-- Details -->
+                        <div style="flex:1; min-width:0;">
+                           <div style="font-size:13px; font-weight:700; color:var(--text-1); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin-bottom:4px;">
+                               <?php echo escape($ad['title']); ?>
+                           </div>
+                           <div style="font-size:11px; color:var(--text-3); display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+                               <?php if (!empty($ad['link_url'])): ?>
+                                   <a href="<?php echo escape($ad['link_url']); ?>" target="_blank" rel="noopener" style="color:var(--color-primary); text-decoration:none; font-weight:600; display:flex; align-items:center; gap:2px;">
+                                       <span class="material-symbols-outlined" style="font-size:14px;">link</span>
+                                       URL Adresi
+                                   </a>
+                               <?php endif; ?>
+                               <span style="display:flex; align-items:center; gap:2px;">
+                                   <span class="material-symbols-outlined" style="font-size:14px;">calendar_month</span>
+                                   <?php echo date('d.m.Y H:i', strtotime($ad['created_at'])); ?>
+                               </span>
+                           </div>
+                        </div>
+                        
+                        <!-- Actions & Status -->
+                        <div style="display:flex; align-items:center; gap:12px;">
+                            <span style="display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:700; color:var(--color-success); background:rgba(22,163,74,0.08); padding:4px 8px; border-radius:6px; border:1px solid rgba(22,163,74,0.2);">
+                                Yayında
+                            </span>
+                            
+                            <form action="<?php echo BASE_URL; ?>/sponsors.php" method="POST" onsubmit="return confirm('Bu reklamı silmek istediğinize emin misiniz?');" style="margin:0;">
+                                <input type="hidden" name="csrf_token" value="<?php echo escape(Csrf::token()); ?>">
+                                <input type="hidden" name="action" value="delete">
+                                <input type="hidden" name="ad_id" value="<?php echo (int)$ad['id']; ?>">
+                                <button type="submit" style="background:none; border:none; color:var(--color-danger); cursor:pointer; padding:6px; display:flex; align-items:center; justify-content:center; border-radius:6px; transition:background .15s;"
+                                        onmouseover="this.style.background='#FEF2F2'" onmouseout="this.style.background='none'">
+                                    <span class="material-symbols-outlined" style="font-size:18px;">delete</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
     </div>
 
 </section>

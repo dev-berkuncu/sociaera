@@ -18,6 +18,10 @@ $migrations = [
         "ALTER TABLE users ADD COLUMN IF NOT EXISTS bank_account VARCHAR(100) DEFAULT NULL AFTER bio",
     'transactions.status kolonu' =>
         "ALTER TABLE transactions ADD COLUMN IF NOT EXISTS status ENUM('pending','approved','rejected') NOT NULL DEFAULT 'approved' AFTER reference_id",
+    'ads.user_id kolonu' =>
+        "ALTER TABLE ads ADD COLUMN IF NOT EXISTS user_id INT UNSIGNED DEFAULT NULL AFTER id",
+    'ads.user_id foreign key' =>
+        "ALTER TABLE ads ADD CONSTRAINT fk_ads_user_id FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE",
 ];
 
 foreach ($migrations as $label => $sql) {

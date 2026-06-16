@@ -90,4 +90,44 @@ class WalletModel
             throw $e;
         }
     }
+
+    /**
+     * Bakiyeden direkt harcama/ödeme yap
+     */
+    public function pay(int $userId, float $amount, string $description = ''): bool
+    {
+        if ($amount <= 0) {
+            throw new \InvalidArgumentException('Miktar sıfırdan büyük olmalıdır.');
+        }
+
+        $this->db->beginTransaction();
+        try {
+            // Kilitli okuma — eşzamanlı çekim ve ödeme işlemlerini önler
+            $stmt = $this->db->prepare("SELECT balance FROM wallets WHERE user_id = ? FOR UPDATE");
+            $stmt->execute([$userId]);
+            $balance = (float)($stmt->fetchColumn() ?: 0);
+            if ($balance < $amount) {
+                $this->db->rollBack();
+                return false;
+            }
+
+            // Bakiyeyi düş
+            $stmt = $this->db->prepare("UPDATE wallets SET balance = balance - ? WHERE user_id = ?");
+            $stmt->execute([$amount, $userId]);
+
+            // İşlem kaydını 'approved' (yani tamamlanmış) olarak ekle
+            $referenceId = 'PAY-' . strtoupper(bin2hex(random_bytes(8)));
+            $stmt = $this->db->prepare("
+                INSERT INTO transactions (user_id, type, amount, description, status, reference_id) VALUES (?, 'withdraw', ?, ?, 'approved', ?)
+            ");
+            $stmt->execute([$userId, $amount, $description, $referenceId]);
+
+            $this->db->commit();
+            return true;
+        } catch (\Throwable $e) {
+            $this->db->rollBack();
+            throw $e;
+        }
+    }
 }
+

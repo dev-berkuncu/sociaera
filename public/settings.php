@@ -322,7 +322,7 @@ $flash = Auth::getFlash();
             <input type="hidden" name="action" value="update_bank">
             <input type="text" name="bank_account"
                    value="<?php echo htmlspecialchars($user['bank_account'] ?? ''); ?>"
-                   placeholder="TR00 0000 0000 0000 0000 0000 00"
+                   placeholder="0300 8108 7"
                    required
                    style="flex:1;min-width:180px;background:var(--bg-section);border:1.5px solid var(--border);
                           border-radius:10px;padding:10px 14px;font-size:14px;font-family:monospace;

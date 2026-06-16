@@ -295,11 +295,27 @@ function feedDayLabel(string $day): string {
             // Insert ad after every 5 posts
             if ($globalIndex % 5 === 0 && !empty($feedAds) && isset($feedAds[$adIndex])):
                 $ad = $feedAds[$adIndex++];
+                
+                // Determine ad image path with fallback
+                $adImage = '';
+                if (!empty($ad['image_url'])) {
+                    $adImage = (strpos($ad['image_url'], 'http') === 0) ? $ad['image_url'] : BASE_URL . '/' . $ad['image_url'];
+                } elseif (!empty($ad['image'])) {
+                    $adImage = $ad['image'];
+                }
+                
+                // Determine ad target URL with fallback
+                $adUrl = '';
+                if (!empty($ad['link_url'])) {
+                    $adUrl = $ad['link_url'];
+                } elseif (!empty($ad['url'])) {
+                    $adUrl = $ad['url'];
+                }
         ?>
         <!-- AD CARD -->
         <div style="background:#fff;border-radius:16px;border:1.5px dashed #E8E6E1;overflow:hidden;padding:14px 16px;display:flex;align-items:center;gap:12px;">
-            <?php if (!empty($ad['image'])): ?>
-            <img src="<?php echo escape($ad['image']); ?>" style="width:56px;height:56px;border-radius:10px;object-fit:cover;flex-shrink:0;" loading="lazy">
+            <?php if (!empty($adImage)): ?>
+            <img src="<?php echo escape($adImage); ?>" style="width:56px;height:56px;border-radius:10px;object-fit:cover;flex-shrink:0;" loading="lazy">
             <?php endif; ?>
             <div style="flex:1;min-width:0;">
                 <div style="font-size:0.6875rem;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:2px;">Sponsorlu</div>
@@ -308,8 +324,8 @@ function feedDayLabel(string $day): string {
                 <div style="font-size:0.75rem;color:var(--text-3);margin-top:2px;"><?php echo escape($ad['description']); ?></div>
                 <?php endif; ?>
             </div>
-            <?php if (!empty($ad['url'])): ?>
-            <a href="<?php echo escape($ad['url']); ?>" target="_blank" rel="noopener"
+            <?php if (!empty($adUrl)): ?>
+            <a href="<?php echo escape($adUrl); ?>" target="_blank" rel="noopener"
                class="btn btn-primary btn-sm" style="flex-shrink:0;text-decoration:none;">İncele</a>
             <?php endif; ?>
         </div>
