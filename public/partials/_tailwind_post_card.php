@@ -43,7 +43,7 @@ $cardAvatar = !empty($post['is_mystery_shopper'])
     <div class="checkin-card-header">
         <!-- Avatar -->
         <div class="checkin-card-avatar">
-            <img src="<?php echo $cardAvatar; ?>" alt="<?php echo escape($post['username']); ?>" width="38" height="38">
+            <img src="<?php echo $cardAvatar; ?>" alt="<?php echo escape($post['username']); ?>" width="38" height="38" loading="lazy">
             <div class="checkin-card-cat-dot" style="background:<?php echo $catColor; ?>;">
                 <span class="material-symbols-outlined" style="font-size:7px;color:#fff;font-variation-settings:'FILL' 1;"><?php echo $catIcon; ?></span>
             </div>

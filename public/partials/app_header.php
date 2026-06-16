@@ -430,7 +430,7 @@ nav.swarm-topnav{
           dd.style.display=(dd.style.display==='block')?'none':'block';"
           style="width:36px;height:36px;border-radius:50%;overflow:hidden;cursor:pointer;
                  border:2px solid #E8E7E3;padding:0;background:none;flex-shrink:0;">
-            <img src="<?php echo $avatarUrl; ?>" alt="Profil" width="36" height="36"
+            <img src="<?php echo $avatarUrl; ?>" alt="Profil" width="36" height="36" loading="lazy"
                  style="width:100%;height:100%;object-fit:cover;display:block;"/>
         </button>
 

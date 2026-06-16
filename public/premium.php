@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             Auth::setFlash('error', 'Cüzdanınızda yeterli bakiye bulunmuyor.');
         } else {
             $walletModel->withdraw(Auth::id(), $premiumPrice, 'Sociaera Premium süresi uzatıldı (Aylık)');
-            $userModel->extendPremium(Auth::id(), 30);
+            $userModel->renewPremium(Auth::id(), 30);
             Auth::setFlash('success', 'Premium süreniz 30 gün daha uzatıldı! 💎');
         }
     } else {
