@@ -144,8 +144,8 @@ nav.swarm-topnav{
   .swarm-layout{grid-template-columns:minmax(0,1fr) 280px;padding:24px 20px 100px;}}
 @media(min-width:1200px){
   .swarm-layout{
-    grid-template-columns:220px minmax(0,1fr) 280px;
-    max-width:1240px;
+    grid-template-columns:260px minmax(0,1fr) 280px;
+    max-width:1280px;
   }
 }
 
