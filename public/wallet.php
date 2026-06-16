@@ -110,7 +110,7 @@ require_once __DIR__ . '/partials/app_header.php';
         </div>
         <div style="position:relative;z-index:1;">
             <div style="color:rgba(255,255,255,0.8);font-weight:600;margin-bottom:4px;letter-spacing:.08em;text-transform:uppercase;font-size:.875rem;">Mevcut Bakiye</div>
-            <div style="font-size:3rem;font-weight:900;margin-bottom:24px;">$<?php echo number_format($balance, 2, ',', '.'); ?></div>
+            <div style="font-size:3rem;font-weight:900;margin-bottom:24px;">$<?php echo number_format($balance, 0, ',', '.'); ?></div>
             <div style="display:flex;flex-wrap:wrap;gap:12px;">
                 <button onclick="openTopupModal()" style="background:#fff;color:var(--color-primary);padding:10px 24px;border-radius:999px;font-weight:700;box-shadow:0 4px 12px rgba(0,0,0,0.15);transition:all .15s;display:inline-flex;align-items:center;gap:8px;border:none;cursor:pointer;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform=''">
                     <span class="material-symbols-outlined">add_circle</span> Bakiye Yükle
@@ -154,7 +154,7 @@ require_once __DIR__ . '/partials/app_header.php';
                         </div>
                     </div>
                     <div style="font-weight:900;font-size:1.1rem;flex-shrink:0;<?php echo $isIn ? 'color:#10b981;' : 'color:#dc2626;'; ?>">
-                        <?php echo $isIn ? '+' : '-'; ?>$<?php echo number_format($tx['amount'], 2, ',', '.'); ?>
+                        <?php echo $isIn ? '+' : '-'; ?>$<?php echo number_format($tx['amount'], 0, ',', '.'); ?>
                     </div>
                 </div>
                 <?php endforeach; ?>

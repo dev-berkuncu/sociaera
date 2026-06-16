@@ -753,7 +753,7 @@ if (bannerUrl($profileUser['banner'] ?? null)) {
             <div class="profile-meta-item">
                 <span class="material-symbols-outlined" style="color:#10b981;font-variation-settings:'FILL' 1;">account_balance_wallet</span>
                 <span style="color:var(--text-2);font-weight:600;">Bakiye:</span>
-                <span style="color:#10b981;font-weight:900;">$<?php echo number_format($balance, 2, ',', '.'); ?></span>
+                <span style="color:#10b981;font-weight:900;">$<?php echo number_format($balance, 0, ',', '.'); ?></span>
                 <a href="<?php echo BASE_URL; ?>/wallet"
                    style="font-size:11px;background:rgba(16,185,129,.1);color:#10b981;border:1px solid rgba(16,185,129,.25);border-radius:20px;padding:2px 8px;font-weight:800;text-decoration:none;display:inline-flex;align-items:center;gap:2px;">
                     Cüzdan <span class="material-symbols-outlined" style="font-size:12px;">arrow_forward</span>

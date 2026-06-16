@@ -137,7 +137,7 @@ try {
     $stmt->execute([
         $userId,
         $amount,
-        'Fleeca Banking ile bakiye yükleme ($' . number_format($amount, 2) . ')',
+        'Fleeca Banking ile bakiye yükleme ($' . number_format($amount, 0, ',', '.') . ')',
         $paymentId,
     ]);
 
@@ -154,7 +154,7 @@ try {
             $userId,          // to_user_id
             0,                // from_user_id (0 = sistem bildirimi)
             'wallet_deposit', // type
-            '$' . number_format($amount, 2) . ' Fleeca Banking ile cüzdanına yüklendi.' // content
+            '$' . number_format($amount, 0, ',', '.') . ' Fleeca Banking ile cüzdanına yüklendi.' // content
         );
     } catch (\Throwable $e) {}
 

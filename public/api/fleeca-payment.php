@@ -33,7 +33,7 @@ $mode    = (int) env('FLEECA_MODE', 0); // 0=sandbox, 1=live
 $body    = json_encode([
     'amount'      => $amount,
     'mode'        => $mode,
-    'description' => 'Sociaera Cüzdan Yükleme — $' . number_format($amount, 2),
+    'description' => 'Sociaera Cüzdan Yükleme — $' . number_format($amount, 0, ',', '.'),
 ]);
 
 Logger::info('Fleeca V2 payment create', ['amount' => $amount, 'mode' => $mode]);

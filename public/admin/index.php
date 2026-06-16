@@ -174,7 +174,7 @@ require_once __DIR__ . '/_header.php';
                 <div style="font-size:11px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><?php echo escape(truncate($rt['description']??'',40)); ?></div>
             </div>
             <div style="text-align:right;flex-shrink:0;">
-                <div style="font-size:13px;font-weight:800;color:<?php echo $rt['type']==='deposit'?'#16A34A':'#DC2626'; ?>;"><?php echo ($rt['type']==='deposit'?'+':'-').'$'.number_format($rt['amount'],2); ?></div>
+                <div style="font-size:13px;font-weight:800;color:<?php echo $rt['type']==='deposit'?'#16A34A':'#DC2626'; ?>;"><?php echo ($rt['type']==='deposit'?'+':'-').'$'.number_format($rt['amount'],0,',','.'); ?></div>
                 <div style="font-size:10px;color:var(--t3);"><?php echo timeAgo($rt['created_at']); ?></div>
             </div>
         </div>

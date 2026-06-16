@@ -132,7 +132,7 @@ require_once __DIR__ . '/_header.php';
             <div><span class="text-slate-500 block">Son Giriş</span><span class="font-semibold text-on-surface"><?php echo $user['last_login_at']?timeAgo($user['last_login_at']):'-';?></span></div>
             <div><span class="text-slate-500 block">Check-in</span><span class="font-semibold text-primary-container"><?php echo $stats['checkins'];?></span></div>
             <div><span class="text-slate-500 block">Takipçi</span><span class="font-semibold text-on-surface"><?php echo $stats['followers'];?></span></div>
-            <div><span class="text-slate-500 block">Cüzdan</span><span class="font-semibold text-yellow-400">$<?php echo number_format($balance,2);?></span></div>
+            <div><span class="text-slate-500 block">Cüzdan</span><span class="font-semibold text-yellow-400">$<?php echo number_format($balance,0,',','.');?></span></div>
             <div><span class="text-slate-500 block">Premium</span><span class="font-semibold <?php echo $isPremium?'text-amber-400':'text-slate-500';?>"><?php echo $isPremium?UserModel::premiumRemainingText($user):'Yok';?></span></div>
         </div>
     </div>
@@ -216,7 +216,7 @@ require_once __DIR__ . '/_header.php';
         <div class="px-6 py-3 flex items-center gap-3 hover:bg-white/[0.02]">
             <span class="material-symbols-outlined text-[18px] <?php echo $t['type']==='deposit'?'text-emerald-400':'text-red-400';?>"><?php echo $t['type']==='deposit'?'arrow_downward':'arrow_upward';?></span>
             <div class="flex-grow"><div class="text-sm text-on-surface"><?php echo escape(truncate($t['description']??'',40));?></div></div>
-            <span class="font-bold text-sm <?php echo $t['type']==='deposit'?'text-emerald-400':'text-red-400';?>">$<?php echo number_format($t['amount'],2);?></span>
+            <span class="font-bold text-sm <?php echo $t['type']==='deposit'?'text-emerald-400':'text-red-400';?>">$<?php echo number_format($t['amount'],0,',','.');?></span>
         </div><?php endforeach;?></div><?php endif;?>
     </div>
 </div>

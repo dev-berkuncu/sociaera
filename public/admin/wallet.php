@@ -63,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && Auth::canWrite()) {
                     $tx['user_id'],
                     null,
                     'wallet',
-                    "Para çekme talebiniz (Ref: {$refCode}, Tutar: $" . number_format($tx['amount'], 2) . ") onaylandı ve banka hesabınıza gönderildi. 💸"
+                    "Para çekme talebiniz (Ref: {$refCode}, Tutar: $" . number_format($tx['amount'], 0, ',', '.') . ") onaylandı ve banka hesabınıza gönderildi. 💸"
                 );
                 
                 Logger::adminAudit('approve_withdrawal', 'transaction', $txId, "Approved withdrawal of $" . $tx['amount'] . " for user " . $tx['user_id']);
@@ -104,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && Auth::canWrite()) {
                         $tx['user_id'],
                         null,
                         'wallet',
-                        "Para çekme talebiniz (Ref: {$refCode}, Tutar: $" . number_format($tx['amount'], 2) . ") reddedildi. Neden: {$reason}. Tutar cüzdanınıza iade edildi."
+                        "Para çekme talebiniz (Ref: {$refCode}, Tutar: $" . number_format($tx['amount'], 0, ',', '.') . ") reddedildi. Neden: {$reason}. Tutar cüzdanınıza iade edildi."
                     );
                     
                     Logger::adminAudit('reject_withdrawal', 'transaction', $txId, "Rejected withdrawal: " . $reason);
@@ -180,27 +180,27 @@ require_once __DIR__ . '/_header.php';
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
     <div class="bg-[#1E293B]/80 border border-white/10 rounded-xl p-5">
         <span class="material-symbols-outlined text-yellow-400 text-[28px] mb-2">account_balance_wallet</span>
-        <div class="text-2xl font-black text-on-surface">$<?php echo number_format($totalBalance,2);?></div>
+        <div class="text-2xl font-black text-on-surface">$<?php echo number_format($totalBalance,0,',','.');?></div>
         <div class="text-label-sm text-slate-400 mt-1">Toplam Bakiye</div>
     </div>
     <div class="bg-[#1E293B]/80 border border-white/10 rounded-xl p-5">
         <span class="material-symbols-outlined text-emerald-400 text-[28px] mb-2">payments</span>
-        <div class="text-2xl font-black text-on-surface">$<?php echo number_format($totalDepositsSum,2);?></div>
+        <div class="text-2xl font-black text-on-surface">$<?php echo number_format($totalDepositsSum,0,',','.');?></div>
         <div class="text-label-sm text-slate-400 mt-1">Toplam Giriş (Yüklemeler)</div>
     </div>
     <div class="bg-[#1E293B]/80 border border-white/10 rounded-xl p-5">
         <span class="material-symbols-outlined text-blue-400 text-[28px] mb-2">check_circle</span>
-        <div class="text-2xl font-black text-on-surface">$<?php echo number_format($totalPaidSum,2);?></div>
+        <div class="text-2xl font-black text-on-surface">$<?php echo number_format($totalPaidSum,0,',','.');?></div>
         <div class="text-label-sm text-slate-400 mt-1">Ödenen Tutar (Çekim)</div>
     </div>
     <div class="bg-[#1E293B]/80 border border-white/10 rounded-xl p-5">
         <span class="material-symbols-outlined text-amber-500 text-[28px] mb-2">hourglass_empty</span>
-        <div class="text-2xl font-black text-on-surface">$<?php echo number_format($totalPendingWithdrawSum,2);?></div>
+        <div class="text-2xl font-black text-on-surface">$<?php echo number_format($totalPendingWithdrawSum,0,',','.');?></div>
         <div class="text-label-sm text-slate-400 mt-1">Bekleyen Çekim Talebi</div>
     </div>
     <div class="bg-[#1E293B]/80 border border-white/10 rounded-xl p-5">
         <span class="material-symbols-outlined text-indigo-400 text-[28px] mb-2">trending_up</span>
-        <div class="text-2xl font-black text-on-surface">$<?php echo number_format($todayDeposits,2);?></div>
+        <div class="text-2xl font-black text-on-surface">$<?php echo number_format($todayDeposits,0,',','.');?></div>
         <div class="text-label-sm text-slate-400 mt-1">Bugün Yüklenen</div>
     </div>
 </div>
@@ -261,7 +261,7 @@ require_once __DIR__ . '/_header.php';
                                 </a>
                             </td>
                             <td class="px-6 py-3 text-slate-300 font-mono"><?php echo escape($pw['bank_account'] ?: 'Belirtilmemiş'); ?></td>
-                            <td class="px-6 py-3 font-bold text-red-400">$<?php echo number_format($pw['amount'], 2); ?></td>
+                            <td class="px-6 py-3 font-bold text-red-400">$<?php echo number_format($pw['amount'], 0, ',', '.'); ?></td>
                             <td class="px-6 py-3 text-slate-400 text-xs font-mono"><?php echo escape($pw['reference_id']); ?></td>
                             <td class="px-6 py-3 text-slate-500 text-xs"><?php echo timeAgo($pw['created_at']); ?></td>
                             <?php if (Auth::canWrite()): ?>
@@ -313,7 +313,7 @@ require_once __DIR__ . '/_header.php';
                     <td class="px-6 py-3 text-slate-500"><?php echo $t['id'];?></td>
                     <td class="px-6 py-3 font-semibold text-on-surface"><a href="<?php echo BASE_URL;?>/admin/user-detail?id=<?php echo $t['user_id'];?>" class="hover:text-primary-container"><?php echo escape($t['username']);?></a></td>
                     <td class="px-6 py-3"><span class="text-xs px-2 py-1 rounded <?php echo $t['type']==='deposit'?'bg-emerald-500/10 text-emerald-400':'bg-red-500/10 text-red-400';?>"><?php echo escape($t['type']);?></span></td>
-                    <td class="px-6 py-3 font-bold <?php echo $t['type']==='deposit'?'text-emerald-400':'text-red-400';?>">$<?php echo number_format($t['amount'],2);?></td>
+                    <td class="px-6 py-3 font-bold <?php echo $t['type']==='deposit'?'text-emerald-400':'text-red-400';?>">$<?php echo number_format($t['amount'],0,',','.');?></td>
                     <td class="px-6 py-3">
                         <?php if ($t['type'] === 'withdraw'): ?>
                             <span class="text-xs px-2 py-1 rounded <?php 

@@ -177,7 +177,7 @@ require_once __DIR__ . '/partials/app_header.php';
 
             <div style="background:var(--bg-section); border:1px solid var(--border); border-radius:14px; padding:14px 18px; display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
                 <span style="font-size:13px; color:var(--text-3);">Cüzdan Bakiyen</span>
-                <span style="font-weight:900; font-size:1.2rem; color:<?php echo $balance >= $premiumPrice ? '#16a34a' : '#ef4444'; ?>;">$<?php echo number_format($balance,2,',','.'); ?></span>
+                <span style="font-weight:900; font-size:1.2rem; color:<?php echo $balance >= $premiumPrice ? '#16a34a' : '#ef4444'; ?>;">$<?php echo number_format($balance,0,',','.'); ?></span>
             </div>
 
             <?php if ($balance >= $premiumPrice): ?>
@@ -245,7 +245,7 @@ require_once __DIR__ . '/partials/app_header.php';
 
             <div style="background:var(--bg-section); border:1px solid var(--border); border-radius:14px; padding:14px 18px; display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
                 <span style="font-size:13px; color:var(--text-3);">Cüzdan Bakiyen</span>
-                <span style="font-weight:900; font-size:1.2rem; color:<?php echo $balance >= $premiumPrice ? '#16a34a' : '#ef4444'; ?>;">$<?php echo number_format($balance,2,',','.'); ?></span>
+                <span style="font-weight:900; font-size:1.2rem; color:<?php echo $balance >= $premiumPrice ? '#16a34a' : '#ef4444'; ?>;">$<?php echo number_format($balance,0,',','.'); ?></span>
             </div>
 
             <?php if ($balance >= $premiumPrice): ?>
