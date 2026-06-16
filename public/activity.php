@@ -312,12 +312,57 @@ function feedDayLabel(string $day): string {
                     $adUrl = $ad['url'];
                 }
         ?>
-        <!-- AD CARD -->
-        <div style="background:#fff;border-radius:16px;border:1.5px dashed var(--border);overflow:hidden;padding:16px;display:flex;flex-direction:column;gap:12px;box-shadow:0 2px 10px rgba(0,0,0,0.02);">
-            <div style="display:flex;align-items:center;justify-content:space-between;">
-                <div style="display:flex;align-items:center;gap:6px;">
-                    <span class="material-symbols-outlined" style="font-size:16px;color:var(--color-primary);">campaign</span>
-                    <span style="font-size:11px;font-weight:800;color:var(--color-primary);text-transform:uppercase;letter-spacing:0.5px;">Sponsorlu İçerik</span>
+        <?php if (empty($ad['user_id'])): ?>
+        <!-- ADMIN SPONSOR CARD -->
+        <div style="background:linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border-radius:16px; overflow:hidden; display:flex; flex-direction:column; box-shadow:0 10px 25px -5px rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.05); margin-bottom:24px;">
+            <div style="padding:12px 16px; display:flex; align-items:center; justify-content:space-between; background:rgba(0,0,0,0.2);">
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <span class="material-symbols-outlined" style="font-size:18px; color:var(--color-primary);">star</span>
+                    <span style="font-size:11px; font-weight:800; color:var(--color-primary); text-transform:uppercase; letter-spacing:1px;">Özel Sponsor</span>
+                </div>
+            </div>
+            
+            <?php 
+                $mType = $ad['media_type'] ?? 'image';
+            ?>
+            <div style="width:100%; position:relative; overflow:hidden;">
+            <?php if ($mType === 'youtube' && !empty($adImage)): 
+                preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i', $adImage, $match);
+                $ytId = $match[1] ?? '';
+                if ($ytId):
+            ?>
+                <iframe width="100%" height="220" src="https://www.youtube.com/embed/<?php echo $ytId; ?>" frameborder="0" allowfullscreen style="display:block;"></iframe>
+                <?php endif; ?>
+            <?php elseif ($mType === 'video' && !empty($adImage)): ?>
+                <video src="<?php echo escape($adImage); ?>" autoplay muted loop controls playsinline style="width:100%; max-height:260px; object-fit:cover; display:block; background:#000;"></video>
+            <?php elseif (!empty($adImage)): ?>
+                <img src="<?php echo escape($adImage); ?>" style="width:100%; max-height:260px; object-fit:cover; display:block;" loading="lazy">
+            <?php endif; ?>
+            </div>
+
+            <div style="padding:16px;">
+                <div style="font-size:1.1rem; font-weight:800; color:#ffffff;"><?php echo escape($ad['title'] ?? ''); ?></div>
+                <?php if (!empty($ad['description'])): ?>
+                <div style="font-size:0.875rem; color:#94a3b8; margin-top:6px; line-height:1.5;"><?php echo escape($ad['description']); ?></div>
+                <?php endif; ?>
+                
+                <?php if (!empty($adUrl)): ?>
+                <a href="<?php echo escape($adUrl); ?>" target="_blank" rel="noopener"
+                   style="display:flex; align-items:center; justify-content:center; gap:6px; width:100%; background:linear-gradient(to right, var(--color-primary), #d8570e); color:#ffffff; padding:12px; border-radius:10px; font-size:14px; font-weight:800; text-decoration:none; margin-top:16px; box-shadow:0 4px 12px rgba(240,109,31,0.3); transition:transform 0.2s, box-shadow 0.2s;"
+                   onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 16px rgba(240,109,31,0.4)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 12px rgba(240,109,31,0.3)';">
+                   Şimdi Keşfet <span class="material-symbols-outlined" style="font-size:18px;">arrow_forward</span>
+                </a>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <?php else: ?>
+        <!-- USER AD CARD -->
+        <div style="background:#fff; border-radius:16px; border:1.5px dashed var(--border); overflow:hidden; padding:16px; display:flex; flex-direction:column; gap:12px; box-shadow:0 2px 10px rgba(0,0,0,0.02); margin-bottom:24px;">
+            <div style="display:flex; align-items:center; justify-content:space-between;">
+                <div style="display:flex; align-items:center; gap:6px;">
+                    <span class="material-symbols-outlined" style="font-size:16px; color:var(--text-3);">campaign</span>
+                    <span style="font-size:11px; font-weight:800; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px;">Öne Çıkarılan İçerik</span>
                 </div>
             </div>
             
@@ -334,24 +379,25 @@ function feedDayLabel(string $day): string {
             <?php elseif ($mType === 'video' && !empty($adImage)): ?>
                 <video src="<?php echo escape($adImage); ?>" autoplay muted loop controls playsinline style="width:100%; max-height:220px; object-fit:cover; border-radius:12px; background:#000;"></video>
             <?php elseif (!empty($adImage)): ?>
-                <img src="<?php echo escape($adImage); ?>" style="width:100%;max-height:220px;border-radius:12px;object-fit:cover;" loading="lazy">
+                <img src="<?php echo escape($adImage); ?>" style="width:100%; max-height:220px; border-radius:12px; object-fit:cover;" loading="lazy">
             <?php endif; ?>
 
             <div>
-                <div style="font-size:1rem;font-weight:800;color:var(--text-1);"><?php echo escape($ad['title'] ?? ''); ?></div>
+                <div style="font-size:1rem; font-weight:800; color:var(--text-1);"><?php echo escape($ad['title'] ?? ''); ?></div>
                 <?php if (!empty($ad['description'])): ?>
-                <div style="font-size:0.875rem;color:var(--text-2);margin-top:4px;line-height:1.4;"><?php echo escape($ad['description']); ?></div>
+                <div style="font-size:0.875rem; color:var(--text-2); margin-top:4px; line-height:1.4;"><?php echo escape($ad['description']); ?></div>
                 <?php endif; ?>
             </div>
             
             <?php if (!empty($adUrl)): ?>
             <a href="<?php echo escape($adUrl); ?>" target="_blank" rel="noopener"
-               style="display:flex;align-items:center;justify-content:center;gap:6px;width:100%;background:var(--bg-section);color:var(--text-1);padding:10px;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none;transition:background 0.2s;"
+               style="display:flex; align-items:center; justify-content:center; gap:6px; width:100%; background:var(--bg-section); color:var(--text-1); padding:10px; border-radius:10px; font-size:13px; font-weight:700; text-decoration:none; transition:background 0.2s;"
                onmouseover="this.style.background='var(--border)'" onmouseout="this.style.background='var(--bg-section)'">
                İncele <span class="material-symbols-outlined" style="font-size:16px;">open_in_new</span>
             </a>
             <?php endif; ?>
         </div>
+        <?php endif; ?>
         <?php endif; ?>
 
         <?php endforeach; // dayPosts ?>
