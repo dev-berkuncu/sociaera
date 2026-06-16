@@ -236,7 +236,7 @@ require_once __DIR__ . '/partials/app_header.php';
         </h2>
         
         <form action="<?php echo BASE_URL; ?>/sponsors.php" method="POST" enctype="multipart/form-data" style="display:flex; flex-direction:column; gap:16px;">
-            <input type="hidden" name="csrf_token" value="<?php echo escape(Csrf::token()); ?>">
+            <input type="hidden" name="csrf_token" value="<?php echo escape(Csrf::generate()); ?>">
             <input type="hidden" name="action" value="create">
             
             <div>
@@ -431,7 +431,7 @@ require_once __DIR__ . '/partials/app_header.php';
                             <?php endif; ?>
                             
                             <form action="<?php echo BASE_URL; ?>/sponsors.php" method="POST" onsubmit="return confirm('Bu reklamı silmek istediğinize emin misiniz?');" style="margin:0;">
-                                <input type="hidden" name="csrf_token" value="<?php echo escape(Csrf::token()); ?>">
+                                <input type="hidden" name="csrf_token" value="<?php echo escape(Csrf::generate()); ?>">
                                 <input type="hidden" name="action" value="delete">
                                 <input type="hidden" name="ad_id" value="<?php echo (int)$ad['id']; ?>">
                                 <button type="submit" style="background:none; border:none; color:var(--color-danger); cursor:pointer; padding:6px; display:flex; align-items:center; justify-content:center; border-radius:6px; transition:background .15s;"
