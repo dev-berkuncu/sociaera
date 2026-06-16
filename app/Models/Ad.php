@@ -19,7 +19,8 @@ class AdModel
     public function getByPosition(string $position, int $limit = 10): array
     {
         $stmt = $this->db->prepare("
-            SELECT * FROM ads WHERE position = ? AND is_active = 1
+            SELECT * FROM ads WHERE position = ? AND is_active = 1 
+            AND (expires_at IS NULL OR expires_at > NOW())
             ORDER BY sort_order, id DESC LIMIT ?
         ");
         $stmt->execute([$position, $limit]);
@@ -56,6 +57,7 @@ class AdModel
     {
         $stmt = $this->db->prepare("
             SELECT * FROM ads WHERE position = 'feed' AND is_active = 1
+            AND (expires_at IS NULL OR expires_at > NOW())
             ORDER BY sort_order ASC, id DESC LIMIT ?
         ");
         $stmt->execute([$limit]);
@@ -68,8 +70,8 @@ class AdModel
     public function createSponsored(string $title, string $imageUrl, ?string $linkUrl, int $userId): int
     {
         $stmt = $this->db->prepare("
-            INSERT INTO ads (title, image_url, link_url, position, is_active, user_id) 
-            VALUES (?, ?, ?, 'feed', 1, ?)
+            INSERT INTO ads (title, image_url, link_url, position, is_active, user_id, expires_at) 
+            VALUES (?, ?, ?, 'feed', 1, ?, DATE_ADD(NOW(), INTERVAL 1 WEEK))
         ");
         $stmt->execute([$title, $imageUrl, $linkUrl, $userId]);
         return (int) $this->db->lastInsertId();

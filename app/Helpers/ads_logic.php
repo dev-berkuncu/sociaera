@@ -18,27 +18,27 @@ try {
     if ($check->rowCount() > 0) {
         // Carousel (birden fazla)
         $carouselAds = $db->query(
-            "SELECT * FROM ads WHERE position = 'carousel' AND is_active = 1 ORDER BY sort_order, id DESC"
+            "SELECT * FROM ads WHERE position = 'carousel' AND is_active = 1 AND (expires_at IS NULL OR expires_at > NOW()) ORDER BY sort_order, id DESC"
         )->fetchAll();
 
         // Sol sidebar (1 tane)
         $sidebarLeftAds = $db->query(
-            "SELECT * FROM ads WHERE position = 'sidebar_left' AND is_active = 1 ORDER BY sort_order, id DESC LIMIT 1"
+            "SELECT * FROM ads WHERE position = 'sidebar_left' AND is_active = 1 AND (expires_at IS NULL OR expires_at > NOW()) ORDER BY sort_order, id DESC LIMIT 1"
         )->fetchAll();
 
         // Sağ sidebar (1 tane)
         $sidebarRightAds = $db->query(
-            "SELECT * FROM ads WHERE position = 'sidebar_right' AND is_active = 1 ORDER BY sort_order, id DESC LIMIT 1"
+            "SELECT * FROM ads WHERE position = 'sidebar_right' AND is_active = 1 AND (expires_at IS NULL OR expires_at > NOW()) ORDER BY sort_order, id DESC LIMIT 1"
         )->fetchAll();
 
         // Footer banner (1 tane)
         $footerAds = $db->query(
-            "SELECT * FROM ads WHERE position = 'footer_banner' AND is_active = 1 ORDER BY sort_order, id DESC LIMIT 1"
+            "SELECT * FROM ads WHERE position = 'footer_banner' AND is_active = 1 AND (expires_at IS NULL OR expires_at > NOW()) ORDER BY sort_order, id DESC LIMIT 1"
         )->fetchAll();
 
         // Feed reklamları — postlar arasında gösterilecek (max 3)
         $feedAds = $db->query(
-            "SELECT * FROM ads WHERE position = 'feed' AND is_active = 1 ORDER BY sort_order, id DESC LIMIT 3"
+            "SELECT * FROM ads WHERE position = 'feed' AND is_active = 1 AND (expires_at IS NULL OR expires_at > NOW()) ORDER BY sort_order, id DESC LIMIT 3"
         )->fetchAll();
     }
 } catch (Exception $e) {

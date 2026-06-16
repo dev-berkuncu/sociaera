@@ -22,6 +22,8 @@ $migrations = [
         "ALTER TABLE ads ADD COLUMN IF NOT EXISTS user_id INT UNSIGNED DEFAULT NULL AFTER id",
     'ads.user_id foreign key' =>
         "ALTER TABLE ads ADD CONSTRAINT fk_ads_user_id FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE",
+    'ads.expires_at kolonu' =>
+        "ALTER TABLE ads ADD COLUMN IF NOT EXISTS expires_at DATETIME DEFAULT NULL AFTER is_active",
 ];
 
 foreach ($migrations as $label => $sql) {

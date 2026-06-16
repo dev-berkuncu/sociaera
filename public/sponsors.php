@@ -28,7 +28,7 @@ try {
     $miniLeaderboard = (new LeaderboardModel())->getTopUsers(5);
 } catch (Exception $e) {}
 
-$adPrice = 150.00;
+$adPrice = 10000.00;
 $userBalance = $walletModel->getBalance($userId);
 
 // POST İstekleri (Reklam Oluşturma veya Silme)
@@ -195,7 +195,7 @@ require_once __DIR__ . '/partials/app_header.php';
                 <div style="font-size:11px; font-weight:700; color:var(--color-primary); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">Reklam Tarifesi</div>
                 <div style="font-size:2rem; font-weight:900; color:var(--text-1); line-height:1; display:flex; align-items:baseline; gap:4px;">
                     $<?php echo number_format($adPrice, 2); ?>
-                    <span style="font-size:12px; font-weight:600; color:var(--text-3);">/ Tek Seferlik</span>
+                    <span style="font-size:12px; font-weight:600; color:var(--text-3);">/ 1 Haftalık</span>
                 </div>
             </div>
             <div style="margin-top:16px; font-size:12px; color:var(--text-2); line-height:1.5; display:flex; flex-direction:column; gap:6px;">
@@ -205,7 +205,7 @@ require_once __DIR__ . '/partials/app_header.php';
                 </div>
                 <div style="display:flex; align-items:center; gap:8px;">
                     <span class="material-symbols-outlined" style="font-size:16px; color:var(--color-success);">check_circle</span>
-                    Aktif edildiği andan itibaren yayına girer
+                    1 hafta boyunca gösterilir
                 </div>
             </div>
         </div>
@@ -301,9 +301,18 @@ require_once __DIR__ . '/partials/app_header.php';
                         
                         <!-- Actions & Status -->
                         <div style="display:flex; align-items:center; gap:12px;">
-                            <span style="display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:700; color:var(--color-success); background:rgba(22,163,74,0.08); padding:4px 8px; border-radius:6px; border:1px solid rgba(22,163,74,0.2);">
-                                Yayında
-                            </span>
+                            <?php 
+                                $isExpired = !empty($ad['expires_at']) && strtotime($ad['expires_at']) < time();
+                            ?>
+                            <?php if ($isExpired): ?>
+                                <span style="display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:700; color:var(--color-danger); background:rgba(239,68,68,0.08); padding:4px 8px; border-radius:6px; border:1px solid rgba(239,68,68,0.2);">
+                                    Süresi Doldu
+                                </span>
+                            <?php else: ?>
+                                <span style="display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:700; color:var(--color-success); background:rgba(22,163,74,0.08); padding:4px 8px; border-radius:6px; border:1px solid rgba(22,163,74,0.2);">
+                                    Yayında
+                                </span>
+                            <?php endif; ?>
                             
                             <form action="<?php echo BASE_URL; ?>/sponsors.php" method="POST" onsubmit="return confirm('Bu reklamı silmek istediğinize emin misiniz?');" style="margin:0;">
                                 <input type="hidden" name="csrf_token" value="<?php echo escape(Csrf::token()); ?>">
