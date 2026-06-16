@@ -492,17 +492,20 @@ nav.swarm-topnav{
     <!-- ── SOL SIDEBAR (Sponsorlar ve Reklamlar) ────────────────── -->
     <?php
     $leftAds = [];
+    $sidebarRightAds = [];
     try {
         if (class_exists('AdModel')) {
-            $leftAds = (new AdModel())->getByPosition('carousel', 6);
+            $adModel = new AdModel();
+            $leftAds = $adModel->getByPosition('carousel', 6);
+            $sidebarRightAds = $adModel->getByPosition('sidebar_right', 1);
         }
     } catch (Exception $e) {}
     ?>
     <aside class="swarm-left-sidebar" style="display:flex; flex-direction:column; gap:16px; box-sizing:border-box;">
-        <!-- ═══ Modern Sponsor Carousel (White Card) ═══ -->
+        <!-- ═══ Sponsor Carousel (White Card) ═══ -->
         <div class="right-panel-card" style="padding:16px; background:#ffffff; border:1.5px solid var(--border); border-radius:16px; display:flex; flex-direction:column; gap:12px; position:relative; box-sizing:border-box; overflow:hidden;">
             <div style="font-size:12px; font-weight:800; color:var(--text-1); letter-spacing:-0.2px; font-family:var(--font); padding-left:2px;">
-                Modern Sponsor Carousel
+                Sponsorlarımız
             </div>
 
             <?php
@@ -516,7 +519,7 @@ nav.swarm-topnav{
                         'image' => $lAd['image_url'],
                         'media_type' => $lAd['media_type'] ?? 'image',
                         'url' => $lAd['link_url'],
-                        'badge' => 'Reklam'
+                        'badge' => 'Sponsor'
                     ];
                 }
             } else {
