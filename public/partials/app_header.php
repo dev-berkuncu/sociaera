@@ -498,7 +498,7 @@ nav.swarm-topnav{
         }
     } catch (Exception $e) {}
     ?>
-    <aside class="swarm-left-sidebar" style="display:flex; flex-direction:column; gap:16px; width:220px; box-sizing:border-box;">
+    <aside class="swarm-left-sidebar" style="display:flex; flex-direction:column; gap:16px; width:260px; box-sizing:border-box;">
         <!-- ═══ Modern Sponsor Carousel (White Card) ═══ -->
         <div class="right-panel-card" style="padding:16px; background:#ffffff; border:1.5px solid var(--border); border-radius:16px; display:flex; flex-direction:column; gap:12px; position:relative; box-sizing:border-box; overflow:hidden;">
             <div style="font-size:12px; font-weight:800; color:var(--text-1); letter-spacing:-0.2px; font-family:var(--font); padding-left:2px;">
@@ -535,8 +535,8 @@ nav.swarm-topnav{
             }
             ?>
 
-            <!-- Carousel Container -->
-            <div class="carousel-container" style="position:relative; width:100%; overflow:hidden;">
+            <!-- Carousel Container (Padded to isolate arrows) -->
+            <div class="carousel-container" style="position:relative; width:100%; overflow:hidden; padding:0 24px; box-sizing:border-box;">
                 <!-- Track -->
                 <div class="carousel-track" style="display:flex; transition:transform 0.4s ease-in-out; width:100%;">
                     <?php foreach ($sliderItems as $index => $item): ?>
@@ -557,11 +557,11 @@ nav.swarm-topnav{
                     <?php endforeach; ?>
                 </div>
 
-                <!-- Navigation Arrows -->
-                <button type="button" class="carousel-nav-btn prev" style="position:absolute; left:2px; top:50%; transform:translateY(-50%); width:24px; height:24px; border-radius:50%; background:#ffffff; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 2px 6px rgba(0,0,0,0.15); z-index:10; color:var(--text-2); padding:0;">
+                <!-- Navigation Arrows (Positioned in padding area outside the slides) -->
+                <button type="button" class="carousel-nav-btn prev" style="position:absolute; left:0px; top:50%; transform:translateY(-50%); width:24px; height:24px; border-radius:50%; background:#ffffff; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 2px 6px rgba(0,0,0,0.15); z-index:10; color:var(--text-2); padding:0;">
                     <span class="material-symbols-outlined" style="font-size:14px; font-weight:bold;">chevron_left</span>
                 </button>
-                <button type="button" class="carousel-nav-btn next" style="position:absolute; right:2px; top:50%; transform:translateY(-50%); width:24px; height:24px; border-radius:50%; background:#ffffff; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 2px 6px rgba(0,0,0,0.15); z-index:10; color:var(--text-2); padding:0;">
+                <button type="button" class="carousel-nav-btn next" style="position:absolute; right:0px; top:50%; transform:translateY(-50%); width:24px; height:24px; border-radius:50%; background:#ffffff; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 2px 6px rgba(0,0,0,0.15); z-index:10; color:var(--text-2); padding:0;">
                     <span class="material-symbols-outlined" style="font-size:14px; font-weight:bold;">chevron_right</span>
                 </button>
             </div>
@@ -583,6 +583,10 @@ nav.swarm-topnav{
             <div style="position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; gap:16px; width:100%;">
                 <div style="color:#ffffff; font-size:12px; font-weight:900; letter-spacing:1px; text-transform:uppercase; opacity:0.9; font-family:var(--font);">
                     LONG ADVERTISEMENT:
+                </div>
+                <!-- Size Badge -->
+                <div style="color:rgba(255,255,255,0.6); font-size:10px; font-weight:700; background:rgba(255,255,255,0.08); padding:3px 8px; border-radius:12px; font-family:var(--font); border:1px solid rgba(255,255,255,0.05); margin-top:-4px;">
+                    300x500 px
                 </div>
                 <div style="color:#ffffff; font-size:16px; font-weight:800; line-height:1.4; max-width:180px; font-family:var(--font);">
                     Featured Content & Opportunities
