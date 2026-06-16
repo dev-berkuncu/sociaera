@@ -569,7 +569,7 @@ nav.swarm-topnav{
                             <div style="position:absolute; inset:0; background:linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 100%);"></div>
 
                             <!-- Content -->
-                            <span style="position:absolute; top:12px; left:12px; font-size:7px; font-weight:800; background:#f06d1f; color:#fff; padding:3px 6px; border-radius:10px; text-transform:uppercase; letter-spacing:0.5px; z-index:2;">REKLAM</span>
+                            <span style="position:absolute; top:12px; left:12px; font-size:7px; font-weight:800; background:#f06d1f; color:#fff; padding:3px 6px; border-radius:10px; text-transform:uppercase; letter-spacing:0.5px; z-index:2;"><?php echo escape($item['badge'] ?? 'SPONSOR'); ?></span>
                             
                             <div style="position:absolute; bottom:16px; left:16px; right:16px; z-index:2; color:#ffffff; font-family:var(--font);">
                                 <div style="font-size:12px; font-weight:800; line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; text-overflow:ellipsis; text-shadow:0 1px 4px rgba(0,0,0,0.8);">

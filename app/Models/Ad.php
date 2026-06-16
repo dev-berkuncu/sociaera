@@ -43,6 +43,17 @@ class AdModel
         return (int) $this->db->lastInsertId();
     }
 
+    public function update(int $id, string $title, ?string $imageUrl, string $linkUrl, string $position, int $sortOrder = 0, string $mediaType = 'image'): void
+    {
+        if ($imageUrl) {
+            $stmt = $this->db->prepare("UPDATE ads SET title = ?, image_url = ?, link_url = ?, position = ?, sort_order = ?, media_type = ? WHERE id = ?");
+            $stmt->execute([$title, $imageUrl, $linkUrl, $position, $sortOrder, $mediaType, $id]);
+        } else {
+            $stmt = $this->db->prepare("UPDATE ads SET title = ?, link_url = ?, position = ?, sort_order = ?, media_type = ? WHERE id = ?");
+            $stmt->execute([$title, $linkUrl, $position, $sortOrder, $mediaType, $id]);
+        }
+    }
+
     public function delete(int $id): void
     {
         $this->db->prepare("DELETE FROM ads WHERE id = ?")->execute([$id]);
