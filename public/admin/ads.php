@@ -118,7 +118,7 @@ require_once __DIR__ . '/_header.php';
                 <select name="position" class="w-full bg-white/5 border border-white/10 text-on-surface rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary-container/40 transition-colors font-sans">
                     <option value="carousel" class="bg-background">🎟️ Sponsorlarımız (Logo Slider)</option>
                     <option value="sidebar_left" class="bg-background">👈 Sol Sidebar (Grid Reklamı)</option>
-                    <option value="sidebar_right" class="bg-background">🗺️ Sağ Sidebar (300x500 Alanı)</option>
+                    <option value="sidebar_right" class="bg-background">🗺️ Reklam Alanı (Geniş Ekran - 300x500)</option>
                     <option value="feed" class="bg-background">📰 Akış Arası (Feed Reklamı)</option>
                 </select>
             </div>
@@ -192,7 +192,7 @@ require_once __DIR__ . '/_header.php';
                             echo match($ad['position']) {
                                 'carousel' => 'Sponsorlarımız (Slider)',
                                 'sidebar_left' => 'Sol Sidebar (Grid)',
-                                'sidebar_right' => 'Sağ Sidebar (300x500)',
+                                'sidebar_right' => 'Reklam Alanı (Geniş Ekran)',
                                 'feed' => 'Akış Arası (Feed)',
                                 default => escape($ad['position'])
                             };
