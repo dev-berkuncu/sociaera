@@ -78,13 +78,13 @@ class AdModel
     /**
      * Kullanıcı sponsorlu reklamı oluştur
      */
-    public function createSponsored(string $title, string $imageUrl, ?string $linkUrl, int $userId, string $mediaType = 'image'): int
+    public function createSponsored(string $title, string $imageUrl, ?string $linkUrl, int $userId, string $mediaType = 'image', string $position = 'feed'): int
     {
         $stmt = $this->db->prepare("
             INSERT INTO ads (title, image_url, link_url, position, is_active, status, user_id, expires_at, media_type) 
-            VALUES (?, ?, ?, 'feed', 0, 'pending', ?, NULL, ?)
+            VALUES (?, ?, ?, ?, 0, 'pending', ?, NULL, ?)
         ");
-        $stmt->execute([$title, $imageUrl, $linkUrl, $userId, $mediaType]);
+        $stmt->execute([$title, $imageUrl, $linkUrl, $position, $userId, $mediaType]);
         return (int) $this->db->lastInsertId();
     }
 

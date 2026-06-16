@@ -28,7 +28,12 @@ try {
     $miniLeaderboard = (new LeaderboardModel())->getTopUsers(5);
 } catch (Exception $e) {}
 
-$adPrice = 10000.00;
+$positions = [
+    'feed' => ['label' => 'Feed İçi Reklam', 'price' => 10000.00],
+    'sidebar_right' => ['label' => 'Sağ Panel Reklam', 'price' => 25000.00],
+    'carousel' => ['label' => 'Sol Menü Sponsor (Slider)', 'price' => 50000.00]
+];
+$adPrice = 10000.00; // Varsayılan
 $userBalance = $walletModel->getBalance($userId);
 
 // POST İstekleri (Reklam Oluşturma veya Silme)
@@ -63,8 +68,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $mediaType = $_POST['media_type'] ?? 'image';
         if (!in_array($mediaType, ['image', 'video', 'youtube'])) $mediaType = 'image';
 
+        $position = $_POST['position'] ?? 'feed';
+        if (!array_key_exists($position, $positions)) $position = 'feed';
+        $currentAdPrice = $positions[$position]['price'];
+
         // Bakiye kontrolü
-        if ($userBalance < $adPrice) {
+        if ($userBalance < $currentAdPrice) {
             Auth::setFlash('error', 'Cüzdanınızda yeterli bakiye bulunmuyor. Lütfen bakiye yükleyin.');
             header('Location: ' . BASE_URL . '/sponsors.php');
             exit;
@@ -106,7 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Reklamı bekleyen (pending) durumda veritabanında oluştur
         try {
-            $adModel->createSponsored($title, $imagePath, empty($linkUrl) ? null : $linkUrl, $userId, $mediaType);
+            $adModel->createSponsored($title, $imagePath, empty($linkUrl) ? null : $linkUrl, $userId, $mediaType, $position);
             Auth::setFlash('success', 'Reklamınız onay için gönderildi. Onaylandığında bakiyenizden düşülecek ve yayına girecektir. 🎉');
         } catch (Exception $e) {
             Auth::setFlash('error', 'Reklam oluşturulurken bir veritabanı hatası oluştu.');
@@ -163,7 +172,7 @@ require_once __DIR__ . '/partials/app_header.php';
         </div>
         <div>
             <h1 style="font-size:1.8rem; font-weight:900; color:var(--text-1); letter-spacing:-.02em; margin:0 0 4px;">Sponsorlu Reklamlar</h1>
-            <p style="color:var(--text-3); font-size:13px; margin:0;">Feed akışında markanızın reklamını yapın ve binlerce oyuncuya ulaşın.</p>
+            <p style="color:var(--text-3); font-size:13px; margin:0;">Markanızın reklamını yapın ve binlerce oyuncuya ulaşın.</p>
         </div>
     </div>
 
@@ -178,10 +187,15 @@ require_once __DIR__ . '/partials/app_header.php';
                 </div>
             </div>
             <div style="margin-top:16px;">
-                <?php if ($userBalance < $adPrice): ?>
-                    <div style="display:flex; align-items:center; gap:6px; background:#FEF2F2; border:1px solid #FCA5A5; border-radius:10px; padding:8px 12px; font-size:12px; color:var(--color-danger); margin-bottom:12px; font-weight:600;">
+                <?php if ($userBalance < 10000): ?>
+                    <div id="insufficientBalanceAlert" style="display:flex; align-items:center; gap:6px; background:#FEF2F2; border:1px solid #FCA5A5; border-radius:10px; padding:8px 12px; font-size:12px; color:var(--color-danger); margin-bottom:12px; font-weight:600;">
                         <span class="material-symbols-outlined" style="font-size:16px;">warning</span>
-                        Bakiye yetersiz ($<?php echo number_format($adPrice, 0, ',', '.'); ?> gerekli)
+                        Bakiye yetersiz! Seçili alan için yükleme yapmalısınız.
+                    </div>
+                <?php else: ?>
+                    <div id="insufficientBalanceAlert" style="display:none; align-items:center; gap:6px; background:#FEF2F2; border:1px solid #FCA5A5; border-radius:10px; padding:8px 12px; font-size:12px; color:var(--color-danger); margin-bottom:12px; font-weight:600;">
+                        <span class="material-symbols-outlined" style="font-size:16px;">warning</span>
+                        Bakiye yetersiz! Seçili alan için yükleme yapmalısınız.
                     </div>
                 <?php endif; ?>
                 <a href="<?php echo BASE_URL; ?>/wallet.php" style="display:inline-flex; align-items:center; gap:8px; background:var(--color-primary); color:#fff; padding:10px 18px; border-radius:10px; font-weight:700; font-size:13px; text-decoration:none; transition:opacity .15s; width:100%; justify-content:center; box-shadow:0 4px 12px rgba(240,109,31,0.2);"
@@ -197,14 +211,14 @@ require_once __DIR__ . '/partials/app_header.php';
             <div>
                 <div style="font-size:11px; font-weight:700; color:var(--color-primary); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">Reklam Tarifesi</div>
                 <div style="font-size:2rem; font-weight:900; color:var(--text-1); line-height:1; display:flex; align-items:baseline; gap:4px;">
-                    $<?php echo number_format($adPrice, 0, ',', '.'); ?>
+                    $<span id="dynamicPriceDisplay"><?php echo number_format($positions['feed']['price'], 0, ',', '.'); ?></span>
                     <span style="font-size:12px; font-weight:600; color:var(--text-3);">/ 1 Haftalık</span>
                 </div>
             </div>
             <div style="margin-top:16px; font-size:12px; color:var(--text-2); line-height:1.5; display:flex; flex-direction:column; gap:6px;">
                 <div style="display:flex; align-items:center; gap:8px;">
                     <span class="material-symbols-outlined" style="font-size:16px; color:var(--color-success);">check_circle</span>
-                    Akış içerisinde (feed) gösterim
+                    Seçili reklam alanında gösterim
                 </div>
                 <div style="display:flex; align-items:center; gap:8px;">
                     <span class="material-symbols-outlined" style="font-size:16px; color:var(--color-success);">check_circle</span>
@@ -240,6 +254,21 @@ require_once __DIR__ . '/partials/app_header.php';
             </div>
             
             <div>
+                <label style="display:block; font-size:13px; font-weight:700; color:var(--text-2); margin-bottom:6px;">Reklam Alanı <span style="color:var(--color-danger);">*</span></label>
+                <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:12px;">
+                    <?php foreach ($positions as $posKey => $posData): ?>
+                    <label style="display:flex; align-items:center; justify-content:space-between; padding:12px; border:1.5px solid var(--border); border-radius:10px; cursor:pointer; background:var(--bg-section); transition:border-color .15s;">
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <input type="radio" name="position" value="<?php echo $posKey; ?>" <?php echo $posKey==='feed'?'checked':''; ?> onchange="updateDynamicPricing()">
+                            <span style="font-size:13px; font-weight:600; color:var(--text-1);"><?php echo $posData['label']; ?></span>
+                        </div>
+                        <span style="font-size:13px; font-weight:800; color:var(--color-primary);">$<?php echo number_format($posData['price'], 0, ',', '.'); ?></span>
+                    </label>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+
+            <div>
                 <label style="display:block; font-size:13px; font-weight:700; color:var(--text-2); margin-bottom:6px;">Medya Türü <span style="color:var(--color-danger);">*</span></label>
                 <div style="display:flex; gap:12px; margin-bottom:12px;">
                     <label style="display:flex; align-items:center; gap:4px; font-size:13px; cursor:pointer;">
@@ -273,6 +302,34 @@ require_once __DIR__ . '/partials/app_header.php';
             </div>
 
             <script>
+                const userBalance = <?php echo (float)$userBalance; ?>;
+                const positionPrices = <?php echo json_encode(array_map(function($p) { return $p['price']; }, $positions)); ?>;
+
+                function updateDynamicPricing() {
+                    const selectedPos = document.querySelector('input[name="position"]:checked').value;
+                    const price = positionPrices[selectedPos];
+                    
+                    document.getElementById('dynamicPriceDisplay').innerText = price.toLocaleString('tr-TR');
+                    document.getElementById('submitPriceDisplay').innerText = price.toLocaleString('tr-TR');
+
+                    const btn = document.getElementById('submitAdBtn');
+                    const alert = document.getElementById('insufficientBalanceAlert');
+                    
+                    if (userBalance < price) {
+                        btn.disabled = true;
+                        btn.style.background = 'var(--text-3)';
+                        btn.style.cursor = 'not-allowed';
+                        btn.style.boxShadow = 'none';
+                        if(alert) alert.style.display = 'flex';
+                    } else {
+                        btn.disabled = false;
+                        btn.style.background = 'var(--color-primary)';
+                        btn.style.cursor = 'pointer';
+                        btn.style.boxShadow = '0 4px 16px rgba(240,109,31,0.25)';
+                        if(alert) alert.style.display = 'none';
+                    }
+                }
+
                 function toggleMediaInput() {
                     const type = document.querySelector('input[name="media_type"]:checked').value;
                     const fileContainer = document.getElementById('fileUploadContainer');
@@ -304,13 +361,16 @@ require_once __DIR__ . '/partials/app_header.php';
                         }
                     }
                 }
+
+                // Initial run
+                updateDynamicPricing();
             </script>
             
-            <button type="submit" <?php echo ($userBalance < $adPrice) ? 'disabled' : ''; ?>
-                    style="width:100%; border:none; background:<?php echo ($userBalance < $adPrice) ? 'var(--text-3)' : 'var(--color-primary)'; ?>; color:#fff; padding:12px 24px; border-radius:12px; font-weight:700; font-size:14px; cursor:<?php echo ($userBalance < $adPrice) ? 'not-allowed' : 'pointer'; ?>; transition:opacity .15s; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:<?php echo ($userBalance < $adPrice) ? 'none' : '0 4px 16px rgba(240,109,31,0.25)'; ?>;"
-                    <?php if ($userBalance >= $adPrice): ?>onmouseover="this.style.opacity='.9'" onmouseout="this.style.opacity='1'"<?php endif; ?>>
+            <button id="submitAdBtn" type="submit" 
+                    style="width:100%; border:none; background:var(--color-primary); color:#fff; padding:12px 24px; border-radius:12px; font-weight:700; font-size:14px; cursor:pointer; transition:opacity .15s; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 4px 16px rgba(240,109,31,0.25);"
+                    onmouseover="if(!this.disabled) this.style.opacity='.9'" onmouseout="if(!this.disabled) this.style.opacity='1'">
                 <span class="material-symbols-outlined" style="font-size:20px;">send</span>
-                Onaya Gönder ($<?php echo number_format($adPrice, 0, ',', '.'); ?>)
+                Onaya Gönder ($<span id="submitPriceDisplay"><?php echo number_format($positions['feed']['price'], 0, ',', '.'); ?></span>)
             </button>
         </form>
     </div>
