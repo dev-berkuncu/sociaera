@@ -628,7 +628,7 @@ nav.swarm-topnav{
                 
                 <!-- Link Overlay -->
                 <a href="https://sparkls.online" target="_blank" rel="noopener" style="position:absolute; inset:0; z-index:10; display:flex; flex-direction:column; justify-content:flex-end; padding:20px; background:linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 50%); text-decoration:none;">
-                    <span style="position:absolute; top:12px; left:12px; font-size:9px; font-weight:800; background:var(--color-primary); color:#fff; padding:4px 8px; border-radius:12px; text-transform:uppercase; letter-spacing:0.5px; box-shadow:0 2px 4px rgba(0,0,0,0.5);">SPONSOR</span>
+                    <span style="position:absolute; top:12px; left:12px; font-size:9px; font-weight:800; background:var(--color-primary); color:#fff; padding:4px 8px; border-radius:12px; text-transform:uppercase; letter-spacing:0.5px; box-shadow:0 2px 4px rgba(0,0,0,0.5);">REKLAM</span>
                 </a>
             </div>
         <?php endif; ?>
