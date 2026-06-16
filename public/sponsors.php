@@ -10,6 +10,8 @@ require_once __DIR__ . '/../app/Models/User.php';
 require_once __DIR__ . '/../app/Models/Notification.php';
 require_once __DIR__ . '/../app/Models/Wallet.php';
 require_once __DIR__ . '/../app/Models/Ad.php';
+require_once __DIR__ . '/../app/Models/Venue.php';
+require_once __DIR__ . '/../app/Models/Leaderboard.php';
 require_once __DIR__ . '/../app/Services/ImageUploader.php';
 
 Auth::requireLogin();

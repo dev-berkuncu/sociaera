@@ -59,6 +59,7 @@ class AdModel
             ORDER BY sort_order ASC, id DESC LIMIT ?
         ");
         $stmt->execute([$limit]);
+        return $stmt->fetchAll();
     }
 
     /**
