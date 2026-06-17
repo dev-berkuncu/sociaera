@@ -626,20 +626,10 @@ nav.swarm-topnav{
             <!-- Subtle background circle decorator -->
             <div style="position:absolute; right:-15px; top:-15px; width:60px; height:60px; border-radius:50%; background:rgba(255,255,255,0.08); pointer-events:none;"></div>
             
-            <!-- Buttons Header Row -->
-            <div style="display:flex; gap:8px; width:100%; box-sizing:border-box; z-index:2; position:relative;">
-                <a href="mailto:reklam@sociaera.online" style="flex:1; display:flex; align-items:center; justify-content:center; background:#ffffff; color:#F06D1F; border:none; padding:8px 4px; border-radius:8px; font-size:10px; font-weight:800; text-decoration:none; text-align:center; box-shadow:0 2px 5px rgba(0,0,0,0.06); transition:transform 0.15s;" onmouseover="this.style.transform='translateY(-1px)';" onmouseout="this.style.transform='translateY(0)';">
-                    İletişime Geç
-                </a>
-                <a href="<?php echo BASE_URL; ?>/sponsors" style="flex:1; display:flex; align-items:center; justify-content:center; background:transparent; color:#ffffff; border:1px solid rgba(255,255,255,0.4); padding:8px 4px; border-radius:8px; font-size:10px; font-weight:800; text-decoration:none; text-align:center; transition:all 0.15s;" onmouseover="this.style.background='rgba(255,255,255,0.08)';" onmouseout="this.style.background='transparent';">
-                    Reklam Ver
-                </a>
-            </div>
-
             <!-- List Section -->
             <div style="display:flex; flex-direction:column; gap:8px; width:100%; z-index:2; position:relative;">
                 <!-- Single Clickable Facebrowser Card -->
-                <a href="https://face.gta.world/pages/sociaera" target="_blank" rel="noopener" style="display:flex; align-items:center; gap:8px; text-decoration:none; color:#ffffff; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); border-radius:10px; padding:10px; transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.15)'; this.style.transform='translateX(3px)';" onmouseout="this.style.background='rgba(255,255,255,0.08)'; this.style.transform='translateX(0)';">
+                <a href="https://face-tr.gta.world/page/sociaera" target="_blank" rel="noopener" style="display:flex; align-items:center; gap:8px; text-decoration:none; color:#ffffff; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); border-radius:10px; padding:10px; transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.15)'; this.style.transform='translateX(3px)';" onmouseout="this.style.background='rgba(255,255,255,0.08)'; this.style.transform='translateX(0)';">
                     <div style="width:32px; height:32px; border-radius:50%; background:rgba(255,255,255,0.15); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
                         <span class="material-symbols-outlined" style="font-size:16px; color:#ffffff;">language</span>
                     </div>
@@ -648,9 +638,9 @@ nav.swarm-topnav{
                             <span style="font-size:11px; font-weight:800; color:#ffffff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Sociaera Facebrowser</span>
                             <span class="material-symbols-outlined" style="font-size:12px; color:#ffd54f; font-variation-settings:'FILL' 1;">verified</span>
                         </div>
-                        <div style="font-size:9px; font-weight:500; color:rgba(255,255,255,0.8); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin-top:2px;">Bize ulaşın & destek alın</div>
+                        <div style="font-size:9px; color:rgba(255,255,255,0.7); margin-top:2px;">Bizi takip et!</div>
                     </div>
-                    <span class="material-symbols-outlined" style="font-size:14px; color:rgba(255,255,255,0.5);">open_in_new</span>
+                    <span class="material-symbols-outlined" style="font-size:14px; color:rgba(255,255,255,0.5);">chevron_right</span>
                 </a>
             </div>
         </div>
