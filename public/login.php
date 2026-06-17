@@ -24,8 +24,8 @@ require_once __DIR__ . '/partials/flash.php';
     <div style="width:100%; max-width:420px; position:relative; z-index:1;">
         <div style="background:#fff; border:1.5px solid var(--border); border-radius:20px; padding:36px 32px; box-shadow:0 20px 60px rgba(0,0,0,.1);">
             <div style="text-align:center; margin-bottom:28px;">
-                <div style="width:64px; height:64px; margin:0 auto 16px; background:#fff; border-radius:18px; display:flex; align-items:center; justify-content:center; transform:rotate(-6deg); box-shadow:0 10px 25px rgba(0,0,0,0.08); overflow:hidden; border:1.5px solid var(--border-light);">
-                    <img src="<?php echo BASE_URL; ?>/assets/images/logo.png" alt="Logo" style="width:100%; height:100%; object-fit:cover;">
+                <div style="margin:0 auto 16px; display:flex; align-items:center; justify-content:center;">
+                    <img src="<?php echo BASE_URL; ?>/assets/images/logo.png" alt="Logo" style="height:64px; width:auto; object-fit:contain;">
                 </div>
                 <h1 style="font-size:1.6rem; font-weight:900; color:var(--text-1); margin:0 0 6px;"><?php echo APP_NAME; ?>'ya Hoş Geldin</h1>
                 <p style="color:var(--text-3); font-size:13px; margin:0;">GTA World hesabınla giriş yap ve keşfe başla</p>
@@ -43,9 +43,7 @@ require_once __DIR__ . '/partials/flash.php';
                 Şifreniz bizimle paylaşılmaz.
             </div>
 
-            <div style="margin-top:16px; text-align:center; font-size:13px; color:var(--text-3);">
-                Hesabın yok mu? <a href="<?php echo BASE_URL; ?>/register" style="color:var(--color-primary); font-weight:700; text-decoration:none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Kayıt Ol</a>
-            </div>
+
         </div>
     </div>
 </div>
