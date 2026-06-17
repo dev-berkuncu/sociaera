@@ -208,6 +208,8 @@ if ($_footerFlash && isset($_footerFlash['type'], $_footerFlash['message'])):
                         'inappropriate' => ['icon' => 'block',             'label' => 'Uygunsuz İçerik'],
                         'fake_checkin'  => ['icon' => 'location_off',      'label' => 'Sahte Check-in'],
                         'fraud'         => ['icon' => 'gpp_bad',           'label' => 'Dolandırıcılık'],
+                        'bug'           => ['icon' => 'bug_report',        'label' => 'Hata Bildir (Bug)'],
+                        'feedback'      => ['icon' => 'feedback',          'label' => 'Geri Bildirim'],
                         'other'         => ['icon' => 'more_horiz',        'label' => 'Diğer'],
                     ];
                     foreach ($reasons as $key => $r):

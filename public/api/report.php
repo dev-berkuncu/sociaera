@@ -28,10 +28,16 @@ $entityId   = (int)($_POST['entity_id'] ?? 0);
 $reason     = $_POST['reason'] ?? '';
 $description = trim($_POST['description'] ?? '');
 
-$validTypes = ['checkin', 'comment', 'user', 'venue'];
-$validReasons = ['spam','harassment','inappropriate','wrong_venue','fake_checkin','fraud','privacy','copyright','other'];
+$validTypes = ['checkin', 'comment', 'user', 'venue', 'system'];
+$validReasons = ['spam','harassment','inappropriate','wrong_venue','fake_checkin','fraud','privacy','copyright','bug','feedback','other'];
 
-if (!in_array($entityType, $validTypes) || !$entityId || !in_array($reason, $validReasons)) {
+if ($entityType === 'system') {
+    $entityId = 0;
+} else if (!$entityId) {
+    Response::json(['ok' => false, 'error' => 'Geçersiz rapor parametreleri.']);
+}
+
+if (!in_array($entityType, $validTypes) || !in_array($reason, $validReasons)) {
     Response::json(['ok' => false, 'error' => 'Geçersiz rapor parametreleri.']);
 }
 

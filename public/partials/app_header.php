@@ -458,6 +458,14 @@ nav.swarm-topnav{
             </a>
             <?php endforeach; ?>
             <hr style="border:none;border-top:1px solid #F2F1EE;margin:4px 0;"/>
+            <a href="#" onclick="App.openReportModal('system', 0); return false;"
+               style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;
+                      text-decoration:none;color:#A0A0A0;font-size:13px;font-weight:600;"
+               onmouseover="this.style.background='#F8F7F5'" onmouseout="this.style.background=''">
+                <span class="material-symbols-outlined" style="font-size:18px;">bug_report</span>
+                Geri Bildirim / Hata
+            </a>
+            <hr style="border:none;border-top:1px solid #F2F1EE;margin:4px 0;"/>
             <a href="<?php echo BASE_URL; ?>/logout"
                style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;
                       text-decoration:none;color:#EF4444;font-size:13px;font-weight:600;"
