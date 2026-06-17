@@ -674,6 +674,9 @@ if (bannerUrl($profileUser['banner'] ?? null)) {
                     </span>
                     <?php echo $isFollowing ? 'Takip Ediliyor' : 'Takip Et'; ?>
                 </button>
+                <button class="btn btn-ghost btn-sm" onclick="App.openReportModal('user', <?php echo $profileUser['id']; ?>)" style="color:var(--text-3);" title="Kullanıcıyı Şikayet Et">
+                    <span class="material-symbols-outlined" style="font-size:16px;">flag</span>
+                </button>
                 <?php else: ?>
                 <a href="<?php echo BASE_URL; ?>/settings" class="btn btn-ghost btn-sm">
                     <span class="material-symbols-outlined" style="font-size:16px;">edit</span>

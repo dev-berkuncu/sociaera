@@ -145,6 +145,13 @@ require_once __DIR__ . '/partials/app_header.php';
                             <span style="font-size:13px;"><?php echo $favoriteCount; ?></span>
                         </button>
                     </form>
+                    <!-- Rapor Butonu -->
+                    <button onclick="App.openReportModal('venue', <?php echo $venue['id']; ?>)"
+                            style="display:flex; align-items:center; justify-content:center; gap:6px; padding:11px 14px; border-radius:12px; font-weight:700; font-size:14px; transition:all .15s; flex-shrink:0; font-family:inherit; background:var(--bg-section);color:var(--text-3);border:1.5px solid var(--border); cursor:pointer;"
+                            title="Mekanı Şikayet Et"
+                            onmouseover="this.style.background='rgba(245,158,11,0.08)';this.style.color='var(--color-primary)';this.style.borderColor='var(--color-primary)';" onmouseout="this.style.background='var(--bg-section)';this.style.color='var(--text-3)';this.style.borderColor='var(--border)';">
+                        <span class="material-symbols-outlined" style="font-size:20px;">flag</span>
+                    </button>
                 </div>
             </div>
 
