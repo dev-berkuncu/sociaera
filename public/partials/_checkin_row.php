@@ -28,43 +28,41 @@ $ciNote    = !empty($ci['note']) ? mb_strimwidth($ci['note'], 0, 80, '…') : nu
 $ciProfileUrl = BASE_URL . '/profile?u=' . urlencode($ci['tag'] ?: ($ci['username'] ?? ''));
 $ciVenueUrl   = !empty($ci['venue_id']) ? BASE_URL . '/venue-detail?id=' . (int)$ci['venue_id'] : '#';
 ?>
-<div class="flex items-center gap-3 px-4 py-3.5 hover:bg-surface-container/50 transition-colors group" id="ci-<?php echo (int)$ci['id']; ?>">
+<div style="display:flex; align-items:center; gap:12px; padding:14px 16px; border-bottom:1px solid var(--border-light); transition:background 0.15s; text-decoration:none;" id="ci-<?php echo (int)$ci['id']; ?>" onmouseover="this.style.background='var(--bg-hover)'" onmouseout="this.style.background='transparent'">
 
     <!-- Avatar + kategori pin -->
-    <a href="<?php echo $ciProfileUrl; ?>" class="relative flex-shrink-0">
+    <a href="<?php echo $ciProfileUrl; ?>" style="position:relative; flex-shrink:0; text-decoration:none;">
         <img src="<?php echo $ciAvatarUrl; ?>" alt="<?php echo escape($ci['username'] ?? ''); ?>"
-             class="w-10 h-10 rounded-full object-cover border-2 border-white/10 group-hover:border-primary/30 transition-colors" width="40" height="40">
-        <div class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-[#131314] flex items-center justify-center"
-             style="background:<?php echo $ciMeta['color']; ?>;">
-            <span class="material-symbols-outlined text-white" style="font-size:9px;font-variation-settings:'FILL' 1;"><?php echo $ciMeta['icon']; ?></span>
+             style="width:40px; height:40px; border-radius:50%; object-fit:cover; border:2px solid rgba(255,255,255,0.1); transition:border-color 0.15s;" width="40" height="40" onmouseover="this.style.borderColor='var(--color-primary)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)'">
+        <div style="position:absolute; bottom:-4px; right:-4px; width:20px; height:20px; border-radius:50%; border:2px solid var(--bg-body); display:flex; align-items:center; justify-content:center; background:<?php echo $ciMeta['color']; ?>;">
+            <span class="material-symbols-outlined" style="font-size:9px; color:#fff; font-variation-settings:'FILL' 1;"><?php echo $ciMeta['icon']; ?></span>
         </div>
     </a>
 
     <!-- İçerik -->
-    <div class="flex-grow min-w-0">
-        <div class="flex items-baseline gap-1.5 flex-wrap">
-            <a href="<?php echo $ciProfileUrl; ?>" class="font-bold text-sm text-on-surface hover:text-primary transition-colors">
+    <div style="flex-grow:1; min-width:0;">
+        <div style="display:flex; align-items:baseline; gap:6px; flex-wrap:wrap; line-height:1.2;">
+            <a href="<?php echo $ciProfileUrl; ?>" style="font-weight:700; font-size:14px; color:var(--text-1); text-decoration:none; transition:color 0.15s;" onmouseover="this.style.color='var(--color-primary)'" onmouseout="this.style.color='var(--text-1)'">
                 <?php echo escape($ci['username'] ?? 'Kullanıcı'); ?>
             </a>
-            <span class="text-on-surface-variant text-[11px]">check-in yaptı:</span>
-            <a href="<?php echo $ciVenueUrl; ?>" class="text-sm font-semibold hover:underline truncate max-w-[160px]" style="color:<?php echo $ciMeta['color']; ?>">
+            <span style="color:var(--text-3); font-size:11px;">check-in yaptı:</span>
+            <a href="<?php echo $ciVenueUrl; ?>" style="font-size:14px; font-weight:600; text-decoration:none; color:<?php echo $ciMeta['color']; ?>; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:160px; display:inline-block; vertical-align:bottom;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
                 <?php echo escape($ci['venue_name'] ?? ''); ?>
             </a>
         </div>
-        <div class="flex items-center gap-1.5 mt-0.5 text-[11px] text-on-surface-variant">
+        <div style="display:flex; align-items:center; gap:6px; margin-top:4px; font-size:11px; color:var(--text-3);">
             <span><?php echo $ciTimeAgo; ?></span>
             <?php if ($ciNote): ?>
-            <span class="opacity-40">·</span>
-            <span class="italic truncate">&ldquo;<?php echo escape($ciNote); ?>&rdquo;</span>
+            <span style="opacity:0.4;">·</span>
+            <span style="font-style:italic; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:180px;">&ldquo;<?php echo escape($ciNote); ?>&rdquo;</span>
             <?php endif; ?>
         </div>
     </div>
 
     <!-- Check-in Badge -->
-    <div class="flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-full flex-shrink-0 border"
-         style="color:<?php echo $ciMeta['color']; ?>;background:<?php echo $ciMeta['color']; ?>18;border-color:<?php echo $ciMeta['color']; ?>30;">
-        <span class="material-symbols-outlined" style="font-size:10px;font-variation-settings:'FILL' 1;">verified</span>
-        <span class="hidden sm:inline">Check-in</span>
+    <div style="display:flex; align-items:center; gap:4px; font-size:10px; font-weight:700; padding:4px 8px; border-radius:12px; flex-shrink:0; border:1px solid <?php echo $ciMeta['color']; ?>40; color:<?php echo $ciMeta['color']; ?>; background:<?php echo $ciMeta['color']; ?>18;">
+        <span class="material-symbols-outlined" style="font-size:12px; font-variation-settings:'FILL' 1;">verified</span>
+        <span>Check-in</span>
     </div>
 
 </div>
