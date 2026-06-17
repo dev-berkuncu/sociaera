@@ -106,17 +106,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         header('Location: ' . $redirectTo); exit;
 
-    /* Banka hesabı (tek zorunlu alan) */
-    } elseif ($action === 'update_bank') {
-        $bank = trim($_POST['bank_account'] ?? '');
-        if (empty($bank)) {
-            Auth::setFlash('error', 'Banka hesap numarası boş bırakılamaz.');
-            header('Location: ' . $redirectTo); exit;
-        }
-        $userModel->updateField(Auth::id(), 'bank_account', $bank);
-        // Flash YOK — direkt dashboard'a yönlendir, overlay çıkmasın
-        header('Location: ' . BASE_URL . '/dashboard'); exit;
-
     /* Şifre */
     } elseif ($action === 'change_password') {
         if (!empty($user['gta_user_id'])) {
@@ -309,35 +298,6 @@ $flash = Auth::getFlash();
         </form>
     </div>
 
-    <!-- ── BANKA HESABI ───────────────────────────────── -->
-    <div style="background:#fff;border:2px solid var(--color-primary);border-radius:16px;padding:20px 24px;
-                box-shadow:0 4px 20px rgba(240,109,31,.08);">
-        <h2 style="font-size:14px;font-weight:700;color:var(--text-1);margin:0 0 4px;display:flex;align-items:center;gap:6px;">
-            <span class="material-symbols-outlined" style="font-size:18px;color:var(--color-primary);">account_balance</span>
-            Banka Hesap Numarası
-        </h2>
-        <p style="font-size:12px;color:var(--text-3);margin:0 0 12px;">Bakiye çekim işlemlerinin gönderileceği IBAN / hesap numarası.</p>
-        <form method="POST" action="<?php echo $redirectTo; ?>" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-            <?php echo csrfField(); ?>
-            <input type="hidden" name="action" value="update_bank">
-            <input type="text" name="bank_account"
-                   value="<?php echo htmlspecialchars($user['bank_account'] ?? ''); ?>"
-                   placeholder="0300 8108 7"
-                   required
-                   style="flex:1;min-width:180px;background:var(--bg-section);border:1.5px solid var(--border);
-                          border-radius:10px;padding:10px 14px;font-size:14px;font-family:monospace;
-                          color:var(--text-1);outline:none;letter-spacing:.06em;box-sizing:border-box;"
-                   onfocus="this.style.borderColor='var(--color-primary)'" onblur="this.style.borderColor='var(--border)'">
-            <button type="submit"
-                    style="background:var(--color-primary);color:#fff;border:none;cursor:pointer;
-                           padding:10px 20px;border-radius:10px;font-size:14px;font-weight:700;
-                           display:inline-flex;align-items:center;gap:6px;white-space:nowrap;transition:opacity .15s;"
-                    onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
-                <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 1;">save</span>
-                Kaydet
-            </button>
-        </form>
-    </div>
 
     <!-- ── ŞİFRE DEĞİŞTİR ─────────────────────────────── -->
     <?php if (empty($user['gta_user_id'])): ?>

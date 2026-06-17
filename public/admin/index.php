@@ -24,6 +24,56 @@ require_once __DIR__ . '/../../app/Models/Report.php';
 
 Auth::requireAdmin();
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'distribute_rewards') {
+    Csrf::requireValid();
+    
+    $prevWeek = LeaderboardModel::getPreviousWeekRange();
+    $weekStr = date('Y-\WW', strtotime($prevWeek['start']));
+
+    $db = Database::getConnection();
+    $stmt = $db->prepare("SELECT setting_value FROM settings WHERE setting_key = 'last_rewarded_week'");
+    $stmt->execute();
+    $lastWeek = $stmt->fetchColumn();
+
+    if ($lastWeek === $weekStr) {
+        Auth::setFlash('error', "Geçen haftanın ödülleri zaten dağıtıldı!");
+    } else {
+        $lbModel = new LeaderboardModel();
+        $top3 = $lbModel->getPreviousTopUsers(3);
+        
+        $walletModel = new WalletModel();
+        $notifModel = new NotificationModel();
+        $rewards = [3000, 2000, 1000];
+        
+        $db->beginTransaction();
+        try {
+            foreach ($top3 as $index => $user) {
+                $amount = $rewards[$index] ?? 0;
+                if ($amount > 0) {
+                    $walletModel->deposit($user['id'], $amount, "Haftalık Liderlik Ödülü (" . ($index+1) . ". Sıra)");
+                    $notifModel->create(
+                        $user['id'], 
+                        Auth::id(), 
+                        'wallet', 
+                        "Tebrikler! Geçen haftayı " . ($index+1) . ". sırada tamamladınız ve $" . number_format($amount, 0) . " kazandınız!"
+                    );
+                }
+            }
+            
+            $stmt = $db->prepare("UPDATE settings SET setting_value = ? WHERE setting_key = 'last_rewarded_week'");
+            $stmt->execute([$weekStr]);
+            
+            $db->commit();
+            Auth::setFlash('success', "Geçen haftanın ödülleri başarıyla dağıtıldı!");
+        } catch (\Exception $e) {
+            $db->rollBack();
+            Auth::setFlash('error', "Ödüller dağıtılırken bir hata oluştu: " . $e->getMessage());
+        }
+    }
+    header("Location: " . BASE_URL . "/admin/");
+    exit;
+}
+
 $adminModel = new AdminModel();
 $stats = $adminModel->getDashboardStats();
 $regChart = $adminModel->getRegistrationChart(7);
@@ -57,7 +107,17 @@ require_once __DIR__ . '/_header.php';
         <span class="material-symbols-outlined" style="color:var(--cp);font-size:22px;" data-fill="1">dashboard</span>
         Dashboard
     </h1>
-    <span style="font-size:12px;color:var(--t3);"><?php echo date('d M Y, H:i'); ?></span>
+    <div style="display:flex;align-items:center;gap:12px;">
+        <form method="POST" style="margin:0;" onsubmit="return confirm('Geçen haftanın liderlik ödüllerini dağıtmak istediğinize emin misiniz? (İlk 3 kişiye sırasıyla 3k-2k-1k dağıtılacak)');">
+            <?php echo csrfField(); ?>
+            <input type="hidden" name="action" value="distribute_rewards">
+            <button type="submit" class="btn-admin btn-admin-primary">
+                <span class="material-symbols-outlined" style="font-size:18px;">workspace_premium</span>
+                Geçen Haftanın Ödüllerini Dağıt
+            </button>
+        </form>
+        <span style="font-size:12px;color:var(--t3);"><?php echo date('d M Y, H:i'); ?></span>
+    </div>
 </div>
 
 <!-- Stats Grid -->

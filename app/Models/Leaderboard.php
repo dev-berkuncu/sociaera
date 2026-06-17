@@ -32,6 +32,46 @@ class LeaderboardModel
         ];
     }
 
+    public static function getPreviousWeekRange(): array
+    {
+        $tz = new DateTimeZone(APP_TIMEZONE);
+        $now = new DateTime('now', $tz);
+        
+        $start = clone $now;
+        $start->modify('last week monday');
+        $start->setTime(0, 0, 0);
+        
+        $end = clone $start;
+        $end->modify('+6 days');
+        $end->setTime(23, 59, 59);
+        
+        return [
+            'start' => $start->format('Y-m-d H:i:s'),
+            'end'   => $end->format('Y-m-d H:i:s'),
+        ];
+    }
+
+    public function getPreviousTopUsers(int $limit = 10): array
+    {
+        $week = self::getPreviousWeekRange();
+
+        $stmt = $this->db->prepare("
+            SELECT u.id, u.username, u.tag, u.avatar, u.is_premium,
+                   COUNT(c.id) as checkin_count,
+                   MIN(c.created_at) as first_checkin
+            FROM checkins c
+            JOIN users u ON c.user_id = u.id
+            WHERE c.is_deleted = 0 AND c.is_excluded_from_leaderboard = 0
+              AND c.created_at BETWEEN ? AND ?
+              AND u.is_active = 1 AND (u.is_admin = 0 OR u.is_admin IS NULL)
+            GROUP BY u.id
+            ORDER BY checkin_count DESC, u.is_premium DESC, first_checkin ASC
+            LIMIT ?
+        ");
+        $stmt->execute([$week['start'], $week['end'], $limit]);
+        return $stmt->fetchAll();
+    }
+
     public function getTopUsers(int $limit = 10): array
     {
         $week = self::getWeekRange();

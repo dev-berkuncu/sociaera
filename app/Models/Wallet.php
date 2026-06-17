@@ -79,9 +79,50 @@ class WalletModel
             $stmt->execute([$amount, $userId]);
 
             $stmt = $this->db->prepare("
-                INSERT INTO transactions (user_id, type, amount, description, status) VALUES (?, 'withdraw', ?, ?, 'pending')
+                INSERT INTO transactions (user_id, type, amount, description) VALUES (?, 'withdraw', ?, ?)
             ");
             $stmt->execute([$userId, $amount, $description]);
+
+            $this->db->commit();
+            return true;
+        } catch (\Throwable $e) {
+            $this->db->rollBack();
+            throw $e;
+        }
+    }
+
+    public function requestWithdrawal(int $userId, float $amount, string $accountInfo): bool
+    {
+        if ($amount < 10000) {
+            throw new \InvalidArgumentException('Minimum çekim tutarı 10.000$ olmalıdır.');
+        }
+
+        $this->db->beginTransaction();
+        try {
+            $stmt = $this->db->prepare("SELECT balance FROM wallets WHERE user_id = ? FOR UPDATE");
+            $stmt->execute([$userId]);
+            $balance = (float)($stmt->fetchColumn() ?: 0);
+            
+            if ($balance < $amount) {
+                $this->db->rollBack();
+                return false;
+            }
+
+            // Bakiyeyi düş
+            $stmt = $this->db->prepare("UPDATE wallets SET balance = balance - ? WHERE user_id = ?");
+            $stmt->execute([$amount, $userId]);
+
+            // İşlem kaydı oluştur
+            $stmt = $this->db->prepare("
+                INSERT INTO transactions (user_id, type, amount, description) VALUES (?, 'withdraw', ?, 'Para Çekme Talebi (Beklemede)')
+            ");
+            $stmt->execute([$userId, $amount]);
+
+            // Çekim talebini kaydet
+            $stmt = $this->db->prepare("
+                INSERT INTO withdrawal_requests (user_id, amount, account_info, status) VALUES (?, ?, ?, 'pending')
+            ");
+            $stmt->execute([$userId, $amount, $accountInfo]);
 
             $this->db->commit();
             return true;

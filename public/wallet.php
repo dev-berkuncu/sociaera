@@ -21,32 +21,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     if ($action === 'withdraw') {
         $amount = (float)($_POST['amount'] ?? 0);
-        if ($amount <= 0) {
-            Auth::setFlash('error', 'Çekmek istediğiniz tutar 0\'dan büyük olmalıdır.');
+        $accountInfo = trim($_POST['account_info'] ?? '');
+
+        if ($amount < 10000) {
+            Auth::setFlash('error', 'Minimum para çekme limiti 10.000$ dir.');
             header('Location: ' . BASE_URL . '/wallet');
             exit;
         }
         
-        $balance = $walletModel->getBalance(Auth::id());
-        if ($balance < $amount) {
-            Auth::setFlash('error', 'Cüzdanınızda bu miktarda bakiye bulunmuyor.');
+        if (empty($accountInfo)) {
+            Auth::setFlash('error', 'Lütfen hesap / cüzdan bilgilerinizi giriniz.');
             header('Location: ' . BASE_URL . '/wallet');
             exit;
         }
-        
-        $refCode = 'W-' . strtoupper(bin2hex(random_bytes(4)));
-        $description = "Para Çekme Talebi - Ref: " . $refCode;
-        
-        if ($walletModel->withdraw(Auth::id(), $amount, $description)) {
-            try {
-                $db = Database::getConnection();
-                $stmt = $db->prepare("UPDATE transactions SET reference_id = ? WHERE user_id = ? AND type = 'withdraw' AND description = ? ORDER BY id DESC LIMIT 1");
-                $stmt->execute([$refCode, Auth::id(), $description]);
-            } catch (Exception $e) {}
-            
-            Auth::setFlash('success', "Çekim talebiniz oluşturuldu! Referans Kodu: <strong>{$refCode}</strong>. Oyun içi ödemeniz için bu kodu yöneticilere bildirebilirsiniz.");
-        } else {
-            Auth::setFlash('error', 'Çekim işlemi sırasında bir hata oluştu.');
+
+        try {
+            if ($walletModel->requestWithdrawal(Auth::id(), $amount, $accountInfo)) {
+                Auth::setFlash('success', "Çekim talebiniz başarıyla oluşturuldu! Yöneticiler onayladığında bakiyeniz hesabınıza yatırılacaktır.");
+            } else {
+                Auth::setFlash('error', 'Cüzdanınızda yeterli bakiye bulunmuyor.');
+            }
+        } catch (\Exception $e) {
+            Auth::setFlash('error', $e->getMessage());
         }
         header('Location: ' . BASE_URL . '/wallet');
         exit;
@@ -115,7 +111,7 @@ require_once __DIR__ . '/partials/app_header.php';
                 <button onclick="openTopupModal()" style="background:#fff;color:var(--color-primary);padding:10px 24px;border-radius:999px;font-weight:700;box-shadow:0 4px 12px rgba(0,0,0,0.15);transition:all .15s;display:inline-flex;align-items:center;gap:8px;border:none;cursor:pointer;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform=''">
                     <span class="material-symbols-outlined">add_circle</span> Bakiye Yükle
                 </button>
-                <button onclick="openWithdrawModal()" style="background:rgba(255,255,255,0.1);border:1.5px solid rgba(255,255,255,0.2);color:#fff;padding:10px 24px;border-radius:999px;font-weight:700;transition:all .15s;display:inline-flex;align-items:center;gap:8px;cursor:pointer;" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">
+                <button onclick="<?php echo $balance >= 10000 ? 'openWithdrawModal()' : "alert('Para çekim talebi oluşturabilmek için bakiyeniz en az 10.000$ olmalıdır.')"; ?>" style="background:rgba(255,255,255,0.1);border:1.5px solid rgba(255,255,255,0.2);color:#fff;padding:10px 24px;border-radius:999px;font-weight:700;transition:all .15s;display:inline-flex;align-items:center;gap:8px;cursor:pointer;" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">
                     <span class="material-symbols-outlined">payments</span> Para Çek
                 </button>
             </div>
@@ -216,7 +212,12 @@ require_once __DIR__ . '/partials/app_header.php';
             
             <div style="position:relative;margin-bottom:24px;">
                 <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-3);font-weight:700;font-size:1.25rem;">$</span>
-                <input type="number" name="amount" id="withdrawAmount" style="width:100%;box-sizing:border-box;background:var(--bg-input);border:1.5px solid var(--border);border-radius:12px;padding:14px 14px 14px 36px;color:var(--text-1);font-size:1.25rem;font-weight:700;outline:none;text-align:center;font-family:inherit;transition:border-color .2s;" placeholder="Tutar (USD)" min="1" max="<?php echo (int)$balance; ?>" step="1" oninput="updateWithdrawAmount()" required onfocus="this.style.borderColor='var(--color-primary)'" onblur="this.style.borderColor='var(--border)'">
+                <input type="number" name="amount" id="withdrawAmount" style="width:100%;box-sizing:border-box;background:var(--bg-input);border:1.5px solid var(--border);border-radius:12px;padding:14px 14px 14px 36px;color:var(--text-1);font-size:1.25rem;font-weight:700;outline:none;text-align:center;font-family:inherit;transition:border-color .2s;" placeholder="Tutar (USD)" min="10000" max="<?php echo (int)$balance; ?>" step="1" oninput="updateWithdrawAmount()" required onfocus="this.style.borderColor='var(--color-primary)'" onblur="this.style.borderColor='var(--border)'">
+            </div>
+
+            <div style="margin-bottom:24px;text-align:left;">
+                <label style="display:block;font-size:0.85rem;font-weight:700;color:var(--text-2);margin-bottom:8px;">Hesap / IBAN / Cüzdan Bilgisi</label>
+                <input type="text" name="account_info" style="width:100%;box-sizing:border-box;background:var(--bg-input);border:1.5px solid var(--border);border-radius:12px;padding:14px;color:var(--text-1);font-size:1rem;font-weight:500;outline:none;font-family:inherit;transition:border-color .2s;" placeholder="Örn: TR12 3456 7890 1234 5678 90" required onfocus="this.style.borderColor='var(--color-primary)'" onblur="this.style.borderColor='var(--border)'">
             </div>
             
             <div style="background:var(--bg-section);border-radius:10px;padding:12px;margin-bottom:24px;display:flex;justify-content:space-between;align-items:center;border:1.5px solid var(--border-light);">
@@ -232,7 +233,7 @@ require_once __DIR__ . '/partials/app_header.php';
             </div>
             
             <p style="font-size:10px;color:var(--text-3);margin-top:24px;text-transform:uppercase;letter-spacing:.08em;font-weight:700;">
-                (( Para çekim talebiniz sonrası sistem size bir referans kodu verecektir. Bu kodu oyun içinden yöneticilere ileterek paranızı tahsil edebilirsiniz. ))
+                (( Çekim talebiniz incelendikten sonra belirtilen hesaba aktarılacaktır. ))
             </p>
         </form>
     </div>
