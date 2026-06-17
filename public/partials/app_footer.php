@@ -84,9 +84,9 @@
                     <!-- Görsel -->
                     <div style="width:40px;height:40px;border-radius:10px;overflow:hidden;background:var(--bg-section);flex-shrink:0;">
                         <?php if (!empty($tv['cover_image'])): ?>
-                            <img src="<?php echo BASE_URL . '/uploads/venues/' . escape($tv['cover_image']); ?>" style="width:100%;height:100%;object-fit:cover;" loading="lazy">
+                            <img src="<?php echo BASE_URL . '/uploads/venues/' . escape($tv['cover_image']); ?>" style="width:100%;height:100%;object-fit:cover;">
                         <?php elseif (!empty($tv['image'])): ?>
-                            <img src="<?php echo uploadUrl('posts', $tv['image']); ?>" style="width:100%;height:100%;object-fit:cover;" loading="lazy">
+                            <img src="<?php echo uploadUrl('posts', $tv['image']); ?>" style="width:100%;height:100%;object-fit:cover;">
                         <?php else: ?>
                             <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;">
                                 <span class="material-symbols-outlined" style="font-size:20px;color:var(--text-3);">storefront</span>

@@ -23,8 +23,7 @@ if (empty($sponsoredAd)) return;
                      alt="<?php echo escape($sponsoredAd['title']); ?>"
                      style="width:100%; height:auto; object-fit:cover; display:block; transition:transform .3s;"
                      onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'"
-                     width="640" height="320"
-                     loading="lazy">
+                     width="640" height="320">
             </div>
         </div>
         <?php endif; ?>
