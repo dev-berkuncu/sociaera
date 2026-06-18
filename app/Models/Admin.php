@@ -59,10 +59,18 @@ class AdminModel
             $stats['pending_reports'] = 0;
         }
 
-        // Ödemeler
+        // Ödemeler (Platform Kazancı)
         try {
             $stats['successful_payments'] = (int) $this->db->query(
                 "SELECT COUNT(*) FROM transactions WHERE type = 'deposit'"
+            )->fetchColumn();
+
+            $stats['monthly_earnings'] = (float) $this->db->query(
+                "SELECT COALESCE(SUM(amount), 0) FROM transactions WHERE type = 'deposit' AND MONTH(created_at) = MONTH(CURDATE()) AND YEAR(created_at) = YEAR(CURDATE())"
+            )->fetchColumn();
+
+            $stats['total_earnings'] = (float) $this->db->query(
+                "SELECT COALESCE(SUM(amount), 0) FROM transactions WHERE type = 'deposit'"
             )->fetchColumn();
 
             $stats['total_wallet_balance'] = (float) $this->db->query(
@@ -70,6 +78,8 @@ class AdminModel
             )->fetchColumn();
         } catch (\Throwable $e) {
             $stats['successful_payments'] = 0;
+            $stats['monthly_earnings'] = 0;
+            $stats['total_earnings'] = 0;
             $stats['total_wallet_balance'] = 0;
         }
 

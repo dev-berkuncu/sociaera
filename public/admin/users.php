@@ -35,6 +35,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && Auth::canWrite()) {
                 Logger::adminAudit('unban', 'user', $targetId);
                 Auth::setFlash('success', 'Ban kaldırıldı.');
                 break;
+            case 'delete':
+                if (Auth::user()['admin_role'] === 'super_admin' && $targetId !== Auth::id()) {
+                    $db = Database::getConnection();
+                    $db->prepare("DELETE FROM users WHERE id = ?")->execute([$targetId]);
+                    Logger::adminAudit('delete_user', 'user', $targetId);
+                    Auth::setFlash('success', 'Kullanıcı kalıcı olarak silindi.');
+                } else {
+                    Auth::setFlash('error', 'Bu işlem için Super Admin yetkisi gereklidir.');
+                }
+                break;
+            case 'reset_balance':
+                if (Auth::user()['admin_role'] === 'super_admin') {
+                    $db = Database::getConnection();
+                    $db->prepare("UPDATE wallets SET balance = 0 WHERE user_id = ?")->execute([$targetId]);
+                    Logger::adminAudit('reset_balance', 'wallet', $targetId);
+                    Auth::setFlash('success', 'Kullanıcının bakiyesi sıfırlandı.');
+                } else {
+                    Auth::setFlash('error', 'Bu işlem için Super Admin yetkisi gereklidir.');
+                }
+                break;
         }
     }
     header('Location: ' . BASE_URL . '/admin/users'); exit;
@@ -126,6 +146,14 @@ require_once __DIR__ . '/_header.php';
                             <form method="POST" class="inline"><input type="hidden" name="csrf_token" value="<?php echo csrfToken();?>"><input type="hidden" name="user_id" value="<?php echo $u['id'];?>"><input type="hidden" name="action" value="unban">
                                 <button class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 flex items-center justify-center transition-colors" title="Ban Kaldır"><span class="material-symbols-outlined text-[18px]">check_circle</span></button></form>
                             <?php endif;?>
+                            
+                            <?php if((Auth::user()['admin_role'] ?? '') === 'super_admin'): ?>
+                            <form method="POST" class="inline" onsubmit="return confirm('Kullanıcının bakiyesini sıfırlamak istediğinize emin misiniz?');"><input type="hidden" name="csrf_token" value="<?php echo csrfToken();?>"><input type="hidden" name="user_id" value="<?php echo $u['id'];?>"><input type="hidden" name="action" value="reset_balance">
+                                <button class="w-8 h-8 rounded-lg bg-yellow-500/10 text-yellow-400 hover:bg-yellow-500/20 flex items-center justify-center transition-colors" title="Bakiyeyi Sıfırla"><span class="material-symbols-outlined text-[18px]">money_off</span></button></form>
+                            <form method="POST" class="inline" onsubmit="return confirm('Kullanıcıyı tamamen silmek istediğinize emin misiniz? Bu işlem geri alınamaz!');"><input type="hidden" name="csrf_token" value="<?php echo csrfToken();?>"><input type="hidden" name="user_id" value="<?php echo $u['id'];?>"><input type="hidden" name="action" value="delete">
+                                <button class="w-8 h-8 rounded-lg bg-red-600/10 text-red-500 hover:bg-red-600/20 flex items-center justify-center transition-colors" title="Kullanıcıyı Sil"><span class="material-symbols-outlined text-[18px]">delete_forever</span></button></form>
+                            <?php endif; ?>
+                            
                             <?php endif;?>
                         </div>
                     </td>
