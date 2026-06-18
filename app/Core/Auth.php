@@ -64,14 +64,27 @@ class Auth
 
         $permissions = [
             'super_admin'    => ['*'],
-            'moderator'      => ['dashboard', 'users', 'venues', 'checkins', 'comments', 'moderation'],
-            'finance_admin'  => ['dashboard', 'wallet', 'users'],
-            'business_admin' => ['dashboard', 'venues', 'business', 'campaigns'],
-            'readonly_admin' => ['dashboard', 'users', 'venues', 'checkins', 'comments', 'wallet', 'moderation', 'audit'],
+            'moderator'      => ['dashboard', 'users', 'venues', 'posts', 'comments', 'moderation', 'mystery'],
+            'finance_admin'  => ['dashboard', 'wallet', 'withdrawals'],
+            'business_admin' => ['dashboard', 'venues', 'ads'],
+            'readonly_admin' => ['dashboard', 'users', 'venues', 'posts', 'comments', 'wallet', 'moderation', 'mystery', 'ads', 'settings'],
         ];
 
         $allowed = $permissions[$role] ?? [];
         return in_array('*', $allowed) || in_array($section, $allowed);
+    }
+
+    /**
+     * Belirli bir admin yetkisi gerektirir. Yetki yoksa dashboarda atar.
+     */
+    public static function requireAccess(string $section): void
+    {
+        self::requireAdmin();
+        if (!self::canAccess($section)) {
+            self::setFlash('error', 'Bu sayfaya erişim yetkiniz yok.');
+            header('Location: ' . BASE_URL . '/admin');
+            exit;
+        }
     }
 
     /**

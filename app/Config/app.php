@@ -15,6 +15,16 @@ if (env('APP_ENV', 'production') === 'production') {
     ini_set('display_startup_errors', '1');
 }
 
+// Session ve Çerez Güvenliği
+ini_set('session.cookie_httponly', 1);
+ini_set('session.use_only_cookies', 1);
+ini_set('session.cookie_samesite', 'Lax');
+
+// Varsayılan UTF-8 Encoding Başlığı
+if (!headers_sent()) {
+    header('Content-Type: text/html; charset=utf-8');
+}
+
 // ── Sabitler ──────────────────────────────────────────────
 define('APP_NAME',    'Sociaera');
 define('APP_VERSION', '1.0.0');

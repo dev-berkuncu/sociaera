@@ -388,19 +388,23 @@ function adminNavHtml(string $activePage, int $pendingVenues, int $pendingReport
 
     $html = '';
     foreach ($sections as $groupLabel => $items) {
-        $html .= '<div class="admin-nav-section">' . htmlspecialchars($groupLabel) . '</div>';
+        $groupHtml = '';
         foreach ($items as $key => $item) {
-            if (!Auth::canAccess($item['section'] ?? 'dashboard')) {}  // no role restriction now, all visible
+            if (!Auth::canAccess($key)) { continue; }
             $isActive = ($activePage === $key);
             $activeClass = $isActive ? ' active' : '';
             $fill = $isActive ? ' data-fill="1"' : '';
-            $html .= '<a href="' . BASE_URL . $item['url'] . '" class="admin-nav-link' . $activeClass . '">';
-            $html .= '<span class="material-symbols-outlined msym"' . $fill . '>' . $item['icon'] . '</span>';
-            $html .= '<span>' . htmlspecialchars($item['label']) . '</span>';
+            $groupHtml .= '<a href="' . BASE_URL . $item['url'] . '" class="admin-nav-link' . $activeClass . '">';
+            $groupHtml .= '<span class="material-symbols-outlined msym"' . $fill . '>' . $item['icon'] . '</span>';
+            $groupHtml .= '<span>' . htmlspecialchars($item['label']) . '</span>';
             if (!empty($item['badge']) && $item['badge'] > 0) {
-                $html .= '<span class="admin-nav-badge">' . $item['badge'] . '</span>';
+                $groupHtml .= '<span class="admin-nav-badge">' . $item['badge'] . '</span>';
             }
-            $html .= '</a>';
+            $groupHtml .= '</a>';
+        }
+        if ($groupHtml !== '') {
+            $html .= '<div class="admin-nav-section">' . htmlspecialchars($groupLabel) . '</div>';
+            $html .= $groupHtml;
         }
     }
 

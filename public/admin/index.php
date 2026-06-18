@@ -1,7 +1,7 @@
 <?php
 /**
- * Admin Panel — Dashboard (V1)
- * 13+ metrik kartı, grafikler, top listeler
+ * Admin Panel â€” Dashboard (V1)
+ * 13+ metrik kartÄ±, grafikler, top listeler
  */
 require_once __DIR__ . '/../../app/Config/env.php';
 loadEnv(dirname(__DIR__, 2) . '/.env');
@@ -22,7 +22,7 @@ require_once __DIR__ . '/../../app/Models/Wallet.php';
 require_once __DIR__ . '/../../app/Models/Admin.php';
 require_once __DIR__ . '/../../app/Models/Report.php';
 
-Auth::requireAdmin();
+Auth::requireAccess('dashboard');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'distribute_rewards') {
     Csrf::requireValid();
@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'distr
     $lastWeek = $stmt->fetchColumn();
 
     if ($lastWeek === $weekStr) {
-        Auth::setFlash('error', "Geçen haftanın ödülleri zaten dağıtıldı!");
+        Auth::setFlash('error', "GeÃ§en haftanÄ±n Ã¶dÃ¼lleri zaten daÄŸÄ±tÄ±ldÄ±!");
     } else {
         $lbModel = new LeaderboardModel();
         $top3 = $lbModel->getPreviousTopUsers(3);
@@ -50,12 +50,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'distr
             foreach ($top3 as $index => $user) {
                 $amount = $rewards[$index] ?? 0;
                 if ($amount > 0) {
-                    $walletModel->deposit($user['id'], $amount, "Haftalık Liderlik Ödülü (" . ($index+1) . ". Sıra)");
+                    $walletModel->deposit($user['id'], $amount, "HaftalÄ±k Liderlik Ã–dÃ¼lÃ¼ (" . ($index+1) . ". SÄ±ra)");
                     $notifModel->create(
                         $user['id'], 
                         Auth::id(), 
                         'wallet', 
-                        "Tebrikler! Geçen haftayı " . ($index+1) . ". sırada tamamladınız ve $" . number_format($amount, 0) . " kazandınız!"
+                        "Tebrikler! GeÃ§en haftayÄ± " . ($index+1) . ". sÄ±rada tamamladÄ±nÄ±z ve $" . number_format($amount, 0) . " kazandÄ±nÄ±z!"
                     );
                 }
             }
@@ -64,10 +64,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'distr
             $stmt->execute([$weekStr]);
             
             $db->commit();
-            Auth::setFlash('success', "Geçen haftanın ödülleri başarıyla dağıtıldı!");
+            Auth::setFlash('success', "GeÃ§en haftanÄ±n Ã¶dÃ¼lleri baÅŸarÄ±yla daÄŸÄ±tÄ±ldÄ±!");
         } catch (\Exception $e) {
             $db->rollBack();
-            Auth::setFlash('error', "Ödüller dağıtılırken bir hata oluştu: " . $e->getMessage());
+            Auth::setFlash('error', "Ã–dÃ¼ller daÄŸÄ±tÄ±lÄ±rken bir hata oluÅŸtu: " . $e->getMessage());
         }
     }
     header("Location: " . BASE_URL . "/admin/");
@@ -108,12 +108,12 @@ require_once __DIR__ . '/_header.php';
         Dashboard
     </h1>
     <div style="display:flex;align-items:center;gap:12px;">
-        <form method="POST" style="margin:0;" onsubmit="return confirm('Geçen haftanın liderlik ödüllerini dağıtmak istediğinize emin misiniz? (İlk 3 kişiye sırasıyla 3k-2k-1k dağıtılacak)');">
+        <form method="POST" style="margin:0;" onsubmit="return confirm('GeÃ§en haftanÄ±n liderlik Ã¶dÃ¼llerini daÄŸÄ±tmak istediÄŸinize emin misiniz? (Ä°lk 3 kiÅŸiye sÄ±rasÄ±yla 3k-2k-1k daÄŸÄ±tÄ±lacak)');">
             <?php echo csrfField(); ?>
             <input type="hidden" name="action" value="distribute_rewards">
             <button type="submit" class="btn-admin btn-admin-primary">
                 <span class="material-symbols-outlined" style="font-size:18px;">workspace_premium</span>
-                Geçen Haftanın Ödüllerini Dağıt
+                GeÃ§en HaftanÄ±n Ã–dÃ¼llerini DaÄŸÄ±t
             </button>
         </form>
         <span style="font-size:12px;color:var(--t3);"><?php echo date('d M Y, H:i'); ?></span>
@@ -124,16 +124,16 @@ require_once __DIR__ . '/_header.php';
 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 mb-8">
     <?php
     $statCards = [
-        ['icon' => 'people',             'value' => $stats['total_users'],         'label' => 'Toplam Üye',        'color' => 'text-blue-400'],
-        ['icon' => 'person_add',         'value' => $stats['today_registrations'], 'label' => 'Bugün Kayıt',       'color' => 'text-cyan-400'],
-        ['icon' => 'bolt',               'value' => $stats['active_users'],        'label' => 'Aktif (7 gün)',     'color' => 'text-emerald-400'],
-        ['icon' => 'location_on',        'value' => $stats['total_venues'],        'label' => 'Onaylı Mekan',      'color' => 'text-green-400'],
+        ['icon' => 'people',             'value' => $stats['total_users'],         'label' => 'Toplam Ãœye',        'color' => 'text-blue-400'],
+        ['icon' => 'person_add',         'value' => $stats['today_registrations'], 'label' => 'BugÃ¼n KayÄ±t',       'color' => 'text-cyan-400'],
+        ['icon' => 'bolt',               'value' => $stats['active_users'],        'label' => 'Aktif (7 gÃ¼n)',     'color' => 'text-emerald-400'],
+        ['icon' => 'location_on',        'value' => $stats['total_venues'],        'label' => 'OnaylÄ± Mekan',      'color' => 'text-green-400'],
         ['icon' => 'edit_note',          'value' => $stats['total_checkins'],      'label' => 'Toplam Check-in',   'color' => 'text-purple-400'],
-        ['icon' => 'today',              'value' => $stats['today_checkins'],      'label' => 'Bugün Check-in',    'color' => 'text-indigo-400'],
+        ['icon' => 'today',              'value' => $stats['today_checkins'],      'label' => 'BugÃ¼n Check-in',    'color' => 'text-indigo-400'],
         ['icon' => 'flag',               'value' => $stats['pending_reports'],     'label' => 'Bekleyen Rapor',    'color' => $stats['pending_reports'] > 0 ? 'text-red-400' : 'text-slate-400'],
-        ['icon' => 'payments',           'value' => $stats['successful_payments'], 'label' => 'Toplam Ödeme',      'color' => 'text-amber-400'],
+        ['icon' => 'payments',           'value' => $stats['successful_payments'], 'label' => 'Toplam Ã–deme',      'color' => 'text-amber-400'],
         ['icon' => 'account_balance_wallet', 'value' => '$' . number_format($stats['total_wallet_balance'], 0), 'label' => 'Toplam Bakiye', 'color' => 'text-yellow-400'],
-        ['icon' => 'workspace_premium',  'value' => $stats['premium_users'],      'label' => 'Premium Üye',       'color' => 'text-orange-400'],
+        ['icon' => 'workspace_premium',  'value' => $stats['premium_users'],      'label' => 'Premium Ãœye',       'color' => 'text-orange-400'],
         ['icon' => 'pending',            'value' => $stats['pending_venues'],      'label' => 'Bekleyen Mekan',    'color' => $stats['pending_venues'] > 0 ? 'text-amber-400' : 'text-slate-400'],
     ];
     foreach ($statCards as $s):
@@ -148,17 +148,17 @@ require_once __DIR__ . '/_header.php';
 
 <!-- Charts -->
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-    <!-- Kayıt Grafiği -->
+    <!-- KayÄ±t GrafiÄŸi -->
     <div class="admin-chart-card">
         <div class="admin-chart-title">
-            <span class="material-symbols-outlined" style="color:#3B82F6;font-size:20px;">person_add</span> Son 7 Gün — Kayıtlar
+            <span class="material-symbols-outlined" style="color:#3B82F6;font-size:20px;">person_add</span> Son 7 GÃ¼n â€” KayÄ±tlar
         </div>
         <div style="height:200px;position:relative;"><canvas id="regChart"></canvas></div>
     </div>
-    <!-- Check-in Grafiği -->
+    <!-- Check-in GrafiÄŸi -->
     <div class="admin-chart-card">
         <div class="admin-chart-title">
-            <span class="material-symbols-outlined" style="color:#8B5CF6;font-size:20px;">edit_note</span> Son 7 Gün — Check-in'ler
+            <span class="material-symbols-outlined" style="color:#8B5CF6;font-size:20px;">edit_note</span> Son 7 GÃ¼n â€” Check-in'ler
         </div>
         <div style="height:200px;position:relative;"><canvas id="checkinChart"></canvas></div>
     </div>
@@ -166,15 +166,15 @@ require_once __DIR__ . '/_header.php';
 
 <!-- Top Lists -->
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-    <!-- En Popüler Mekanlar -->
+    <!-- En PopÃ¼ler Mekanlar -->
     <div class="admin-table-card">
         <div class="admin-table-head">
             <div class="admin-table-title">
-                <span class="material-symbols-outlined" style="color:#16A34A;font-size:18px;">trending_up</span> En Popüler Mekanlar
+                <span class="material-symbols-outlined" style="color:#16A34A;font-size:18px;">trending_up</span> En PopÃ¼ler Mekanlar
             </div>
         </div>
         <?php if (empty($topVenues)): ?>
-            <div style="padding:24px;text-align:center;color:var(--t3);">Henüz veri yok.</div>
+            <div style="padding:24px;text-align:center;color:var(--t3);">HenÃ¼z veri yok.</div>
         <?php else: ?>
         <?php foreach ($topVenues as $i => $tv): ?>
         <div style="display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--border-l);" onmouseover="this.style.background='var(--section)'" onmouseout="this.style.background=''"> 
@@ -183,21 +183,21 @@ require_once __DIR__ . '/_header.php';
                 <div style="font-size:13px;font-weight:700;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><?php echo escape($tv['name']); ?></div>
                 <div style="font-size:11px;color:var(--t3);"><?php echo escape(VenueModel::categories()[$tv['category']] ?? $tv['category']); ?></div>
             </div>
-            <span style="font-size:13px;font-weight:800;color:var(--cp);flex-shrink:0;"><?php echo $tv['checkin_count']; ?> ✓</span>
+            <span style="font-size:13px;font-weight:800;color:var(--cp);flex-shrink:0;"><?php echo $tv['checkin_count']; ?> âœ“</span>
         </div>
         <?php endforeach; ?>
         <?php endif; ?>
     </div>
 
-    <!-- En Aktif Kullanıcılar -->
+    <!-- En Aktif KullanÄ±cÄ±lar -->
     <div class="admin-table-card">
         <div class="admin-table-head">
             <div class="admin-table-title">
-                <span class="material-symbols-outlined" style="color:#F59E0B;font-size:18px;">emoji_events</span> En Aktif Kullanıcılar
+                <span class="material-symbols-outlined" style="color:#F59E0B;font-size:18px;">emoji_events</span> En Aktif KullanÄ±cÄ±lar
             </div>
         </div>
         <?php if (empty($topUsers)): ?>
-            <div style="padding:24px;text-align:center;color:var(--t3);">Henüz veri yok.</div>
+            <div style="padding:24px;text-align:center;color:var(--t3);">HenÃ¼z veri yok.</div>
         <?php else: ?>
         <?php foreach ($topUsers as $i => $tu): ?>
         <div style="display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--border-l);" onmouseover="this.style.background='var(--section)'" onmouseout="this.style.background=''"> 
@@ -206,7 +206,7 @@ require_once __DIR__ . '/_header.php';
                 <?php echo avatarHtml($tu['avatar'] ?? null, $tu['username'], '28'); ?>
                 <a href="<?php echo BASE_URL; ?>/admin/user-detail?id=<?php echo $tu['id']; ?>" style="font-size:13px;font-weight:700;color:var(--t1);text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" onmouseover="this.style.color='var(--cp)'" onmouseout="this.style.color='var(--t1)'"><?php echo escape($tu['username']); ?></a>
             </div>
-            <span style="font-size:13px;font-weight:800;color:var(--cp);flex-shrink:0;"><?php echo $tu['checkin_count']; ?> ✓</span>
+            <span style="font-size:13px;font-weight:800;color:var(--cp);flex-shrink:0;"><?php echo $tu['checkin_count']; ?> âœ“</span>
         </div>
         <?php endforeach; ?>
         <?php endif; ?>
@@ -215,14 +215,14 @@ require_once __DIR__ . '/_header.php';
 
 <!-- Recent Transactions & Reports -->
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-    <!-- Son Ödeme İşlemleri -->
+    <!-- Son Ã–deme Ä°ÅŸlemleri -->
     <div class="admin-table-card">
         <div class="admin-table-head">
-            <div class="admin-table-title"><span class="material-symbols-outlined" style="color:#F59E0B;font-size:18px;">payments</span> Son Ödemeler</div>
-            <a href="<?php echo BASE_URL; ?>/admin/wallet" class="admin-table-link">Tümü →</a>
+            <div class="admin-table-title"><span class="material-symbols-outlined" style="color:#F59E0B;font-size:18px;">payments</span> Son Ã–demeler</div>
+            <a href="<?php echo BASE_URL; ?>/admin/wallet" class="admin-table-link">TÃ¼mÃ¼ â†’</a>
         </div>
         <?php if (empty($recentTransactions)): ?>
-            <div style="padding:24px;text-align:center;color:var(--t3);">Henüz ödeme yok.</div>
+            <div style="padding:24px;text-align:center;color:var(--t3);">HenÃ¼z Ã¶deme yok.</div>
         <?php else: ?>
         <?php foreach ($recentTransactions as $rt): ?>
         <div style="display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border-l);" onmouseover="this.style.background='var(--section)'" onmouseout="this.style.background=''">
@@ -246,20 +246,20 @@ require_once __DIR__ . '/_header.php';
     <div class="admin-table-card">
         <div class="admin-table-head">
             <div class="admin-table-title"><span class="material-symbols-outlined" style="color:#DC2626;font-size:18px;">flag</span> Bekleyen Raporlar</div>
-            <a href="<?php echo BASE_URL; ?>/admin/reports" class="admin-table-link">Tümü →</a>
+            <a href="<?php echo BASE_URL; ?>/admin/reports" class="admin-table-link">TÃ¼mÃ¼ â†’</a>
         </div>
         <?php if (empty($recentReports)): ?>
-            <div style="padding:24px;text-align:center;color:var(--t3);">Bekleyen rapor yok. ✓</div>
+            <div style="padding:24px;text-align:center;color:var(--t3);">Bekleyen rapor yok. âœ“</div>
         <?php else: ?>
         <?php foreach ($recentReports as $rr): ?>
         <div style="display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border-l);" onmouseover="this.style.background='var(--section)'" onmouseout="this.style.background=''">
             <span class="material-symbols-outlined" style="font-size:18px;color:#DC2626;flex-shrink:0;">report</span>
             <div style="flex:1;min-width:0;">
                 <div style="font-size:13px;font-weight:700;color:var(--t1);"><?php echo escape($rr['entity_type']); ?> #<?php echo $rr['entity_id']; ?></div>
-                <div style="font-size:11px;color:var(--t3);"><?php echo escape($rr['reason']); ?> — <?php echo escape($rr['reporter_name']); ?></div>
+                <div style="font-size:11px;color:var(--t3);"><?php echo escape($rr['reason']); ?> â€” <?php echo escape($rr['reporter_name']); ?></div>
             </div>
             <div style="text-align:right;flex-shrink:0;">
-                <a href="<?php echo BASE_URL; ?>/admin/report-detail?id=<?php echo $rr['id']; ?>" style="font-size:12px;font-weight:700;color:var(--cp);text-decoration:none;">İncele →</a>
+                <a href="<?php echo BASE_URL; ?>/admin/report-detail?id=<?php echo $rr['id']; ?>" style="font-size:12px;font-weight:700;color:var(--cp);text-decoration:none;">Ä°ncele â†’</a>
                 <div style="font-size:10px;color:var(--t3);"><?php echo timeAgo($rr['created_at']); ?></div>
             </div>
         </div>
@@ -270,7 +270,7 @@ require_once __DIR__ . '/_header.php';
 
 <!-- Son Loglar -->
 <?php
-// Gizli müşteri bekleyen sayısı
+// Gizli mÃ¼ÅŸteri bekleyen sayÄ±sÄ±
 require_once __DIR__ . '/../../app/Models/MysteryShopperModel.php';
 $mysteryPending = 0;
 try { $mysteryPending = (new MysteryShopperModel())->countPending(); } catch (\Throwable $e) {}
@@ -282,12 +282,12 @@ try { $mysteryPending = (new MysteryShopperModel())->countPending(); } catch (\T
         <span class="material-symbols-outlined" style="font-size:26px;color:#4F46E5;" data-fill="1">person_search</span>
     </div>
     <div style="flex:1;">
-        <div style="font-size:14px;font-weight:700;color:var(--t1);">Gizli Müşteri Başvuruları</div>
+        <div style="font-size:14px;font-weight:700;color:var(--t1);">Gizli MÃ¼ÅŸteri BaÅŸvurularÄ±</div>
         <div style="font-size:12px;color:var(--t3);margin-top:2px;">
             <?php if ($mysteryPending > 0): ?>
-                <span style="color:#D97706;font-weight:700;"><?php echo $mysteryPending; ?> başvuru</span> inceleme bekliyor
+                <span style="color:#D97706;font-weight:700;"><?php echo $mysteryPending; ?> baÅŸvuru</span> inceleme bekliyor
             <?php else: ?>
-                Bekleyen başvuru yok
+                Bekleyen baÅŸvuru yok
             <?php endif; ?>
         </div>
     </div>
@@ -295,21 +295,21 @@ try { $mysteryPending = (new MysteryShopperModel())->countPending(); } catch (\T
         <?php if ($mysteryPending > 0): ?>
             <span style="width:7px;height:7px;border-radius:50%;background:#F59E0B;display:inline-block;"></span>
         <?php endif; ?>
-        İncele →
+        Ä°ncele â†’
     </a>
 </div>
 
 <div class="admin-table-card">
     <div class="admin-table-head">
-        <div class="admin-table-title"><span class="material-symbols-outlined" style="color:var(--cp);font-size:18px;">history</span> Son Admin İşlemleri</div>
-        <a href="<?php echo BASE_URL; ?>/admin/audit" class="admin-table-link">Tümünü Gör →</a>
+        <div class="admin-table-title"><span class="material-symbols-outlined" style="color:var(--cp);font-size:18px;">history</span> Son Admin Ä°ÅŸlemleri</div>
+        <a href="<?php echo BASE_URL; ?>/admin/audit" class="admin-table-link">TÃ¼mÃ¼nÃ¼ GÃ¶r â†’</a>
     </div>
     <?php if (empty($logs)): ?>
-        <div style="padding:32px;text-align:center;color:var(--t3);">Henüz log yok.</div>
+        <div style="padding:32px;text-align:center;color:var(--t3);">HenÃ¼z log yok.</div>
     <?php else: ?>
     <div class="admin-table-overflow">
         <table class="admin-table">
-            <thead><tr><th>Admin</th><th>İşlem</th><th>Hedef</th><th>Tarih</th></tr></thead>
+            <thead><tr><th>Admin</th><th>Ä°ÅŸlem</th><th>Hedef</th><th>Tarih</th></tr></thead>
             <tbody>
                 <?php foreach ($logs as $log): ?>
                 <tr>
@@ -338,7 +338,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
-    // Kayıt grafiği
+    // KayÄ±t grafiÄŸi
     new Chart(document.getElementById('regChart'), {
         type: 'bar',
         data: {
@@ -354,7 +354,7 @@ document.addEventListener('DOMContentLoaded', function() {
         options: chartDefaults
     });
 
-    // Check-in grafiği
+    // Check-in grafiÄŸi
     new Chart(document.getElementById('checkinChart'), {
         type: 'line',
         data: {

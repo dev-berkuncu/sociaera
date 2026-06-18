@@ -212,3 +212,245 @@ INSERT INTO `settings` (`setting_key`, `setting_value`) VALUES
     ('week_start', 'monday'),
     ('maintenance_mode', '0')
 ON DUPLICATE KEY UPDATE `setting_value` = VALUES(`setting_value`);
+-- Migration: Add unique index on transactions.reference_id
+-- Prevents duplicate payment processing at the database level
+-- Date: 2026-05-18
+
+ALTER TABLE `transactions`
+    ADD UNIQUE INDEX `uk_reference_id` (`reference_id`);
+-- ── Ads user_id kolonu ve ilişkisi ────────────────────────────
+ALTER TABLE ads ADD COLUMN IF NOT EXISTS user_id INT UNSIGNED DEFAULT NULL AFTER id;
+
+-- Yabancı anahtar kısıtlaması ekleme
+ALTER TABLE ads ADD CONSTRAINT fk_ads_user_id FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
+-- Venues tablosuna işletme paneli alanları ekleme
+ALTER TABLE venues 
+    ADD COLUMN IF NOT EXISTS phone VARCHAR(20) DEFAULT NULL AFTER address,
+    ADD COLUMN IF NOT EXISTS hours VARCHAR(255) DEFAULT NULL AFTER phone,
+    ADD COLUMN IF NOT EXISTS is_open TINYINT(1) DEFAULT 1 AFTER hours,
+    ADD COLUMN IF NOT EXISTS cover_image VARCHAR(255) DEFAULT NULL AFTER image;
+
+-- Users tablosuna premium süre ve rozet kolonları ekleme
+ALTER TABLE users
+    ADD COLUMN IF NOT EXISTS premium_until DATETIME DEFAULT NULL AFTER is_premium,
+    ADD COLUMN IF NOT EXISTS badge VARCHAR(30) DEFAULT NULL AFTER premium_until;
+-- Kullanıcı rozetleri tablosu (haftalık sıfırlama destekli)
+CREATE TABLE IF NOT EXISTS user_badges (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id INT UNSIGNED NOT NULL,
+    badge_key VARCHAR(50) NOT NULL,
+    week_start DATE NOT NULL,
+    earned_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY uk_user_badge_week (user_id, badge_key, week_start),
+    KEY idx_user_id (user_id),
+    KEY idx_badge_key (badge_key),
+    KEY idx_week_start (week_start)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- Venue Ratings Table
+-- Kullanıcıların mekanlara 1-5 arası puan vermesini sağlar
+-- UNIQUE constraint ile aynı kullanıcının aynı mekana birden fazla rating vermesi engellenir
+
+CREATE TABLE IF NOT EXISTS venue_ratings (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    venue_id INT UNSIGNED NOT NULL,
+    user_id INT UNSIGNED NOT NULL,
+    rating TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE KEY uq_venue_user (venue_id, user_id),
+    KEY idx_venue_id (venue_id),
+    KEY idx_user_id (user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- Fleeca Banking V2 — Ödeme Takip Tablosu
+CREATE TABLE IF NOT EXISTS `fleeca_payments` (
+    `id`         INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `payment_id` VARCHAR(36) NOT NULL,           -- Fleeca UUID
+    `user_id`    INT UNSIGNED NOT NULL,
+    `amount`     DECIMAL(10,2) NOT NULL,
+    `status`     ENUM('pending','paid','failed') NOT NULL DEFAULT 'pending',
+    `mode`       ENUM('sandbox','live') NOT NULL DEFAULT 'sandbox',
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `paid_at`    DATETIME DEFAULT NULL,
+    UNIQUE KEY `uk_payment_id` (`payment_id`),
+    KEY `idx_user` (`user_id`),
+    KEY `idx_status` (`status`),
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- ============================================================
+-- Sociaera — Gizli Müşteri Sistemi Migration
+-- ============================================================
+
+-- Başvuru tablosu
+CREATE TABLE IF NOT EXISTS `mystery_shoppers` (
+    `id`              INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `user_id`         INT UNSIGNED NOT NULL,
+    `status`          ENUM('pending','approved','rejected') NOT NULL DEFAULT 'pending',
+    `motivation`      TEXT DEFAULT NULL,          -- Başvuru motivasyon metni
+    `admin_note`      TEXT DEFAULT NULL,          -- Admin notu
+    `reviewed_by`     INT UNSIGNED DEFAULT NULL,  -- Onaylayan admin
+    `applied_at`      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `reviewed_at`     DATETIME DEFAULT NULL,
+    UNIQUE KEY `uk_user` (`user_id`),
+    KEY `idx_status` (`status`),
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`reviewed_by`) REFERENCES `users`(`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- checkins tablosuna gizli müşteri alanı ekle (yoksa)
+ALTER TABLE `checkins`
+    ADD COLUMN `is_mystery_shopper` TINYINT(1) NOT NULL DEFAULT 0 AFTER `is_deleted`;
+-- Profile views table
+CREATE TABLE IF NOT EXISTS profile_views (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    profile_user_id INT UNSIGNED NOT NULL,
+    viewer_user_id INT UNSIGNED NOT NULL,
+    viewed_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    KEY idx_profile_viewer (profile_user_id, viewer_user_id),
+    KEY idx_viewed_at (viewed_at),
+    FOREIGN KEY (profile_user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (viewer_user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Venue favorites table
+CREATE TABLE IF NOT EXISTS venue_favorites (
+    user_id INT UNSIGNED NOT NULL,
+    venue_id INT UNSIGNED NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (user_id, venue_id),
+    KEY idx_venue_fav (venue_id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (venue_id) REFERENCES venues(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Profile theme column
+ALTER TABLE users ADD COLUMN IF NOT EXISTS profile_theme VARCHAR(20) DEFAULT 'default' AFTER badge;
+
+-- Ads feed position
+ALTER TABLE ads MODIFY COLUMN position ENUM('carousel','sidebar_left','sidebar_right','footer_banner','feed') NOT NULL DEFAULT 'sidebar_right';
+-- ============================================================
+-- Sociaera V1 Admin Panel Migration
+-- Çalıştır: mysql -u root -p sociaera_db < migrations/v1_admin_panel.sql
+-- ============================================================
+
+-- 1. Rol sistemi: is_admin yanına admin_role ekle
+ALTER TABLE `users`
+    ADD COLUMN `admin_role` ENUM('super_admin','moderator','finance_admin','business_admin','readonly_admin')
+    DEFAULT NULL AFTER `is_admin`;
+
+-- Mevcut admin'leri super_admin yap
+UPDATE `users` SET `admin_role` = 'super_admin' WHERE `is_admin` = 1;
+
+-- 2. İçerik raporları tablosu
+CREATE TABLE IF NOT EXISTS `content_reports` (
+    `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `reporter_id` INT UNSIGNED NOT NULL,
+    `entity_type` ENUM('checkin','comment','user','venue') NOT NULL,
+    `entity_id` INT UNSIGNED NOT NULL,
+    `reason` ENUM('spam','harassment','inappropriate','wrong_venue','fake_checkin','fraud','privacy','copyright','other') NOT NULL,
+    `description` TEXT DEFAULT NULL,
+    `status` ENUM('pending','reviewed','resolved','dismissed') DEFAULT 'pending',
+    `admin_id` INT UNSIGNED DEFAULT NULL,
+    `admin_note` TEXT DEFAULT NULL,
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `resolved_at` DATETIME DEFAULT NULL,
+    KEY `idx_status` (`status`),
+    KEY `idx_entity` (`entity_type`, `entity_id`),
+    KEY `idx_reporter` (`reporter_id`),
+    FOREIGN KEY (`reporter_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`admin_id`) REFERENCES `users`(`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 3. Admin notları tablosu
+CREATE TABLE IF NOT EXISTS `admin_notes` (
+    `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `admin_id` INT UNSIGNED NOT NULL,
+    `entity_type` ENUM('user','venue','checkin','comment','transaction') NOT NULL,
+    `entity_id` INT UNSIGNED NOT NULL,
+    `note` TEXT NOT NULL,
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    KEY `idx_entity` (`entity_type`, `entity_id`),
+    FOREIGN KEY (`admin_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 4. admin_logs tablosunu genişlet
+ALTER TABLE `admin_logs`
+    ADD COLUMN `old_value` TEXT DEFAULT NULL,
+    ADD COLUMN `new_value` TEXT DEFAULT NULL,
+    ADD COLUMN `user_agent` VARCHAR(500) DEFAULT NULL;
+
+-- 5. post_comments tablosuna is_hidden ekle (yoksa)
+ALTER TABLE `post_comments`
+    ADD COLUMN `is_hidden` TINYINT(1) NOT NULL DEFAULT 0 AFTER `is_deleted`;
+-- ============================================================
+-- Sociaera — Kampanya Sistemi Migration
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS `venue_campaigns` (
+    `id`              INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `venue_id`        INT UNSIGNED NOT NULL,
+    `title`           VARCHAR(100) NOT NULL,
+    `description`     VARCHAR(280) DEFAULT NULL,
+    -- Tetikleyici tip: nth_checkin = Ninci check-in ödülü
+    `trigger_type`    ENUM('nth_checkin','total_checkins','first_checkin') NOT NULL DEFAULT 'nth_checkin',
+    `trigger_value`   INT UNSIGNED NOT NULL DEFAULT 10,   -- Örn: 10. check-in
+    -- Ödül tipi
+    `reward_type`     ENUM('discount_percent','discount_fixed','free_item','custom') NOT NULL DEFAULT 'discount_percent',
+    `reward_value`    DECIMAL(10,2) DEFAULT NULL,         -- Örn: 50 (%)
+    `reward_text`     VARCHAR(200) DEFAULT NULL,          -- Örn: "%50 İndirim Kuponu"
+    -- Durum
+    `is_active`       TINYINT(1) NOT NULL DEFAULT 1,
+    `starts_at`       DATETIME DEFAULT NULL,
+    `ends_at`         DATETIME DEFAULT NULL,
+    `max_redemptions` INT UNSIGNED DEFAULT NULL,          -- NULL = sınırsız
+    `created_at`      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at`      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    KEY `idx_venue` (`venue_id`),
+    KEY `idx_active` (`is_active`, `ends_at`),
+    FOREIGN KEY (`venue_id`) REFERENCES `venues`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Kampanya kazanımları (kim, ne zaman kazandı)
+CREATE TABLE IF NOT EXISTS `campaign_redemptions` (
+    `id`          INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `campaign_id` INT UNSIGNED NOT NULL,
+    `user_id`     INT UNSIGNED NOT NULL,
+    `venue_id`    INT UNSIGNED NOT NULL,
+    `code`        VARCHAR(32) NOT NULL,       -- Kullanıcıya gösterilen kod
+    `status`      ENUM('earned','used','expired') NOT NULL DEFAULT 'earned',
+    `earned_at`   TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `used_at`     DATETIME DEFAULT NULL,
+    UNIQUE KEY `uk_campaign_user` (`campaign_id`, `user_id`),   -- Bir kampanyadan bir kez
+    KEY `idx_user` (`user_id`),
+    KEY `idx_code` (`code`),
+    FOREIGN KEY (`campaign_id`) REFERENCES `venue_campaigns`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- ── Bakiye Çekim ve Banka Hesap Numarası Güncellemesi ──────────────────────
+
+-- users tablosuna bank_account kolonu eklenmesi
+ALTER TABLE users ADD COLUMN IF NOT EXISTS bank_account VARCHAR(50) DEFAULT NULL AFTER bio;
+
+-- transactions tablosuna status kolonu eklenmesi
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS status ENUM('pending', 'approved', 'rejected') NOT NULL DEFAULT 'approved' AFTER reference_id;
+-- Sociaera Performance Optimizations Migration
+-- Execute this file in your MySQL/phpMyAdmin
+
+-- 1. Add counter columns to checkins
+ALTER TABLE `checkins` ADD COLUMN `like_count` INT UNSIGNED NOT NULL DEFAULT 0 AFTER `image`;
+ALTER TABLE `checkins` ADD COLUMN `comment_count` INT UNSIGNED NOT NULL DEFAULT 0 AFTER `like_count`;
+ALTER TABLE `checkins` ADD COLUMN `repost_count` INT UNSIGNED NOT NULL DEFAULT 0 AFTER `comment_count`;
+
+-- 2. Backfill existing counters
+UPDATE `checkins` c SET `like_count` = (SELECT COUNT(*) FROM `post_likes` pl WHERE pl.checkin_id = c.id);
+UPDATE `checkins` c SET `comment_count` = (SELECT COUNT(*) FROM `post_comments` pc WHERE pc.checkin_id = c.id AND pc.is_deleted = 0);
+UPDATE `checkins` c SET `repost_count` = (SELECT COUNT(*) FROM `post_reposts` pr WHERE pr.checkin_id = c.id);
+
+-- 3. Add necessary indexes
+-- For global feed
+CREATE INDEX `idx_is_deleted_created_at` ON `checkins` (`is_deleted`, `created_at` DESC);
+
+-- For users search and mentions
+CREATE INDEX `idx_username` ON `users` (`username`);
+
+-- For venues search
+CREATE INDEX `idx_name` ON `venues` (`name`);

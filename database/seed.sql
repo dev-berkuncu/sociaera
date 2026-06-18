@@ -6,16 +6,17 @@
 SET NAMES utf8mb4;
 
 -- ── Admin Kullanıcı ───────────────────────────────────────
--- Şifre: admin123 (bcrypt hash)
-INSERT INTO `users` (`id`, `username`, `tag`, `email`, `password_hash`, `is_admin`, `is_active`, `created_at`) VALUES
-(1, 'Admin', 'admin', 'admin@sociaera.online', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 1, 1, '2026-01-01 00:00:00');
+-- NOT: Production ortamında default şifre ile kurulum YAPMAYIN!
+-- Örnek kurulum için şifre sıfırlanmıştır, kendi güvenli şifrenizi belirleyin.
+INSERT INTO `users` (`id`, `username`, `tag`, `email`, `password_hash`, `is_admin`, `admin_role`, `is_active`, `created_at`) VALUES
+(1, 'Admin', 'admin', 'admin@sociaera.online', '$2y$10$invalid_hash_change_me', 1, 'super_admin', 1, '2026-01-01 00:00:00');
 
 -- ── Test Kullanıcıları ────────────────────────────────────
--- Şifre: test123 (bcrypt hash)
+-- NOT: Şifreler güvenlik sebebiyle devredışı bırakılmıştır.
 INSERT INTO `users` (`id`, `username`, `tag`, `email`, `password_hash`, `is_admin`, `is_active`, `created_at`) VALUES
-(2, 'Carlos_Mendoza', 'carlos', 'carlos@test.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 0, 1, '2026-01-10 12:00:00'),
-(3, 'Aylin_Demir', 'aylin', 'aylin@test.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 0, 1, '2026-01-15 14:30:00'),
-(4, 'Jake_Morrison', 'jake', 'jake@test.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 0, 1, '2026-02-01 09:00:00');
+(2, 'Carlos_Mendoza', 'carlos', 'carlos@test.com', '$2y$10$invalid_hash_change_me', 0, 1, '2026-01-10 12:00:00'),
+(3, 'Aylin_Demir', 'aylin', 'aylin@test.com', '$2y$10$invalid_hash_change_me', 0, 1, '2026-01-15 14:30:00'),
+(4, 'Jake_Morrison', 'jake', 'jake@test.com', '$2y$10$invalid_hash_change_me', 0, 1, '2026-02-01 09:00:00');
 
 -- ── Mekanlar ──────────────────────────────────────────────
 INSERT INTO `venues` (`id`, `name`, `description`, `address`, `category`, `facebrowser_url`, `status`, `is_active`, `created_by`, `created_at`) VALUES

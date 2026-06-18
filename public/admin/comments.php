@@ -1,6 +1,6 @@
 <?php
 /**
- * Admin — Yorum Yönetimi
+ * Admin â€” Yorum YÃ¶netimi
  */
 require_once __DIR__ . '/../../app/Config/env.php';
 loadEnv(dirname(__DIR__, 2) . '/.env');
@@ -15,7 +15,7 @@ require_once __DIR__ . '/../../app/Models/Checkin.php';
 require_once __DIR__ . '/../../app/Models/Notification.php';
 require_once __DIR__ . '/../../app/Models/Report.php';
 
-Auth::requireAdmin();
+Auth::requireAccess('comments');
 $db = Database::getConnection();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && Auth::canWrite()) {
@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && Auth::canWrite()) {
             case 'restore':
                 $db->prepare("UPDATE post_comments SET is_deleted = 0 WHERE id = ?")->execute([$commentId]);
                 Logger::adminAudit('restore', 'comment', $commentId);
-                Auth::setFlash('success', 'Yorum geri yüklendi.');
+                Auth::setFlash('success', 'Yorum geri yÃ¼klendi.');
                 break;
         }
     }
@@ -62,7 +62,7 @@ $stmt->execute([$perPage, $offset]);
 $comments = $stmt->fetchAll();
 
 $pendingVenues = (new VenueModel())->getPendingCount();
-$pageTitle = 'Yorum Yönetimi';
+$pageTitle = 'Yorum YÃ¶netimi';
 $adminPage = 'comments';
 require_once __DIR__ . '/_header.php';
 ?>
@@ -73,7 +73,7 @@ require_once __DIR__ . '/_header.php';
     </h1>
     <div class="flex gap-2">
         <a href="?deleted=<?php echo $showDeleted ? '' : '1'; ?>" class="bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 px-4 py-1.5 rounded-lg text-label-md transition-colors">
-            <?php echo $showDeleted ? 'Aktif Göster' : 'Silinenleri Göster'; ?>
+            <?php echo $showDeleted ? 'Aktif GÃ¶ster' : 'Silinenleri GÃ¶ster'; ?>
         </a>
     </div>
 </div>
@@ -82,7 +82,7 @@ require_once __DIR__ . '/_header.php';
     <div class="overflow-x-auto">
         <table class="w-full text-left">
             <thead class="bg-white/[0.03] text-slate-400 text-label-sm uppercase">
-                <tr><th class="px-6 py-3">#</th><th class="px-6 py-3">Kullanıcı</th><th class="px-6 py-3">Yorum</th><th class="px-6 py-3">Mekan</th><th class="px-6 py-3">Tarih</th><th class="px-6 py-3">İşlem</th></tr>
+                <tr><th class="px-6 py-3">#</th><th class="px-6 py-3">KullanÄ±cÄ±</th><th class="px-6 py-3">Yorum</th><th class="px-6 py-3">Mekan</th><th class="px-6 py-3">Tarih</th><th class="px-6 py-3">Ä°ÅŸlem</th></tr>
             </thead>
             <tbody class="divide-y divide-white/5">
                 <?php foreach ($comments as $c): ?>
@@ -95,7 +95,7 @@ require_once __DIR__ . '/_header.php';
                     <td class="px-6 py-3">
                         <?php if(Auth::canWrite()):?>
                         <form method="POST" class="inline"><input type="hidden" name="csrf_token" value="<?php echo csrfToken();?>"><input type="hidden" name="comment_id" value="<?php echo $c['id'];?>"><input type="hidden" name="action" value="<?php echo $c['is_deleted']?'restore':'hide';?>">
-                            <button class="w-8 h-8 rounded-lg <?php echo $c['is_deleted']?'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20':'bg-red-500/10 text-red-400 hover:bg-red-500/20';?> flex items-center justify-center transition-colors" title="<?php echo $c['is_deleted']?'Geri Yükle':'Gizle';?>">
+                            <button class="w-8 h-8 rounded-lg <?php echo $c['is_deleted']?'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20':'bg-red-500/10 text-red-400 hover:bg-red-500/20';?> flex items-center justify-center transition-colors" title="<?php echo $c['is_deleted']?'Geri YÃ¼kle':'Gizle';?>">
                                 <span class="material-symbols-outlined text-[18px]"><?php echo $c['is_deleted']?'visibility':'visibility_off';?></span>
                             </button>
                         </form>

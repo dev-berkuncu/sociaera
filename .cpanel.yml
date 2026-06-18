@@ -3,3 +3,4 @@ deployment:
   tasks:
     - export DEPLOYPATH=/home/$USER/sociaera.online
     - /bin/cp /home/$USER/.env_sociaera $DEPLOYPATH/.env
+    - /bin/rm -rf $DEPLOYPATH/.git
