@@ -49,7 +49,7 @@
 
                 <!-- Check-in yap butonu -->
                 <a href="<?php echo BASE_URL; ?>/venues" class="btn btn-primary btn-block" style="justify-content:center;">
-                    <span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:'FILL' 1;">add_location_alt</span>
+                    <span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:'FILL' 1;">where_to_vote</span>
                     Check-in Yap
                 </a>
             </div>
@@ -129,7 +129,7 @@
         <?php if ($key === '_checkin'): ?>
         <div class="swarm-nav-fab-item">
             <a href="<?php echo BASE_URL . $item['url']; ?>" class="swarm-nav-fab-inner" aria-label="Check-in Yap">
-                <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">add_location_alt</span>
+                <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">where_to_vote</span>
             </a>
         </div>
         <?php else: ?>
@@ -144,7 +144,7 @@
 
 <!-- ── DESKTOP FAB (Check-in) ────────────────────────────── -->
 <a href="<?php echo BASE_URL; ?>/venues" class="swarm-fab" aria-label="Check-in Yap">
-    <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">add_location_alt</span>
+    <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">where_to_vote</span>
 </a>
 
 <?php endif; ?>

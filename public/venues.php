@@ -65,7 +65,7 @@ require_once __DIR__ . '/partials/app_header.php';
     <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
         <h1 style="font-size:1.375rem;font-weight:800;color:var(--text-1);margin:0;letter-spacing:-0.3px;">Mekanlar</h1>
         <a href="<?php echo BASE_URL; ?>/add-venue" class="btn btn-primary btn-sm" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;white-space:nowrap;">
-            <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 1;">add_location_alt</span>
+            <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 1;">add_business</span>
             Mekan Ekle
         </a>
     </div>
