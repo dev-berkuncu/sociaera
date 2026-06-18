@@ -4,9 +4,9 @@ loadEnv(__DIR__ . '/../.env');
 
 $dbHost = env('DB_HOST', '127.0.0.1');
 $dbPort = env('DB_PORT', '3306');
-$dbName = env('DB_DATABASE', 'sociaera');
-$dbUser = env('DB_USERNAME', 'root');
-$dbPass = env('DB_PASSWORD', '');
+$dbName = env('DB_NAME', 'sociaera');
+$dbUser = env('DB_USER', 'root');
+$dbPass = env('DB_PASS', '');
 
 try {
     $dsn = "mysql:host={$dbHost};port={$dbPort};dbname={$dbName};charset=utf8mb4";
