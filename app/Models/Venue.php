@@ -75,8 +75,8 @@ class VenueModel
     public function create(array $data): int
     {
         $stmt = $this->db->prepare("
-            INSERT INTO venues (name, description, address, website, category, facebrowser_url, status, is_active, created_by)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO venues (name, description, address, website, category, facebrowser_url, cover_image, status, is_active, created_by)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ");
         $stmt->execute([
             $data['name'],
@@ -85,6 +85,7 @@ class VenueModel
             $data['website'] ?? null,
             $data['category'] ?? null,
             $data['facebrowser_url'] ?? null,
+            $data['cover_image'] ?? null,
             $data['status'] ?? 'pending',
             $data['is_active'] ?? 1,
             $data['created_by'] ?? null,

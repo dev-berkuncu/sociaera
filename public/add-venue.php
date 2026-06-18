@@ -28,20 +28,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (strlen($name) > 100) {
         $error = 'Mekan adı en fazla 100 karakter olabilir.';
     } else {
-        try {
-            $venueModel = new VenueModel();
-            $isAdmin = Auth::isAdmin();
-            $venueModel->create([
-                'name'           => $name,
-                'description'    => $desc,
-                'address'        => $addr,
-                'website'        => $website,
-                'category'       => $category,
-                'facebrowser_url'=> $fb,
-                'status'         => $isAdmin ? 'approved' : 'pending',
-                'created_by'     => Auth::id(),
-            ]);
-            $success = true;
+            try {
+                $coverImg = $_FILES['cover_image'] ?? null;
+                $uploadedCover = null;
+                if ($coverImg && $coverImg['tmp_name']) {
+                    $uploadedCover = uploadImage($coverImg, 'venue');
+                }
+
+                $venueModel = new VenueModel();
+                $isAdmin = Auth::isAdmin();
+                $venueModel->create([
+                    'name'           => $name,
+                    'description'    => $desc,
+                    'address'        => $addr,
+                    'website'        => $website,
+                    'category'       => $category,
+                    'facebrowser_url'=> $fb,
+                    'cover_image'    => $uploadedCover,
+                    'status'         => $isAdmin ? 'approved' : 'pending',
+                    'created_by'     => Auth::id(),
+                ]);
+                $success = true;
             if ($isAdmin) {
                 Auth::setFlash('success', 'Mekan başarıyla eklendi! ✅');
             } else {
@@ -113,8 +120,13 @@ require_once __DIR__ . '/partials/app_header.php';
             </div>
             <?php endif; ?>
 
-            <form method="POST" style="display:flex; flex-direction:column; gap:18px;">
+            <form method="POST" enctype="multipart/form-data" style="display:flex; flex-direction:column; gap:18px;">
                 <?php echo csrfField(); ?>
+
+                <div class="av-field">
+                    <label for="cover_image" class="av-label">Mekan Fotoğrafı</label>
+                    <input type="file" id="cover_image" name="cover_image" accept="image/*" class="av-input" style="padding:8px 10px;">
+                </div>
 
                 <div class="av-field">
                     <label for="name" class="av-label">Mekan Adı <span style="color:#dc2626;">*</span></label>
