@@ -280,7 +280,15 @@ const App = {
                     });
                 } else {
                     dropdownEl.style.cssText = 'display:block;position:absolute;left:0;right:0;top:100%;z-index:400;background:#fff;border:1.5px solid #E8E7E3;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.12);overflow:hidden;margin-top:4px;';
-                    dropdownEl.innerHTML = '<div style="padding:14px;text-align:center;color:#A0A0A0;font-size:13px;">Sonuç bulunamadı</div>';
+                    dropdownEl.innerHTML = `
+                        <div style="padding:16px;text-align:center;display:flex;flex-direction:column;gap:8px;align-items:center;">
+                            <span style="color:#A0A0A0;font-size:13px;">Aradığınız mekan bulunamadı.</span>
+                            <a href="${App.baseUrl}/add-venue" style="display:inline-flex;align-items:center;gap:4px;background:#10b981;color:#fff;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:700;text-decoration:none;">
+                                <span class="material-symbols-outlined" style="font-size:16px;">add_location_alt</span>
+                                Yeni Mekan Ekle
+                            </a>
+                        </div>
+                    `;
                 }
             }, 300);
         });
