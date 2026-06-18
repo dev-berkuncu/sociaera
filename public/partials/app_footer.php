@@ -256,11 +256,11 @@ document.querySelectorAll('.report-radio').forEach(function(r){
 <script>
 // Global image fallback handler to prevent any broken images
 document.addEventListener('error', function(e) {
-    if (e.target.tagName && e.target.tagName.toLowerCase() === 'img') {
-        if (!e.target.dataset.failed) {
-            e.target.dataset.failed = true;
-            // Provide a clean, generic placeholder SVG instead of the broken browser icon
-            e.target.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23e8e7e3"/><path d="M30 70 L45 50 L55 60 L70 40 L80 70 Z" fill="%23c4c3bf"/><circle cx="70" cy="30" r="8" fill="%23c4c3bf"/></svg>';
+    if (e.target && e.target.tagName && e.target.tagName.toLowerCase() === 'img') {
+        if (!e.target.hasAttribute('data-failed')) {
+            e.target.setAttribute('data-failed', '1');
+            e.target.style.background = 'linear-gradient(135deg, #f06d1f, #ffa633)';
+            e.target.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
         }
     }
 }, true);

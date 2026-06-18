@@ -645,6 +645,7 @@ nav.swarm-topnav{
         <script>
         document.addEventListener("DOMContentLoaded", function() {
             const track = document.querySelector(".carousel-track");
+            if (!track) return;
             const slides = Array.from(track.children);
             const dots = document.querySelectorAll(".carousel-dot");
             const nextBtn = document.querySelector(".carousel-nav-btn.next");
