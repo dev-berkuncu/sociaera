@@ -119,13 +119,22 @@ require_once __DIR__ . '/partials/app_header.php';
     <div class="empty-state">
         <span class="empty-state-icon material-symbols-outlined">location_off</span>
         <p class="empty-state-title">Mekan bulunamadı</p>
-        <p style="font-size:0.875rem;color:var(--text-3);margin:4px 0 0;">
+        <p style="font-size:0.875rem;color:var(--text-3);margin:4px 0 16px;">
             <?php if ($search || $category): ?>
-            <a href="<?php echo BASE_URL; ?>/venues" style="color:var(--color-primary);font-weight:600;text-decoration:none;">Filtreleri temizle</a>
+            Aradığınız kriterlere uygun mekan yok.
             <?php else: ?>
             Henüz mekan eklenmemiş.
             <?php endif; ?>
         </p>
+        <div style="display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;">
+            <?php if ($search || $category): ?>
+            <a href="<?php echo BASE_URL; ?>/venues" class="btn btn-ghost" style="color:var(--text-2);text-decoration:none;">Filtreleri Temizle</a>
+            <?php endif; ?>
+            <a href="<?php echo BASE_URL; ?>/add-venue" class="btn btn-primary" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;">
+                <span class="material-symbols-outlined" style="font-size:18px;">add_business</span>
+                Yeni Mekan Ekle
+            </a>
+        </div>
     </div>
 
     <?php else: ?>
