@@ -297,9 +297,9 @@ select.av-input { cursor: pointer; padding-right: 36px; appearance: none; }
             </a>
             <h1 class="av-title">
                 <span class="material-symbols-outlined" style="font-size:36px;">add_location_alt</span>
-                Yeni Mekan Öner
+                Şehrin Mekanlarını Haritaya Taşı
             </h1>
-            <p class="av-subtitle">Eksik veya yeni açılan bir mekanı sisteme ekleyerek Swarm topluluğuna katkıda bulun. Önerin admin onayından geçtikten sonra herkese açık hale gelecektir.</p>
+            <p class="av-subtitle">Gittiğin, sevdiğin veya şehrin gizli kalmış köşelerindeki mekanları sisteme ekleyerek Swarm topluluğunun keşfetmesini sağla. Şehri birlikte haritalayalım.</p>
         </div>
     </div>
 
