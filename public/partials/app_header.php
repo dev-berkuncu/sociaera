@@ -559,7 +559,7 @@ nav.swarm-topnav{
                             <?php endif; elseif ($mType === 'video' && $bgUrl): ?>
                                 <video src="<?php echo $bgUrl; ?>" autoplay muted loop playsinline style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover;"></video>
                             <?php elseif ($bgUrl): ?>
-                                <div style="position:absolute; inset:0; background:url('<?php echo $bgUrl; ?>') center/cover no-repeat;"></div>
+                                <div style="position:absolute; inset:0; background:url('<?php echo $bgUrl; ?>') center/cover no-repeat, linear-gradient(135deg, #1a365d, #0f2b46);"></div>
                             <?php endif; ?>
                             
                             <!-- Gradient Overlay -->
@@ -621,7 +621,7 @@ nav.swarm-topnav{
         <?php else: ?>
             <div class="right-panel-card" style="border:none; border-radius:16px; padding:0; box-sizing:border-box; min-height:300px; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; position:relative; overflow:hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
                 <!-- Fallback SparkLS Image -->
-                <div style="position:absolute; inset:0; background:url('<?php echo BASE_URL; ?>/assets/img/sponsors/sparkls.jpg') center/cover no-repeat;"></div>
+                <div style="position:absolute; inset:0; background:url('<?php echo BASE_URL; ?>/assets/img/sponsors/sparkls.jpg') center/cover no-repeat, linear-gradient(135deg, #1a365d, #0f2b46);"></div>
                 
                 <!-- Link Overlay -->
                 <a href="https://sparkls.online" target="_blank" rel="noopener" style="position:absolute; inset:0; z-index:10; display:flex; flex-direction:column; justify-content:flex-end; padding:20px; background:linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 50%); text-decoration:none;">

@@ -196,11 +196,14 @@ function defaultAvatar(string $username, string $size = '40'): string
 function avatarHtml(?string $avatar, string $username, string $size = '40', string $loading = 'lazy'): string
 {
     $url = avatarUrl($avatar);
+    $fallback = 'https://ui-avatars.com/api/?name=' . rawurlencode($username) . '&background=random';
     if ($url) {
         return '<img src="' . escapeUrl($url) . '" alt="' . escape($username) . '" '
-             . 'class="avatar-img" width="' . $size . '" height="' . $size . '" loading="' . escape($loading) . '">';
+             . 'class="avatar-img" width="' . $size . '" height="' . $size . '" loading="' . escape($loading) . '" '
+             . 'onerror="this.onerror=null; this.src=\'' . $fallback . '\';">';
     }
-    return defaultAvatar($username, $size);
+    return '<img src="' . $fallback . '" alt="' . escape($username) . '" '
+         . 'class="avatar-img" width="' . $size . '" height="' . $size . '" loading="' . escape($loading) . '">';
 }
 
 // ── Sayısal ────────────────────────────────────────────────
