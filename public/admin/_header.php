@@ -28,34 +28,8 @@ $_pendingVenues = $pendingVenues ?? 0;
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block" rel="stylesheet"/>
 
-<!-- Tailwind CDN -->
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<script>
-tailwind.config = {
-    darkMode: 'class',
-    theme: {
-        extend: {
-            colors: {
-                primary: '#F06D1F',
-                'primary-hover': '#D95E10',
-                'primary-light': '#FFA633',
-                'primary-bg': '#FFF3EB',
-                'app-bg': '#F5F4F0',
-                'card-bg': '#ffffff',
-                'section-bg': '#F8F7F5',
-                'input-bg': '#F2F1EE',
-                border: '#E8E7E3',
-                't1': '#1A1A1A',
-                't2': '#5C5C5C',
-                't3': '#A0A0A0',
-            },
-            fontFamily: {
-                sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
-            }
-        }
-    }
-}
-</script>
+<!-- Tailwind CSS Build -->
+<link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/tailwind-admin.css?v=<?php echo filemtime(__DIR__ . '/../assets/css/tailwind-admin.css'); ?>"/>
 
 <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
 
