@@ -605,16 +605,6 @@ nav.swarm-topnav{
                     <div style="color:#ffffff; font-size:16px; font-weight:800; text-align:left; text-shadow:0 2px 6px rgba(0,0,0,0.9);"><?php echo escape($rAd['title'] ?? ''); ?></div>
                 </a>
             </div>
-        <?php else: ?>
-            <div class="right-panel-card" style="border:none; border-radius:16px; padding:0; box-sizing:border-box; min-height:300px; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; position:relative; overflow:hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-                <!-- Fallback SparkLS Image -->
-                <div style="position:absolute; inset:0; background:url('<?php echo BASE_URL; ?>/assets/img/sponsors/sparkls.jpg') center/cover no-repeat, linear-gradient(135deg, #1a365d, #0f2b46);"></div>
-                
-                <!-- Link Overlay -->
-                <a href="https://sparkls.online" target="_blank" rel="noopener" style="position:absolute; inset:0; z-index:10; display:flex; flex-direction:column; justify-content:flex-end; padding:20px; background:linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 50%); text-decoration:none;">
-                    <span style="position:absolute; top:12px; left:12px; font-size:9px; font-weight:800; background:var(--color-primary); color:#fff; padding:4px 8px; border-radius:12px; text-transform:uppercase; letter-spacing:0.5px; box-shadow:0 2px 4px rgba(0,0,0,0.5);">REKLAM</span>
-                </a>
-            </div>
         <?php endif; ?>
 
         <!-- ═══ Brand Contact / Support Widget (Sitenin Renklerinde Orange) ═══ -->
