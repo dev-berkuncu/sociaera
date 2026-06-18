@@ -9,32 +9,30 @@ try {
     // 1. Yabancı anahtar kontrollerini kapat
     $db->exec('SET FOREIGN_KEY_CHECKS = 0');
     
-    // 2. Tüm tabloları bul ve sil (DROP)
+    // 2. Tabloları temizle (Sadece izin verilenler hariç)
     $tables = $db->query("SHOW TABLES")->fetchAll(PDO::FETCH_COLUMN);
+    $excludedTables = ['users', 'settings', 'wallets'];
+    
     foreach ($tables as $table) {
-        $db->exec("DROP TABLE IF EXISTS `$table`");
+        if (!in_array($table, $excludedTables)) {
+            $db->exec("TRUNCATE TABLE `$table`");
+        }
     }
     
-    // 3. Yabancı anahtar kontrollerini tekrar aç
+    // 3. Kullanıcıları ve Cüzdanları Temizle
+    // Sadece admin OLMAYAN kullanıcıları sil
+    $stmt = $db->prepare("DELETE FROM users WHERE is_admin = 0");
+    $stmt->execute();
+    $deletedUsers = $stmt->rowCount();
+    
+    // Silinen kullanıcılara ait cüzdanları sil (Admin cüzdanları kalır)
+    $db->exec("DELETE FROM wallets WHERE user_id NOT IN (SELECT id FROM users)");
+    
+    // Adminlerin avatarlarını ve bannerlarını sıfırla (Çünkü klasörü sileceğiz)
+    $db->exec("UPDATE users SET avatar = NULL, banner = NULL");
+    
+    // 4. Yabancı anahtar kontrollerini tekrar aç
     $db->exec('SET FOREIGN_KEY_CHECKS = 1');
-    
-    // 4. Şemayı baştan kur
-    $schemaPath = dirname(__DIR__) . '/database/schema.sql';
-    if (file_exists($schemaPath)) {
-        $schema = file_get_contents($schemaPath);
-        $db->exec($schema);
-    } else {
-        throw new Exception("schema.sql bulunamadı!");
-    }
-    
-    // 5. Seed verisini ekle (Admin kullanıcısı vb.)
-    $seedPath = dirname(__DIR__) . '/database/seed.sql';
-    if (file_exists($seedPath)) {
-        $seed = file_get_contents($seedPath);
-        $db->exec($seed);
-    } else {
-        throw new Exception("seed.sql bulunamadı!");
-    }
     
     // 6. Uploads klasörlerini temizle (.gitkeep hariç)
     function clearDirectory($dir) {
@@ -61,11 +59,12 @@ try {
     
     // Ekrana çıktı ver
     echo "<div style='font-family:sans-serif; padding:40px; text-align:center;'>";
-    echo "<h1 style='color:green; font-size:32px;'>✅ SİSTEM TAMAMEN SIFIRLANDI!</h1>";
-    echo "<p style='font-size:18px;'>Tüm veritabanı, tablolar ve yüklenen fotoğraflar başarıyla kalıcı olarak silindi.</p>";
-    echo "<p style='font-size:18px;'>Veritabanı şeması ve sadece yetkili <b>Admin</b> kullanıcısı sıfırdan oluşturuldu.</p>";
+    echo "<h1 style='color:green; font-size:32px;'>✅ SİSTEM SIFIRLANDI (Adminler Hariç)!</h1>";
+    echo "<p style='font-size:18px;'>Tüm veritabanı, gönderiler, beğeniler, check-in'ler, mekanlar ve yüklenen fotoğraflar başarıyla silindi.</p>";
+    echo "<p style='font-size:18px;'><b>Yetkili Admin hesapları ve sistem ayarları</b> güvenliğiniz için korundu.</p>";
     echo "<div style='margin: 30px 0; padding:20px; background:#f9f9f9; border-radius:10px; display:inline-block; text-align:left;'>";
-    echo "<b>Silinen Tablolar:</b> " . count($tables) . "<br>";
+    echo "<b>Sıfırlanan Tablolar:</b> " . ($truncatedTables ?? count($tables)) . "<br>";
+    echo "<b>Silinen Kullanıcı (Admin olmayanlar):</b> $deletedUsers<br>";
     echo "<b>Temizlenen Klasörler:</b> uploads/ (avatarlar, mekan fotoğrafları, reklamlar vb.)";
     echo "</div>";
     echo "<p style='color:red; font-weight:bold;'>GÜVENLİK NOTU: Bu dosya işlemi tamamladıktan sonra kendini otomatik olarak sildi (Self-Destruct).</p>";
