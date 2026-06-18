@@ -15,7 +15,7 @@ try {
 
     echo "Feed sorgusu test ediliyor...<br>";
     $model = new CheckinModel();
-    $posts = $model->getGlobalFeed(1, 1);
+    $posts = $model->getGlobalFeed(1, 20);
     
     echo "Sorgu başarılı! " . count($posts) . " post çekildi.<br>";
     echo "<pre>";
