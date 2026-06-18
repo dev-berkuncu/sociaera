@@ -67,6 +67,8 @@ $activeNav = 'venues';
 require_once __DIR__ . '/partials/app_header.php';
 ?>
 
+<div style="min-width:0;">
+
 <style>
 /* ── YENİ TASARIM: ADD VENUE ── */
 .av-wrapper {
@@ -417,6 +419,7 @@ select.av-input { cursor: pointer; padding-right: 36px; appearance: none; }
 
         </form>
     <?php endif; ?>
+</div>
 </div>
 
 <?php require_once __DIR__ . '/partials/app_footer.php'; ?>
