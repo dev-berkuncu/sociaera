@@ -155,6 +155,32 @@ require_once __DIR__ . '/partials/app_header.php';
     </div>
 </div>
 
+<!-- ── SPONSORLARIMIZ (CAROUSEL) ────────────────────────────── -->
+<?php if (!empty($carouselAds)): ?>
+<div style="margin-bottom:20px;">
+    <div class="swarm-section-label" style="margin-bottom:8px;">
+        <span class="material-symbols-outlined" style="font-size:14px;color:var(--color-primary);font-variation-settings:'FILL' 1;">star</span>
+        Sponsorlarımız
+    </div>
+    <div style="display:flex;gap:12px;overflow-x:auto;padding-bottom:10px;scrollbar-width:none;-ms-overflow-style:none;">
+        <?php foreach ($carouselAds as $ad): ?>
+            <a href="<?php echo !empty($ad['link_url']) ? escape($ad['link_url']) : '#'; ?>" target="_blank" rel="noopener noreferrer" style="flex-shrink:0;width:120px;height:80px;border-radius:12px;overflow:hidden;border:1.5px solid var(--border-light);background:#fff;display:flex;align-items:center;justify-content:center;transition:transform 0.2s;text-decoration:none;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                <?php if ($ad['media_type'] === 'youtube'): ?>
+                    <img src="https://img.youtube.com/vi/<?php 
+                        preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i', $ad['image_url'], $matches);
+                        echo $matches[1] ?? '';
+                    ?>/mqdefault.jpg" style="width:100%;height:100%;object-fit:cover;" alt="Sponsor">
+                <?php elseif ($ad['media_type'] === 'video'): ?>
+                    <video src="<?php echo BASE_URL . '/' . ltrim($ad['image_url'], '/'); ?>" style="width:100%;height:100%;object-fit:cover;" autoplay loop muted playsinline></video>
+                <?php else: ?>
+                    <img src="<?php echo BASE_URL . '/' . ltrim($ad['image_url'], '/'); ?>" alt="<?php echo escape($ad['title']); ?>" style="width:100%;height:100%;object-fit:cover;">
+                <?php endif; ?>
+            </a>
+        <?php endforeach; ?>
+    </div>
+</div>
+<?php endif; ?>
+
 <!-- ── ARKADAŞ AKTİVİTESİ ──────────────────────────────────── -->
 <?php if (!empty($friendActivity)): ?>
 <div>
