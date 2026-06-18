@@ -359,31 +359,20 @@ nav.swarm-topnav{
         'kampanyalar' => ['icon'=>'campaign',                 'label'=>'Kampanyalar',   'url'=>'/kampanyalar'],
         'wallet'      => ['icon'=>'account_balance_wallet',   'label'=>'Cüzdan',        'url'=>'/wallet'],
         'premium'     => ['icon'=>'workspace_premium',        'label'=>'Premium',       'url'=>'/premium'],
-        'profile'     => ['icon'=>'person',                   'label'=>'Profilim',      'url'=>'/profile'],
-        'add-venue'   => ['icon'=>'add_business',             'label'=>'Mekan Öner',    'url'=>'/add-venue'],
-        'sponsors'    => ['icon'=>'ads_click',                'label'=>'Reklam Ver',    'url'=>'/sponsors'],
-        'character-select' => ['icon'=>'switch_account',      'label'=>'Karakter',      'url'=>'/character-select'],
-        'settings'    => ['icon'=>'settings',                 'label'=>'Ayarlar',       'url'=>'/settings']
     ];
-
-    if (!empty($currentUser['is_admin']) || !empty($currentUser['admin_role'])) {
-        $navLinks['admin'] = ['icon'=>'admin_panel_settings', 'label'=>'Admin Paneli', 'url'=>'/admin'];
-    }
-
     $currentNav = $activeNav ?? '';
     foreach ($navLinks as $key => $nl):
         $isActive = ($currentNav === $key);
         $isPremiumLink = ($key === 'premium');
-        $isAdminLink = ($key === 'admin');
     ?>
     <a href="<?php echo BASE_URL . $nl['url']; ?>"
        style="display:flex;align-items:center;gap:6px;padding:0 11px;height:58px;
               font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap;
               border-bottom:3px solid <?php echo $isActive ? '#F06D1F' : 'transparent'; ?>;
-              color:<?php echo $isAdminLink ? '#EF4444' : ($isPremiumLink ? '#F59E0B' : ($isActive ? '#F06D1F' : '#5C5C5C')); ?>;
+              color:<?php echo $isPremiumLink ? '#F59E0B' : ($isActive ? '#F06D1F' : '#5C5C5C'); ?>;
               transition:color .15s,border-color .15s;"
-       onmouseover="if(!this.style.borderBottomColor.includes('F06D1F')){this.style.color='<?php echo $isAdminLink ? '#B91C1C' : ($isPremiumLink ? '#D97706' : '#F06D1F'); ?>';}"
-       onmouseout="<?php echo $isActive ? '' : "this.style.color='" . ($isAdminLink ? '#EF4444' : ($isPremiumLink ? '#F59E0B' : '#5C5C5C')) . "';"; ?>">
+       onmouseover="if(!this.style.borderBottomColor.includes('F06D1F')){this.style.color='<?php echo $isPremiumLink ? '#D97706' : '#F06D1F'; ?>';}"
+       onmouseout="<?php echo $isActive ? '' : "this.style.color='" . ($isPremiumLink ? '#F59E0B' : '#5C5C5C') . "';"; ?>">
         <span class="material-symbols-outlined" style="font-size:18px;<?php echo $isPremiumLink ? "font-variation-settings:'FILL' 1;" : ''; ?>"><?php echo $nl['icon']; ?></span>
         <span class="nav-label" style="display:none;"><?php echo $nl['label']; ?></span>
     </a>
@@ -403,28 +392,6 @@ nav.swarm-topnav{
                border-radius:8px;white-space:nowrap;z-index:999;pointer-events:none;
                box-shadow:0 4px 12px rgba(0,0,0,.2);">🚧 Yakında geliyor!</span>
     </span>
-
-    <a href="#" onclick="App.openReportModal('system', 0); return false;"
-       style="display:flex;align-items:center;gap:6px;padding:0 11px;height:58px;
-              font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap;
-              border-bottom:3px solid transparent;color:#5C5C5C;
-              transition:color .15s;"
-       onmouseover="this.style.color='#1A1A1A';"
-       onmouseout="this.style.color='#5C5C5C';">
-        <span class="material-symbols-outlined" style="font-size:18px;">bug_report</span>
-        <span class="nav-label" style="display:none;">Geri Bildirim</span>
-    </a>
-
-    <a href="<?php echo BASE_URL; ?>/logout"
-       style="display:flex;align-items:center;gap:6px;padding:0 11px;height:58px;
-              font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap;
-              border-bottom:3px solid transparent;color:#EF4444;
-              transition:color .15s;"
-       onmouseover="this.style.color='#B91C1C';"
-       onmouseout="this.style.color='#EF4444';">
-        <span class="material-symbols-outlined" style="font-size:18px;">logout</span>
-        <span class="nav-label" style="display:none;">Çıkış Yap</span>
-    </a>
 
     <style>
     @media(min-width:1100px){ nav.swarm-topnav .nav-label, #swarm-topnav .nav-label { display:inline!important; } }
@@ -456,14 +423,59 @@ nav.swarm-topnav{
         <?php endif; ?>
     </a>
 
-    <!-- Avatar Sadece Profil Linki -->
+    <!-- Avatar + Dropdown -->
     <div style="position:relative;margin-left:4px;">
-        <a href="<?php echo BASE_URL; ?>/profile"
-           style="width:36px;height:36px;border-radius:50%;overflow:hidden;cursor:pointer;
-                  border:2px solid #E8E7E3;padding:0;background:none;flex-shrink:0;display:block;">
+        <button id="nav-avatar-btn" onclick="
+          var dd=document.getElementById('nav-dropdown');
+          dd.style.display=(dd.style.display==='block')?'none':'block';"
+          style="width:36px;height:36px;border-radius:50%;overflow:hidden;cursor:pointer;
+                 border:2px solid #E8E7E3;padding:0;background:none;flex-shrink:0;">
             <img src="<?php echo $avatarUrl; ?>" alt="Profil" width="36" height="36"
                  style="width:100%;height:100%;object-fit:cover;display:block;"/>
-        </a>
+        </button>
+
+        <div id="nav-dropdown" style="display:none;position:absolute;right:0;top:calc(100% + 8px);
+          width:210px;background:#fff;border:1.5px solid #E8E7E3;border-radius:14px;
+          box-shadow:0 8px 24px rgba(0,0,0,0.12);padding:6px;z-index:9999;">
+            <?php
+            $ddLinks = [
+                ['url'=>'/profile',         'icon'=>'person',                 'label'=>'Profilim',          'color'=>'#F06D1F'],
+                ['url'=>'/wallet',           'icon'=>'account_balance_wallet', 'label'=>'Cüzdanım',          'color'=>'#F06D1F'],
+                ['url'=>'/add-venue',        'icon'=>'add_business',           'label'=>'Mekan Öner/Ekle',   'color'=>'#10b981'],
+                ['url'=>'/sponsors',         'icon'=>'ads_click',              'label'=>'Reklam Ver',        'color'=>'#3B82F6'],
+                ['url'=>'/missions',         'icon'=>'military_tech',          'label'=>'Görevler',          'color'=>'#F06D1F'],
+                ['url'=>'/kampanyalar',      'icon'=>'campaign',               'label'=>'Kampanyalar',       'color'=>'#F06D1F'],
+                ['url'=>'/premium',          'icon'=>'diamond',                'label'=>'Premium',           'color'=>'#4F46E5'],
+                ['url'=>'/mystery-shopper',  'icon'=>'visibility_off',         'label'=>'Gizli Müşteri',     'color'=>'#A0A0A0'],
+                ['url'=>'/character-select', 'icon'=>'switch_account',         'label'=>'Karakter Değiştir', 'color'=>'#A0A0A0'],
+                ['url'=>'/settings',         'icon'=>'settings',               'label'=>'Ayarlar',           'color'=>'#A0A0A0'],
+            ];
+            foreach($ddLinks as $dl): ?>
+            <a href="<?php echo BASE_URL.$dl['url']; ?>"
+               style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;
+                      text-decoration:none;color:#1A1A1A;font-size:13px;font-weight:600;"
+               onmouseover="this.style.background='#F8F7F5'" onmouseout="this.style.background=''">
+                <span class="material-symbols-outlined" style="font-size:18px;color:<?php echo $dl['color']; ?>;"><?php echo $dl['icon']; ?></span>
+                <?php echo $dl['label']; ?>
+            </a>
+            <?php endforeach; ?>
+            <hr style="border:none;border-top:1px solid #F2F1EE;margin:4px 0;"/>
+            <a href="#" onclick="App.openReportModal('system', 0); return false;"
+               style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;
+                      text-decoration:none;color:#A0A0A0;font-size:13px;font-weight:600;"
+               onmouseover="this.style.background='#F8F7F5'" onmouseout="this.style.background=''">
+                <span class="material-symbols-outlined" style="font-size:18px;">bug_report</span>
+                Geri Bildirim / Hata
+            </a>
+            <hr style="border:none;border-top:1px solid #F2F1EE;margin:4px 0;"/>
+            <a href="<?php echo BASE_URL; ?>/logout"
+               style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;
+                      text-decoration:none;color:#EF4444;font-size:13px;font-weight:600;"
+               onmouseover="this.style.background='#FEF2F2'" onmouseout="this.style.background=''">
+                <span class="material-symbols-outlined" style="font-size:18px;">logout</span>
+                Çıkış Yap
+            </a>
+        </div>
     </div>
 
 </nav>
