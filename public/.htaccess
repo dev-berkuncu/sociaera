@@ -8,7 +8,6 @@
 
 # ── Rewrite Engine ─────────────────────────────────────────
 RewriteEngine On
-RewriteBase /
 
 # ── Admin klasörü — DirectoryIndex garantiyle ──────────────
 RewriteCond %{REQUEST_URI} ^/admin/?$
