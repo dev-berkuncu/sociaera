@@ -1,6 +1,6 @@
 <?php
 /**
- * Admin â€” Rapor Detay
+ * Admin — Rapor Detay
  */
 require_once __DIR__ . '/../../app/Config/env.php';
 loadEnv(dirname(__DIR__, 2) . '/.env');
@@ -21,7 +21,7 @@ $reportId = (int)($_GET['id'] ?? 0);
 if (!$reportId) { header('Location: ' . BASE_URL . '/admin/reports'); exit; }
 
 $report = $reportModel->getById($reportId);
-if (!$report) { Auth::setFlash('error','Rapor bulunamadÄ±.'); header('Location: ' . BASE_URL . '/admin/reports'); exit; }
+if (!$report) { Auth::setFlash('error','Rapor bulunamadı.'); header('Location: ' . BASE_URL . '/admin/reports'); exit; }
 
 $entity = $reportModel->getReportedEntity($report['entity_type'], $report['entity_id']);
 
@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && Auth::canWrite()) {
         case 'resolve':
             $reportModel->resolve($reportId, Auth::id(), $note);
             Logger::adminAudit('resolve_report','report',$reportId,$note);
-            Auth::setFlash('success','Rapor Ã§Ã¶zÃ¼ldÃ¼.');
+            Auth::setFlash('success','Rapor çözüldü.');
             break;
         case 'dismiss':
             $reportModel->dismiss($reportId, Auth::id(), $note);
@@ -48,9 +48,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && Auth::canWrite()) {
             } elseif ($report['entity_type'] === 'comment') {
                 $db->prepare("UPDATE post_comments SET is_deleted = 1 WHERE id = ?")->execute([$report['entity_id']]);
             }
-            $reportModel->resolve($reportId, Auth::id(), $note ?: 'Ä°Ã§erik gizlendi');
+            $reportModel->resolve($reportId, Auth::id(), $note ?: 'İçerik gizlendi');
             Logger::adminAudit('hide_reported_content',$report['entity_type'],$report['entity_id']);
-            Auth::setFlash('success','Ä°Ã§erik gizlendi ve rapor Ã§Ã¶zÃ¼ldÃ¼.');
+            Auth::setFlash('success','İçerik gizlendi ve rapor çözüldü.');
             break;
         case 'ban_user':
             $targetUserId = null;
@@ -61,19 +61,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && Auth::canWrite()) {
                 $days = max(1, (int)($_POST['ban_days'] ?? 7));
                 $until = date('Y-m-d H:i:s', strtotime("+{$days} days"));
                 (new UserModel())->ban($targetUserId, $until);
-                Logger::adminAudit('ban','user',$targetUserId,"Rapor #{$reportId} nedeniyle {$days} gÃ¼n ban");
+                Logger::adminAudit('ban','user',$targetUserId,"Rapor #{$reportId} nedeniyle {$days} gün ban");
             }
-            $reportModel->resolve($reportId, Auth::id(), $note ?: "KullanÄ±cÄ± banlandÄ±");
-            Auth::setFlash('success','KullanÄ±cÄ± banlandÄ± ve rapor Ã§Ã¶zÃ¼ldÃ¼.');
+            $reportModel->resolve($reportId, Auth::id(), $note ?: "Kullanıcı banlandı");
+            Auth::setFlash('success','Kullanıcı banlandı ve rapor çözüldü.');
             break;
     }
     header('Location: ' . BASE_URL . '/admin/report-detail?id=' . $reportId); exit;
 }
 
 $reasonLabels = [
-    'spam'=>'Spam','harassment'=>'Hakaret','inappropriate'=>'Uygunsuz Ä°Ã§erik','wrong_venue'=>'YanlÄ±ÅŸ Mekan',
-    'fake_checkin'=>'Sahte Check-in','fraud'=>'DolandÄ±rÄ±cÄ±lÄ±k','privacy'=>'Gizlilik Ä°hlali',
-    'copyright'=>'Telif Ä°hlali','other'=>'DiÄŸer'
+    'spam'=>'Spam','harassment'=>'Hakaret','inappropriate'=>'Uygunsuz İçerik','wrong_venue'=>'Yanlış Mekan',
+    'fake_checkin'=>'Sahte Check-in','fraud'=>'Dolandırıcılık','privacy'=>'Gizlilik İhlali',
+    'copyright'=>'Telif İhlali','other'=>'Diğer'
 ];
 
 $pendingVenues = (new VenueModel())->getPendingCount();
@@ -99,11 +99,11 @@ require_once __DIR__ . '/_header.php';
                 <span class="text-xs px-2 py-1 rounded <?php echo $report['status']==='pending'?'bg-amber-500/10 text-amber-400':'bg-emerald-500/10 text-emerald-400';?>"><?php echo ucfirst($report['status']);?></span>
             </div>
             <div class="flex justify-between"><span class="text-slate-500">Raporlayan</span><span class="text-on-surface font-semibold"><?php echo escape($report['reporter_name']);?></span></div>
-            <div class="flex justify-between"><span class="text-slate-500">TÃ¼r</span><span class="text-on-surface"><?php echo escape($report['entity_type']);?> #<?php echo $report['entity_id'];?></span></div>
+            <div class="flex justify-between"><span class="text-slate-500">Tür</span><span class="text-on-surface"><?php echo escape($report['entity_type']);?> #<?php echo $report['entity_id'];?></span></div>
             <div class="flex justify-between"><span class="text-slate-500">Neden</span><span class="text-red-400"><?php echo escape($reasonLabels[$report['reason']]??$report['reason']);?></span></div>
             <div class="flex justify-between"><span class="text-slate-500">Tarih</span><span class="text-on-surface"><?php echo formatDate($report['created_at'],true);?></span></div>
             <?php if($report['description']):?>
-            <div><span class="text-slate-500 block mb-1">AÃ§Ä±klama</span><div class="text-slate-300 bg-white/5 rounded-lg p-3"><?php echo nl2brSafe($report['description']);?></div></div>
+            <div><span class="text-slate-500 block mb-1">Açıklama</span><div class="text-slate-300 bg-white/5 rounded-lg p-3"><?php echo nl2brSafe($report['description']);?></div></div>
             <?php endif;?>
             <?php if($report['admin_note']):?>
             <div><span class="text-slate-500 block mb-1">Admin Notu</span><div class="text-slate-300 bg-white/5 rounded-lg p-3"><?php echo nl2brSafe($report['admin_note']);?></div></div>
@@ -111,13 +111,13 @@ require_once __DIR__ . '/_header.php';
         </div>
     </div>
 
-    <!-- Raporlanan Ä°Ã§erik -->
+    <!-- Raporlanan İçerik -->
     <div class="bg-[#1E293B]/80 border border-white/10 rounded-xl p-6">
         <h3 class="font-bold text-on-surface mb-4 flex items-center gap-2">
-            <span class="material-symbols-outlined text-slate-400 text-[20px]">preview</span> Raporlanan Ä°Ã§erik
+            <span class="material-symbols-outlined text-slate-400 text-[20px]">preview</span> Raporlanan İçerik
         </h3>
         <?php if(!$entity):?>
-            <div class="text-center text-slate-400 py-6">Ä°Ã§erik bulunamadÄ± veya silinmiÅŸ.</div>
+            <div class="text-center text-slate-400 py-6">İçerik bulunamadı veya silinmiş.</div>
         <?php else:?>
         <div class="bg-white/5 rounded-lg p-4 text-sm">
             <?php if($report['entity_type']==='checkin'):?>
@@ -141,20 +141,20 @@ require_once __DIR__ . '/_header.php';
 
 <?php if($report['status']==='pending' && Auth::canWrite()):?>
 <div class="bg-[#1E293B]/80 border border-white/10 rounded-xl p-6">
-    <h3 class="font-bold text-on-surface mb-4">Admin AksiyonlarÄ±</h3>
+    <h3 class="font-bold text-on-surface mb-4">Admin Aksiyonları</h3>
     <form method="POST">
         <input type="hidden" name="csrf_token" value="<?php echo csrfToken();?>">
         <div class="mb-4">
             <label class="block text-label-md text-slate-400 mb-1">Admin Notu</label>
-            <textarea name="admin_note" rows="3" class="w-full bg-white/5 border border-white/10 text-on-surface rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary-container/40" placeholder="Karar aÃ§Ä±klamasÄ±..."></textarea>
+            <textarea name="admin_note" rows="3" class="w-full bg-white/5 border border-white/10 text-on-surface rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary-container/40" placeholder="Karar açıklaması..."></textarea>
         </div>
         <div class="flex flex-wrap gap-3">
             <button name="action" value="dismiss" class="bg-slate-500/10 text-slate-400 border border-slate-500/20 px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-500/20 transition-colors">Raporu Reddet</button>
-            <button name="action" value="resolve" class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-emerald-500/20 transition-colors">Ã‡Ã¶zÃ¼ldÃ¼ Ä°ÅŸaretle</button>
-            <button name="action" value="hide_content" class="bg-amber-500/10 text-amber-400 border border-amber-500/20 px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-amber-500/20 transition-colors">Ä°Ã§eriÄŸi Gizle</button>
+            <button name="action" value="resolve" class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-emerald-500/20 transition-colors">Çözüldü İşaretle</button>
+            <button name="action" value="hide_content" class="bg-amber-500/10 text-amber-400 border border-amber-500/20 px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-amber-500/20 transition-colors">İçeriği Gizle</button>
             <div class="flex gap-2">
                 <input type="number" name="ban_days" value="7" min="1" class="w-20 bg-white/5 border border-white/10 text-on-surface rounded-lg px-3 py-2.5 text-sm">
-                <button name="action" value="ban_user" class="bg-red-500/10 text-red-400 border border-red-500/20 px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-red-500/20 transition-colors">KullanÄ±cÄ±yÄ± Banla</button>
+                <button name="action" value="ban_user" class="bg-red-500/10 text-red-400 border border-red-500/20 px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-red-500/20 transition-colors">Kullanıcıyı Banla</button>
             </div>
         </div>
     </form>

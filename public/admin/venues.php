@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && Auth::canWrite()) {
     $venueId = (int)($_POST['venue_id'] ?? 0);
     if ($venueId) {
         switch ($action) {
-            case 'approve': $venueModel->approve($venueId); Logger::adminAudit('approve', 'venue', $venueId); Auth::setFlash('success', 'Mekan onaylandÄ±.'); break;
+            case 'approve': $venueModel->approve($venueId); Logger::adminAudit('approve', 'venue', $venueId); Auth::setFlash('success', 'Mekan onaylandı.'); break;
             case 'reject': $venueModel->reject($venueId); Logger::adminAudit('reject', 'venue', $venueId); Auth::setFlash('success', 'Mekan reddedildi.'); break;
             case 'delete': $venueModel->delete($venueId); Logger::adminAudit('delete', 'venue', $venueId); Auth::setFlash('success', 'Mekan silindi.'); break;
         }
@@ -33,7 +33,7 @@ $venues = $venueModel->getAll($status, $search);
 $pendingVenues = $venueModel->getPendingCount();
 $categories = VenueModel::categories();
 
-$pageTitle = 'Mekan YÃ¶netimi';
+$pageTitle = 'Mekan Yönetimi';
 $adminPage = 'venues';
 require_once __DIR__ . '/_header.php';
 ?>
@@ -48,10 +48,10 @@ require_once __DIR__ . '/_header.php';
 <div class="flex gap-2 mb-6 flex-wrap">
     <?php
     $filters = [
-        '' => ['label' => 'TÃ¼mÃ¼', 'active' => !$status],
+        '' => ['label' => 'Tümü', 'active' => !$status],
         'pending' => ['label' => 'Bekleyen (' . $pendingVenues . ')', 'active' => $status === 'pending'],
-        'approved' => ['label' => 'OnaylÄ±', 'active' => $status === 'approved'],
-        'rejected' => ['label' => 'ReddedilmiÅŸ', 'active' => $status === 'rejected'],
+        'approved' => ['label' => 'Onaylı', 'active' => $status === 'approved'],
+        'rejected' => ['label' => 'Reddedilmiş', 'active' => $status === 'rejected'],
     ];
     foreach ($filters as $key => $f):
         $cls = $f['active']
@@ -67,7 +67,7 @@ require_once __DIR__ . '/_header.php';
     <div class="overflow-x-auto">
         <table class="w-full text-left">
             <thead class="bg-white/[0.03] text-slate-400 text-label-sm uppercase">
-                <tr><th class="px-6 py-3">#</th><th class="px-6 py-3">Mekan</th><th class="px-6 py-3">Kategori</th><th class="px-6 py-3">Check-in</th><th class="px-6 py-3">OluÅŸturan</th><th class="px-6 py-3">Durum</th><th class="px-6 py-3">Ä°ÅŸlem</th></tr>
+                <tr><th class="px-6 py-3">#</th><th class="px-6 py-3">Mekan</th><th class="px-6 py-3">Kategori</th><th class="px-6 py-3">Check-in</th><th class="px-6 py-3">Oluşturan</th><th class="px-6 py-3">Durum</th><th class="px-6 py-3">İşlem</th></tr>
             </thead>
             <tbody class="divide-y divide-white/5">
                 <?php foreach ($venues as $v): ?>
@@ -94,7 +94,7 @@ require_once __DIR__ . '/_header.php';
                             <form method="POST" class="inline"><input type="hidden" name="csrf_token" value="<?php echo csrfToken(); ?>"><input type="hidden" name="venue_id" value="<?php echo $v['id']; ?>"><input type="hidden" name="action" value="approve"><button class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 flex items-center justify-center transition-colors" title="Onayla"><span class="material-symbols-outlined text-[18px]">check</span></button></form>
                             <form method="POST" class="inline"><input type="hidden" name="csrf_token" value="<?php echo csrfToken(); ?>"><input type="hidden" name="venue_id" value="<?php echo $v['id']; ?>"><input type="hidden" name="action" value="reject"><button class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 flex items-center justify-center transition-colors" title="Reddet"><span class="material-symbols-outlined text-[18px]">close</span></button></form>
                             <?php endif; ?>
-                            <form method="POST" class="inline" onsubmit="return confirm('Silmek istediÄŸinize emin misiniz?')"><input type="hidden" name="csrf_token" value="<?php echo csrfToken(); ?>"><input type="hidden" name="venue_id" value="<?php echo $v['id']; ?>"><input type="hidden" name="action" value="delete"><button class="w-8 h-8 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 flex items-center justify-center transition-colors" title="Sil"><span class="material-symbols-outlined text-[18px]">delete</span></button></form>
+                            <form method="POST" class="inline" onsubmit="return confirm('Silmek istediğinize emin misiniz?')"><input type="hidden" name="csrf_token" value="<?php echo csrfToken(); ?>"><input type="hidden" name="venue_id" value="<?php echo $v['id']; ?>"><input type="hidden" name="action" value="delete"><button class="w-8 h-8 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 flex items-center justify-center transition-colors" title="Sil"><span class="material-symbols-outlined text-[18px]">delete</span></button></form>
                         </div>
                     </td>
                 </tr>

@@ -1,6 +1,6 @@
 <?php
 /**
- * Admin â€” Rapor Listesi (Moderasyon)
+ * Admin — Rapor Listesi (Moderasyon)
  */
 require_once __DIR__ . '/../../app/Config/env.php';
 loadEnv(dirname(__DIR__, 2) . '/.env');
@@ -21,9 +21,9 @@ $page = max(1, (int)($_GET['page'] ?? 1));
 $result = $reportModel->getAll($page, 30, ['status' => $status]);
 
 $reasonLabels = [
-    'spam'=>'Spam','harassment'=>'Hakaret','inappropriate'=>'Uygunsuz','wrong_venue'=>'YanlÄ±ÅŸ Mekan',
-    'fake_checkin'=>'Sahte Check-in','fraud'=>'DolandÄ±rÄ±cÄ±lÄ±k','privacy'=>'Gizlilik Ä°hlali',
-    'copyright'=>'Telif Ä°hlali','other'=>'DiÄŸer'
+    'spam'=>'Spam','harassment'=>'Hakaret','inappropriate'=>'Uygunsuz','wrong_venue'=>'Yanlış Mekan',
+    'fake_checkin'=>'Sahte Check-in','fraud'=>'Dolandırıcılık','privacy'=>'Gizlilik İhlali',
+    'copyright'=>'Telif İhlali','other'=>'Diğer'
 ];
 
 $pendingVenues = (new VenueModel())->getPendingCount();
@@ -39,7 +39,7 @@ require_once __DIR__ . '/_header.php';
 </div>
 
 <div class="flex gap-2 mb-6 flex-wrap">
-    <?php foreach(['pending'=>'Bekleyen','reviewed'=>'Ä°ncelenen','resolved'=>'Ã‡Ã¶zÃ¼len','dismissed'=>'Reddedilen'] as $k=>$l):
+    <?php foreach(['pending'=>'Bekleyen','reviewed'=>'İncelenen','resolved'=>'Çözülen','dismissed'=>'Reddedilen'] as $k=>$l):
         $active = $status===$k;
         $cls=$active?'bg-primary-container text-white':'bg-white/5 text-slate-400 hover:bg-white/10';
     ?>
@@ -54,7 +54,7 @@ require_once __DIR__ . '/_header.php';
     <div class="overflow-x-auto">
         <table class="w-full text-left">
             <thead class="bg-white/[0.03] text-slate-400 text-label-sm uppercase">
-                <tr><th class="px-6 py-3">#</th><th class="px-6 py-3">Raporlayan</th><th class="px-6 py-3">TÃ¼r</th><th class="px-6 py-3">Hedef</th><th class="px-6 py-3">Neden</th><th class="px-6 py-3">Tarih</th><th class="px-6 py-3">Ä°ÅŸlem</th></tr>
+                <tr><th class="px-6 py-3">#</th><th class="px-6 py-3">Raporlayan</th><th class="px-6 py-3">Tür</th><th class="px-6 py-3">Hedef</th><th class="px-6 py-3">Neden</th><th class="px-6 py-3">Tarih</th><th class="px-6 py-3">İşlem</th></tr>
             </thead>
             <tbody class="divide-y divide-white/5">
                 <?php foreach($result['reports'] as $r):?>
@@ -65,7 +65,7 @@ require_once __DIR__ . '/_header.php';
                     <td class="px-6 py-3 text-slate-300">#<?php echo $r['entity_id'];?></td>
                     <td class="px-6 py-3"><span class="text-xs px-2 py-1 rounded bg-red-500/10 text-red-400"><?php echo escape($reasonLabels[$r['reason']]??$r['reason']);?></span></td>
                     <td class="px-6 py-3 text-slate-500 text-xs"><?php echo timeAgo($r['created_at']);?></td>
-                    <td class="px-6 py-3"><a href="<?php echo BASE_URL;?>/admin/report-detail?id=<?php echo $r['id'];?>" class="text-primary-container hover:underline text-xs font-semibold">Ä°ncele â†’</a></td>
+                    <td class="px-6 py-3"><a href="<?php echo BASE_URL;?>/admin/report-detail?id=<?php echo $r['id'];?>" class="text-primary-container hover:underline text-xs font-semibold">İncele →</a></td>
                 </tr>
                 <?php endforeach;?>
             </tbody>

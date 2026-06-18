@@ -1,6 +1,6 @@
 <?php
 /**
- * Admin â€” KullanÄ±cÄ± Listesi (V1)
+ * Admin — Kullanıcı Listesi (V1)
  */
 require_once __DIR__ . '/../../app/Config/env.php';
 loadEnv(dirname(__DIR__, 2) . '/.env');
@@ -27,13 +27,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && Auth::canWrite()) {
                 $days = max(1, (int)($_POST['days'] ?? 7));
                 $until = date('Y-m-d H:i:s', strtotime("+{$days} days"));
                 $userModel->ban($targetId, $until);
-                Logger::adminAudit('ban', 'user', $targetId, "{$days} gÃ¼n");
-                Auth::setFlash('success', 'KullanÄ±cÄ± banlandÄ±.');
+                Logger::adminAudit('ban', 'user', $targetId, "{$days} gün");
+                Auth::setFlash('success', 'Kullanıcı banlandı.');
                 break;
             case 'unban':
                 $userModel->unban($targetId);
                 Logger::adminAudit('unban', 'user', $targetId);
-                Auth::setFlash('success', 'Ban kaldÄ±rÄ±ldÄ±.');
+                Auth::setFlash('success', 'Ban kaldırıldı.');
                 break;
         }
     }
@@ -46,27 +46,27 @@ $filter = trim($_GET['filter'] ?? 'all');
 $result = $userModel->getAll($page, 30, $search, $filter);
 $pendingVenues = (new VenueModel())->getPendingCount();
 
-$pageTitle = 'KullanÄ±cÄ± YÃ¶netimi';
+$pageTitle = 'Kullanıcı Yönetimi';
 $adminPage = 'users';
 require_once __DIR__ . '/_header.php';
 ?>
 
 <div class="flex items-center justify-between mb-6 flex-wrap gap-4">
     <h1 class="text-xl font-black text-on-surface flex items-center gap-2">
-        <span class="material-symbols-outlined text-primary-container">people</span> KullanÄ±cÄ±lar (<?php echo $result['total']; ?>)
+        <span class="material-symbols-outlined text-primary-container">people</span> Kullanıcılar (<?php echo $result['total']; ?>)
     </h1>
     <form method="GET" class="relative">
         <?php if ($filter !== 'all'): ?>
             <input type="hidden" name="filter" value="<?php echo escape($filter); ?>">
         <?php endif; ?>
         <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">search</span>
-        <input type="text" name="q" placeholder="KullanÄ±cÄ± ara..." value="<?php echo escape($search); ?>" class="bg-white/5 border border-white/10 text-on-surface rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-primary-container/40 w-64 transition-colors">
+        <input type="text" name="q" placeholder="Kullanıcı ara..." value="<?php echo escape($search); ?>" class="bg-white/5 border border-white/10 text-on-surface rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-primary-container/40 w-64 transition-colors">
     </form>
 </div>
 
 <div class="flex gap-2 mb-4 flex-wrap">
-    <a href="?filter=all&q=<?php echo escape($search); ?>" class="px-4 py-2 text-xs font-bold rounded-lg border transition-all duration-150 <?php echo $filter === 'all' ? 'bg-primary text-white border-primary shadow-sm shadow-primary/20' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-950'; ?>">TÃ¼mÃ¼</a>
-    <a href="?filter=users&q=<?php echo escape($search); ?>" class="px-4 py-2 text-xs font-bold rounded-lg border transition-all duration-150 <?php echo $filter === 'users' ? 'bg-primary text-white border-primary shadow-sm shadow-primary/20' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-950'; ?>">Normal Ãœyeler</a>
+    <a href="?filter=all&q=<?php echo escape($search); ?>" class="px-4 py-2 text-xs font-bold rounded-lg border transition-all duration-150 <?php echo $filter === 'all' ? 'bg-primary text-white border-primary shadow-sm shadow-primary/20' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-950'; ?>">Tümü</a>
+    <a href="?filter=users&q=<?php echo escape($search); ?>" class="px-4 py-2 text-xs font-bold rounded-lg border transition-all duration-150 <?php echo $filter === 'users' ? 'bg-primary text-white border-primary shadow-sm shadow-primary/20' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-950'; ?>">Normal Üyeler</a>
     <a href="?filter=admins&q=<?php echo escape($search); ?>" class="px-4 py-2 text-xs font-bold rounded-lg border transition-all duration-150 <?php echo $filter === 'admins' ? 'bg-primary text-white border-primary shadow-sm shadow-primary/20' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-950'; ?>">Yetkililer</a>
 </div>
 
@@ -74,7 +74,7 @@ require_once __DIR__ . '/_header.php';
     <div class="overflow-x-auto">
         <table class="w-full text-left">
             <thead class="bg-white/[0.03] text-slate-400 text-label-sm uppercase">
-                <tr><th class="px-6 py-3">#</th><th class="px-6 py-3">KullanÄ±cÄ±</th><th class="px-6 py-3">E-posta</th><th class="px-6 py-3">Rol</th><th class="px-6 py-3">Durum</th><th class="px-6 py-3">KayÄ±t</th><th class="px-6 py-3">Ä°ÅŸlem</th></tr>
+                <tr><th class="px-6 py-3">#</th><th class="px-6 py-3">Kullanıcı</th><th class="px-6 py-3">E-posta</th><th class="px-6 py-3">Rol</th><th class="px-6 py-3">Durum</th><th class="px-6 py-3">Kayıt</th><th class="px-6 py-3">İşlem</th></tr>
             </thead>
             <tbody class="divide-y divide-white/5">
                 <?php foreach ($result['users'] as $u):
@@ -102,12 +102,12 @@ require_once __DIR__ . '/_header.php';
                         <?php elseif($u['is_admin']):?>
                             <span class="text-xs font-semibold px-2 py-1 rounded border bg-purple-500/10 text-purple-400 border-purple-500/20">Admin</span>
                         <?php else:?>
-                            <span class="text-xs text-slate-500">Ãœye</span>
+                            <span class="text-xs text-slate-500">Üye</span>
                         <?php endif;?>
                     </td>
                     <td class="px-6 py-3">
                         <?php if($isBanned):?>
-                            <span class="text-xs font-semibold px-2 py-1 rounded border bg-red-500/10 text-red-400 border-red-500/20">BanlÄ±</span>
+                            <span class="text-xs font-semibold px-2 py-1 rounded border bg-red-500/10 text-red-400 border-red-500/20">Banlı</span>
                         <?php else:?>
                             <span class="text-xs font-semibold px-2 py-1 rounded border bg-emerald-500/10 text-emerald-400 border-emerald-500/20">Aktif</span>
                         <?php endif;?>
@@ -121,10 +121,10 @@ require_once __DIR__ . '/_header.php';
                             <?php if(Auth::canWrite() && (int)$u['id'] !== Auth::id()):?>
                             <?php if(!$isBanned):?>
                             <form method="POST" class="inline"><input type="hidden" name="csrf_token" value="<?php echo csrfToken();?>"><input type="hidden" name="user_id" value="<?php echo $u['id'];?>"><input type="hidden" name="action" value="ban"><input type="hidden" name="days" value="7">
-                                <button class="w-8 h-8 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 flex items-center justify-center transition-colors" title="7 GÃ¼n Ban"><span class="material-symbols-outlined text-[18px]">block</span></button></form>
+                                <button class="w-8 h-8 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 flex items-center justify-center transition-colors" title="7 Gün Ban"><span class="material-symbols-outlined text-[18px]">block</span></button></form>
                             <?php else:?>
                             <form method="POST" class="inline"><input type="hidden" name="csrf_token" value="<?php echo csrfToken();?>"><input type="hidden" name="user_id" value="<?php echo $u['id'];?>"><input type="hidden" name="action" value="unban">
-                                <button class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 flex items-center justify-center transition-colors" title="Ban KaldÄ±r"><span class="material-symbols-outlined text-[18px]">check_circle</span></button></form>
+                                <button class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 flex items-center justify-center transition-colors" title="Ban Kaldır"><span class="material-symbols-outlined text-[18px]">check_circle</span></button></form>
                             <?php endif;?>
                             <?php endif;?>
                         </div>

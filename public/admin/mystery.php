@@ -1,6 +1,6 @@
 <?php
 /**
- * Admin â€” Gizli MÃ¼ÅŸteri BaÅŸvuru YÃ¶netimi
+ * Admin — Gizli Müşteri Başvuru Yönetimi
  */
 require_once __DIR__ . '/../../app/Config/env.php';
 loadEnv(dirname(__DIR__, 2) . '/.env');
@@ -23,7 +23,7 @@ Auth::requireAccess('mystery');
 
 $mysteryModel = new MysteryShopperModel();
 
-// POST â€” Onayla / Reddet
+// POST — Onayla / Reddet
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     Csrf::requireValid();
     $appId  = (int)($_POST['application_id'] ?? 0);
@@ -34,11 +34,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($action === 'approve') {
             $mysteryModel->approve($appId, Auth::id(), $note ?: null);
             Logger::adminAudit('mystery_approve', 'mystery_shoppers', $appId, null, ['status' => 'approved']);
-            Auth::setFlash('success', 'BaÅŸvuru onaylandÄ±.');
+            Auth::setFlash('success', 'Başvuru onaylandı.');
         } else {
             $mysteryModel->reject($appId, Auth::id(), $note ?: null);
             Logger::adminAudit('mystery_reject', 'mystery_shoppers', $appId, null, ['status' => 'rejected', 'note' => $note]);
-            Auth::setFlash('success', 'BaÅŸvuru reddedildi.');
+            Auth::setFlash('success', 'Başvuru reddedildi.');
         }
     }
     header('Location: ' . BASE_URL . '/admin/mystery'); exit;
@@ -49,7 +49,7 @@ $page         = max(1, (int)($_GET['page'] ?? 1));
 $applications = $mysteryModel->getAll($filterStatus, $page, 25);
 $pendingCount = $mysteryModel->countPending();
 
-$pageTitle = 'Gizli MÃ¼ÅŸteri BaÅŸvurularÄ± â€” Admin';
+$pageTitle = 'Gizli Müşteri Başvuruları — Admin';
 $hideSidebar = true;
 require_once __DIR__ . '/../partials/app_header.php';
 ?>
@@ -65,7 +65,7 @@ require_once __DIR__ . '/../partials/app_header.php';
         <div class="flex-grow">
             <h1 class="text-2xl font-black text-on-surface tracking-tight flex items-center gap-2">
                 <span class="material-symbols-outlined text-indigo-400">person_search</span>
-                Gizli MÃ¼ÅŸteri BaÅŸvurularÄ±
+                Gizli Müşteri Başvuruları
             </h1>
         </div>
         <?php if ($pendingCount > 0): ?>
@@ -77,7 +77,7 @@ require_once __DIR__ . '/../partials/app_header.php';
 
     <!-- Filtre Tabs -->
     <div class="flex gap-2 border-b border-white/10 pb-0">
-        <?php foreach (['pending' => 'Bekleyenler', 'approved' => 'Onaylananlar', 'rejected' => 'Reddedilenler', '' => 'TÃ¼mÃ¼'] as $s => $l): ?>
+        <?php foreach (['pending' => 'Bekleyenler', 'approved' => 'Onaylananlar', 'rejected' => 'Reddedilenler', '' => 'Tümü'] as $s => $l): ?>
         <a href="?status=<?php echo $s; ?>"
            class="px-5 py-3 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap
                   <?php echo $filterStatus === $s
@@ -92,14 +92,14 @@ require_once __DIR__ . '/../partials/app_header.php';
     <?php if (empty($applications)): ?>
     <div class="bg-[#1E293B]/80 border border-white/10 rounded-xl p-10 text-center text-slate-400">
         <span class="material-symbols-outlined text-[48px] mb-3 opacity-40 block">person_search</span>
-        <p>Bu kategoride baÅŸvuru yok.</p>
+        <p>Bu kategoride başvuru yok.</p>
     </div>
     <?php else: ?>
     <div class="space-y-3">
         <?php foreach ($applications as $app):
             $statusBadge = match($app['status']) {
                 'pending'  => ['bg-amber-500/10 text-amber-400',   'hourglass_top',  'Bekliyor'],
-                'approved' => ['bg-emerald-500/10 text-emerald-400','check_circle',   'OnaylÄ±'],
+                'approved' => ['bg-emerald-500/10 text-emerald-400','check_circle',   'Onaylı'],
                 'rejected' => ['bg-red-500/10 text-red-400',       'cancel',         'Reddedildi'],
                 default    => ['bg-white/5 text-slate-400',        'info',           $app['status']],
             };
@@ -124,9 +124,9 @@ require_once __DIR__ . '/../partials/app_header.php';
                         </span>
                     </div>
                     <div class="text-xs text-slate-500 mt-0.5">
-                        BaÅŸvuru: <?php echo formatDate($app['applied_at']); ?>
+                        Başvuru: <?php echo formatDate($app['applied_at']); ?>
                         <?php if ($app['reviewed_at']): ?>
-                        Â· Ä°nceleme: <?php echo formatDate($app['reviewed_at']); ?>
+                        · İnceleme: <?php echo formatDate($app['reviewed_at']); ?>
                         (<?php echo escape($app['reviewer_name'] ?? 'Admin'); ?>)
                         <?php endif; ?>
                     </div>
@@ -146,13 +146,13 @@ require_once __DIR__ . '/../partials/app_header.php';
                     <?php endif; ?>
                 </div>
 
-                <!-- Aksiyonlar (sadece pending iÃ§in) -->
+                <!-- Aksiyonlar (sadece pending için) -->
                 <?php if ($app['status'] === 'pending'): ?>
                 <div class="flex-shrink-0 w-full md:w-auto">
                     <form method="POST" class="space-y-2">
                         <?php echo csrfField(); ?>
                         <input type="hidden" name="application_id" value="<?php echo $app['id']; ?>">
-                        <textarea name="admin_note" rows="2" placeholder="Not (isteÄŸe baÄŸlÄ±)..."
+                        <textarea name="admin_note" rows="2" placeholder="Not (isteğe bağlı)..."
                                   class="w-full bg-white/5 border border-white/10 text-on-surface rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-primary-container/40 resize-none"></textarea>
                         <div class="flex gap-2">
                             <button type="submit" name="action" value="approve"

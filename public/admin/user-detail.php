@@ -1,6 +1,6 @@
 <?php
 /**
- * Admin â€” KullanÄ±cÄ± Detay SayfasÄ±
+ * Admin — Kullanıcı Detay Sayfası
  */
 require_once __DIR__ . '/../../app/Config/env.php';
 loadEnv(dirname(__DIR__, 2) . '/.env');
@@ -22,7 +22,7 @@ if (!$userId) { header('Location: ' . BASE_URL . '/admin/users'); exit; }
 
 $userModel = new UserModel();
 $user = $userModel->getById($userId);
-if (!$user) { Auth::setFlash('error', 'KullanÄ±cÄ± bulunamadÄ±.'); header('Location: ' . BASE_URL . '/admin/users'); exit; }
+if (!$user) { Auth::setFlash('error', 'Kullanıcı bulunamadı.'); header('Location: ' . BASE_URL . '/admin/users'); exit; }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && Auth::canWrite()) {
     Csrf::requireValid();
@@ -33,17 +33,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && Auth::canWrite()) {
             $days = max(1, (int)($_POST['days'] ?? 7));
             $until = date('Y-m-d H:i:s', strtotime("+{$days} days"));
             $userModel->ban($userId, $until);
-            Logger::adminAudit('ban', 'user', $userId, "{$days} gÃ¼n ban");
-            Auth::setFlash('success', "KullanÄ±cÄ± {$days} gÃ¼n banlandÄ±.");
+            Logger::adminAudit('ban', 'user', $userId, "{$days} gün ban");
+            Auth::setFlash('success', "Kullanıcı {$days} gün banlandı.");
             break;
         case 'unban':
             $userModel->unban($userId);
             Logger::adminAudit('unban', 'user', $userId);
-            Auth::setFlash('success', 'Ban kaldÄ±rÄ±ldÄ±.');
+            Auth::setFlash('success', 'Ban kaldırıldı.');
             break;
         case 'set_role':
             if (!Auth::hasRole('super_admin')) {
-                Auth::setFlash('error', 'Bu iÅŸlem iÃ§in Super Admin yetkisine sahip olmalÄ±sÄ±nÄ±z.');
+                Auth::setFlash('error', 'Bu işlem için Super Admin yetkisine sahip olmalısınız.');
                 header('Location: ' . BASE_URL . '/admin/user-detail?id=' . $userId); exit;
             }
             $role = $_POST['role'] ?? null;
@@ -51,34 +51,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && Auth::canWrite()) {
             if (in_array($role, $valid)) {
                 $nr = $role ?: null;
                 $db->prepare("UPDATE users SET admin_role=?, is_admin=? WHERE id=?")->execute([$nr, $nr?1:0, $userId]);
-                Logger::adminAudit('set_role','user',$userId,'Rol deÄŸiÅŸtirildi',$user['admin_role']??'none',$role?:'none');
-                Auth::setFlash('success','Admin rolÃ¼ gÃ¼ncellendi.');
+                Logger::adminAudit('set_role','user',$userId,'Rol değiştirildi',$user['admin_role']??'none',$role?:'none');
+                Auth::setFlash('success','Admin rolü güncellendi.');
             }
             break;
         case 'premium_add':
             $days = max(1, (int)($_POST['days'] ?? 7));
             $userModel->setPremium($userId, $days);
-            Logger::adminAudit('premium_add','user',$userId,"{$days} gÃ¼n premium");
-            Auth::setFlash('success',"Premium {$days} gÃ¼n eklendi.");
+            Logger::adminAudit('premium_add','user',$userId,"{$days} gün premium");
+            Auth::setFlash('success',"Premium {$days} gün eklendi.");
             break;
         case 'premium_remove':
             $db->prepare("UPDATE users SET is_premium=0, premium_until=NULL WHERE id=?")->execute([$userId]);
             Logger::adminAudit('premium_remove','user',$userId);
-            Auth::setFlash('success','Premium kaldÄ±rÄ±ldÄ±.');
+            Auth::setFlash('success','Premium kaldırıldı.');
             break;
         case 'change_password':
             if (!Auth::hasRole('super_admin')) {
-                Auth::setFlash('error', 'Bu iÅŸlem iÃ§in Super Admin yetkisine sahip olmalÄ±sÄ±nÄ±z.');
+                Auth::setFlash('error', 'Bu işlem için Super Admin yetkisine sahip olmalısınız.');
                 header('Location: ' . BASE_URL . '/admin/user-detail?id=' . $userId); exit;
             }
             $newPassword = $_POST['new_password'] ?? '';
             if (strlen($newPassword) < 6) {
-                Auth::setFlash('error', 'Åifre en az 6 karakter olmalÄ±dÄ±r.');
+                Auth::setFlash('error', 'Şifre en az 6 karakter olmalıdır.');
             } else {
                 $hash = password_hash($newPassword, PASSWORD_DEFAULT);
                 $db->prepare("UPDATE users SET password_hash = ? WHERE id = ?")->execute([$hash, $userId]);
-                Logger::adminAudit('change_password', 'user', $userId, 'Åifre deÄŸiÅŸtirildi');
-                Auth::setFlash('success', 'KullanÄ±cÄ±nÄ±n ÅŸifresi baÅŸarÄ±yla deÄŸiÅŸtirildi.');
+                Logger::adminAudit('change_password', 'user', $userId, 'Şifre değiştirildi');
+                Auth::setFlash('success', 'Kullanıcının şifresi başarıyla değiştirildi.');
             }
             break;
     }
@@ -98,7 +98,7 @@ require_once __DIR__ . '/_header.php';
 ?>
 
 <div class="flex items-center gap-2 text-sm text-slate-400 mb-6">
-    <a href="<?php echo BASE_URL; ?>/admin/users" class="hover:text-primary-container">KullanÄ±cÄ±lar</a>
+    <a href="<?php echo BASE_URL; ?>/admin/users" class="hover:text-primary-container">Kullanıcılar</a>
     <span class="material-symbols-outlined text-[14px]">chevron_right</span>
     <span class="text-on-surface"><?php echo escape($user['username']); ?></span>
 </div>
@@ -120,7 +120,7 @@ require_once __DIR__ . '/_header.php';
                 <?php if($user['tag']):?><div class="text-sm text-slate-400">@<?php echo escape($user['tag']);?></div><?php endif;?>
             </div>
             <?php if($isBanned):?>
-                <span class="text-xs font-semibold px-3 py-1.5 rounded-lg border bg-red-500/10 text-red-400 border-red-500/20">BanlÄ± â€” <?php echo formatDate($user['banned_until']);?></span>
+                <span class="text-xs font-semibold px-3 py-1.5 rounded-lg border bg-red-500/10 text-red-400 border-red-500/20">Banlı — <?php echo formatDate($user['banned_until']);?></span>
             <?php else:?>
                 <span class="text-xs font-semibold px-3 py-1.5 rounded-lg border bg-emerald-500/10 text-emerald-400 border-emerald-500/20">Aktif</span>
             <?php endif;?>
@@ -128,11 +128,11 @@ require_once __DIR__ . '/_header.php';
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
             <div><span class="text-slate-500 block">ID</span><span class="font-semibold text-on-surface">#<?php echo $user['id'];?></span></div>
             <div><span class="text-slate-500 block">E-posta</span><span class="font-semibold text-on-surface"><?php echo escape($user['email']);?></span></div>
-            <div><span class="text-slate-500 block">KayÄ±t</span><span class="font-semibold text-on-surface"><?php echo formatDate($user['created_at']);?></span></div>
-            <div><span class="text-slate-500 block">Son GiriÅŸ</span><span class="font-semibold text-on-surface"><?php echo $user['last_login_at']?timeAgo($user['last_login_at']):'-';?></span></div>
+            <div><span class="text-slate-500 block">Kayıt</span><span class="font-semibold text-on-surface"><?php echo formatDate($user['created_at']);?></span></div>
+            <div><span class="text-slate-500 block">Son Giriş</span><span class="font-semibold text-on-surface"><?php echo $user['last_login_at']?timeAgo($user['last_login_at']):'-';?></span></div>
             <div><span class="text-slate-500 block">Check-in</span><span class="font-semibold text-primary-container"><?php echo $stats['checkins'];?></span></div>
-            <div><span class="text-slate-500 block">TakipÃ§i</span><span class="font-semibold text-on-surface"><?php echo $stats['followers'];?></span></div>
-            <div><span class="text-slate-500 block">CÃ¼zdan</span><span class="font-semibold text-yellow-400">$<?php echo number_format($balance,0,',','.');?></span></div>
+            <div><span class="text-slate-500 block">Takipçi</span><span class="font-semibold text-on-surface"><?php echo $stats['followers'];?></span></div>
+            <div><span class="text-slate-500 block">Cüzdan</span><span class="font-semibold text-yellow-400">$<?php echo number_format($balance,0,',','.');?></span></div>
             <div><span class="text-slate-500 block">Premium</span><span class="font-semibold <?php echo $isPremium?'text-amber-400':'text-slate-500';?>"><?php echo $isPremium?UserModel::premiumRemainingText($user):'Yok';?></span></div>
         </div>
     </div>
@@ -144,7 +144,7 @@ require_once __DIR__ . '/_header.php';
         <h4 class="text-sm font-bold text-on-surface mb-3"><span class="material-symbols-outlined text-[16px] text-red-400">block</span> Ban</h4>
         <?php if($isBanned):?>
         <form method="POST"><input type="hidden" name="csrf_token" value="<?php echo csrfToken();?>"><input type="hidden" name="action" value="unban">
-            <button class="w-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-emerald-500/20">Ban KaldÄ±r</button></form>
+            <button class="w-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-emerald-500/20">Ban Kaldır</button></form>
         <?php else:?>
         <form method="POST" class="flex gap-2"><input type="hidden" name="csrf_token" value="<?php echo csrfToken();?>"><input type="hidden" name="action" value="ban">
             <input type="number" name="days" value="7" min="1" class="w-20 bg-white/5 border border-white/10 text-on-surface rounded-lg px-3 py-2 text-sm">
@@ -156,18 +156,18 @@ require_once __DIR__ . '/_header.php';
         <?php if (Auth::hasRole('super_admin')): ?>
         <form method="POST" class="flex gap-2"><input type="hidden" name="csrf_token" value="<?php echo csrfToken();?>"><input type="hidden" name="action" value="set_role">
             <select name="role" class="flex-grow bg-white/5 border border-white/10 text-on-surface rounded-lg px-3 py-2 text-sm">
-                <option value="" class="bg-background" <?php echo empty($user['admin_role'])?'selected':'';?>>KullanÄ±cÄ±</option>
+                <option value="" class="bg-background" <?php echo empty($user['admin_role'])?'selected':'';?>>Kullanıcı</option>
                 <option value="super_admin" class="bg-background" <?php echo ($user['admin_role']??'')==='super_admin'?'selected':'';?>>Super Admin</option>
-                <option value="moderator" class="bg-background" <?php echo ($user['admin_role']??'')==='moderator'?'selected':'';?>>ModeratÃ¶r</option>
+                <option value="moderator" class="bg-background" <?php echo ($user['admin_role']??'')==='moderator'?'selected':'';?>>Moderatör</option>
                 <option value="finance_admin" class="bg-background" <?php echo ($user['admin_role']??'')==='finance_admin'?'selected':'';?>>Finans</option>
-                <option value="business_admin" class="bg-background" <?php echo ($user['admin_role']??'')==='business_admin'?'selected':'';?>>Ä°ÅŸletme</option>
+                <option value="business_admin" class="bg-background" <?php echo ($user['admin_role']??'')==='business_admin'?'selected':'';?>>İşletme</option>
                 <option value="readonly_admin" class="bg-background" <?php echo ($user['admin_role']??'')==='readonly_admin'?'selected':'';?>>Read-only</option>
             </select>
             <button class="bg-purple-500/10 text-purple-400 border border-purple-500/20 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-purple-500/20">Kaydet</button></form>
         <?php else: ?>
         <div class="text-sm text-slate-400">
-            Rol: <span class="font-semibold text-on-surface"><?php echo empty($user['admin_role']) ? 'KullanÄ±cÄ±' : escape(ucfirst(str_replace('_',' ',$user['admin_role']))); ?></span>
-            <p class="text-xs text-slate-500 mt-2">Rol deÄŸiÅŸtirmek iÃ§in Super Admin olmalÄ±sÄ±nÄ±z.</p>
+            Rol: <span class="font-semibold text-on-surface"><?php echo empty($user['admin_role']) ? 'Kullanıcı' : escape(ucfirst(str_replace('_',' ',$user['admin_role']))); ?></span>
+            <p class="text-xs text-slate-500 mt-2">Rol değiştirmek için Super Admin olmalısınız.</p>
         </div>
         <?php endif; ?>
     </div>
@@ -179,20 +179,20 @@ require_once __DIR__ . '/_header.php';
                 <button class="flex-grow bg-amber-500/10 text-amber-400 border border-amber-500/20 px-3 py-2 rounded-lg text-sm font-semibold hover:bg-amber-500/20">Ekle</button></form>
             <?php if($isPremium):?>
             <form method="POST"><input type="hidden" name="csrf_token" value="<?php echo csrfToken();?>"><input type="hidden" name="action" value="premium_remove">
-                <button class="bg-red-500/10 text-red-400 border border-red-500/20 px-3 py-2 rounded-lg text-sm font-semibold hover:bg-red-500/20">KaldÄ±r</button></form>
+                <button class="bg-red-500/10 text-red-400 border border-red-500/20 px-3 py-2 rounded-lg text-sm font-semibold hover:bg-red-500/20">Kaldır</button></form>
             <?php endif;?>
         </div>
     </div>
     <div class="bg-[#1E293B]/80 border border-white/10 rounded-xl p-5">
-        <h4 class="text-sm font-bold text-on-surface mb-3"><span class="material-symbols-outlined text-[16px] text-blue-400">key</span> Åifre DeÄŸiÅŸtir</h4>
+        <h4 class="text-sm font-bold text-on-surface mb-3"><span class="material-symbols-outlined text-[16px] text-blue-400">key</span> Şifre Değiştir</h4>
         <?php if (Auth::hasRole('super_admin')): ?>
         <form method="POST" class="flex gap-2"><input type="hidden" name="csrf_token" value="<?php echo csrfToken();?>"><input type="hidden" name="action" value="change_password">
-            <input type="password" name="new_password" placeholder="Yeni ÅŸifre" required class="flex-grow bg-white/5 border border-white/10 text-on-surface rounded-lg px-3 py-2 text-sm w-full">
-            <button class="bg-blue-500/10 text-blue-400 border border-blue-500/20 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-500/20">DeÄŸiÅŸtir</button></form>
+            <input type="password" name="new_password" placeholder="Yeni şifre" required class="flex-grow bg-white/5 border border-white/10 text-on-surface rounded-lg px-3 py-2 text-sm w-full">
+            <button class="bg-blue-500/10 text-blue-400 border border-blue-500/20 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-500/20">Değiştir</button></form>
         <?php else: ?>
         <div class="text-sm text-slate-400">
-            Åifre DeÄŸiÅŸtir: <span class="text-slate-500">-</span>
-            <p class="text-xs text-slate-500 mt-2">Åifre deÄŸiÅŸtirmek iÃ§in Super Admin olmalÄ±sÄ±nÄ±z.</p>
+            Şifre Değiştir: <span class="text-slate-500">-</span>
+            <p class="text-xs text-slate-500 mt-2">Şifre değiştirmek için Super Admin olmalısınız.</p>
         </div>
         <?php endif; ?>
     </div>
@@ -210,7 +210,7 @@ require_once __DIR__ . '/_header.php';
         </div><?php endforeach;?></div><?php endif;?>
     </div>
     <div class="bg-[#1E293B]/80 border border-white/10 rounded-xl overflow-hidden">
-        <div class="px-6 py-4 border-b border-white/5"><h3 class="font-bold text-on-surface">CÃ¼zdan Hareketleri</h3></div>
+        <div class="px-6 py-4 border-b border-white/5"><h3 class="font-bold text-on-surface">Cüzdan Hareketleri</h3></div>
         <?php if(empty($transactions)):?><div class="p-6 text-center text-slate-400">Yok.</div>
         <?php else:?><div class="divide-y divide-white/5"><?php foreach($transactions as $t):?>
         <div class="px-6 py-3 flex items-center gap-3 hover:bg-white/[0.02]">

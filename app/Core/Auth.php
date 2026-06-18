@@ -82,7 +82,7 @@ class Auth
         self::requireAdmin();
         if (!self::canAccess($section)) {
             self::setFlash('error', 'Bu sayfaya erişim yetkiniz yok.');
-            header('Location: ' . BASE_URL . '/admin');
+            header('Location: ' . BASE_URL . '/dashboard');
             exit;
         }
     }
