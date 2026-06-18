@@ -585,7 +585,7 @@ nav.swarm-topnav{
 
         <!-- ═══ Tall Vertical Banner (Reklam Alanı) Carousel ═══ -->
         <?php if (!empty($sidebarRightAds)): ?>
-            <div class="right-ad-carousel-container" style="position:relative; width:100%; border-radius:16px; overflow:hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); min-height:300px; background:linear-gradient(150deg, #0f2b46 0%, #1a365d 35%, #0f172a 100%) !important;">
+            <div class="right-ad-carousel-container" style="position:relative; width:100%; border-radius:16px; overflow:hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); height:300px; background:linear-gradient(150deg, #0f2b46 0%, #1a365d 35%, #0f172a 100%) !important;">
                 <div class="right-ad-carousel-track" style="display:flex; transition:transform 0.4s ease-in-out; height:100%; width:100%;">
                     <?php foreach ($sidebarRightAds as $rAd): ?>
                         <div class="right-ad-slide" style="flex:0 0 100%; width:100%; height:100%; position:relative;">
