@@ -625,7 +625,7 @@ $pAvatar   = safeAvatarUrl($profileUser['avatar'] ?? null, $profileUser['usernam
 
 // Banner background
 if (bannerUrl($profileUser['banner'] ?? null)) {
-    $bannerHtml = '<img src="' . bannerUrl($profileUser['banner']) . '" style="width:100%;height:100%;object-fit:cover;display:block;" width="800" height="180" alt="Banner">';
+    $bannerHtml = '<img src="' . bannerUrl($profileUser['banner']) . '" style="width:100%;height:100%;object-fit:cover;display:block;" width="800" height="180" fetchpriority="high" alt="Banner">';
 } else {
     $bannerStyle = 'background: linear-gradient(135deg, ' . $accentColor . '33, #fff8f4);';
     $bannerHtml  = '<div style="width:100%;height:100%;' . $bannerStyle . '"></div>';
@@ -655,7 +655,7 @@ if (bannerUrl($profileUser['banner'] ?? null)) {
                 <?php if ($isPremium): ?>
                 <div class="profile-premium-ring"></div>
                 <?php endif; ?>
-                <img src="<?php echo $pAvatar; ?>" alt="<?php echo escape($profileUser['username']); ?>"
+                <img src="<?php echo $pAvatar; ?>" alt="<?php echo escape($profileUser['username']); ?>" fetchpriority="high"
                      class="profile-avatar" width="88" height="88">
                 <?php if ($isPremium): ?>
                 <div class="profile-premium-badge">

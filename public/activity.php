@@ -154,8 +154,8 @@ function feedDayLabel(string $day): string {
                 <!-- Avatar with category dot -->
                 <a href="<?php echo BASE_URL; ?>/profile?u=<?php echo urlencode($post['tag'] ?: $post['username']); ?>"
                    style="position:relative;flex-shrink:0;text-decoration:none;">
-                    <img src="<?php echo $pAvatar; ?>" alt=""
-                         style="width:42px;height:42px;border-radius:50%;object-fit:cover;border:2px solid #fff;box-shadow:0 0 0 1.5px #E8E6E1;"
+                    <img src="<?php echo $pAvatar; ?>" alt="" loading="lazy" decoding="async"
+                         style="width:40px;height:40px;border-radius:50%;object-fit:cover;border:1px solid var(--border);"
                          width="42" height="42">
                     <!-- Category dot -->
                     <div style="position:absolute;bottom:-2px;right:-2px;width:18px;height:18px;border-radius:50%;background:<?php echo $pMeta['color']; ?>;border:2px solid #fff;display:flex;align-items:center;justify-content:center;">
@@ -210,7 +210,9 @@ function feedDayLabel(string $day): string {
             <?php if (!empty($post['image'])): ?>
             <div style="padding:0 16px 10px;">
                 <img src="<?php echo uploadUrl('posts', $post['image']); ?>"
-                     style="width:100%;max-width:100%;aspect-ratio:16/9;object-fit:cover;object-position:center;border-radius:12px;display:block;border:1px solid #EEECE8;background:var(--bg-section);min-height:160px;max-height:380px;" loading="lazy"
+                     loading="lazy" decoding="async"
+                     style="display:block; width:100%; max-width:100%; height:auto; max-height:400px; object-fit:contain; background:#111; cursor:pointer;"
+                     onclick="openLightbox(this.src)"
                      onerror="this.closest('div').style.display='none'">
             </div>
             <?php endif; ?>
@@ -274,8 +276,8 @@ function feedDayLabel(string $day): string {
                 </div>
                 <form style="display:flex;gap:8px;align-items:center;"
                       onsubmit="App.submitInlineComment(this, <?php echo $post['id']; ?>); return false;">
-                    <img src="<?php echo safeAvatarUrl($currentUser['avatar'] ?? null, $currentUser['username'] ?? 'U'); ?>"
-                         style="width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;">
+                    <img src="<?php echo safeAvatarUrl($currentUser['avatar'] ?? null, $currentUser['username'] ?? 'U'); ?>" loading="lazy" decoding="async"
+                         style="width:36px;height:36px;border-radius:50%;object-fit:cover;flex-shrink:0;">
                     <input type="text" placeholder="Yorum yaz…" maxlength="500" required
                            class="comment-input-inline"
                            style="flex:1;background:#F2F1EE;border:1.5px solid transparent;border-radius:20px;padding:7px 14px;font-size:13px;font-family:var(--font);outline:none;color:var(--text-1);"

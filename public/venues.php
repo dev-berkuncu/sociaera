@@ -149,11 +149,11 @@ require_once __DIR__ . '/partials/app_header.php';
             <div class="venue-card-img" style="position:relative;height:150px;overflow:hidden;background:<?php echo $meta['bg']; ?>;">
 
                 <?php if (!empty($v['cover_image'])): ?>
-                    <img src="<?php echo BASE_URL . '/uploads/venues/' . escape($v['cover_image']); ?>"
+                    <img src="<?php echo BASE_URL . '/uploads/venues/' . escape($v['cover_image']); ?>" loading="lazy" decoding="async"
                          style="width:100%;height:100%;object-fit:cover;transition:transform 0.4s;" loading="lazy"
                          onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform=''">
                 <?php elseif (!empty($v['image'])): ?>
-                    <img src="<?php echo uploadUrl('posts', $v['image']); ?>"
+                    <img src="<?php echo uploadUrl('posts', $v['image']); ?>" loading="lazy" decoding="async"
                          style="width:100%;height:100%;object-fit:cover;transition:transform 0.4s;" loading="lazy"
                          onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform=''">
                 <?php else: ?>
