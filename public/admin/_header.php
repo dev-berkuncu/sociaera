@@ -379,6 +379,7 @@ function adminNavHtml(string $activePage, int $pendingVenues, int $pendingReport
         'Finans' => [
             'wallet'      => ['icon'=>'account_balance_wallet','label'=>'Cüzdan İşlemleri','url'=>'/admin/wallet'],
             'withdrawals' => ['icon'=>'payments',            'label'=>'Para Çekme',    'url'=>'/admin/withdrawals'],
+            'expenses'    => ['icon'=>'receipt_long',        'label'=>'Giderler',      'url'=>'/admin/expenses'],
         ],
         'Sistem' => [
             'ads'        => ['icon'=>'campaign',     'label'=>'Sponsorlar',    'url'=>'/admin/ads'],

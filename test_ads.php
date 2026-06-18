@@ -1,0 +1,1 @@
+<?php require "app/Config/env.php"; loadEnv(".env"); require "app/Config/database.php"; $db = Database::getConnection(); $stmt = $db->query("SELECT title, image_url FROM ads"); print_r($stmt->fetchAll(PDO::FETCH_ASSOC));

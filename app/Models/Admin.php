@@ -76,11 +76,23 @@ class AdminModel
             $stats['total_wallet_balance'] = (float) $this->db->query(
                 "SELECT COALESCE(SUM(balance), 0) FROM wallets"
             )->fetchColumn();
+            
+            // Giderler (Expenses)
+            $stats['monthly_expenses'] = (float) $this->db->query(
+                "SELECT COALESCE(SUM(amount), 0) FROM platform_expenses WHERE MONTH(expense_date) = MONTH(CURDATE()) AND YEAR(expense_date) = YEAR(CURDATE())"
+            )->fetchColumn();
+            
+            $stats['total_expenses'] = (float) $this->db->query(
+                "SELECT COALESCE(SUM(amount), 0) FROM platform_expenses"
+            )->fetchColumn();
+            
         } catch (\Throwable $e) {
             $stats['successful_payments'] = 0;
             $stats['monthly_earnings'] = 0;
             $stats['total_earnings'] = 0;
             $stats['total_wallet_balance'] = 0;
+            $stats['monthly_expenses'] = 0;
+            $stats['total_expenses'] = 0;
         }
 
         // Bekleyen mekanlar

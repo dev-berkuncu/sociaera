@@ -164,6 +164,17 @@ CREATE TABLE IF NOT EXISTS `transactions` (
     FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- ── Platform Giderleri ────────────────────────────────────
+CREATE TABLE IF NOT EXISTS `platform_expenses` (
+    `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `admin_id` INT UNSIGNED NOT NULL,
+    `title` VARCHAR(255) NOT NULL,
+    `amount` DECIMAL(15,2) NOT NULL,
+    `expense_date` DATE NOT NULL,
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (`admin_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- ── Reklamlar ─────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS `ads` (
     `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
