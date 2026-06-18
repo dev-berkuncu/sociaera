@@ -423,6 +423,17 @@ nav.swarm-topnav{
         <?php endif; ?>
     </a>
 
+    <!-- Admin Paneli Butonu (Sadece Adminlere) -->
+    <?php if (!empty($currentUser['is_admin']) || !empty($currentUser['admin_role'])): ?>
+    <a href="<?php echo BASE_URL; ?>/admin" aria-label="Admin Paneli" style="
+      width:38px;height:38px;border-radius:50%;flex-shrink:0;
+      display:flex;align-items:center;justify-content:center;
+      color:#EF4444;text-decoration:none;position:relative;margin-right:2px;"
+      onmouseover="this.style.background='#FEF2F2'" onmouseout="this.style.background=''">
+        <span class="material-symbols-outlined" style="font-size:24px;">shield_person</span>
+    </a>
+    <?php endif; ?>
+
     <!-- Avatar + Dropdown -->
     <div style="position:relative;margin-left:4px;">
         <button id="nav-avatar-btn" onclick="
@@ -438,7 +449,11 @@ nav.swarm-topnav{
           width:210px;background:#fff;border:1.5px solid #E8E7E3;border-radius:14px;
           box-shadow:0 8px 24px rgba(0,0,0,0.12);padding:6px;z-index:9999;">
             <?php
-            $ddLinks = [
+            $ddLinks = [];
+            if (!empty($currentUser['is_admin']) || !empty($currentUser['admin_role'])) {
+                $ddLinks[] = ['url'=>'/admin', 'icon'=>'admin_panel_settings', 'label'=>'Admin Paneli', 'color'=>'#EF4444'];
+            }
+            $ddLinks = array_merge($ddLinks, [
                 ['url'=>'/profile',         'icon'=>'person',                 'label'=>'Profilim',          'color'=>'#F06D1F'],
                 ['url'=>'/wallet',           'icon'=>'account_balance_wallet', 'label'=>'Cüzdanım',          'color'=>'#F06D1F'],
                 ['url'=>'/add-venue',        'icon'=>'add_business',           'label'=>'Mekan Öner/Ekle',   'color'=>'#10b981'],
@@ -448,7 +463,7 @@ nav.swarm-topnav{
                 ['url'=>'/mystery-shopper',  'icon'=>'visibility_off',         'label'=>'Gizli Müşteri',     'color'=>'#A0A0A0'],
                 ['url'=>'/character-select', 'icon'=>'switch_account',         'label'=>'Karakter Değiştir', 'color'=>'#A0A0A0'],
                 ['url'=>'/settings',         'icon'=>'settings',               'label'=>'Ayarlar',           'color'=>'#A0A0A0'],
-            ];
+            ]);
             foreach($ddLinks as $dl): ?>
             <a href="<?php echo BASE_URL.$dl['url']; ?>"
                style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;
@@ -603,16 +618,6 @@ nav.swarm-topnav{
                 <a href="<?php echo escape($rAd['link_url'] ?? '#'); ?>" target="_blank" rel="noopener" style="position:absolute; inset:0; z-index:10; display:flex; flex-direction:column; justify-content:flex-end; padding:20px; background:linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 60%); text-decoration:none;">
                     <span style="position:absolute; top:12px; left:12px; font-size:9px; font-weight:800; background:var(--color-primary); color:#fff; padding:4px 8px; border-radius:12px; text-transform:uppercase; letter-spacing:0.5px; box-shadow:0 2px 4px rgba(0,0,0,0.5);">REKLAM</span>
                     <div style="color:#ffffff; font-size:16px; font-weight:800; text-align:left; text-shadow:0 2px 6px rgba(0,0,0,0.9);"><?php echo escape($rAd['title'] ?? ''); ?></div>
-                </a>
-            </div>
-        <?php else: ?>
-            <div class="right-panel-card" style="border:none; border-radius:16px; padding:0; box-sizing:border-box; min-height:300px; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; position:relative; overflow:hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-                <!-- Fallback SparkLS Image -->
-                <div style="position:absolute; inset:0; background:url('<?php echo BASE_URL; ?>/assets/img/sponsors/sparkls.jpg') center/cover no-repeat, linear-gradient(135deg, #1a365d, #0f2b46);"></div>
-                
-                <!-- Link Overlay -->
-                <a href="https://sparkls.online" target="_blank" rel="noopener" style="position:absolute; inset:0; z-index:10; display:flex; flex-direction:column; justify-content:flex-end; padding:20px; background:linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 50%); text-decoration:none;">
-                    <span style="position:absolute; top:12px; left:12px; font-size:9px; font-weight:800; background:var(--color-primary); color:#fff; padding:4px 8px; border-radius:12px; text-transform:uppercase; letter-spacing:0.5px; box-shadow:0 2px 4px rgba(0,0,0,0.5);">REKLAM</span>
                 </a>
             </div>
         <?php endif; ?>
