@@ -85,9 +85,7 @@ class CheckinModel
                 (SELECT c.id, c.user_id, c.venue_id, c.note, c.image, c.created_at,
                        u.username, u.tag, u.avatar, u.is_premium,
                        v.name as venue_name, v.category as venue_category, v.address as venue_address,
-                       (SELECT COUNT(*) FROM post_likes WHERE checkin_id = c.id) as like_count,
-                       (SELECT COUNT(*) FROM post_comments WHERE checkin_id = c.id AND is_deleted = 0) as comment_count,
-                       (SELECT COUNT(*) FROM post_reposts WHERE checkin_id = c.id) as repost_count,
+                       c.like_count, c.comment_count, c.repost_count,
                        NULL as reposted_by, NULL as reposted_by_tag, c.created_at as sort_time
                 FROM checkins c
                 JOIN users u ON c.user_id = u.id
@@ -97,9 +95,7 @@ class CheckinModel
                 (SELECT c.id, c.user_id, c.venue_id, c.note, c.image, c.created_at,
                        u.username, u.tag, u.avatar, u.is_premium,
                        v.name as venue_name, v.category as venue_category, v.address as venue_address,
-                       (SELECT COUNT(*) FROM post_likes WHERE checkin_id = c.id) as like_count,
-                       (SELECT COUNT(*) FROM post_comments WHERE checkin_id = c.id AND is_deleted = 0) as comment_count,
-                       (SELECT COUNT(*) FROM post_reposts WHERE checkin_id = c.id) as repost_count,
+                       c.like_count, c.comment_count, c.repost_count,
                        ru.username as reposted_by, ru.tag as reposted_by_tag, pr.created_at as sort_time
                 FROM post_reposts pr
                 JOIN checkins c ON pr.checkin_id = c.id
@@ -118,9 +114,7 @@ class CheckinModel
                 SELECT c.id, c.user_id, c.venue_id, c.note, c.image, c.created_at,
                        u.username, u.tag, u.avatar, u.is_premium,
                        v.name as venue_name, v.category as venue_category, v.address as venue_address,
-                       (SELECT COUNT(*) FROM post_likes WHERE checkin_id = c.id) as like_count,
-                       (SELECT COUNT(*) FROM post_comments WHERE checkin_id = c.id AND is_deleted = 0) as comment_count,
-                       (SELECT COUNT(*) FROM post_reposts WHERE checkin_id = c.id) as repost_count,
+                       c.like_count, c.comment_count, c.repost_count,
                        NULL as reposted_by, NULL as reposted_by_tag
                 FROM checkins c
                 JOIN users u ON c.user_id = u.id
@@ -148,9 +142,7 @@ class CheckinModel
         $stmt = $this->db->prepare("
             SELECT c.*, u.username, u.tag, u.avatar, u.is_premium,
                    v.name as venue_name, v.category as venue_category, v.address as venue_address,
-                   (SELECT COUNT(*) FROM post_likes WHERE checkin_id = c.id) as like_count,
-                   (SELECT COUNT(*) FROM post_comments WHERE checkin_id = c.id AND is_deleted = 0) as comment_count,
-                   (SELECT COUNT(*) FROM post_reposts WHERE checkin_id = c.id) as repost_count
+                   c.like_count, c.comment_count, c.repost_count
             FROM checkins c
             JOIN users u ON c.user_id = u.id
             JOIN venues v ON c.venue_id = v.id
@@ -172,9 +164,7 @@ class CheckinModel
         $stmt = $this->db->prepare("
             SELECT c.*, u.username, u.tag, u.avatar, u.is_premium,
                    v.name as venue_name, v.category as venue_category, v.address as venue_address,
-                   (SELECT COUNT(*) FROM post_likes WHERE checkin_id = c.id) as like_count,
-                   (SELECT COUNT(*) FROM post_comments WHERE checkin_id = c.id AND is_deleted = 0) as comment_count,
-                   (SELECT COUNT(*) FROM post_reposts WHERE checkin_id = c.id) as repost_count
+                   c.like_count, c.comment_count, c.repost_count
             FROM checkins c
             JOIN users u ON c.user_id = u.id
             JOIN venues v ON c.venue_id = v.id
@@ -198,9 +188,7 @@ class CheckinModel
         $stmt = $this->db->prepare("
             SELECT c.*, u.username, u.tag, u.avatar, u.is_premium,
                    v.name as venue_name, v.category as venue_category, v.address as venue_address,
-                   (SELECT COUNT(*) FROM post_likes WHERE checkin_id = c.id) as like_count,
-                   (SELECT COUNT(*) FROM post_comments WHERE checkin_id = c.id AND is_deleted = 0) as comment_count,
-                   (SELECT COUNT(*) FROM post_reposts WHERE checkin_id = c.id) as repost_count
+                   c.like_count, c.comment_count, c.repost_count
             FROM checkins c
             JOIN users u ON c.user_id = u.id
             JOIN venues v ON c.venue_id = v.id
@@ -224,9 +212,7 @@ class CheckinModel
         $stmt = $this->db->prepare("
             SELECT c.*, u.username, u.tag, u.avatar, u.is_premium,
                    v.name as venue_name, v.category as venue_category, v.id as venue_id_ref, v.address as venue_address,
-                   (SELECT COUNT(*) FROM post_likes WHERE checkin_id = c.id) as like_count,
-                   (SELECT COUNT(*) FROM post_comments WHERE checkin_id = c.id AND is_deleted = 0) as comment_count,
-                   (SELECT COUNT(*) FROM post_reposts WHERE checkin_id = c.id) as repost_count
+                   c.like_count, c.comment_count, c.repost_count
             FROM checkins c
             JOIN users u ON c.user_id = u.id
             JOIN venues v ON c.venue_id = v.id
@@ -253,6 +239,7 @@ class CheckinModel
         $result = $stmt->execute([$userId, $checkinId]);
 
         if ($stmt->rowCount() > 0) {
+            $this->db->prepare("UPDATE checkins SET like_count = like_count + 1 WHERE id = ?")->execute([$checkinId]);
             $this->createNotification($checkinId, $userId, 'like');
         }
         return $result;
@@ -261,7 +248,11 @@ class CheckinModel
     public function unlike(int $userId, int $checkinId): bool
     {
         $stmt = $this->db->prepare("DELETE FROM post_likes WHERE user_id = ? AND checkin_id = ?");
-        return $stmt->execute([$userId, $checkinId]);
+        $result = $stmt->execute([$userId, $checkinId]);
+        if ($stmt->rowCount() > 0) {
+            $this->db->prepare("UPDATE checkins SET like_count = IF(like_count > 0, like_count - 1, 0) WHERE id = ?")->execute([$checkinId]);
+        }
+        return $result;
     }
 
     public function hasLiked(int $userId, int $checkinId): bool
@@ -277,6 +268,7 @@ class CheckinModel
         $result = $stmt->execute([$userId, $checkinId, $quote]);
 
         if ($stmt->rowCount() > 0) {
+            $this->db->prepare("UPDATE checkins SET repost_count = repost_count + 1 WHERE id = ?")->execute([$checkinId]);
             $this->createNotification($checkinId, $userId, 'repost');
         }
         return $result;
@@ -285,7 +277,11 @@ class CheckinModel
     public function unrepost(int $userId, int $checkinId): bool
     {
         $stmt = $this->db->prepare("DELETE FROM post_reposts WHERE user_id = ? AND checkin_id = ?");
-        return $stmt->execute([$userId, $checkinId]);
+        $result = $stmt->execute([$userId, $checkinId]);
+        if ($stmt->rowCount() > 0) {
+            $this->db->prepare("UPDATE checkins SET repost_count = IF(repost_count > 0, repost_count - 1, 0) WHERE id = ?")->execute([$checkinId]);
+        }
+        return $result;
     }
 
     public function hasReposted(int $userId, int $checkinId): bool
@@ -301,6 +297,8 @@ class CheckinModel
             INSERT INTO post_comments (user_id, checkin_id, comment, image) VALUES (?, ?, ?, ?)
         ");
         $stmt->execute([$userId, $checkinId, $comment, $image]);
+        
+        $this->db->prepare("UPDATE checkins SET comment_count = comment_count + 1 WHERE id = ?")->execute([$checkinId]);
 
         $this->createNotification($checkinId, $userId, 'comment');
 
@@ -337,9 +335,7 @@ class CheckinModel
         $stmt = $this->db->prepare("
             SELECT c.*, u.username, u.tag, u.avatar, u.is_premium,
                    v.name as venue_name, v.category as venue_category, v.address as venue_address,
-                   (SELECT COUNT(*) FROM post_likes WHERE checkin_id = c.id) as like_count,
-                   (SELECT COUNT(*) FROM post_comments WHERE checkin_id = c.id AND is_deleted = 0) as comment_count,
-                   (SELECT COUNT(*) FROM post_reposts WHERE checkin_id = c.id) as repost_count
+                   c.like_count, c.comment_count, c.repost_count
             FROM post_likes pl
             JOIN checkins c ON pl.checkin_id = c.id
             JOIN users u ON c.user_id = u.id
@@ -359,9 +355,7 @@ class CheckinModel
             SELECT c.*, u.username, u.tag, u.avatar, u.is_premium,
                    v.name as venue_name, v.category as venue_category, v.address as venue_address,
                    pr.quote as repost_quote,
-                   (SELECT COUNT(*) FROM post_likes WHERE checkin_id = c.id) as like_count,
-                   (SELECT COUNT(*) FROM post_comments WHERE checkin_id = c.id AND is_deleted = 0) as comment_count,
-                   (SELECT COUNT(*) FROM post_reposts WHERE checkin_id = c.id) as repost_count
+                   c.like_count, c.comment_count, c.repost_count
             FROM post_reposts pr
             JOIN checkins c ON pr.checkin_id = c.id
             JOIN users u ON c.user_id = u.id

@@ -30,7 +30,8 @@ CREATE TABLE IF NOT EXISTS `users` (
     UNIQUE KEY `uk_username` (`username`),
     UNIQUE KEY `uk_email` (`email`),
     UNIQUE KEY `uk_tag` (`tag`),
-    KEY `idx_gta_user` (`gta_user_id`)
+    KEY `idx_gta_user` (`gta_user_id`),
+    KEY `idx_username` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ── Mekanlar ──────────────────────────────────────────────
@@ -49,7 +50,8 @@ CREATE TABLE IF NOT EXISTS `venues` (
     `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     KEY `idx_status_created` (`status`, `created_at`),
     KEY `idx_category` (`category`),
-    KEY `idx_created_by` (`created_by`)
+    KEY `idx_created_by` (`created_by`),
+    KEY `idx_name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ── Check-in'ler (= Gönderiler) ──────────────────────────
@@ -59,6 +61,9 @@ CREATE TABLE IF NOT EXISTS `checkins` (
     `venue_id` INT UNSIGNED NOT NULL,
     `note` TEXT DEFAULT NULL,
     `image` VARCHAR(255) DEFAULT NULL,
+    `like_count` INT UNSIGNED NOT NULL DEFAULT 0,
+    `comment_count` INT UNSIGNED NOT NULL DEFAULT 0,
+    `repost_count` INT UNSIGNED NOT NULL DEFAULT 0,
     `is_flagged` TINYINT(1) NOT NULL DEFAULT 0,
     `is_excluded_from_leaderboard` TINYINT(1) NOT NULL DEFAULT 0,
     `is_deleted` TINYINT(1) NOT NULL DEFAULT 0,
@@ -67,6 +72,7 @@ CREATE TABLE IF NOT EXISTS `checkins` (
     KEY `idx_venue_created` (`venue_id`, `created_at`),
     KEY `idx_created` (`created_at`),
     KEY `idx_deleted` (`is_deleted`),
+    KEY `idx_is_deleted_created_at` (`is_deleted`, `created_at`),
     FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
     FOREIGN KEY (`venue_id`) REFERENCES `venues`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
