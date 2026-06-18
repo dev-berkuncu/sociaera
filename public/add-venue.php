@@ -64,7 +64,7 @@ require_once __DIR__ . '/partials/app_header.php';
 .av-field { display:flex; flex-direction:column; gap:8px; }
 .av-label { font-size:13px; font-weight:700; color:var(--text-2); }
 .av-input {
-    background:#fff;
+    background:var(--bg-input);
     border:1.5px solid var(--border);
     border-radius:10px;
     padding:11px 14px;
@@ -95,7 +95,7 @@ require_once __DIR__ . '/partials/app_header.php';
     </div>
 
     <?php if ($success): ?>
-        <div style="background:#fff; border:1.5px solid rgba(16,185,129,0.25); border-radius:16px; padding:40px 32px; text-align:center; box-shadow:0 4px 20px rgba(16,185,129,0.08);">
+        <div style="background:var(--bg-section); border:1.5px solid rgba(16,185,129,0.25); border-radius:16px; padding:40px 32px; text-align:center; box-shadow:0 4px 20px rgba(16,185,129,0.08);">
             <span class="material-symbols-outlined" style="font-size:64px; display:block; margin-bottom:16px; color:#10b981; font-variation-settings:'FILL' 1;">check_circle</span>
             <p style="font-size:1.2rem; font-weight:700; color:var(--text-1); margin:0 0 20px;">Mekan öneriniz başarıyla gönderildi!</p>
             <a href="<?php echo BASE_URL; ?>/venues"
@@ -105,7 +105,7 @@ require_once __DIR__ . '/partials/app_header.php';
             </a>
         </div>
     <?php else: ?>
-        <div style="background:#fff; border:1.5px solid var(--border-light); border-radius:16px; padding:28px; box-shadow:0 4px 16px rgba(0,0,0,0.05);">
+        <div style="background:var(--bg-section); border:1.5px solid var(--border-light); border-radius:16px; padding:28px; box-shadow:0 4px 16px rgba(0,0,0,0.05);">
             <?php if ($error): ?>
             <div style="background:rgba(220,38,38,0.07); border:1.5px solid rgba(220,38,38,0.25); color:#dc2626; padding:12px 16px; border-radius:10px; margin-bottom:20px; display:flex; align-items:center; gap:10px; font-size:14px; font-weight:600;">
                 <span class="material-symbols-outlined" style="flex-shrink:0;">error</span>
