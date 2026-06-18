@@ -628,6 +628,20 @@ nav.swarm-topnav{
                     </div>
                     <span class="material-symbols-outlined" style="font-size:14px; color:rgba(255,255,255,0.5);">chevron_right</span>
                 </a>
+
+                <!-- Single Clickable Discord Card (Coming Soon) -->
+                <a href="#" style="display:flex; align-items:center; gap:8px; text-decoration:none; color:#ffffff; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); border-radius:10px; padding:10px; transition:all 0.2s; cursor:default;" onmouseover="this.style.background='rgba(255,255,255,0.15)'; this.style.transform='translateX(3px)';" onmouseout="this.style.background='rgba(255,255,255,0.08)'; this.style.transform='translateX(0)';">
+                    <div style="width:32px; height:32px; border-radius:50%; background:rgba(255,255,255,0.15); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                        <span class="material-symbols-outlined" style="font-size:16px; color:#ffffff;">forum</span>
+                    </div>
+                    <div style="flex:1; min-width:0;">
+                        <div style="display:flex; align-items:center; gap:3px;">
+                            <span style="font-size:11px; font-weight:800; color:#ffffff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Sociaera Discord</span>
+                        </div>
+                        <div style="font-size:9px; color:rgba(255,255,255,0.7); margin-top:2px;">Yakında eklenecek</div>
+                    </div>
+                    <span class="material-symbols-outlined" style="font-size:14px; color:rgba(255,255,255,0.5);">schedule</span>
+                </a>
             </div>
         </div>
 
