@@ -24,5 +24,9 @@ module.exports = {
               sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
           }
       }
-  }
+  },
+  plugins: [
+    require('@tailwindcss/forms'),
+    require('@tailwindcss/container-queries'),
+  ]
 }

@@ -1,8 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    "./public/*.php",
-    "./public/partials/**/*.php",
+    "./public/**/*.php",
     "./app/**/*.php"
   ],
   darkMode: "class",
@@ -101,5 +100,9 @@ module.exports = {
           }
       }
     }
-  }
+  },
+  plugins: [
+    require('@tailwindcss/forms'),
+    require('@tailwindcss/container-queries'),
+  ]
 }
