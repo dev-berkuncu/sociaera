@@ -32,7 +32,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $coverImg = $_FILES['cover_image'] ?? null;
                 $uploadedCover = null;
                 if ($coverImg && $coverImg['tmp_name']) {
-                    $uploadedCover = uploadImage($coverImg, 'venue');
+                    require_once __DIR__ . '/../app/Services/ImageUploader.php';
+                    $uploader = new ImageUploader();
+                    $result = $uploader->upload($coverImg, 'venues', ['maxWidth' => 1200, 'quality' => 85]);
+                    if ($result['success']) {
+                        $uploadedCover = $result['filename'];
+                    } else {
+                        throw new \Exception($result['error']);
+                    }
                 }
 
                 $venueModel = new VenueModel();
