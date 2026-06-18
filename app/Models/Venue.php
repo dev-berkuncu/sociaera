@@ -75,7 +75,7 @@ class VenueModel
     public function create(array $data): int
     {
         $stmt = $this->db->prepare("
-            INSERT INTO venues (name, description, address, website, category, facebrowser_url, cover_image, status, is_active, created_by)
+            INSERT INTO venues (name, description, address, website, category, facebrowser_url, image, status, is_active, created_by)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ");
         $stmt->execute([
@@ -85,7 +85,7 @@ class VenueModel
             $data['website'] ?? null,
             $data['category'] ?? null,
             $data['facebrowser_url'] ?? null,
-            $data['cover_image'] ?? null,
+            $data['image'] ?? null,
             $data['status'] ?? 'pending',
             $data['is_active'] ?? 1,
             $data['created_by'] ?? null,
@@ -98,7 +98,7 @@ class VenueModel
         $sets   = [];
         $params = [];
 
-        foreach (['name', 'description', 'address', 'website', 'category', 'facebrowser_url', 'status', 'is_active', 'image', 'phone', 'hours', 'is_open', 'cover_image'] as $field) {
+        foreach (['name', 'description', 'address', 'website', 'category', 'facebrowser_url', 'status', 'is_active', 'image', 'phone', 'hours', 'is_open'] as $field) {
             if (array_key_exists($field, $data)) {
                 $sets[]   = "{$field} = ?";
                 $params[] = $data[$field];

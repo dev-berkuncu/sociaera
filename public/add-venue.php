@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'website'        => $website,
                     'category'       => $category,
                     'facebrowser_url'=> $fb,
-                    'cover_image'    => $uploadedCover,
+                    'image'          => $uploadedCover,
                     'status'         => $isAdmin ? 'approved' : 'pending',
                     'created_by'     => Auth::id(),
                 ]);
