@@ -495,7 +495,7 @@ nav.swarm-topnav{
         if (class_exists('AdModel')) {
             $adModel = new AdModel();
             $leftAds = $adModel->getByPosition('carousel', 6);
-            $sidebarRightAds = $adModel->getByPosition('sidebar_right', 1);
+            $sidebarRightAds = $adModel->getByPosition('sidebar_right', 5);
         }
     } catch (Exception $e) {}
     ?>
@@ -583,28 +583,43 @@ nav.swarm-topnav{
             <?php endif; ?>
         </div>
 
-        <!-- ═══ Tall Vertical Banner (Reklam Alanı) ═══ -->
-        <?php if (!empty($sidebarRightAds)): $rAd = $sidebarRightAds[0]; ?>
-            <div class="right-panel-card" style="background:linear-gradient(150deg, #0f2b46 0%, #1a365d 35%, #0f172a 100%) !important; border:none; border-radius:16px; padding:0; box-sizing:border-box; min-height:300px; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; position:relative; overflow:hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-                <?php 
-                $bgUrl = escape($rAd['image_url'] ?? '');
-                $mType = $rAd['media_type'] ?? 'image';
-                if ($mType === 'youtube' && $bgUrl): 
-                    preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i', $bgUrl, $match);
-                    $ytId = $match[1] ?? '';
-                    if ($ytId):
-                ?>
-                    <iframe width="100%" height="100%" src="https://www.youtube.com/embed/<?php echo $ytId; ?>?autoplay=1&mute=1&controls=0&loop=1&playlist=<?php echo $ytId; ?>" frameborder="0" style="position:absolute; inset:0; pointer-events:none;"></iframe>
-                <?php endif; elseif ($mType === 'video' && $bgUrl): ?>
-                    <video src="<?php echo $bgUrl; ?>" autoplay muted loop playsinline style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover;"></video>
-                <?php elseif ($bgUrl): ?>
-                    <div style="position:absolute; inset:0; background:url('<?php echo $bgUrl; ?>') center/cover no-repeat;"></div>
-                <?php endif; ?>
+        <!-- ═══ Tall Vertical Banner (Reklam Alanı) Carousel ═══ -->
+        <?php if (!empty($sidebarRightAds)): ?>
+            <div class="right-ad-carousel-container" style="position:relative; width:100%; border-radius:16px; overflow:hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); min-height:300px; background:linear-gradient(150deg, #0f2b46 0%, #1a365d 35%, #0f172a 100%) !important;">
+                <div class="right-ad-carousel-track" style="display:flex; transition:transform 0.4s ease-in-out; height:100%; width:100%;">
+                    <?php foreach ($sidebarRightAds as $rAd): ?>
+                        <div class="right-ad-slide" style="flex:0 0 100%; width:100%; height:100%; position:relative;">
+                            <?php 
+                            $bgUrl = escape($rAd['image_url'] ?? '');
+                            $mType = $rAd['media_type'] ?? 'image';
+                            if ($mType === 'youtube' && $bgUrl): 
+                                preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i', $bgUrl, $match);
+                                $ytId = $match[1] ?? '';
+                                if ($ytId):
+                            ?>
+                                <iframe width="100%" height="100%" src="https://www.youtube.com/embed/<?php echo $ytId; ?>?autoplay=1&mute=1&controls=0&loop=1&playlist=<?php echo $ytId; ?>" frameborder="0" style="position:absolute; inset:0; pointer-events:none;"></iframe>
+                            <?php endif; elseif ($mType === 'video' && $bgUrl): ?>
+                                <video src="<?php echo $bgUrl; ?>" autoplay muted loop playsinline style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover;"></video>
+                            <?php elseif ($bgUrl): ?>
+                                <div style="position:absolute; inset:0; background:url('<?php echo $bgUrl; ?>') center/cover no-repeat;"></div>
+                            <?php endif; ?>
 
-                <a href="<?php echo escape($rAd['link_url'] ?? '#'); ?>" target="_blank" rel="noopener" style="position:absolute; inset:0; z-index:10; display:flex; flex-direction:column; justify-content:flex-end; padding:20px; background:linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 60%); text-decoration:none;">
-                    <span style="position:absolute; top:12px; left:12px; font-size:9px; font-weight:800; background:var(--color-primary); color:#fff; padding:4px 8px; border-radius:12px; text-transform:uppercase; letter-spacing:0.5px; box-shadow:0 2px 4px rgba(0,0,0,0.5);">REKLAM</span>
-                    <div style="color:#ffffff; font-size:16px; font-weight:800; text-align:left; text-shadow:0 2px 6px rgba(0,0,0,0.9);"><?php echo escape($rAd['title'] ?? ''); ?></div>
-                </a>
+                            <a href="<?php echo escape($rAd['link_url'] ?? '#'); ?>" target="_blank" rel="noopener" style="position:absolute; inset:0; z-index:10; display:flex; flex-direction:column; justify-content:flex-end; padding:20px; background:linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 60%); text-decoration:none;">
+                                <span style="position:absolute; top:12px; left:12px; font-size:9px; font-weight:800; background:var(--color-primary); color:#fff; padding:4px 8px; border-radius:12px; text-transform:uppercase; letter-spacing:0.5px; box-shadow:0 2px 4px rgba(0,0,0,0.5);">REKLAM</span>
+                                <div style="color:#ffffff; font-size:16px; font-weight:800; text-align:left; text-shadow:0 2px 6px rgba(0,0,0,0.9);"><?php echo escape($rAd['title'] ?? ''); ?></div>
+                            </a>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+
+                <?php if (count($sidebarRightAds) > 1): ?>
+                <!-- Dots for Right Banner -->
+                <div class="right-ad-carousel-dots" style="position:absolute; bottom:8px; left:0; right:0; display:flex; justify-content:center; gap:6px; z-index:15;">
+                    <?php foreach ($sidebarRightAds as $index => $rAd): ?>
+                    <span class="right-ad-dot" data-index="<?php echo $index; ?>" style="width:6px; height:6px; border-radius:50%; background:rgba(255,255,255,0.5); cursor:pointer; transition:all 0.2s;"></span>
+                    <?php endforeach; ?>
+                </div>
+                <?php endif; ?>
             </div>
         <?php endif; ?>
 
@@ -713,6 +728,49 @@ nav.swarm-topnav{
             
             updateCarousel(0);
             startAutoPlay();
+            
+            // Right Banner Carousel Logic
+            const rightTrack = document.querySelector(".right-ad-carousel-track");
+            if (rightTrack) {
+                const rightSlides = Array.from(rightTrack.children);
+                const rightDots = document.querySelectorAll(".right-ad-dot");
+                
+                if (rightSlides.length > 1) {
+                    let rightIndex = 0;
+                    let rightTimer = null;
+                    
+                    function updateRightCarousel(index) {
+                        if (index < 0) index = rightSlides.length - 1;
+                        if (index >= rightSlides.length) index = 0;
+                        
+                        rightIndex = index;
+                        rightTrack.style.transform = `translateX(-${rightIndex * 100}%)`;
+                        
+                        rightDots.forEach(dot => dot.style.background = "rgba(255,255,255,0.5)");
+                        if (rightDots[rightIndex]) {
+                            rightDots[rightIndex].style.background = "#F06D1F";
+                        }
+                    }
+                    
+                    function startRightAutoPlay() {
+                        if (rightTimer) clearInterval(rightTimer);
+                        rightTimer = setInterval(() => {
+                            updateRightCarousel(rightIndex + 1);
+                        }, 5000);
+                    }
+                    
+                    rightDots.forEach(dot => {
+                        dot.addEventListener("click", (e) => {
+                            const idx = parseInt(e.target.getAttribute("data-index"));
+                            updateRightCarousel(idx);
+                            startRightAutoPlay();
+                        });
+                    });
+                    
+                    updateRightCarousel(0);
+                    startRightAutoPlay();
+                }
+            }
         });
         </script>
     </aside>
