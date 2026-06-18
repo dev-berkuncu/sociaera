@@ -519,24 +519,10 @@ nav.swarm-topnav{
                         'badge' => 'Sponsor'
                     ];
                 }
-            } else {
-                $mockSponsors = [
-                    ['name' => 'Tequi-la-la — Cuma Geceleri Özel Kampanyası', 'logo' => BASE_URL . '/assets/img/sponsors/colosseum.png', 'desc' => 'Sponsor', 'url' => 'https://face-tr.gta.world/page/colosseum'],
-                    ['name' => 'Paradise Group — Lüks ve Eğlence Sponsoru', 'logo' => BASE_URL . '/assets/img/sponsors/paradise-group.png', 'desc' => 'Sponsor', 'url' => 'https://face-tr.gta.world/page/paradise'],
-                ];
-                foreach ($mockSponsors as $mock) {
-                    $sliderItems[] = [
-                        'type' => 'sponsor',
-                        'title' => $mock['name'],
-                        'image' => $mock['logo'],
-                        'media_type' => 'image',
-                        'url' => $mock['url'],
-                        'badge' => $mock['desc']
-                    ];
-                }
             }
             ?>
 
+            <?php if (!empty($sliderItems)): ?>
             <!-- Carousel Container (Padded to isolate arrows) -->
             <div class="carousel-container" style="position:relative; width:100%; overflow:hidden;">
                 <!-- Track -->
@@ -593,6 +579,7 @@ nav.swarm-topnav{
                 <span class="carousel-dot" data-slide-index="<?php echo $index; ?>" style="width:6px; height:6px; border-radius:50%; background:#dcdcdc; cursor:pointer; transition:all 0.2s;"></span>
                 <?php endforeach; ?>
             </div>
+            <?php endif; ?>
         </div>
 
         <!-- ═══ Tall Vertical Banner (Reklam Alanı) ═══ -->
