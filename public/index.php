@@ -120,8 +120,7 @@ if (Auth::check()) { header('Location: ' . BASE_URL . '/dashboard'); exit; }
     </script>
 <style>
         .glass-card {
-            background-color: rgba(19, 19, 20, 0.8);
-            backdrop-filter: blur(20px);
+            background-color: rgba(19, 19, 20, 0.95);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
         .btn-glow {
@@ -147,9 +146,9 @@ if (Auth::check()) { header('Location: ' . BASE_URL . '/dashboard'); exit; }
 <body class="text-on-background antialiased selection:bg-primary-container selection:text-white relative bg-[#131314] min-h-screen">
 <!-- Full Page Background -->
 <div class="fixed inset-0 z-[-2] bg-cover bg-center bg-no-repeat" style="background-image: url('<?php echo BASE_URL; ?>/assets/images/hero-bg.jpg');"></div>
-<div class="fixed inset-0 z-[-1] bg-background/85 backdrop-blur-sm"></div>
+<div class="fixed inset-0 z-[-1] bg-background/95"></div>
 <!-- TopNavBar -->
-<nav class="bg-surface-container/85 backdrop-blur-xl font-['Manrope'] text-sm tracking-wide font-medium w-full top-0 sticky border-b border-outline-variant/30 shadow-[0_30px_30px_rgba(19,19,20,0.15)] z-50">
+<nav class="bg-surface-container font-['Manrope'] text-sm tracking-wide font-medium w-full top-0 sticky border-b border-outline-variant/30 shadow-[0_30px_30px_rgba(19,19,20,0.15)] z-50">
 <div class="flex justify-center items-center w-full px-8 py-4 max-w-7xl mx-auto">
 <div class="flex items-center gap-2 text-2xl font-bold tracking-tighter text-[#ff9100]">
                 <img src="<?php echo BASE_URL; ?>/assets/images/logo.png" alt="Logo" class="h-8 w-auto opacity-90" width="32" height="32">
