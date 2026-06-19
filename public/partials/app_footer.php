@@ -265,6 +265,48 @@ document.addEventListener('error', function(e) {
     }
 }, true);
 </script>
+<!-- Online Status Polling -->
+<?php if (Auth::check()): ?>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    function pingOnlineStatus() {
+        let userIds = [];
+        document.querySelectorAll('.online-indicator[data-user-id]').forEach(el => {
+            let uid = el.getAttribute('data-user-id');
+            if (uid && !userIds.includes(uid)) userIds.push(uid);
+        });
+
+        let formData = new URLSearchParams();
+        userIds.forEach(uid => formData.append('user_ids[]', uid));
+
+        fetch('<?php echo BASE_URL; ?>/ajax/ping.php', {
+            method: 'POST',
+            body: formData,
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success && data.statuses) {
+                document.querySelectorAll('.online-indicator[data-user-id]').forEach(el => {
+                    let uid = el.getAttribute('data-user-id');
+                    if (data.statuses[uid] === true) {
+                        el.style.backgroundColor = '#22c55e'; // Online (green)
+                        el.classList.remove('hidden');
+                    } else {
+                        el.style.backgroundColor = '#94a3b8'; // Offline (gray)
+                        el.classList.add('hidden'); // Optional: hide when offline
+                    }
+                });
+            }
+        }).catch(err => console.error("Ping error:", err));
+    }
+
+    // Ping immediately and then every 45 seconds
+    pingOnlineStatus();
+    setInterval(pingOnlineStatus, 45000);
+});
+</script>
+<?php endif; ?>
 <script src="<?php echo asset('js/app.js'); ?>"></script>
 </body>
 </html>

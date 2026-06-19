@@ -651,12 +651,13 @@ if (bannerUrl($profileUser['banner'] ?? null)) {
         <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px;">
 
             <!-- Avatar -->
-            <div class="profile-avatar-wrap">
+            <div class="profile-avatar-wrap" style="position:relative; display:inline-block;" data-user-id="<?php echo $profileUser['id']; ?>">
                 <?php if ($isPremium): ?>
                 <div class="profile-premium-ring"></div>
                 <?php endif; ?>
                 <img src="<?php echo $pAvatar; ?>" alt="<?php echo escape($profileUser['username']); ?>" fetchpriority="high"
                      class="profile-avatar" width="88" height="88">
+                <span class="online-indicator hidden absolute bottom-1 right-1 w-4 h-4 rounded-full border-2 border-surface z-10 transition-colors" style="background-color: #22c55e;"></span>
                 <?php if ($isPremium): ?>
                 <div class="profile-premium-badge">
                     <span class="material-symbols-outlined">diamond</span> Premium

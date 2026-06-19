@@ -193,17 +193,30 @@ function defaultAvatar(string $username, string $size = '40'): string
 /**
  * Avatar img veya default HTML
  */
-function avatarHtml(?string $avatar, string $username, string $size = '40', string $loading = 'lazy'): string
+function avatarHtml(?string $avatar, string $username, string $size = '40', string $loading = 'lazy', ?bool $isOnline = null, ?int $userId = null): string
 {
     $url = avatarUrl($avatar);
     $fallback = 'https://ui-avatars.com/api/?name=' . rawurlencode($username) . '&background=random';
+    
+    $imgHtml = '';
     if ($url) {
-        return '<img src="' . escapeUrl($url) . '" alt="' . escape($username) . '" '
+        $imgHtml = '<img src="' . escapeUrl($url) . '" alt="' . escape($username) . '" '
              . 'class="avatar-img" width="' . $size . '" height="' . $size . '" loading="' . escape($loading) . '" '
              . 'onerror="this.onerror=null; this.src=\'' . $fallback . '\';">';
+    } else {
+        $imgHtml = '<img src="' . $fallback . '" alt="' . escape($username) . '" '
+             . 'class="avatar-img" width="' . $size . '" height="' . $size . '" loading="' . escape($loading) . '">';
     }
-    return '<img src="' . $fallback . '" alt="' . escape($username) . '" '
-         . 'class="avatar-img" width="' . $size . '" height="' . $size . '" loading="' . escape($loading) . '">';
+
+    if ($isOnline !== null) {
+        $dotColor = $isOnline ? '#22c55e' : '#94a3b8'; // green-500 or slate-400
+        $userIdAttr = $userId ? ' data-user-id="' . $userId . '"' : '';
+        $dotHtml = '<span class="online-indicator"' . $userIdAttr . ' style="position:absolute; bottom:0; right:0; width:min(30%, 12px); height:min(30%, 12px); background-color:' . $dotColor . '; border:2px solid #fff; border-radius:50%; z-index:10; transition: background-color 0.3s;"></span>';
+        
+        return '<div style="position:relative; display:inline-block; width:' . $size . 'px; height:' . $size . 'px; flex-shrink:0;">' . $imgHtml . $dotHtml . '</div>';
+    }
+
+    return $imgHtml;
 }
 
 // ── Sayısal ────────────────────────────────────────────────

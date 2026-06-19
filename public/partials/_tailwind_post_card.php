@@ -42,8 +42,9 @@ $cardAvatar = !empty($post['is_mystery_shopper'])
     <!-- Header: Avatar + Kim nereye gitti -->
     <div class="checkin-card-header">
         <!-- Avatar -->
-        <div class="checkin-card-avatar">
-            <img src="<?php echo $cardAvatar; ?>" alt="<?php echo escape($post['username']); ?>" width="38" height="38">
+        <div class="checkin-card-avatar relative inline-block" data-user-id="<?php echo $post['user_id']; ?>">
+            <img src="<?php echo $cardAvatar; ?>" alt="<?php echo escape($post['username']); ?>" width="38" height="38" style="border-radius:50%;">
+            <span class="online-indicator hidden absolute bottom-0 left-0 w-3 h-3 rounded-full border-2 border-white z-10 transition-colors" style="background-color: #22c55e;"></span>
             <div class="checkin-card-cat-dot" style="background:<?php echo $catColor; ?>;">
                 <span class="material-symbols-outlined" style="font-size:7px;color:#fff;font-variation-settings:'FILL' 1;"><?php echo $catIcon; ?></span>
             </div>

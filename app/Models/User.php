@@ -612,6 +612,42 @@ class UserModel
         return strtotime($user['premium_until']) > time();
     }
 
+    // ── Online/Offline Status ──────────────────────────────────
+
+    public function updateLastSeen(int $userId): void
+    {
+        try {
+            $this->db->prepare("UPDATE users SET last_seen_at = NOW() WHERE id = ?")->execute([$userId]);
+        } catch (\Throwable $e) {
+            // Ignore if column doesn't exist yet
+        }
+    }
+
+    public static function isOnline(?string $lastSeenAt, int $timeoutMinutes = 3): bool
+    {
+        if (empty($lastSeenAt)) return false;
+        return strtotime($lastSeenAt) > (time() - ($timeoutMinutes * 60));
+    }
+
+    public function getLastSeenTimes(array $userIds): array
+    {
+        if (empty($userIds)) return [];
+        
+        $placeholders = implode(',', array_fill(0, count($userIds), '?'));
+        $stmt = $this->db->prepare("SELECT id, last_seen_at FROM users WHERE id IN ($placeholders)");
+        try {
+            $stmt->execute($userIds);
+            $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            $map = [];
+            foreach ($results as $r) {
+                $map[$r['id']] = $r['last_seen_at'];
+            }
+            return $map;
+        } catch (\Throwable $e) {
+            return [];
+        }
+    }
+
     /**
      * Premium kalan süreyi insan-okunur döndür
      */
