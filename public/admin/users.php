@@ -55,6 +55,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && Auth::canWrite()) {
                     Auth::setFlash('error', 'Bu işlem için Super Admin yetkisi gereklidir.');
                 }
                 break;
+            case 'grant_premium':
+                if (Auth::user()['admin_role'] === 'super_admin') {
+                    $userModel->setPremium($targetId, 30);
+                    Logger::adminAudit('grant_premium', 'user', $targetId, '30 gün');
+                    Auth::setFlash('success', 'Kullanıcıya 30 günlük premium tanımlandı.');
+                } else {
+                    Auth::setFlash('error', 'Bu işlem için Super Admin yetkisi gereklidir.');
+                }
+                break;
+            case 'revoke_premium':
+                if (Auth::user()['admin_role'] === 'super_admin') {
+                    $userModel->removePremium($targetId);
+                    Logger::adminAudit('revoke_premium', 'user', $targetId);
+                    Auth::setFlash('success', 'Kullanıcının premium üyeliği iptal edildi.');
+                } else {
+                    Auth::setFlash('error', 'Bu işlem için Super Admin yetkisi gereklidir.');
+                }
+                break;
         }
     }
     header('Location: ' . BASE_URL . '/admin/users'); exit;
@@ -148,6 +166,14 @@ require_once __DIR__ . '/_header.php';
                             <?php endif;?>
                             
                             <?php if((Auth::user()['admin_role'] ?? '') === 'super_admin'): ?>
+                            <?php if(!$isPrem): ?>
+                            <form method="POST" class="inline" onsubmit="return confirm('Kullanıcıya 30 günlük premium vermek istediğinize emin misiniz?');"><input type="hidden" name="csrf_token" value="<?php echo csrfToken();?>"><input type="hidden" name="user_id" value="<?php echo $u['id'];?>"><input type="hidden" name="action" value="grant_premium">
+                                <button class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-500 hover:bg-amber-500/20 flex items-center justify-center transition-colors" title="Premium Ver (30 Gün)"><span class="material-symbols-outlined text-[18px]">workspace_premium</span></button></form>
+                            <?php else: ?>
+                            <form method="POST" class="inline" onsubmit="return confirm('Kullanıcının premium üyeliğini iptal etmek istediğinize emin misiniz?');"><input type="hidden" name="csrf_token" value="<?php echo csrfToken();?>"><input type="hidden" name="user_id" value="<?php echo $u['id'];?>"><input type="hidden" name="action" value="revoke_premium">
+                                <button class="w-8 h-8 rounded-lg bg-slate-500/10 text-slate-500 hover:bg-slate-500/20 flex items-center justify-center transition-colors" title="Premium İptal"><span class="material-symbols-outlined text-[18px]">remove_moderator</span></button></form>
+                            <?php endif; ?>
+
                             <form method="POST" class="inline" onsubmit="return confirm('Kullanıcının bakiyesini sıfırlamak istediğinize emin misiniz?');"><input type="hidden" name="csrf_token" value="<?php echo csrfToken();?>"><input type="hidden" name="user_id" value="<?php echo $u['id'];?>"><input type="hidden" name="action" value="reset_balance">
                                 <button class="w-8 h-8 rounded-lg bg-yellow-500/10 text-yellow-400 hover:bg-yellow-500/20 flex items-center justify-center transition-colors" title="Bakiyeyi Sıfırla"><span class="material-symbols-outlined text-[18px]">money_off</span></button></form>
                             <form method="POST" class="inline" onsubmit="return confirm('Kullanıcıyı tamamen silmek istediğinize emin misiniz? Bu işlem geri alınamaz!');"><input type="hidden" name="csrf_token" value="<?php echo csrfToken();?>"><input type="hidden" name="user_id" value="<?php echo $u['id'];?>"><input type="hidden" name="action" value="delete">

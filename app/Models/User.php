@@ -592,6 +592,15 @@ class UserModel
         }
     }
 
+    public function removePremium(int $userId): void
+    {
+        try {
+            $this->db->prepare("UPDATE users SET is_premium = 0, premium_until = NULL WHERE id = ?")->execute([$userId]);
+        } catch (\Throwable $e) {
+            $this->db->prepare("UPDATE users SET is_premium = 0 WHERE id = ?")->execute([$userId]);
+        }
+    }
+
     /**
      * Kullanıcının premium'u aktif mi kontrol et
      */
