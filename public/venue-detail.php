@@ -96,8 +96,8 @@ require_once __DIR__ . '/partials/app_header.php';
                 <div style="position:absolute; inset:0; background-image:url('<?php echo BASE_URL . '/uploads/venues/' . escape($venue['cover_image']); ?>'); background-size:cover; background-position:center; filter:blur(20px); opacity:0.4; transform:scale(1.1);"></div>
                 <img src="<?php echo BASE_URL . '/uploads/venues/' . escape($venue['cover_image']); ?>" style="width:100%; height:100%; object-fit:contain; padding:16px; box-sizing:border-box; position:relative; z-index:2; display:block;" width="800" height="200">
             <?php elseif (!empty($venue['image'])): ?>
-                <div style="position:absolute; inset:0; background-image:url('<?php echo uploadUrl('posts', $venue['image']); ?>'); background-size:cover; background-position:center; filter:blur(20px); opacity:0.4; transform:scale(1.1);"></div>
-                <img src="<?php echo uploadUrl('posts', $venue['image']); ?>" style="width:100%; height:100%; object-fit:contain; padding:16px; box-sizing:border-box; position:relative; z-index:2; display:block;" width="800" height="200">
+                <div style="position:absolute; inset:0; background-image:url('<?php echo uploadUrl('venues', $venue['image']); ?>'); background-size:cover; background-position:center; filter:blur(20px); opacity:0.4; transform:scale(1.1);"></div>
+                <img src="<?php echo uploadUrl('venues', $venue['image']); ?>" style="width:100%; height:100%; object-fit:contain; padding:16px; box-sizing:border-box; position:relative; z-index:2; display:block;" width="800" height="200">
             <?php else: ?>
                 <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; position:relative; z-index:2; color:var(--text-3);"><span class="material-symbols-outlined" style="font-size:64px;">store</span></div>
             <?php endif; ?>

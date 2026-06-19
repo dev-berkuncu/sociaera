@@ -178,7 +178,7 @@ require_once __DIR__ . '/partials/app_header.php';
                 <?php if (!empty($venue['cover_image'])): ?>
                     <img src="<?php echo BASE_URL . '/uploads/venues/' . escape($venue['cover_image']); ?>" style="width:100%; height:100%; object-fit:cover;">
                 <?php elseif (!empty($venue['image'])): ?>
-                    <img src="<?php echo uploadUrl('posts', $venue['image']); ?>" style="width:100%; height:100%; object-fit:cover;">
+                    <img src="<?php echo uploadUrl('venues', $venue['image']); ?>" style="width:100%; height:100%; object-fit:cover;">
                 <?php else: ?>
                     <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:var(--text-3);">
                         <span class="material-symbols-outlined" style="font-size:64px;">add_photo_alternate</span>

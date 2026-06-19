@@ -153,7 +153,7 @@ require_once __DIR__ . '/partials/app_header.php';
                          style="width:100%;height:100%;object-fit:cover;transition:transform 0.4s;" loading="lazy"
                          onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform=''">
                 <?php elseif (!empty($v['image'])): ?>
-                    <img src="<?php echo uploadUrl('posts', $v['image']); ?>" loading="lazy" decoding="async"
+                    <img src="<?php echo uploadUrl('venues', $v['image']); ?>" loading="lazy" decoding="async"
                          style="width:100%;height:100%;object-fit:cover;transition:transform 0.4s;" loading="lazy"
                          onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform=''">
                 <?php else: ?>

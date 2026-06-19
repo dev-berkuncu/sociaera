@@ -470,7 +470,7 @@ require_once __DIR__ . '/partials/app_header.php';
 
                 <!-- Venue image / icon -->
                 <?php if (!empty($v['image'])): ?>
-                    <img src="<?php echo uploadUrl('posts', $v['image']); ?>" class="lb-venue-img" alt="<?php echo escape($v['name']); ?>">
+                    <img src="<?php echo uploadUrl('venues', $v['image']); ?>" class="lb-venue-img" alt="<?php echo escape($v['name']); ?>">
                 <?php else: ?>
                     <div class="lb-venue-icon">
                         <span class="material-symbols-outlined" style="font-size:22px;">store</span>
