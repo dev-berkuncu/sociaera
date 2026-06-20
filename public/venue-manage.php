@@ -52,12 +52,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'is_open'     => isset($_POST['is_open']) ? 1 : 0,
         ];
 
-        // Kapak gÃ¶rseli yÃ¼kleme
+        // Kapak görseli yükleme
         if (!empty($_FILES['cover_image']['name'])) {
             $uploader = new ImageUploader();
             $result = $uploader->upload($_FILES['cover_image'], 'venues', ['maxWidth' => 1200, 'quality' => 85]);
             if ($result['success']) {
                 $updateData['cover_image'] = $result['filename'];
+            }
+        }
+
+        // Logo (Profil Fotoğrafı) yükleme
+        if (!empty($_FILES['image']['name'])) {
+            if (!isset($uploader)) $uploader = new ImageUploader();
+            $result = $uploader->upload($_FILES['image'], 'venues', ['maxWidth' => 600, 'quality' => 85]);
+            if ($result['success']) {
+                $updateData['image'] = $result['filename'];
             }
         }
 
@@ -191,6 +200,27 @@ require_once __DIR__ . '/partials/app_header.php';
                     <input type="file" name="cover_image" accept="image/*" style="display:none;" id="coverInput">
                 </label>
             </div>
+            
+            <div style="padding:20px 20px 0; display:flex; align-items:center; gap:16px;">
+                <div style="width:72px; height:72px; border-radius:16px; overflow:hidden; border:2px solid var(--border); background:var(--bg-section); position:relative;" id="logoWrap">
+                    <?php if (!empty($venue['image'])): ?>
+                        <img src="<?php echo uploadUrl('venues', $venue['image']); ?>" style="width:100%; height:100%; object-fit:cover;">
+                    <?php else: ?>
+                        <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:var(--text-3);">
+                            <span class="material-symbols-outlined" style="font-size:32px;">storefront</span>
+                        </div>
+                    <?php endif; ?>
+                    <label id="logoLabel" style="position:absolute; inset:0; background:rgba(0,0,0,0.4); opacity:0; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:opacity .2s;">
+                        <span class="material-symbols-outlined" style="color:#fff;">camera_alt</span>
+                        <input type="file" name="image" accept="image/*" style="display:none;" id="logoInput">
+                    </label>
+                </div>
+                <div style="font-size:13px; color:var(--text-2);">
+                    <strong style="color:var(--text-1); display:block; margin-bottom:2px;">Mekan Logosu (PP)</strong>
+                    Kare formatta bir logo yükleyin.
+                </div>
+            </div>
+
             <div style="padding:20px; display:flex; flex-direction:column; gap:14px;">
                 <!-- Ä°ÅŸletme AdÄ± -->
                 <div>
@@ -278,6 +308,13 @@ require_once __DIR__ . '/partials/app_header.php';
     if (wrap && label) {
         wrap.addEventListener('mouseover', () => label.style.opacity = '1');
         wrap.addEventListener('mouseout', () => label.style.opacity = '0');
+    }
+    
+    const logoWrap = document.getElementById('logoWrap');
+    const logoLabel = document.getElementById('logoLabel');
+    if (logoWrap && logoLabel) {
+        logoWrap.addEventListener('mouseover', () => logoLabel.style.opacity = '1');
+        logoWrap.addEventListener('mouseout', () => logoLabel.style.opacity = '0');
     }
 })();
 

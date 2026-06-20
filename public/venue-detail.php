@@ -123,8 +123,19 @@ require_once __DIR__ . '/partials/app_header.php';
         <!-- Venue Content -->
         <div style="padding:24px; position:relative; z-index:5;">
             <div style="display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:16px; margin-bottom:20px;">
-                <div>
-                    <h1 style="font-size:2rem; font-weight:900; letter-spacing:-.02em; color:var(--text-1); margin:0;"><?php echo escape($venue['name']); ?></h1>
+                <div style="display:flex; align-items:center; gap:16px;">
+                    <?php if (!empty($venue['image'])): ?>
+                        <div style="width:72px; height:72px; border-radius:16px; overflow:hidden; border:2px solid var(--border); background:#fff; flex-shrink:0; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
+                            <img src="<?php echo uploadUrl('venues', $venue['image']); ?>" alt="Logo" style="width:100%; height:100%; object-fit:cover;">
+                        </div>
+                    <?php else: ?>
+                        <div style="width:72px; height:72px; border-radius:16px; overflow:hidden; border:2px solid var(--border); background:#f8fafc; display:flex; align-items:center; justify-content:center; color:var(--text-3); flex-shrink:0; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
+                            <span class="material-symbols-outlined" style="font-size:32px;">storefront</span>
+                        </div>
+                    <?php endif; ?>
+                    <div>
+                        <h1 style="font-size:2rem; font-weight:900; letter-spacing:-.02em; color:var(--text-1); margin:0;"><?php echo escape($venue['name']); ?></h1>
+                    </div>
                 </div>
                 <!-- CTA buttons -->
                 <div style="display:flex; align-items:center; gap:10px; flex-shrink:0;">
