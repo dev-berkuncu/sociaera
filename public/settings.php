@@ -136,6 +136,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
         header('Location: ' . $redirectTo); exit;
+        
+    /* Tema (Premium) */
+    } elseif ($action === 'update_theme') {
+        if (!UserModel::isPremiumActive($user)) {
+            Auth::setFlash('error', 'Tema değiştirmek için Premium üyelik gerekir.');
+        } else {
+            $theme  = $_POST['theme'] ?? 'default';
+            $themes = UserModel::availableThemes();
+            if (!isset($themes[$theme])) {
+                Auth::setFlash('error', 'Geçersiz tema.');
+            } else {
+                $userModel->updateTheme(Auth::id(), $theme);
+                Auth::setFlash('success', 'Tema güncellendi ✓');
+            }
+        }
+        header('Location: ' . $redirectTo); exit;
     }
 
     /* Bilinmeyen action */
@@ -381,6 +397,44 @@ $flash = Auth::getFlash();
             </div>
         </form>
     </div>
+
+    <!-- ── TEMA (Premium) ────────────────────────────── -->
+    <div style="background:#fff;border:1.5px solid rgba(123,208,255,.4);border-radius:16px;padding:20px 24px;margin-top:16px;">
+        <h2 style="font-size:14px;font-weight:700;color:var(--text-1);margin:0 0 4px;display:flex;align-items:center;gap:6px;">
+            <span class="material-symbols-outlined" style="font-size:18px;color:#7bd0ff;">palette</span>
+            Profil Teması
+            <span style="background:rgba(123,208,255,.2);color:#7bd0ff;font-size:10px;font-weight:800;
+                         border-radius:99px;padding:1px 7px;border:1px solid rgba(123,208,255,.35);">PREMIUM</span>
+        </h2>
+        <p style="font-size:12px;color:var(--text-2);margin:0 0 12px;">Profil sayfanın rengini değiştir.</p>
+        <form method="POST" action="<?php echo $redirectTo; ?>" style="display:flex;flex-direction:column;gap:12px;">
+            <?php echo csrfField(); ?>
+            <input type="hidden" name="action" value="update_theme">
+            <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                <?php foreach (UserModel::availableThemes() as $tk => $tv): ?>
+                <label>
+                    <input type="radio" name="theme" value="<?php echo $tk; ?>"
+                           <?php echo ($user['theme']??'default') === $tk ? 'checked' : ''; ?> style="display:none;">
+                    <div style="padding:9px 14px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg-section);
+                                cursor:pointer;display:flex;align-items:center;gap:6px;min-width:100px;">
+                        <span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:<?php echo $tv['color']; ?>;"></span>
+                        <span style="font-size:12px;font-weight:700;color:var(--text-2);"><?php echo $tv['label']; ?></span>
+                    </div>
+                </label>
+                <?php endforeach; ?>
+            </div>
+            <div>
+                <button type="submit"
+                        style="background:rgba(123,208,255,.15);color:#7bd0ff;border:1.5px solid rgba(123,208,255,.4);
+                               cursor:pointer;padding:9px 20px;border-radius:10px;font-size:14px;font-weight:700;
+                               display:inline-flex;align-items:center;gap:6px;">
+                    <span class="material-symbols-outlined" style="font-size:16px;">save</span>
+                    Temayı Kaydet
+                </button>
+            </div>
+        </form>
+    </div>
+
     <?php else: ?>
     <div style="background:#fff;border:1px solid var(--border);border-radius:16px;padding:20px 24px;">
         <h2 style="font-size:14px;font-weight:700;color:var(--text-2);margin:0 0 6px;display:flex;align-items:center;gap:6px;">
@@ -388,6 +442,21 @@ $flash = Auth::getFlash();
             Profil Rozeti
         </h2>
         <p style="font-size:13px;color:var(--text-3);margin:0 0 10px;">Rozet seçmek için Premium üyelik gerekir.</p>
+        <a href="<?php echo BASE_URL; ?>/premium"
+           style="display:inline-flex;align-items:center;gap:6px;background:rgba(123,208,255,.15);color:#7bd0ff;
+                  border:1.5px solid rgba(123,208,255,.4);padding:8px 16px;border-radius:10px;font-size:13px;
+                  font-weight:700;text-decoration:none;">
+            <span class="material-symbols-outlined" style="font-size:15px;">diamond</span>
+            Premium'a Geç
+        </a>
+    </div>
+
+    <div style="background:#fff;border:1px solid var(--border);border-radius:16px;padding:20px 24px;margin-top:16px;">
+        <h2 style="font-size:14px;font-weight:700;color:var(--text-2);margin:0 0 6px;display:flex;align-items:center;gap:6px;">
+            <span class="material-symbols-outlined" style="font-size:18px;color:var(--text-3);">palette</span>
+            Profil Teması
+        </h2>
+        <p style="font-size:13px;color:var(--text-3);margin:0 0 10px;">Tema seçmek için Premium üyelik gerekir.</p>
         <a href="<?php echo BASE_URL; ?>/premium"
            style="display:inline-flex;align-items:center;gap:6px;background:rgba(123,208,255,.15);color:#7bd0ff;
                   border:1.5px solid rgba(123,208,255,.4);padding:8px 16px;border-radius:10px;font-size:13px;

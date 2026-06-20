@@ -182,7 +182,30 @@ require_once __DIR__ . '/partials/app_header.php';
 ?>
 
 <div style="min-width:0;">
+<?php 
+$themeCss = '';
+if (UserModel::isPremiumActive($profileUser) && !empty($profileUser['theme'])) {
+    $themes = UserModel::availableThemes();
+    if (isset($themes[$profileUser['theme']])) {
+        $t = $themes[$profileUser['theme']];
+        // Sadece primary rengi ve banner tint'i değiştir, metinleri bozmamak için surface'i direkt basma
+        $themeCss = "
+        :root {
+            --color-primary: {$t['color']} !important;
+        }
+        .profile-banner {
+            background: linear-gradient(135deg, {$t['color']}33, {$t['surface']}11) !important;
+        }
+        .profile-header.is-premium {
+            border-color: {$t['color']}44 !important;
+            box-shadow: 0 4px 24px {$t['color']}15 !important;
+        }
+        ";
+    }
+}
+?>
 <style>
+<?php echo $themeCss; ?>
 /* ── Profile page-local styles ───────────────────────────── */
 
 /* Profile Header Card */

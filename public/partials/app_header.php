@@ -492,7 +492,8 @@ nav.swarm-topnav{
     $leftAds = [];
     $sidebarRightAds = [];
     try {
-        if (class_exists('AdModel')) {
+        $isPremiumActive = isset($currentUser) ? UserModel::isPremiumActive($currentUser) : false;
+        if (!$isPremiumActive && class_exists('AdModel')) {
             $adModel = new AdModel();
             $leftAds = $adModel->getByPosition('carousel', 6);
             $sidebarRightAds = $adModel->getByPosition('sidebar_right', 5);

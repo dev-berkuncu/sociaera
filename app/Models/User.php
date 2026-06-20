@@ -671,6 +671,15 @@ class UserModel
         }
     }
 
+    public function updateTheme(int $userId, ?string $theme): void
+    {
+        try {
+            $this->db->prepare("UPDATE users SET theme = ? WHERE id = ?")->execute([$theme, $userId]);
+        } catch (\Throwable $e) {
+            // Ignore if column doesn't exist
+        }
+    }
+
     public function updateField(int $userId, string $field, ?string $value): void
     {
         $allowed = ['profile_theme', 'badge'];
@@ -692,6 +701,18 @@ class UserModel
             'fire'         => ['icon' => 'local_fire_department', 'label' => 'Fire',   'color' => '#f97316'],
             'shield'       => ['icon' => 'shield',         'label' => 'Shield',        'color' => '#06b6d4'],
             'eco'          => ['icon' => 'eco',            'label' => 'Eco',           'color' => '#22c55e'],
+        ];
+    }
+
+    public static function availableThemes(): array
+    {
+        return [
+            'default'  => ['label' => 'Varsayılan', 'color' => '#f06d1f', 'surface' => '#1e293b'],
+            'ocean'    => ['label' => 'Ocean Mavi', 'color' => '#0ea5e9', 'surface' => '#0f172a'],
+            'forest'   => ['label' => 'Forest Yeşil', 'color' => '#10b981', 'surface' => '#064e3b'],
+            'sunset'   => ['label' => 'Sunset Kızıl', 'color' => '#f43f5e', 'surface' => '#4c0519'],
+            'royal'    => ['label' => 'Royal Mor',  'color' => '#8b5cf6', 'surface' => '#2e1065'],
+            'midnight' => ['label' => 'Midnight',   'color' => '#f8fafc', 'surface' => '#020617'],
         ];
     }
 }
