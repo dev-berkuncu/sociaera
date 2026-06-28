@@ -45,7 +45,7 @@ if (Auth::check()) { header('Location: ' . BASE_URL . '/dashboard'); exit; }
 </head>
 <body class="text-on-background antialiased selection:bg-primary-container selection:text-white relative bg-[#131314] min-h-screen">
 <!-- Full Page Background -->
-<div class="fixed inset-0 z-[-2] bg-cover bg-center bg-no-repeat" style="background-image: url('<?php echo BASE_URL; ?>/assets/images/hero-bg.jpg?v=<?php echo $heroV; ?>');"></div>
+<div class="fixed inset-0 z-[-2] bg-cover bg-center bg-no-repeat blur-[3px] scale-105" style="background-image: url('<?php echo BASE_URL; ?>/assets/images/hero-bg.jpg?v=<?php echo $heroV; ?>');"></div>
 <div class="fixed inset-0 z-[-1] bg-background/40"></div>
 <!-- TopNavBar -->
 <nav class="bg-surface-container font-['Manrope'] text-sm tracking-wide font-medium w-full top-0 sticky border-b border-outline-variant/30 shadow-[0_30px_30px_rgba(19,19,20,0.15)] z-50">
