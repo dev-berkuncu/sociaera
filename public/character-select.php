@@ -72,7 +72,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$isSwitching) {
             Auth::setFlash('success', $charName . ' olarak giriş yaptın! 🎭');
         }
 
-        $redirectUrl = !empty($user['bank_account']) ? '/dashboard' : '/settings';
+        // Sadece ilk defa kayıt olanları ayarlar sayfasına yönlendir
+        $redirectUrl = $result['is_new'] ? '/settings' : '/dashboard';
         header('Location: ' . BASE_URL . $redirectUrl);
         exit;
     } elseif ($charId && !$charName) {

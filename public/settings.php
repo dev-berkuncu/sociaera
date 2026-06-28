@@ -58,6 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($result['ok']) {
             Auth::refresh(['username' => $username ?: $user['username']]);
             Auth::setFlash('success', 'Profil güncellendi ✓');
+            $redirectTo = BASE_URL . '/dashboard';
         } else {
             Auth::setFlash('error', $result['error']);
         }
