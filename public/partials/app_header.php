@@ -493,10 +493,15 @@ nav.swarm-topnav{
     $sidebarRightAds = [];
     try {
         $isPremiumActive = isset($currentUser) ? UserModel::isPremiumActive($currentUser) : false;
-        if (!$isPremiumActive && class_exists('AdModel')) {
+        if (class_exists('AdModel')) {
             $adModel = new AdModel();
+            // Sponsorlar (carousel) herkese gösterilecek (premium olsa bile)
             $leftAds = $adModel->getByPosition('carousel', 6);
-            $sidebarRightAds = $adModel->getByPosition('sidebar_right', 5);
+            
+            // Diğer reklamlar (sağ sidebar vs) premiumlarda gizli kalacak
+            if (!$isPremiumActive) {
+                $sidebarRightAds = $adModel->getByPosition('sidebar_right', 5);
+            }
         }
     } catch (Exception $e) {}
     ?>
