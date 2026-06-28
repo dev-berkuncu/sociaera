@@ -223,14 +223,13 @@ INSERT INTO `settings` (`setting_key`, `setting_value`) VALUES
     ('week_start', 'monday'),
     ('maintenance_mode', '0')
 ON DUPLICATE KEY UPDATE `setting_value` = VALUES(`setting_value`);
--- Migration: Add unique index on transactions.reference_id
--- Prevents duplicate payment processing at the database level
--- Date: 2026-05-18
-
-ALTER TABLE `transactions`
-    ADD UNIQUE INDEX `uk_reference_id` (`reference_id`);
--- ── Ads user_id kolonu ve ilişkisi ────────────────────────────
-ALTER TABLE ads ADD COLUMN IF NOT EXISTS user_id INT UNSIGNED DEFAULT NULL AFTER id;
+-- Migration bloğu iptal edildi (transaction uk_reference_id tablo içinde zaten var)
+-- ── Ads user_id ve diğer eksik kolonlar ────────────────────────────
+ALTER TABLE ads 
+    ADD COLUMN IF NOT EXISTS user_id INT UNSIGNED DEFAULT NULL AFTER id,
+    ADD COLUMN IF NOT EXISTS status ENUM('pending', 'approved', 'rejected') NOT NULL DEFAULT 'pending' AFTER is_active,
+    ADD COLUMN IF NOT EXISTS media_type VARCHAR(50) NOT NULL DEFAULT 'image' AFTER status,
+    ADD COLUMN IF NOT EXISTS expires_at DATETIME DEFAULT NULL AFTER media_type;
 
 -- Yabancı anahtar kısıtlaması ekleme
 ALTER TABLE ads ADD CONSTRAINT fk_ads_user_id FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
@@ -333,8 +332,10 @@ CREATE TABLE IF NOT EXISTS venue_favorites (
     FOREIGN KEY (venue_id) REFERENCES venues(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Profile theme column
-ALTER TABLE users ADD COLUMN IF NOT EXISTS profile_theme VARCHAR(20) DEFAULT 'default' AFTER badge;
+-- Profile theme and last_seen_at columns
+ALTER TABLE users 
+    ADD COLUMN IF NOT EXISTS theme VARCHAR(20) DEFAULT 'default' AFTER badge,
+    ADD COLUMN IF NOT EXISTS last_seen_at DATETIME DEFAULT NULL AFTER theme;
 
 -- Ads feed position
 ALTER TABLE ads MODIFY COLUMN position ENUM('carousel','sidebar_left','sidebar_right','footer_banner','feed') NOT NULL DEFAULT 'sidebar_right';
@@ -443,25 +444,15 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS bank_account VARCHAR(50) DEFAULT NULL
 
 -- transactions tablosuna status kolonu eklenmesi
 ALTER TABLE transactions ADD COLUMN IF NOT EXISTS status ENUM('pending', 'approved', 'rejected') NOT NULL DEFAULT 'approved' AFTER reference_id;
--- Sociaera Performance Optimizations Migration
--- Execute this file in your MySQL/phpMyAdmin
-
--- 1. Add counter columns to checkins
-ALTER TABLE `checkins` ADD COLUMN `like_count` INT UNSIGNED NOT NULL DEFAULT 0 AFTER `image`;
-ALTER TABLE `checkins` ADD COLUMN `comment_count` INT UNSIGNED NOT NULL DEFAULT 0 AFTER `like_count`;
-ALTER TABLE `checkins` ADD COLUMN `repost_count` INT UNSIGNED NOT NULL DEFAULT 0 AFTER `comment_count`;
-
--- 2. Backfill existing counters
-UPDATE `checkins` c SET `like_count` = (SELECT COUNT(*) FROM `post_likes` pl WHERE pl.checkin_id = c.id);
-UPDATE `checkins` c SET `comment_count` = (SELECT COUNT(*) FROM `post_comments` pc WHERE pc.checkin_id = c.id AND pc.is_deleted = 0);
-UPDATE `checkins` c SET `repost_count` = (SELECT COUNT(*) FROM `post_reposts` pr WHERE pr.checkin_id = c.id);
-
--- 3. Add necessary indexes
--- For global feed
-CREATE INDEX `idx_is_deleted_created_at` ON `checkins` (`is_deleted`, `created_at` DESC);
-
--- For users search and mentions
-CREATE INDEX `idx_username` ON `users` (`username`);
-
--- For venues search
-CREATE INDEX `idx_name` ON `venues` (`name`);
+-- ── Para Çekme Talepleri (withdrawal_requests) ──────────────────
+CREATE TABLE IF NOT EXISTS `withdrawal_requests` (
+    `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `user_id` INT UNSIGNED NOT NULL,
+    `amount` DECIMAL(15,2) NOT NULL,
+    `account_info` TEXT NOT NULL,
+    `status` ENUM('pending','approved','rejected') NOT NULL DEFAULT 'pending',
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    KEY `idx_user` (`user_id`),
+    KEY `idx_status` (`status`),
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
