@@ -15,9 +15,10 @@ require_once __DIR__ . '/partials/flash.php';
 ?>
 
 <div style="flex:1; display:flex; align-items:center; justify-content:center; width:100%; position:relative; overflow:hidden; padding:24px 16px;">
-    <!-- Background Image -->
+    <!-- Background blob decorations -->
     <div style="position:absolute; inset:0; z-index:0; pointer-events:none;">
-        <div style="position:absolute; inset:0; background-image: url('<?php echo BASE_URL; ?>/assets/images/hero-bg.jpg'); background-size:cover; background-position:center; filter:brightness(0.6);"></div>
+        <div style="position:absolute; top:25%; left:25%; width:400px; height:400px; border-radius:50%; background:rgba(240,109,31,0.12); filter:blur(80px); opacity:.6;"></div>
+        <div style="position:absolute; bottom:25%; right:25%; width:320px; height:320px; border-radius:50%; background:rgba(255,158,125,0.1); filter:blur(60px); opacity:.5;"></div>
     </div>
 
     <div style="width:100%; max-width:420px; position:relative; z-index:1;">
