@@ -45,8 +45,26 @@ if (Auth::check()) { header('Location: ' . BASE_URL . '/dashboard'); exit; }
 </head>
 <body class="text-on-background antialiased selection:bg-primary-container selection:text-white relative bg-[#131314] min-h-screen">
 <!-- Full Page Background -->
-<div class="fixed inset-0 z-[-2] bg-no-repeat" style="top: 64px; background-image: url('<?php echo BASE_URL; ?>/assets/images/hero-bg.jpg?v=<?php echo $heroV; ?>'); background-size: cover; background-position: center 10%; filter: blur(2px);"></div>
+<div class="fixed inset-0 z-[-2] bg-no-repeat" style="top: 64px; background-image: url('<?php echo BASE_URL; ?>/assets/images/hero-bg.jpg?v=<?php echo $heroV; ?>'); background-size: cover; background-position: center center; filter: blur(2px);"></div>
 <div class="fixed inset-0 z-[-1]" style="top: 64px; background: linear-gradient(135deg, rgba(10,8,6,0.82) 0%, rgba(40,18,4,0.75) 50%, rgba(10,8,6,0.85) 100%);"></div>
+<!-- Hologram CSS Overlay -->
+<style>
+@keyframes hologram-pulse {
+  0%, 100% { opacity: 0.7; filter: drop-shadow(0 0 8px #00eaff) drop-shadow(0 0 20px rgba(255,145,0,0.5)); transform: translateY(0px) scale(1); }
+  50% { opacity: 1; filter: drop-shadow(0 0 18px #00eaff) drop-shadow(0 0 40px rgba(255,145,0,0.8)); transform: translateY(-6px) scale(1.04); }
+}
+@keyframes hologram-ray {
+  0%, 100% { opacity: 0.15; height: 60px; }
+  50% { opacity: 0.35; height: 90px; }
+}
+.hologram-wrap { position: fixed; z-index: 1; right: calc(50% - 340px); top: calc(64px + 18%); pointer-events: none; }
+.hologram-logo { width: 72px; height: auto; animation: hologram-pulse 2.8s ease-in-out infinite; }
+.hologram-ray { width: 2px; background: linear-gradient(to bottom, rgba(0,234,255,0.6), transparent); margin: 0 auto; animation: hologram-ray 2.8s ease-in-out infinite; border-radius: 2px; }
+</style>
+<div class="hologram-wrap">
+  <div class="hologram-ray"></div>
+  <img src="<?php echo BASE_URL; ?>/assets/images/logo.png" alt="hologram" class="hologram-logo">
+</div>
 <!-- TopNavBar -->
 <nav class="bg-surface-container font-['Manrope'] text-sm tracking-wide font-medium w-full top-0 sticky border-b border-outline-variant/30 shadow-[0_30px_30px_rgba(19,19,20,0.15)] z-50">
 <div class="flex justify-center items-center w-full px-8 py-4 max-w-7xl mx-auto">
