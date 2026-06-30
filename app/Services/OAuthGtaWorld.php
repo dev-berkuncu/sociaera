@@ -143,7 +143,8 @@ class OAuthGtaWorld
     private static function httpPost(string $url, array $data): ?array
     {
         $ch = curl_init($url);
-        curl_setopt_array($ch, [
+
+        $curlOpts = [
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_POST           => true,
             CURLOPT_POSTFIELDS     => http_build_query($data),
@@ -151,9 +152,27 @@ class OAuthGtaWorld
                 'Accept: application/json',
                 'Content-Type: application/x-www-form-urlencoded',
             ],
-            CURLOPT_TIMEOUT        => 15,
+            CURLOPT_TIMEOUT        => 20,
+            CURLOPT_CONNECTTIMEOUT => 10,
+            CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_SSL_VERIFYPEER => true,
-        ]);
+            CURLOPT_SSL_VERIFYHOST => 2,
+        ];
+
+        // Hostinger / shared hosting CA bundle fallback
+        $caBundles = [
+            '/etc/ssl/certs/ca-certificates.crt',
+            '/etc/pki/tls/certs/ca-bundle.crt',
+            '/usr/share/ssl/certs/ca-bundle.crt',
+        ];
+        foreach ($caBundles as $bundle) {
+            if (file_exists($bundle)) {
+                $curlOpts[CURLOPT_CAINFO] = $bundle;
+                break;
+            }
+        }
+
+        curl_setopt_array($ch, $curlOpts);
 
         $response = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -178,15 +197,34 @@ class OAuthGtaWorld
     private static function httpGet(string $url, string $token): ?array
     {
         $ch = curl_init($url);
-        curl_setopt_array($ch, [
+
+        $curlOpts = [
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HTTPHEADER     => [
                 'Accept: application/json',
                 'Authorization: Bearer ' . $token,
             ],
-            CURLOPT_TIMEOUT        => 15,
+            CURLOPT_TIMEOUT        => 20,
+            CURLOPT_CONNECTTIMEOUT => 10,
+            CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_SSL_VERIFYPEER => true,
-        ]);
+            CURLOPT_SSL_VERIFYHOST => 2,
+        ];
+
+        // Hostinger / shared hosting CA bundle fallback
+        $caBundles = [
+            '/etc/ssl/certs/ca-certificates.crt',
+            '/etc/pki/tls/certs/ca-bundle.crt',
+            '/usr/share/ssl/certs/ca-bundle.crt',
+        ];
+        foreach ($caBundles as $bundle) {
+            if (file_exists($bundle)) {
+                $curlOpts[CURLOPT_CAINFO] = $bundle;
+                break;
+            }
+        }
+
+        curl_setopt_array($ch, $curlOpts);
 
         $response = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
