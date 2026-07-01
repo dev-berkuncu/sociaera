@@ -117,9 +117,11 @@ require_once __DIR__ . '/_header.php';
                 <tr><th class="px-6 py-3">#</th><th class="px-6 py-3">Kullanıcı</th><th class="px-6 py-3">E-posta</th><th class="px-6 py-3">Rol</th><th class="px-6 py-3">Durum</th><th class="px-6 py-3">Kayıt</th><th class="px-6 py-3">İşlem</th></tr>
             </thead>
             <tbody class="divide-y divide-white/5">
-                <?php foreach ($result['users'] as $u):
-                    $isBanned = $u['banned_until'] && strtotime($u['banned_until']) > time();
-                    $isPrem = !empty($u['is_premium']);
+                <?php 
+                foreach ($result['users'] as $u):
+                    try {
+                        $isBanned = $u['banned_until'] && strtotime($u['banned_until']) > time();
+                        $isPrem = !empty($u['is_premium']);
                 ?>
                 <tr class="hover:bg-white/[0.02] transition-colors">
                     <td class="px-6 py-3 text-slate-500"><?php echo $u['id']; ?></td>
@@ -135,11 +137,11 @@ require_once __DIR__ . '/_header.php';
                             </div>
                         </a>
                     </td>
-                    <td class="px-6 py-3 text-slate-400 text-xs"><?php echo escape($u['email']); ?></td>
+                    <td class="px-6 py-3 text-slate-400 text-xs"><?php echo escape($u['email'] ?? ''); ?></td>
                     <td class="px-6 py-3">
                         <?php if(!empty($u['admin_role'])):?>
-                            <span class="text-xs font-semibold px-2 py-1 rounded border bg-purple-500/10 text-purple-400 border-purple-500/20"><?php echo escape(ucfirst(str_replace('_',' ',$u['admin_role'])));?></span>
-                        <?php elseif($u['is_admin']):?>
+                            <span class="text-xs font-semibold px-2 py-1 rounded border bg-purple-500/10 text-purple-400 border-purple-500/20"><?php echo escape(ucfirst(str_replace('_',' ',(string)$u['admin_role'])));?></span>
+                        <?php elseif(!empty($u['is_admin'])):?>
                             <span class="text-xs font-semibold px-2 py-1 rounded border bg-purple-500/10 text-purple-400 border-purple-500/20">Admin</span>
                         <?php else:?>
                             <span class="text-xs text-slate-500">Üye</span>
@@ -152,7 +154,7 @@ require_once __DIR__ . '/_header.php';
                             <span class="text-xs font-semibold px-2 py-1 rounded border bg-emerald-500/10 text-emerald-400 border-emerald-500/20">Aktif</span>
                         <?php endif;?>
                     </td>
-                    <td class="px-6 py-3 text-slate-500 text-xs"><?php echo formatDate($u['created_at']); ?></td>
+                    <td class="px-6 py-3 text-slate-500 text-xs"><?php echo formatDate((string)($u['created_at'] ?? '')); ?></td>
                     <td class="px-6 py-3">
                         <div class="flex gap-1">
                             <a href="<?php echo BASE_URL;?>/admin/user-detail?id=<?php echo $u['id'];?>" class="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 flex items-center justify-center transition-colors" title="Detay">
@@ -186,7 +188,12 @@ require_once __DIR__ . '/_header.php';
                         </div>
                     </td>
                 </tr>
-                <?php endforeach; ?>
+                <?php 
+                    } catch (\Throwable $e) {
+                        echo '<tr class="bg-red-500/20"><td colspan="7" class="p-2 text-xs text-red-400">Error rendering user ID ' . ($u['id'] ?? '?') . ': ' . $e->getMessage() . '</td></tr>';
+                    }
+                endforeach; 
+                ?>
             </tbody>
         </table>
     </div>
