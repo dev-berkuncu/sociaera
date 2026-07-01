@@ -108,7 +108,9 @@ require_once __DIR__ . '/_header.php';
     <a href="?filter=admins&q=<?php echo escape($search); ?>" class="px-4 py-2 text-xs font-bold rounded-lg border transition-all duration-150 <?php echo $filter === 'admins' ? 'bg-primary text-white border-primary shadow-sm shadow-primary/20' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-950'; ?>">Yetkililer</a>
 </div>
 
+<?php file_put_contents(__DIR__ . '/debug_users.txt', print_r($result, true)); ?>
 <div class="bg-[#1E293B]/80 border border-white/10 rounded-xl overflow-hidden">
+    <div style="font-size: 10px; color: #666; padding: 2px;">DEBUG_ROWS: <?php echo count($result['users']); ?> / <?php echo $result['total']; ?></div>
     <div class="overflow-x-auto">
         <table class="w-full text-left">
             <thead class="bg-white/[0.03] text-slate-400 text-label-sm uppercase">
