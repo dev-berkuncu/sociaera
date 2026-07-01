@@ -123,13 +123,13 @@ require_once __DIR__ . '/_header.php';
                     <td class="px-6 py-3 text-slate-500"><?php echo $u['id']; ?></td>
                     <td class="px-6 py-3">
                         <a href="<?php echo BASE_URL; ?>/admin/user-detail?id=<?php echo $u['id']; ?>" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
-                            <?php echo avatarHtml($u['avatar'] ?? null, $u['username'], '32'); ?>
+                            <?php echo avatarHtml($u['avatar'] ?? null, $u['username'] ?? 'Bilinmeyen', '32'); ?>
                             <div>
                                 <div class="font-semibold text-on-surface flex items-center gap-1">
-                                    <?php echo escape($u['username']); ?>
+                                    <?php echo escape($u['username'] ?? 'Bilinmeyen'); ?>
                                     <?php if($isPrem):?><span class="material-symbols-outlined text-amber-400 text-[14px]" data-weight="fill">workspace_premium</span><?php endif;?>
                                 </div>
-                                <?php if ($u['tag']): ?><div class="text-xs text-slate-500">@<?php echo escape($u['tag']); ?></div><?php endif; ?>
+                                <?php if (!empty($u['tag'])): ?><div class="text-xs text-slate-500">@<?php echo escape($u['tag']); ?></div><?php endif; ?>
                             </div>
                         </a>
                     </td>
