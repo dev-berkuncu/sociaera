@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && Auth::canWrite()) {
                 Auth::setFlash('success', 'Ban kaldırıldı.');
                 break;
             case 'delete':
-                if (Auth::user()['admin_role'] === 'super_admin' && $targetId !== Auth::id()) {
+                if (Auth::adminRole() === 'super_admin' && $targetId !== Auth::id()) {
                     $db = Database::getConnection();
                     $db->prepare("DELETE FROM users WHERE id = ?")->execute([$targetId]);
                     Logger::adminAudit('delete_user', 'user', $targetId);
@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && Auth::canWrite()) {
                 }
                 break;
             case 'reset_balance':
-                if (Auth::user()['admin_role'] === 'super_admin') {
+                if (Auth::adminRole() === 'super_admin') {
                     $db = Database::getConnection();
                     $db->prepare("UPDATE wallets SET balance = 0 WHERE user_id = ?")->execute([$targetId]);
                     Logger::adminAudit('reset_balance', 'wallet', $targetId);
@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && Auth::canWrite()) {
                 }
                 break;
             case 'grant_premium':
-                if (Auth::user()['admin_role'] === 'super_admin') {
+                if (Auth::adminRole() === 'super_admin') {
                     $userModel->setPremium($targetId, 30);
                     Logger::adminAudit('grant_premium', 'user', $targetId, '30 gün');
                     Auth::setFlash('success', 'Kullanıcıya 30 günlük premium tanımlandı.');
@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && Auth::canWrite()) {
                 }
                 break;
             case 'revoke_premium':
-                if (Auth::user()['admin_role'] === 'super_admin') {
+                if (Auth::adminRole() === 'super_admin') {
                     $userModel->removePremium($targetId);
                     Logger::adminAudit('revoke_premium', 'user', $targetId);
                     Auth::setFlash('success', 'Kullanıcının premium üyeliği iptal edildi.');
@@ -169,7 +169,7 @@ require_once __DIR__ . '/_header.php';
                                 <button class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 flex items-center justify-center transition-colors" title="Ban Kaldır"><span class="material-symbols-outlined text-[18px]">check_circle</span></button></form>
                             <?php endif;?>
                             
-                            <?php if((Auth::user()['admin_role'] ?? '') === 'super_admin'): ?>
+                            <?php if(Auth::adminRole() === 'super_admin'): ?>
                             <?php if(!$isPrem): ?>
                             <form method="POST" class="inline" onsubmit="return confirm('Kullanıcıya 30 günlük premium vermek istediğinize emin misiniz?');"><input type="hidden" name="csrf_token" value="<?php echo csrfToken();?>"><input type="hidden" name="user_id" value="<?php echo $u['id'];?>"><input type="hidden" name="action" value="grant_premium">
                                 <button class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-500 hover:bg-amber-500/20 flex items-center justify-center transition-colors" title="Premium Ver (30 Gün)"><span class="material-symbols-outlined text-[18px]">workspace_premium</span></button></form>
