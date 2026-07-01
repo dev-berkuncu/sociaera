@@ -333,7 +333,8 @@ require_once __DIR__ . '/partials/app_header.php';
                     <div style="display:flex; align-items:center; gap:16px; background:var(--bg-section); border:1px solid var(--border); border-radius:12px; padding:12px; position:relative; overflow:hidden;">
                         <!-- Image Thumbnail -->
                         <div style="width:64px; height:64px; border-radius:8px; overflow:hidden; flex-shrink:0; background:#fff; border:1px solid var(--border);">
-                            <img src="<?php echo BASE_URL . '/' . escape($ad['image_url']); ?>" style="width:100%; height:100%; object-fit:cover;" loading="lazy">
+                            <img src="<?php echo escape(adImageUrl($ad['image_url']) ?? ''); ?>" style="width:100%; height:100%; object-fit:cover;" loading="lazy"
+                                 onerror="this.onerror=null; this.style.background='#f0f0f0'; this.alt='Görsel yüklenemedi';">
                         </div>
                         
                         <!-- Details -->

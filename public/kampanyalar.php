@@ -115,9 +115,9 @@ require_once __DIR__ . '/partials/app_header.php';
                     <a href="<?php echo BASE_URL; ?>/venue-detail?id=<?php echo $c['venue_id']; ?>"
                        style="width:56px; height:56px; border-radius:12px; overflow:hidden; display:flex; align-items:center; justify-content:center; flex-shrink:0; background:var(--bg-section); border:1px solid var(--border); text-decoration:none;">
                         <?php if (!empty($c['cover_image'])): ?>
-                            <img src="<?php echo BASE_URL . '/uploads/venues/' . escape($c['cover_image']); ?>" style="width:100%; height:100%; object-fit:contain; padding:4px; box-sizing:border-box;" width="56" height="56" loading="lazy">
+                            <img src="<?php echo uploadUrl('venues', $c['cover_image']); ?>" style="width:100%; height:100%; object-fit:contain; padding:4px; box-sizing:border-box;" width="56" height="56" loading="lazy" onerror="this.onerror=null; this.src='<?php echo BASE_URL; ?>/assets/images/default-cover.png';">
                         <?php elseif (!empty($c['venue_image'])): ?>
-                            <img src="<?php echo uploadUrl('venues', $c['venue_image']); ?>" style="width:100%; height:100%; object-fit:contain; padding:4px; box-sizing:border-box;" width="56" height="56" loading="lazy">
+                            <img src="<?php echo uploadUrl('venues', $c['venue_image']); ?>" style="width:100%; height:100%; object-fit:contain; padding:4px; box-sizing:border-box;" width="56" height="56" loading="lazy" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=<?php echo urlencode($c['venue_name'] ?? 'Mekan'); ?>&background=random';">
                         <?php else: ?>
                             <span class="material-symbols-outlined" style="font-size:24px; color:var(--text-3);">store</span>
                         <?php endif; ?>

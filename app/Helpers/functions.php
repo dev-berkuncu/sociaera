@@ -153,6 +153,26 @@ function uploadUrl(string $folder, ?string $filename): ?string
 }
 
 /**
+ * Reklam görseli URL üret
+ * DB'de image_url alanı 'uploads/ads/xxx.webp' formatında tutuluyor.
+ * Bu fonksiyon her durumda doğru tam URL döndürür.
+ * - Harici URL (http/https) → direkt döndür
+ * - Relative path (uploads/...) → BASE_URL ile birleştir
+ * - Başında / olan path → normalize et
+ * - Boş/null → null döndür
+ */
+function adImageUrl(?string $imageUrl): ?string
+{
+    if (empty($imageUrl)) return null;
+    // Zaten tam URL ise direkt döndür
+    if (str_starts_with($imageUrl, 'http://') || str_starts_with($imageUrl, 'https://')) {
+        return $imageUrl;
+    }
+    // Başındaki slash'ları temizle ve BASE_URL ile birleştir
+    return BASE_URL . '/' . ltrim($imageUrl, '/');
+}
+
+/**
  * Avatar URL (yoksa null)
  */
 function avatarUrl(?string $avatar): ?string

@@ -194,7 +194,7 @@ require_once __DIR__ . '/_header.php';
             <div id="adminFileContainer" style="<?php echo $mType==='youtube'?'display:none;':'display:block;'; ?>">
                 <input type="file" name="image" id="adminImage" accept="<?php echo $mType==='video'?'video/mp4,video/webm':'image/*'; ?>" class="w-full bg-white/5 border border-white/10 text-on-surface rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-primary-container/40 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-sm file:bg-primary-container file:text-white transition-colors">
                 <?php if ($editAd && $mType !== 'youtube' && !empty($editAd['image_url'])): ?>
-                    <p class="text-xs text-slate-500 mt-2">Şu anki medya: <a href="<?php echo BASE_URL . '/' . ltrim($editAd['image_url'], '/'); ?>" target="_blank" class="text-primary hover:underline">Görüntüle</a> (Değiştirmek istemiyorsanız boş bırakın)</p>
+                    <p class="text-xs text-slate-500 mt-2">Şu anki medya: <a href="<?php echo escape(adImageUrl($editAd['image_url']) ?? ''); ?>" target="_blank" class="text-primary hover:underline">Görüntüle</a> (Değiştirmek istemiyorsanız boş bırakın)</p>
                 <?php endif; ?>
             </div>
             <div id="adminYtContainer" style="<?php echo $mType==='youtube'?'display:block;':'display:none;'; ?>">
@@ -242,7 +242,8 @@ require_once __DIR__ . '/_header.php';
                         <?php elseif ($ad['media_type'] === 'video'): ?>
                             <div class="w-12 h-8 bg-blue-500/20 text-blue-500 flex items-center justify-center rounded text-xs font-bold">VID</div>
                         <?php elseif (!empty($ad['image_url'])): ?>
-                            <img src="<?php echo BASE_URL . '/' . ltrim($ad['image_url'], '/'); ?>" class="w-12 h-8 object-cover rounded border border-white/10" alt="ad">
+                            <img src="<?php echo escape(adImageUrl($ad['image_url']) ?? ''); ?>" class="w-12 h-8 object-cover rounded border border-white/10" alt="ad"
+                                 onerror="this.onerror=null; this.style.background='rgba(255,255,255,0.05)'; this.alt='!';">
                         <?php else: ?>
                             <div class="w-12 h-8 bg-white/5 rounded"></div>
                         <?php endif; ?>

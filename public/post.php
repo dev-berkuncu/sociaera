@@ -88,7 +88,7 @@ require_once __DIR__ . '/partials/app_header.php';
 
                         <?php if (!empty($c['image'])): ?>
                             <div style="margin-top:12px; border-radius:8px; overflow:hidden; max-width:360px; border:1px solid var(--border); background:var(--bg-section);">
-                                <img src="<?php echo uploadUrl('posts', $c['image']); ?>" loading="lazy" style="display:block; width:100%; max-width:100%; height:auto; max-height:250px; object-fit:contain;" width="400" height="250">
+                                <img src="<?php echo uploadUrl('posts', $c['image']); ?>" loading="lazy" style="display:block; width:100%; max-width:100%; height:auto; max-height:250px; object-fit:contain;" width="400" height="250" onerror="this.onerror=null; this.style.background='#f0f0f0'; this.style.minHeight='120px'; this.alt='Görsel yüklenemedi';">
                             </div>
                         <?php endif; ?>
                     </div>

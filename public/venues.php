@@ -149,12 +149,14 @@ require_once __DIR__ . '/partials/app_header.php';
             <div class="venue-card-img" style="position:relative;height:150px;overflow:hidden;background:<?php echo $meta['bg']; ?>;">
 
                 <?php if (!empty($v['cover_image'])): ?>
-                    <img src="<?php echo BASE_URL . '/uploads/venues/' . escape($v['cover_image']); ?>" loading="lazy" decoding="async"
-                         style="width:100%;height:100%;object-fit:cover;transition:transform 0.4s;" loading="lazy"
+                    <img src="<?php echo uploadUrl('venues', $v['cover_image']); ?>" loading="lazy" decoding="async"
+                         style="width:100%;height:100%;object-fit:cover;transition:transform 0.4s;"
+                         onerror="this.onerror=null; this.src='<?php echo BASE_URL; ?>/assets/images/default-cover.png';"
                          onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform=''">
                 <?php elseif (!empty($v['image'])): ?>
                     <img src="<?php echo uploadUrl('venues', $v['image']); ?>" loading="lazy" decoding="async"
-                         style="width:100%;height:100%;object-fit:cover;transition:transform 0.4s;" loading="lazy"
+                         style="width:100%;height:100%;object-fit:cover;transition:transform 0.4s;"
+                         onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=<?php echo urlencode($v['name']); ?>&background=random';"
                          onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform=''">
                 <?php else: ?>
                     <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;">

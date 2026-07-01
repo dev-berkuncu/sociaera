@@ -94,10 +94,10 @@ require_once __DIR__ . '/partials/app_header.php';
             <div style="position:absolute; inset:0; z-index:1; background:linear-gradient(to top,rgba(255,255,255,0.85) 0%,transparent 60%);"></div>
             <?php if (!empty($venue['cover_image'])): ?>
                 <div style="position:absolute; inset:0; background-image:url('<?php echo BASE_URL . '/uploads/venues/' . escape($venue['cover_image']); ?>'); background-size:cover; background-position:center; filter:blur(20px); opacity:0.4; transform:scale(1.1);"></div>
-                <img src="<?php echo BASE_URL . '/uploads/venues/' . escape($venue['cover_image']); ?>" style="width:100%; height:100%; object-fit:contain; padding:16px; box-sizing:border-box; position:relative; z-index:2; display:block;" width="800" height="200">
+                <img src="<?php echo uploadUrl('venues', $venue['cover_image']); ?>" style="width:100%; height:100%; object-fit:contain; padding:16px; box-sizing:border-box; position:relative; z-index:2; display:block;" width="800" height="200" onerror="this.onerror=null; this.src='<?php echo BASE_URL; ?>/assets/images/default-cover.png'; this.style.objectFit='cover';">
             <?php elseif (!empty($venue['image'])): ?>
                 <div style="position:absolute; inset:0; background-image:url('<?php echo uploadUrl('venues', $venue['image']); ?>'); background-size:cover; background-position:center; filter:blur(20px); opacity:0.4; transform:scale(1.1);"></div>
-                <img src="<?php echo uploadUrl('venues', $venue['image']); ?>" style="width:100%; height:100%; object-fit:contain; padding:16px; box-sizing:border-box; position:relative; z-index:2; display:block;" width="800" height="200">
+                <img src="<?php echo uploadUrl('venues', $venue['image']); ?>" style="width:100%; height:100%; object-fit:contain; padding:16px; box-sizing:border-box; position:relative; z-index:2; display:block;" width="800" height="200" onerror="this.onerror=null; this.src='<?php echo BASE_URL; ?>/assets/images/default-cover.png'; this.style.objectFit='cover';">
             <?php else: ?>
                 <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; position:relative; z-index:2; color:var(--text-3);"><span class="material-symbols-outlined" style="font-size:64px;">store</span></div>
             <?php endif; ?>
@@ -126,7 +126,7 @@ require_once __DIR__ . '/partials/app_header.php';
                 <div style="display:flex; align-items:center; gap:16px;">
                     <?php if (!empty($venue['image'])): ?>
                         <div style="width:72px; height:72px; border-radius:16px; overflow:hidden; border:2px solid var(--border); background:#fff; flex-shrink:0; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
-                            <img src="<?php echo uploadUrl('venues', $venue['image']); ?>" alt="Logo" style="width:100%; height:100%; object-fit:cover;">
+                            <img src="<?php echo uploadUrl('venues', $venue['image']); ?>" alt="Logo" style="width:100%; height:100%; object-fit:cover;" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=<?php echo urlencode($venue['name']); ?>&background=random';">
                         </div>
                     <?php else: ?>
                         <div style="width:72px; height:72px; border-radius:16px; overflow:hidden; border:2px solid var(--border); background:#f8fafc; display:flex; align-items:center; justify-content:center; color:var(--text-3); flex-shrink:0; box-shadow:0 4px 12px rgba(0,0,0,0.08);">

@@ -213,7 +213,7 @@ function feedDayLabel(string $day): string {
                      loading="lazy" decoding="async"
                      style="display:block; width:100%; max-width:100%; height:auto; max-height:400px; object-fit:contain; background:#111; cursor:pointer;"
                      onclick="openLightbox(this.src)"
-                     onerror="this.closest('div').style.display='none'">
+                     onerror="this.onerror=null; this.style.background='#f0f0f0'; this.style.minHeight='120px'; this.alt='Görsel yüklenemedi';">
             </div>
             <?php endif; ?>
 
@@ -301,9 +301,9 @@ function feedDayLabel(string $day): string {
                 // Determine ad image path with fallback
                 $adImage = '';
                 if (!empty($ad['image_url'])) {
-                    $adImage = (strpos($ad['image_url'], 'http') === 0) ? $ad['image_url'] : BASE_URL . '/' . $ad['image_url'];
+                    $adImage = adImageUrl($ad['image_url']);
                 } elseif (!empty($ad['image'])) {
-                    $adImage = $ad['image'];
+                    $adImage = adImageUrl($ad['image']);
                 }
                 
                 // Determine ad target URL with fallback

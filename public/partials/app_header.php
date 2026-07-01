@@ -541,7 +541,7 @@ nav.swarm-topnav{
                             
                             <!-- Media Background -->
                             <?php 
-                            $bgUrl = escape($item['image'] ?? '');
+                            $bgUrl = adImageUrl($item['image'] ?? '');
                             $mType = $item['media_type'] ?? 'image';
                             if ($mType === 'youtube' && $bgUrl): 
                                 preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i', $bgUrl, $match);
@@ -550,9 +550,9 @@ nav.swarm-topnav{
                             ?>
                                 <iframe width="100%" height="100%" src="https://www.youtube.com/embed/<?php echo $ytId; ?>?autoplay=1&mute=1&controls=0&loop=1&playlist=<?php echo $ytId; ?>" frameborder="0" style="position:absolute; inset:0; pointer-events:none;"></iframe>
                             <?php endif; elseif ($mType === 'video' && $bgUrl): ?>
-                                <video src="<?php echo $bgUrl; ?>" autoplay muted loop playsinline style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover;"></video>
+                                <video src="<?php echo escape($bgUrl); ?>" autoplay muted loop playsinline style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover;"></video>
                             <?php elseif ($bgUrl): ?>
-                                <div style="position:absolute; inset:0; background:url('<?php echo $bgUrl; ?>') center/cover no-repeat, linear-gradient(135deg, #1a365d, #0f2b46);"></div>
+                                <div style="position:absolute; inset:0; background:url('<?php echo escape($bgUrl); ?>') center/cover no-repeat, linear-gradient(135deg, #1a365d, #0f2b46);"></div>
                             <?php endif; ?>
                             
                             <!-- Gradient Overlay -->
@@ -596,7 +596,7 @@ nav.swarm-topnav{
                     <?php foreach ($sidebarRightAds as $rAd): ?>
                         <div class="right-ad-slide" style="flex:0 0 100%; width:100%; height:100%; position:relative;">
                             <?php 
-                            $bgUrl = escape($rAd['image_url'] ?? '');
+                            $bgUrl = adImageUrl($rAd['image_url'] ?? '');
                             $mType = $rAd['media_type'] ?? 'image';
                             if ($mType === 'youtube' && $bgUrl): 
                                 preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i', $bgUrl, $match);
@@ -605,9 +605,9 @@ nav.swarm-topnav{
                             ?>
                                 <iframe width="100%" height="100%" src="https://www.youtube.com/embed/<?php echo $ytId; ?>?autoplay=1&mute=1&controls=0&loop=1&playlist=<?php echo $ytId; ?>" frameborder="0" style="position:absolute; inset:0; pointer-events:none;"></iframe>
                             <?php endif; elseif ($mType === 'video' && $bgUrl): ?>
-                                <video src="<?php echo $bgUrl; ?>" autoplay muted loop playsinline style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover;"></video>
+                                <video src="<?php echo escape($bgUrl); ?>" autoplay muted loop playsinline style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover;"></video>
                             <?php elseif ($bgUrl): ?>
-                                <div style="position:absolute; inset:0; background:url('<?php echo $bgUrl; ?>') center/cover no-repeat;"></div>
+                                <div style="position:absolute; inset:0; background:url('<?php echo escape($bgUrl); ?>') center/cover no-repeat;"></div>
                             <?php endif; ?>
 
                             <a href="<?php echo escape($rAd['link_url'] ?? '#'); ?>" target="_blank" rel="noopener" style="position:absolute; inset:0; z-index:10; display:flex; flex-direction:column; justify-content:flex-end; padding:20px; background:linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 60%); text-decoration:none;">

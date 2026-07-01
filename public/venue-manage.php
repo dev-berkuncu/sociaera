@@ -185,9 +185,9 @@ require_once __DIR__ . '/partials/app_header.php';
             <!-- Image cover -->
             <div style="height:192px; position:relative; overflow:hidden; background:var(--bg-section);" id="coverWrap">
                 <?php if (!empty($venue['cover_image'])): ?>
-                    <img src="<?php echo BASE_URL . '/uploads/venues/' . escape($venue['cover_image']); ?>" style="width:100%; height:100%; object-fit:cover;">
+                    <img src="<?php echo uploadUrl('venues', $venue['cover_image']); ?>" style="width:100%; height:100%; object-fit:cover;" onerror="this.onerror=null; this.src='<?php echo BASE_URL; ?>/assets/images/default-cover.png';">
                 <?php elseif (!empty($venue['image'])): ?>
-                    <img src="<?php echo uploadUrl('venues', $venue['image']); ?>" style="width:100%; height:100%; object-fit:cover;">
+                    <img src="<?php echo uploadUrl('venues', $venue['image']); ?>" style="width:100%; height:100%; object-fit:cover;" onerror="this.onerror=null; this.src='<?php echo BASE_URL; ?>/assets/images/default-cover.png';">
                 <?php else: ?>
                     <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:var(--text-3);">
                         <span class="material-symbols-outlined" style="font-size:64px;">add_photo_alternate</span>
@@ -204,7 +204,7 @@ require_once __DIR__ . '/partials/app_header.php';
             <div style="padding:20px 20px 0; display:flex; align-items:center; gap:16px;">
                 <div style="width:72px; height:72px; border-radius:16px; overflow:hidden; border:2px solid var(--border); background:var(--bg-section); position:relative;" id="logoWrap">
                     <?php if (!empty($venue['image'])): ?>
-                        <img src="<?php echo uploadUrl('venues', $venue['image']); ?>" style="width:100%; height:100%; object-fit:cover;">
+                        <img src="<?php echo uploadUrl('venues', $venue['image']); ?>" style="width:100%; height:100%; object-fit:cover;" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=<?php echo urlencode($venue['name']); ?>&background=random';">
                     <?php else: ?>
                         <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:var(--text-3);">
                             <span class="material-symbols-outlined" style="font-size:32px;">storefront</span>

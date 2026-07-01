@@ -200,6 +200,7 @@ $flash = Auth::getFlash();
         </h2>
         <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
             <img src="<?php echo $pAvatar; ?>"
+                 onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=<?php echo urlencode($currentUser['username'] ?? 'U'); ?>&background=random';"
                  style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid #fff;box-shadow:0 2px 10px rgba(0,0,0,.12);flex-shrink:0;">
             <form method="POST" enctype="multipart/form-data" style="flex:1;min-width:180px;">
                 <?php echo csrfField(); ?>
@@ -224,7 +225,7 @@ $flash = Auth::getFlash();
         </h2>
         <div style="height:100px;border-radius:10px;overflow:hidden;margin-bottom:12px;background:var(--bg-section);border:1px solid var(--border);">
             <?php if ($pBanner): ?>
-                <img src="<?php echo $pBanner; ?>" style="width:100%;height:100%;object-fit:cover;">
+                <img src="<?php echo $pBanner; ?>" style="width:100%;height:100%;object-fit:cover;" onerror="this.onerror=null; this.src='<?php echo BASE_URL; ?>/assets/images/default-cover.png';">
             <?php else: ?>
                 <div style="width:100%;height:100%;background:linear-gradient(135deg,#FFF3EB,#F5F4F0);display:flex;align-items:center;justify-content:center;">
                     <span class="material-symbols-outlined" style="font-size:28px;color:var(--text-3);opacity:.4;">wallpaper</span>

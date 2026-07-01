@@ -19,10 +19,11 @@ if (empty($sponsoredAd)) return;
         <?php if (!empty($sponsoredAd['image_url'])): ?>
         <div style="padding:0 16px 12px;">
             <div style="border-radius:10px; overflow:hidden; border:1px solid var(--border);">
-                <img src="<?php echo BASE_URL . '/' . escape($sponsoredAd['image_url']); ?>"
+                <img src="<?php echo escape(adImageUrl($sponsoredAd['image_url']) ?? ''); ?>"
                      alt="<?php echo escape($sponsoredAd['title']); ?>"
                      style="width:100%; height:auto; object-fit:cover; display:block; transition:transform .3s;"
                      onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'"
+                     onerror="this.onerror=null; this.style.background='#f0f0f0'; this.style.minHeight='120px';"
                      width="640" height="320">
             </div>
         </div>

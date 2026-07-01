@@ -648,7 +648,7 @@ $pAvatar   = safeAvatarUrl($profileUser['avatar'] ?? null, $profileUser['usernam
 
 // Banner background
 if (bannerUrl($profileUser['banner'] ?? null)) {
-    $bannerHtml = '<img src="' . bannerUrl($profileUser['banner']) . '" style="width:100%;height:100%;object-fit:cover;display:block;" width="800" height="180" fetchpriority="high" alt="Banner">';
+    $bannerHtml = '<img src="' . bannerUrl($profileUser['banner']) . '" style="width:100%;height:100%;object-fit:cover;display:block;" width="800" height="180" fetchpriority="high" alt="Banner" onerror="this.onerror=null; this.src=\'' . BASE_URL . '/assets/images/default-cover.png\';">';
 } else {
     $bannerStyle = 'background: linear-gradient(135deg, ' . $accentColor . '33, #fff8f4);';
     $bannerHtml  = '<div style="width:100%;height:100%;' . $bannerStyle . '"></div>';
