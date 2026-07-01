@@ -492,16 +492,8 @@ class UserModel
         $total->execute($params);
         $totalCount = (int) $total->fetchColumn();
 
-        $stmt = $this->db->prepare("SELECT * FROM users {$where} ORDER BY created_at DESC LIMIT ? OFFSET ?");
-        
-        $paramIndex = 1;
-        foreach ($params as $param) {
-            $stmt->bindValue($paramIndex++, $param, \PDO::PARAM_STR);
-        }
-        $stmt->bindValue($paramIndex++, $perPage, \PDO::PARAM_INT);
-        $stmt->bindValue($paramIndex++, $offset, \PDO::PARAM_INT);
-        
-        $stmt->execute();
+        $stmt = $this->db->prepare("SELECT * FROM users {$where} ORDER BY created_at DESC LIMIT {$perPage} OFFSET {$offset}");
+        $stmt->execute($params);
 
         return [
             'users' => $stmt->fetchAll(),
