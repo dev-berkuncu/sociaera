@@ -37,8 +37,8 @@ define('PUBLIC_PATH',  ROOT_PATH . '/public');
 define('UPLOAD_PATH',  PUBLIC_PATH . '/uploads');
 
 // Otomatik Güvenli Upload Klasörü (Hostinger Git Deploy gibi ortamlar için)
-// ROOT_PATH'in iki üst dizinine (genelde /home/user/) güvenli bir klasör oluşturur.
-$persistentUploads = dirname(ROOT_PATH, 2) . '/sociaera_uploads_persistent';
+// ROOT_PATH'in bir üst dizinine (genelde /domains/domain.com/) güvenli bir klasör oluşturur.
+$persistentUploads = dirname(ROOT_PATH) . '/sociaera_uploads_persistent';
 
 if (!file_exists($persistentUploads)) {
     @mkdir($persistentUploads, 0755, true);
@@ -53,11 +53,11 @@ if (!file_exists($persistentUploads)) {
 // Eğer public/uploads yoksa (Git pull sonrası silinmişse veya yeni kurulumsa)
 if (!file_exists(UPLOAD_PATH)) {
     $symlinked = false;
-    // Linux/Hostinger ortamında symlink oluşturarak kalıcı klasöre bağla
-    if (is_dir($persistentUploads)) {
+    // Linux/Hostinger ortamında symlink oluşturarak kalıcı klasöre bağla (eğer fonksiyon açıksa)
+    if (is_dir($persistentUploads) && function_exists('symlink')) {
         $symlinked = @symlink($persistentUploads, UPLOAD_PATH);
     }
-    // Symlink yetkisi yoksa (Örn: Windows XAMPP) normal klasör oluşturarak fallback yap
+    // Symlink yetkisi yoksa veya yasaklıysa (Örn: Windows XAMPP, Katı Shared Hosting) normal klasör oluşturarak fallback yap
     if (!$symlinked) {
         @mkdir(UPLOAD_PATH, 0755, true);
         @mkdir(UPLOAD_PATH . '/avatars', 0755, true);
