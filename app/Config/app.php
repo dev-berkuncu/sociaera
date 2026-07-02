@@ -34,7 +34,7 @@ define('APP_ENV',     env('APP_ENV', 'production'));
 define('ROOT_PATH',    dirname(__DIR__, 2));
 define('APP_PATH',     ROOT_PATH . '/app');
 define('PUBLIC_PATH',  ROOT_PATH . '/public');
-define('UPLOAD_PATH',  PUBLIC_PATH . '/uploads');
+
 
 // Otomatik Güvenli Upload Klasörü (Hostinger Git Deploy gibi ortamlar için)
 // ROOT_PATH'in bir üst dizinine (genelde /domains/domain.com/) güvenli bir klasör oluşturur.
@@ -51,23 +51,23 @@ if (!file_exists($persistentUploads)) {
 }
 
 // Eğer public/uploads yoksa (Git pull sonrası silinmişse veya yeni kurulumsa)
-if (!file_exists(UPLOAD_PATH)) {
-    $symlinked = false;
+$publicUploads = PUBLIC_PATH . '/uploads';
+$symlinked = false;
+
+if (!file_exists($publicUploads)) {
     // Linux/Hostinger ortamında symlink oluşturarak kalıcı klasöre bağla (eğer fonksiyon açıksa)
     if (is_dir($persistentUploads) && function_exists('symlink')) {
-        $symlinked = @symlink($persistentUploads, UPLOAD_PATH);
+        $symlinked = @symlink($persistentUploads, $publicUploads);
     }
-    // Symlink yetkisi yoksa veya yasaklıysa (Örn: Windows XAMPP, Katı Shared Hosting) normal klasör oluşturarak fallback yap
-    if (!$symlinked) {
-        @mkdir(UPLOAD_PATH, 0755, true);
-        @mkdir(UPLOAD_PATH . '/avatars', 0755, true);
-        @mkdir(UPLOAD_PATH . '/banners', 0755, true);
-        @mkdir(UPLOAD_PATH . '/ads', 0755, true);
-        @mkdir(UPLOAD_PATH . '/venues', 0755, true);
-        @mkdir(UPLOAD_PATH . '/posts', 0755, true);
-        @mkdir(UPLOAD_PATH . '/sponsors', 0755, true);
-    }
+} else if (is_link($publicUploads)) {
+    $symlinked = true;
+} else if (is_dir($publicUploads)) {
+    $symlinked = true; // Gerçek bir klasörse de standart çalışmaya devam et
 }
+
+// Symlink başarısız olursa veya yetki yoksa (Örn: Windows XAMPP, Katı Shared Hosting),
+// UPLOAD_PATH'i doğrudan dışarıdaki klasör yap. .htaccess bu dosyaları proxy ile sunacaktır!
+define('UPLOAD_PATH', $symlinked ? $publicUploads : $persistentUploads);
 
 define('STORAGE_PATH', ROOT_PATH . '/storage');
 

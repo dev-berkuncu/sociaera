@@ -17,6 +17,10 @@ RewriteRule ^admin/?$ admin/index.php [L]
 RewriteRule ^admin/login/?$ admin/login.php [L]
 
 
+# ── Uploads Proxy (Symlink İzin Verilmeyen Sunucular İçin) ──
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^uploads/(.*)$ serve_upload.php?path=$1 [L,QSA]
+
 # ── Clean URLs (.php uzantısız) ────────────────────────────
 # Dosya veya klasör değilse .php ekle
 RewriteCond %{REQUEST_FILENAME} !-f
