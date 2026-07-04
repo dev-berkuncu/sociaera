@@ -61,12 +61,12 @@ if (!file_exists($publicUploads)) {
     }
 } else if (is_link($publicUploads)) {
     $symlinked = true;
-} else if (is_dir($publicUploads)) {
-    $symlinked = true; // Gerçek bir klasörse de standart çalışmaya devam et
 }
 
-// Symlink başarısız olursa veya yetki yoksa (Örn: Windows XAMPP, Katı Shared Hosting),
-// UPLOAD_PATH'i doğrudan dışarıdaki klasör yap. .htaccess bu dosyaları proxy ile sunacaktır!
+// DİKKAT: Eğer $publicUploads gerçek bir klasörse (symlink değilse), onu kullanmamalıyız!
+// Çünkü Git deploy o klasörün içini silecektir. 
+// Bu yüzden $symlinked false kalır ve UPLOAD_PATH doğrudan dışarıdaki klasör (persistent) olur.
+// .htaccess dosyası, fiziksel olarak bulunamayan resimleri proxy (serve_upload.php) ile oradan sunar!
 define('UPLOAD_PATH', $symlinked ? $publicUploads : $persistentUploads);
 
 define('STORAGE_PATH', ROOT_PATH . '/storage');
