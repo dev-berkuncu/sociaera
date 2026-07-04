@@ -90,6 +90,9 @@ require_once __DIR__ . '/_header.php';
                     </td>
                     <td class="px-6 py-3">
                         <div class="flex gap-1">
+                            <a href="venue-detail?id=<?php echo $v['id']; ?>" class="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 flex items-center justify-center transition-colors" title="Düzenle">
+                                <span class="material-symbols-outlined text-[18px]">edit</span>
+                            </a>
                             <?php if ($v['status'] === 'pending'): ?>
                             <form method="POST" class="inline"><input type="hidden" name="csrf_token" value="<?php echo csrfToken(); ?>"><input type="hidden" name="venue_id" value="<?php echo $v['id']; ?>"><input type="hidden" name="action" value="approve"><button class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 flex items-center justify-center transition-colors" title="Onayla"><span class="material-symbols-outlined text-[18px]">check</span></button></form>
                             <form method="POST" class="inline"><input type="hidden" name="csrf_token" value="<?php echo csrfToken(); ?>"><input type="hidden" name="venue_id" value="<?php echo $v['id']; ?>"><input type="hidden" name="action" value="reject"><button class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 flex items-center justify-center transition-colors" title="Reddet"><span class="material-symbols-outlined text-[18px]">close</span></button></form>
