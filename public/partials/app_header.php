@@ -441,6 +441,7 @@ nav.swarm-topnav{
             $ddLinks = [
                 ['url'=>'/profile',         'icon'=>'person',                 'label'=>'Profilim',          'color'=>'#F06D1F'],
                 ['url'=>'/wallet',           'icon'=>'account_balance_wallet', 'label'=>'Cüzdanım',          'color'=>'#F06D1F'],
+                ['url'=>'/business',         'icon'=>'storefront',             'label'=>'İşletme Ekle',      'color'=>'#8b5cf6'],
                 ['url'=>'/add-venue',        'icon'=>'add_business',           'label'=>'Mekan Öner/Ekle',   'color'=>'#10b981'],
                 ['url'=>'/sponsors',         'icon'=>'ads_click',              'label'=>'Reklam Ver',        'color'=>'#3B82F6'],
                 ['url'=>'/missions',         'icon'=>'military_tech',          'label'=>'Görevler',          'color'=>'#F06D1F'],
