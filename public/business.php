@@ -84,7 +84,7 @@ $categories = VenueModel::categories();
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta name="csrf-token" content="<?php echo csrfToken(); ?>"/>
 <title>İşletmenizi Ekleyin — Sociaera Business</title>
-<meta name="description" content="Mekanınızı Sociaera haritasına kaydedin. Müşterileriniz check-in yapsın, fotoğraf paylaşsın ve kampanyalarınızla müdavim kitlenizi büyütün."/>
+<meta name="description" content="Mekanınızı Sociaera haritasına kaydedin. Müşterileriniz check-in yapsın, fotoğraf paylaşsın ve kampanyalarınızla kitlenizi büyütün."/>
 
 <!-- Google Fonts -->
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
@@ -245,7 +245,7 @@ select.form-input option { background: #0f1520; color: #fff; }
                 </div>
 
                 <p style="color:rgba(255,255,255,0.45); font-size:15px; line-height:1.7; max-width:520px;">
-                    Mekanınızı Sociaera haritasına kaydedin. Müşterileriniz mekanınızda check-in yapsın, fotoğraflar paylaşsın ve özel kampanyalarınızla müdavim kitlenizi büyütün.
+                    Mekanınızı Sociaera haritasına kaydedin. Müşterileriniz mekanınızda check-in yapsın, fotoğraflar paylaşsın ve özel kampanyalarınızla kitlenizi büyütün.
                 </p>
             </div>
 
