@@ -391,7 +391,7 @@ select.form-input option { background: #0f1520; color: #fff; }
                     <?php endif; ?>
 
                     <form method="POST" enctype="multipart/form-data">
-                        <?php echo csrfInput(); ?>
+                        <input type="hidden" name="csrf_token" value="<?php echo csrfToken(); ?>">
 
                         <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
 
