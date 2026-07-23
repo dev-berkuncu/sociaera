@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'category'        => $category,
             'facebrowser_url' => $facebrowser,
             'image'           => $uploadedCover,
-            'status'          => 'approved',
+            'status'          => 'pending',
             'is_active'       => 1,
             'created_by'      => Auth::check() ? Auth::id() : null,
         ]);
@@ -354,110 +354,145 @@ select.form-input option { background: #0f1520; color: #fff; }
         </div>
 
         <!-- ── REGISTRATION FORM ── -->
-        <div id="register-form">
-            <div class="glass-form" style="border-radius:24px; padding:32px 36px;">
+        <div id="register-form" style="display:flex; flex-direction:column; gap:24px;">
 
-                <h2 style="font-size:24px; font-weight:800; margin-bottom:28px; letter-spacing:-0.5px;">
+                <h2 style="font-size:24px; font-weight:800; letter-spacing:-0.5px;">
                     İşletme Kayıt Formu
                 </h2>
 
                 <?php if ($success): ?>
-                    <div style="background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.3); border-radius:20px; padding:32px; text-align:center;">
+                    <div class="glass-form" style="border-radius:20px; padding:32px; text-align:center;">
                         <div style="width:56px; height:56px; background:rgba(16,185,129,0.15); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px;">
                             <span class="material-symbols-outlined" style="font-size:28px; color:#10b981; font-variation-settings:'FILL' 1;">check_circle</span>
                         </div>
-                        <h3 style="font-size:20px; font-weight:700; color:#6ee7b7; margin-bottom:8px;">Tebrikler! İşletmeniz Başarıyla Kaydedildi 🎉</h3>
+                        <h3 style="font-size:20px; font-weight:700; color:#6ee7b7; margin-bottom:8px;">Başvurunuz Alındı! 🎉</h3>
                         <p style="color:rgba(255,255,255,0.5); font-size:14px; max-width:460px; margin:0 auto 20px;">
-                            Mekanınız sisteme eklendi ve onaylandı. Artık kullanıcılar mekanınızda check-in yapabilir!
+                            Mekanınız incelenmek üzere admin paneline gönderildi. Onaylandığında kullanıcılar mekanınızda check-in yapabilecek!
                         </p>
                         <div style="display:flex; justify-content:center; gap:12px;">
-                            <?php if ($createdVenueId): ?>
-                                <a href="<?php echo BASE_URL; ?>/venue?id=<?php echo $createdVenueId; ?>" class="btn-orange" style="padding:12px 24px; font-size:14px; border-radius:12px;">
-                                    Mekanı Görüntüle
-                                </a>
-                            <?php endif; ?>
-                            <a href="<?php echo BASE_URL; ?>/business" style="display:inline-flex; align-items:center; gap:6px; padding:12px 24px; background:rgba(255,255,255,0.08); border-radius:12px; font-weight:600; font-size:14px; color:#fff; transition:background 0.2s;">
+                            <a href="<?php echo BASE_URL; ?>/business" class="btn-orange" style="padding:12px 24px; font-size:14px; border-radius:12px;">
                                 Yeni Mekan Ekle
+                            </a>
+                            <a href="<?php echo BASE_URL; ?>/" style="display:inline-flex; align-items:center; gap:6px; padding:12px 24px; background:rgba(255,255,255,0.08); border-radius:12px; font-weight:600; font-size:14px; color:#fff;">
+                                Ana Sayfaya Dön
                             </a>
                         </div>
                     </div>
                 <?php else: ?>
 
                     <?php if ($error): ?>
-                        <div style="background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.3); border-radius:12px; padding:14px 18px; display:flex; align-items:center; gap:10px; font-size:14px; color:#f87171; margin-bottom:24px;">
+                        <div style="background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.3); border-radius:12px; padding:14px 18px; display:flex; align-items:center; gap:10px; font-size:14px; color:#f87171;">
                             <span class="material-symbols-outlined" style="font-size:18px;">error</span>
                             <?php echo escape($error); ?>
                         </div>
                     <?php endif; ?>
 
-                    <form method="POST" enctype="multipart/form-data">
+                    <form method="POST" enctype="multipart/form-data" style="display:flex; flex-direction:column; gap:24px;">
                         <input type="hidden" name="csrf_token" value="<?php echo csrfToken(); ?>">
 
-                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
-
-                            <!-- Left Column -->
-                            <div style="display:flex; flex-direction:column; gap:18px;">
-                                <div>
-                                    <label style="display:block; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:rgba(255,255,255,0.5); margin-bottom:8px;">
-                                        İşletme Adı <span style="color:#F06D1F;">*</span>
-                                    </label>
-                                    <input type="text" name="name" required placeholder="İşletme Kayıt Formu" class="form-input">
+                        <!-- ── Temel Bilgiler ── -->
+                        <div class="glass-form" style="border-radius:20px; padding:28px;">
+                            <div style="display:flex; align-items:center; gap:10px; margin-bottom:22px;">
+                                <div style="width:28px; height:28px; border-radius:50%; background:#F06D1F; display:flex; align-items:center; justify-content:center;">
+                                    <span class="material-symbols-outlined" style="font-size:16px; color:#fff;">info</span>
                                 </div>
-
-                                <div>
-                                    <label style="display:block; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:rgba(255,255,255,0.5); margin-bottom:8px;">
-                                        Kategori <span style="color:#F06D1F;">*</span>
-                                    </label>
-                                    <select name="category" required class="form-input">
-                                        <option value="">Bir kategori seçiniz...</option>
-                                        <?php foreach ($categories as $key => $label): ?>
-                                            <option value="<?php echo escape($key); ?>"><?php echo escape($label); ?></option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                </div>
-
-                                <div>
-                                    <label style="display:block; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:rgba(255,255,255,0.5); margin-bottom:8px;">İletişim / Telefon</label>
-                                    <input type="text" name="phone" placeholder="Örn: 555-0199" class="form-input">
-                                </div>
-
-                                <div>
-                                    <label style="display:block; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:rgba(255,255,255,0.5); margin-bottom:8px;">Adres / Konum</label>
-                                    <textarea name="address" rows="3" placeholder="Örn: Del Perro Boulevard No:42" class="form-input" style="resize:none;"></textarea>
-                                </div>
+                                <span style="font-size:16px; font-weight:800;">Temel Bilgiler</span>
                             </div>
 
-                            <!-- Right Column -->
-                            <div style="display:flex; flex-direction:column; gap:18px;">
+                            <!-- Mekan Adı + Kategori yan yana -->
+                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">
                                 <div>
-                                    <label style="display:block; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:rgba(255,255,255,0.5); margin-bottom:8px;">Sosyomel Kampanya</label>
-                                    <input type="text" name="facebrowser_url" placeholder="İşletme Kayıt Kategorisi" class="form-input">
+                                    <label style="display:block; font-size:12px; font-weight:600; color:rgba(255,255,255,0.6); margin-bottom:6px;">Mekan Adı <span style="color:#F06D1F;">*</span></label>
+                                    <div style="position:relative;">
+                                        <span class="material-symbols-outlined" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); font-size:18px; color:rgba(255,255,255,0.25);">storefront</span>
+                                        <input type="text" name="name" required placeholder="Örn: Bean Machine Coffee" class="form-input" style="padding-left:40px;">
+                                    </div>
                                 </div>
-
                                 <div>
-                                    <label style="display:block; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:rgba(255,255,255,0.5); margin-bottom:8px;">İşletme Adı</label>
-                                    <input type="url" name="website" placeholder="Sot Vanır" class="form-input">
-                                </div>
-
-                                <div>
-                                    <label style="display:block; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:rgba(255,255,255,0.5); margin-bottom:8px;">Açıklama</label>
-                                    <textarea name="description" rows="3" placeholder="Mekanınızın konsepti veya sunduğunuz imkanlar..." class="form-input" style="resize:none;"></textarea>
-                                </div>
-
-                                <div>
-                                    <label style="display:block; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:rgba(255,255,255,0.5); margin-bottom:8px;">Mekan Görseli</label>
-                                    <div style="border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:10px; background:rgba(0,0,0,0.3);">
-                                        <input type="file" name="cover_image" accept="image/*" style="width:100%; font-size:13px; color:rgba(255,255,255,0.5); cursor:pointer;">
+                                    <label style="display:block; font-size:12px; font-weight:600; color:rgba(255,255,255,0.6); margin-bottom:6px;">Kategori <span style="color:#F06D1F;">*</span></label>
+                                    <div style="position:relative;">
+                                        <span class="material-symbols-outlined" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); font-size:18px; color:rgba(255,255,255,0.25);">category</span>
+                                        <select name="category" required class="form-input" style="padding-left:40px;">
+                                            <option value="">Bir kategori seçin</option>
+                                            <?php foreach ($categories as $key => $label): ?>
+                                                <option value="<?php echo escape($key); ?>"><?php echo escape($label); ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
                                     </div>
                                 </div>
                             </div>
 
+                            <!-- Açıklama -->
+                            <div style="margin-bottom:16px;">
+                                <label style="display:block; font-size:12px; font-weight:600; color:rgba(255,255,255,0.6); margin-bottom:6px;">Açıklama (Opsiyonel)</label>
+                                <textarea name="description" rows="3" placeholder="Mekan hakkında kısa bir bilgi..." class="form-input" style="resize:vertical;"></textarea>
+                            </div>
+
+                            <!-- Mekan Fotoğrafı -->
+                            <div>
+                                <label style="display:block; font-size:12px; font-weight:600; color:rgba(255,255,255,0.6); margin-bottom:6px;">Mekan Fotoğrafı</label>
+                                <label for="cover_image_input" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; padding:28px 20px; border:2px dashed rgba(255,255,255,0.12); border-radius:16px; background:rgba(255,255,255,0.02); cursor:pointer; transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(240,109,31,0.5)'; this.style.background='rgba(240,109,31,0.03)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.12)'; this.style.background='rgba(255,255,255,0.02)'">
+                                    <span class="material-symbols-outlined" style="font-size:36px; color:#F06D1F; opacity:0.7;">add_photo_alternate</span>
+                                    <span style="font-size:13px; color:rgba(255,255,255,0.5);">Fotoğraf yüklemek için tıklayın veya sürükleyin</span>
+                                    <span style="font-size:11px; color:rgba(255,255,255,0.25);">PNG, JPG veya WEBP (Maks 5MB)</span>
+                                    <input type="file" name="cover_image" id="cover_image_input" accept="image/*" style="display:none;">
+                                </label>
+                                <div id="file-name-display" style="font-size:12px; color:#F06D1F; margin-top:6px; display:none;"></div>
+                            </div>
                         </div>
 
-                        <div style="margin-top:28px; padding-top:24px; border-top:1px solid rgba(255,255,255,0.06); display:flex; justify-content:flex-end;">
-                            <button type="submit" class="btn-orange" style="padding:14px 36px; font-size:15px; border-radius:14px;">
+                        <!-- ── Konum & İletişim ── -->
+                        <div class="glass-form" style="border-radius:20px; padding:28px;">
+                            <div style="display:flex; align-items:center; gap:10px; margin-bottom:22px;">
+                                <div style="width:28px; height:28px; border-radius:50%; background:#F06D1F; display:flex; align-items:center; justify-content:center;">
+                                    <span class="material-symbols-outlined" style="font-size:16px; color:#fff; font-variation-settings:'FILL' 1;">location_on</span>
+                                </div>
+                                <span style="font-size:16px; font-weight:800;">Konum & İletişim</span>
+                            </div>
+
+                            <!-- Adres -->
+                            <div style="margin-bottom:16px;">
+                                <label style="display:block; font-size:12px; font-weight:600; color:rgba(255,255,255,0.6); margin-bottom:6px;">Adres</label>
+                                <div style="position:relative;">
+                                    <span class="material-symbols-outlined" style="position:absolute; left:12px; top:14px; font-size:18px; color:rgba(255,255,255,0.25);">location_on</span>
+                                    <input type="text" name="address" placeholder="Açık adres veya bölge" class="form-input" style="padding-left:40px;">
+                                </div>
+                            </div>
+
+                            <!-- Facebrowser URL + Website yan yana -->
+                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">
+                                <div>
+                                    <label style="display:block; font-size:12px; font-weight:600; color:rgba(255,255,255,0.6); margin-bottom:6px;">Facebrowser URL</label>
+                                    <div style="position:relative;">
+                                        <span class="material-symbols-outlined" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); font-size:18px; color:rgba(255,255,255,0.25);">language</span>
+                                        <input type="url" name="facebrowser_url" placeholder="https://face.gta.world/pages/..." class="form-input" style="padding-left:40px;">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label style="display:block; font-size:12px; font-weight:600; color:rgba(255,255,255,0.6); margin-bottom:6px;">Website</label>
+                                    <div style="position:relative;">
+                                        <span class="material-symbols-outlined" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); font-size:18px; color:rgba(255,255,255,0.25);">public</span>
+                                        <input type="url" name="website" placeholder="https://..." class="form-input" style="padding-left:40px;">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Telefon -->
+                            <div>
+                                <label style="display:block; font-size:12px; font-weight:600; color:rgba(255,255,255,0.6); margin-bottom:6px;">Telefon (Opsiyonel)</label>
+                                <div style="position:relative;">
+                                    <span class="material-symbols-outlined" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); font-size:18px; color:rgba(255,255,255,0.25);">call</span>
+                                    <input type="text" name="phone" placeholder="Örn: 555-0199" class="form-input" style="padding-left:40px;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ── Footer Buttons ── -->
+                        <div style="display:flex; align-items:center; justify-content:space-between; padding-top:8px;">
+                            <a href="<?php echo BASE_URL; ?>/" style="font-size:14px; font-weight:600; color:rgba(255,255,255,0.4); transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.4)'">İptal</a>
+                            <button type="submit" class="btn-orange" style="padding:14px 32px; font-size:15px; border-radius:14px;">
                                 <span class="material-symbols-outlined" style="font-size:20px;">send</span>
-                                İşletmeyi Kaydet & Yayınla
+                                Mekanı Gönder
                             </button>
                         </div>
 
@@ -476,6 +511,19 @@ select.form-input option { background: #0f1520; color: #fff; }
     </div>
 
 </div>
+
+<script>
+// Show selected file name
+document.getElementById('cover_image_input').addEventListener('change', function() {
+    var display = document.getElementById('file-name-display');
+    if (this.files && this.files[0]) {
+        display.textContent = '📎 ' + this.files[0].name;
+        display.style.display = 'block';
+    } else {
+        display.style.display = 'none';
+    }
+});
+</script>
 
 </body>
 </html>
