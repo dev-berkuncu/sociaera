@@ -9,9 +9,6 @@ require_once __DIR__ . '/../app/Models/User.php';
 require_once __DIR__ . '/../app/Models/Venue.php';
 require_once __DIR__ . '/../app/Services/ImageUploader.php';
 
-$pageTitle = "İşletmenizi Ekleyin & Kaydedin — Sociaera Business";
-$activeNav = "business";
-
 $error = '';
 $success = false;
 $createdVenueId = null;
@@ -36,7 +33,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             throw new Exception('Lütfen bir mekan kategorisi seçiniz.');
         }
 
-        // Fotoğraf Yükleme
         $coverImg = $_FILES['cover_image'] ?? null;
         $uploadedCover = null;
         if ($coverImg && !empty($coverImg['tmp_name'])) {
@@ -56,8 +52,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $venueModel = new VenueModel();
-        
-        // İşletme kaydı doğrudan onaylı (approved) olarak sisteme işlenir
         $createdVenueId = $venueModel->create([
             'name'            => $name,
             'description'     => $description,
@@ -82,293 +76,307 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $categories = VenueModel::categories();
-
-require_once __DIR__ . '/partials/app_header.php';
 ?>
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="csrf-token" content="<?php echo csrfToken(); ?>"/>
+<title>İşletmenizi Ekleyin — Sociaera Business</title>
+<meta name="description" content="Mekanınızı Sociaera haritasına kaydedin. Müşterileriniz check-in yapsın, fotoğraf paylaşsın ve kampanyalarınızla müdavim kitlenizi büyütün."/>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="anonymous" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block" rel="stylesheet"/>
 
 <style>
-/* Custom Styles for Business Mockup Design */
-.business-container {
-    background-color: #0b0e14;
-    color: #ffffff;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    position: relative;
-    overflow: hidden;
+/* ── RESET & BASE ── */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html, body {
+    background: #0b0e14 !important;
+    color: #ffffff !important;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    scroll-behavior: smooth;
 }
+a { text-decoration: none; color: inherit; }
+input, select, textarea, button { font-family: inherit; }
 
-/* Ambient Radial Glows */
+/* ── AMBIENT GLOWS ── */
 .glow-top-left {
-    position: absolute;
-    top: -100px;
-    left: -100px;
-    width: 500px;
-    height: 500px;
-    background: radial-gradient(circle, rgba(240, 109, 31, 0.18) 0%, rgba(240, 109, 31, 0) 70%);
-    pointer-events: none;
-    z-index: 0;
+    position: absolute; top: -120px; left: -120px;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(240,109,31,0.15) 0%, transparent 70%);
+    pointer-events: none; z-index: 0;
+}
+.glow-right {
+    position: absolute; top: 30%; right: -100px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(240,109,31,0.18) 0%, transparent 70%);
+    pointer-events: none; z-index: 0;
 }
 
-.glow-phone {
-    position: absolute;
-    top: 50%;
-    right: 10%;
-    transform: translateY(-50%);
-    width: 450px;
-    height: 450px;
-    background: radial-gradient(circle, rgba(240, 109, 31, 0.22) 0%, rgba(240, 109, 31, 0) 70%);
-    pointer-events: none;
-    z-index: 0;
+/* ── BUTTONS ── */
+.btn-orange {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #F06D1F; color: #fff; font-weight: 700;
+    border: none; border-radius: 9999px; cursor: pointer;
+    box-shadow: 0 0 20px rgba(240,109,31,0.5), 0 4px 12px rgba(240,109,31,0.25);
+    transition: all 0.25s ease;
 }
-
-/* Glowing Orange Buttons */
-.btn-orange-glow {
-    background-color: #F06D1F;
-    color: #ffffff;
-    font-weight: 700;
-    border-radius: 9999px;
-    box-shadow: 0 0 25px rgba(240, 109, 31, 0.55), 0 4px 12px rgba(240, 109, 31, 0.3);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.btn-orange-glow:hover {
-    background-color: #ff7a29;
-    box-shadow: 0 0 35px rgba(240, 109, 31, 0.8), 0 6px 20px rgba(240, 109, 31, 0.5);
+.btn-orange:hover {
+    background: #ff7a29;
+    box-shadow: 0 0 30px rgba(240,109,31,0.7), 0 6px 18px rgba(240,109,31,0.4);
     transform: translateY(-2px);
 }
 
-/* 3D Phone Mockup Styling */
-.phone-perspective {
-    perspective: 1200px;
-}
+/* ── 3D PHONE ── */
+.phone-perspective { perspective: 1200px; }
 .phone-frame {
-    transform: rotateY(-14deg) rotateX(8deg) rotateZ(3deg);
-    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.6s ease;
-    box-shadow: -20px 20px 50px rgba(0, 0, 0, 0.7), 0 0 30px rgba(240, 109, 31, 0.2);
+    transform: rotateY(-14deg) rotateX(6deg) rotateZ(2deg);
+    transition: transform 0.6s cubic-bezier(0.16,1,0.3,1), box-shadow 0.6s ease;
+    box-shadow: -20px 20px 60px rgba(0,0,0,0.6), 0 0 25px rgba(240,109,31,0.15);
 }
 .phone-frame:hover {
-    transform: rotateY(-4deg) rotateX(2deg) rotateZ(1deg) scale(1.02);
-    box-shadow: -10px 15px 40px rgba(0, 0, 0, 0.6), 0 0 45px rgba(240, 109, 31, 0.4);
+    transform: rotateY(-5deg) rotateX(2deg) rotateZ(0.5deg) scale(1.03);
+    box-shadow: -12px 15px 40px rgba(0,0,0,0.5), 0 0 40px rgba(240,109,31,0.35);
 }
 
-/* Glassmorphism Form Card */
-.glass-form-card {
-    background: rgba(18, 24, 38, 0.75);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    border: 1.5px solid rgba(240, 109, 31, 0.4);
-    box-shadow: 0 0 40px rgba(240, 109, 31, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.1);
-    position: relative;
-    overflow: hidden;
+/* ── GLASS FORM ── */
+.glass-form {
+    background: rgba(16,22,34,0.8);
+    backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+    border: 1.5px solid rgba(240,109,31,0.35);
+    box-shadow: 0 0 50px rgba(240,109,31,0.1), inset 0 1px 0 rgba(255,255,255,0.06);
+    position: relative; overflow: hidden;
+}
+.glass-form::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(240,109,31,0.7), transparent);
 }
 
-.glass-form-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(240, 109, 31, 0.8), transparent);
+/* ── FORM INPUTS ── */
+.form-input {
+    width: 100%; background: rgba(8,12,20,0.8);
+    border: 1px solid rgba(255,255,255,0.1); color: #fff;
+    border-radius: 12px; padding: 12px 16px; font-size: 14px;
+    transition: all 0.2s ease; outline: none;
 }
-
-/* Form Input Styling */
-.form-input-dark {
-    background: rgba(10, 14, 23, 0.7);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    color: #ffffff;
-    border-radius: 12px;
-    padding: 12px 16px;
-    transition: all 0.2s ease;
-}
-.form-input-dark:focus {
-    outline: none;
+.form-input:focus {
     border-color: #F06D1F;
-    box-shadow: 0 0 15px rgba(240, 109, 31, 0.3);
+    box-shadow: 0 0 12px rgba(240,109,31,0.25);
 }
+.form-input::placeholder { color: rgba(255,255,255,0.25); }
+select.form-input { appearance: none; cursor: pointer; }
+select.form-input option { background: #0f1520; color: #fff; }
+
+/* ── FEATURE PILL BAR ── */
+.pill-bar {
+    background: rgba(14,19,30,0.85);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.08);
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+    .hero-grid { flex-direction: column !important; text-align: center; }
+    .hero-text h1 { font-size: 2.2rem; }
+    .hero-actions { justify-content: center; }
+    .phone-perspective { display: none; }
+    .pill-features { flex-direction: column; gap: 12px !important; }
+    .pill-divider { display: none; }
+}
+
+/* ── ANIMATIONS ── */
+@keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 12px rgba(240,109,31,0.5); }
+    50% { box-shadow: 0 0 24px rgba(240,109,31,0.9); }
+}
+@keyframes float-pin {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+}
+.pin-float { animation: float-pin 2s ease-in-out infinite; }
+.pin-float-delay { animation: float-pin 2.5s ease-in-out 0.4s infinite; }
+.pin-float-delay2 { animation: float-pin 2.2s ease-in-out 0.8s infinite; }
 </style>
+</head>
 
-<div class="business-container min-h-screen pb-16 px-4 md:px-8">
-    
-    <!-- Ambient Lighting Effects -->
+<body>
+
+<div style="position:relative; overflow:hidden; min-height:100vh; padding-bottom:60px;">
+
+    <!-- Ambient Glows -->
     <div class="glow-top-left"></div>
-    <div class="glow-phone"></div>
+    <div class="glow-right"></div>
 
-    <div class="max-w-6xl mx-auto relative z-10 space-y-12 pt-6">
+    <div style="max-width:1140px; margin:0 auto; position:relative; z-index:10; padding:0 20px;">
 
-        <!-- Top Header Navigation Bar -->
-        <header class="flex items-center justify-between py-4 border-b border-white/10">
-            <div class="flex items-center gap-2">
-                <span class="text-2xl font-black text-[#F06D1F] tracking-tight drop-shadow-[0_0_10px_rgba(240,109,31,0.5)]">Sociaera</span>
-                <span class="text-2xl font-light text-white tracking-wide">Business</span>
+        <!-- ── TOP NAV ── -->
+        <header style="display:flex; align-items:center; justify-content:space-between; padding:20px 0; border-bottom:1px solid rgba(255,255,255,0.08);">
+            <div style="display:flex; align-items:center; gap:8px;">
+                <span style="font-size:22px; font-weight:800; color:#F06D1F; letter-spacing:-0.5px; text-shadow:0 0 12px rgba(240,109,31,0.4);">Sociaera</span>
+                <span style="font-size:22px; font-weight:300; color:rgba(255,255,255,0.85); letter-spacing:1px;">Business</span>
             </div>
-            <a href="#register-form" class="btn-orange-glow px-6 py-2.5 text-sm tracking-wide">
+            <a href="#register-form" class="btn-orange" style="padding:10px 24px; font-size:14px;">
                 İşletmeni Kaydet
             </a>
         </header>
 
-        <!-- Hero Section -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center pt-4 lg:pt-8">
-            
-            <!-- Hero Text Left (7 Cols) -->
-            <div class="lg:col-span-7 space-y-8 text-center lg:text-left">
-                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-[1.15] tracking-tight">
+        <!-- ── HERO ── -->
+        <div class="hero-grid" style="display:flex; align-items:center; gap:40px; padding:50px 0 30px;">
+
+            <!-- Left: Text -->
+            <div class="hero-text" style="flex:1; min-width:0;">
+                <h1 style="font-size:3.2rem; font-weight:800; line-height:1.12; letter-spacing:-1px; margin-bottom:28px;">
                     İşletmenizi Ekleyin,<br>
-                    <span class="text-white">Müşterilerinize</span><br>
-                    <span class="text-white">Ulaşın!</span>
+                    Müşterilerinize<br>
+                    Ulaşın!
                 </h1>
 
-                <div class="pt-2 flex justify-center lg:justify-start">
-                    <a href="#register-form" class="btn-orange-glow px-8 py-4 text-base sm:text-lg inline-flex items-center gap-3">
+                <div class="hero-actions" style="display:flex; gap:16px; margin-bottom:24px;">
+                    <a href="#register-form" class="btn-orange" style="padding:16px 32px; font-size:16px;">
                         Hemen İşletmeni Kaydet
                     </a>
                 </div>
 
-                <p class="text-slate-400 text-sm sm:text-base leading-relaxed max-w-xl mx-auto lg:mx-0">
+                <p style="color:rgba(255,255,255,0.45); font-size:15px; line-height:1.7; max-width:520px;">
                     Mekanınızı Sociaera haritasına kaydedin. Müşterileriniz mekanınızda check-in yapsın, fotoğraflar paylaşsın ve özel kampanyalarınızla müdavim kitlenizi büyütün.
                 </p>
             </div>
 
-            <!-- Phone 3D Visual Right (5 Cols) -->
-            <div class="lg:col-span-5 flex justify-center lg:justify-end phone-perspective py-6">
-                
-                <!-- Realistic Smartphone Frame -->
-                <div class="phone-frame w-[280px] sm:w-[310px] bg-[#121620] rounded-[44px] p-3 border-4 border-[#2a303f] relative overflow-hidden">
-                    
-                    <!-- Phone Dynamic Island / Speaker Notch -->
-                    <div class="w-28 h-4 bg-black rounded-full mx-auto mb-2 relative z-20 flex items-center justify-center">
-                        <div class="w-3 h-3 rounded-full bg-[#1a1a1a] mr-2"></div>
-                    </div>
+            <!-- Right: 3D Phone -->
+            <div class="phone-perspective" style="flex-shrink:0;">
+                <div class="phone-frame" style="width:290px; background:#1a1f2e; border-radius:44px; padding:10px; border:3px solid #2d3345;">
 
-                    <!-- Inner App Display Screen -->
-                    <div class="bg-[#0f131c] rounded-[34px] overflow-hidden text-white border border-white/10 text-left relative min-h-[520px] flex flex-col justify-between p-3">
-                        
-                        <!-- App Header -->
-                        <div class="flex items-center justify-between pb-3 border-b border-white/10">
-                            <span class="font-black text-sm text-[#F06D1F]">Sociaera</span>
-                            <div class="flex items-center gap-2">
-                                <span class="material-symbols-outlined text-xs text-slate-400">search</span>
-                                <span class="material-symbols-outlined text-xs text-[#F06D1F]">notifications</span>
+                    <!-- Notch -->
+                    <div style="width:100px; height:14px; background:#000; border-radius:99px; margin:0 auto 6px;"></div>
+
+                    <!-- Screen -->
+                    <div style="background:#0d1117; border-radius:34px; overflow:hidden; padding:12px; min-height:500px; display:flex; flex-direction:column;">
+
+                        <!-- App Top Bar -->
+                        <div style="display:flex; align-items:center; justify-content:space-between; padding-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.08);">
+                            <span style="font-weight:800; font-size:13px; color:#F06D1F;">Sociaera</span>
+                            <div style="display:flex; gap:6px;">
+                                <span class="material-symbols-outlined" style="font-size:14px; color:rgba(255,255,255,0.4);">search</span>
+                                <span class="material-symbols-outlined" style="font-size:14px; color:#F06D1F;">notifications</span>
                             </div>
                         </div>
 
-                        <!-- Simulated Map View with Pins -->
-                        <div class="relative my-4 flex-1 rounded-2xl bg-[#161c28] border border-white/5 overflow-hidden p-2 min-h-[280px]">
-                            <!-- Grid / Roads illustration -->
-                            <div class="absolute inset-0 opacity-20 bg-[radial-gradient(#38bdf8_1px,transparent_1px)] [background-size:16px_16px]"></div>
-                            
-                            <!-- Glowing Map Pins -->
-                            <div class="absolute top-6 left-10 text-[#F06D1F] drop-shadow-[0_0_8px_rgba(240,109,31,0.8)] animate-pulse">
-                                <span class="material-symbols-outlined text-2xl">location_on</span>
+                        <!-- Map Area -->
+                        <div style="flex:1; position:relative; margin:12px 0; border-radius:18px; background:#141a26; border:1px solid rgba(255,255,255,0.04); overflow:hidden; min-height:300px;">
+                            <!-- Grid Pattern -->
+                            <div style="position:absolute; inset:0; opacity:0.12; background-image:radial-gradient(rgba(56,189,248,0.8) 1px, transparent 1px); background-size:18px 18px;"></div>
+
+                            <!-- Pins -->
+                            <div class="pin-float" style="position:absolute; top:30px; left:28px; color:#F06D1F; filter:drop-shadow(0 0 6px rgba(240,109,31,0.8));">
+                                <span class="material-symbols-outlined" style="font-size:22px; font-variation-settings:'FILL' 1;">location_on</span>
                             </div>
-                            <div class="absolute top-16 right-12 text-[#F06D1F] drop-shadow-[0_0_8px_rgba(240,109,31,0.8)]">
-                                <span class="material-symbols-outlined text-xl">location_on</span>
+                            <div class="pin-float-delay" style="position:absolute; top:70px; right:30px; color:#F06D1F; filter:drop-shadow(0 0 6px rgba(240,109,31,0.8));">
+                                <span class="material-symbols-outlined" style="font-size:18px; font-variation-settings:'FILL' 1;">location_on</span>
                             </div>
-                            <div class="absolute bottom-16 left-16 text-[#F06D1F] drop-shadow-[0_0_8px_rgba(240,109,31,0.8)]">
-                                <span class="material-symbols-outlined text-xl">location_on</span>
+                            <div class="pin-float-delay2" style="position:absolute; bottom:80px; left:45px; color:#F06D1F; filter:drop-shadow(0 0 6px rgba(240,109,31,0.8));">
+                                <span class="material-symbols-outlined" style="font-size:20px; font-variation-settings:'FILL' 1;">location_on</span>
                             </div>
 
-                            <!-- Central Pulsing Radar / Business Marker -->
-                            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
-                                <div class="w-12 h-12 rounded-full bg-[#F06D1F]/20 animate-ping absolute"></div>
-                                <div class="w-8 h-8 rounded-full bg-[#F06D1F] border-2 border-white flex items-center justify-center text-white shadow-[0_0_15px_rgba(240,109,31,0.9)] relative z-10">
-                                    <span class="material-symbols-outlined text-sm">visibility</span>
+                            <!-- Central Pulse -->
+                            <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); display:flex; align-items:center; justify-content:center;">
+                                <div style="position:absolute; width:50px; height:50px; border-radius:50%; background:rgba(240,109,31,0.15); animation:pulse-glow 2s ease-in-out infinite;"></div>
+                                <div style="width:32px; height:32px; border-radius:50%; background:#F06D1F; border:2px solid #fff; display:flex; align-items:center; justify-content:center; box-shadow:0 0 15px rgba(240,109,31,0.8); position:relative; z-index:2;">
+                                    <span class="material-symbols-outlined" style="font-size:14px; color:#fff;">visibility</span>
                                 </div>
                             </div>
-                            
-                            <!-- Simulated Active Venue Card -->
-                            <div class="absolute bottom-2 left-2 right-2 bg-[#1e2638]/90 backdrop-blur-md rounded-xl p-2 border border-white/10 text-xs">
-                                <div class="flex items-center justify-between">
-                                    <span class="font-bold text-white">Sociaera Venue</span>
-                                    <span class="text-amber-400 font-semibold">★ 5.0</span>
+
+                            <!-- Bottom Venue Card -->
+                            <div style="position:absolute; bottom:8px; left:8px; right:8px; background:rgba(22,30,48,0.92); backdrop-filter:blur(8px); border-radius:12px; padding:8px 10px; border:1px solid rgba(255,255,255,0.08);">
+                                <div style="display:flex; align-items:center; justify-content:space-between;">
+                                    <span style="font-weight:700; font-size:11px; color:#fff;">Sociaera Venue</span>
+                                    <span style="color:#fbbf24; font-weight:700; font-size:10px;">★ 5.0</span>
                                 </div>
-                                <div class="text-[10px] text-slate-400">68 Check-in • Del Perro Blvd</div>
+                                <div style="font-size:9px; color:rgba(255,255,255,0.4); margin-top:2px;">68 Check-in • Del Perro Blvd</div>
                             </div>
                         </div>
 
-                        <!-- App Bottom Navigation Bar -->
-                        <div class="flex items-center justify-around pt-2 border-t border-white/10 text-slate-400">
-                            <span class="material-symbols-outlined text-base text-[#F06D1F]">home</span>
-                            <span class="material-symbols-outlined text-base">map</span>
-                            <div class="w-7 h-7 rounded-full bg-[#F06D1F] text-white flex items-center justify-center shadow-md">
-                                <span class="material-symbols-outlined text-sm">add</span>
+                        <!-- Bottom Nav -->
+                        <div style="display:flex; align-items:center; justify-content:space-around; padding-top:8px; border-top:1px solid rgba(255,255,255,0.06);">
+                            <span class="material-symbols-outlined" style="font-size:18px; color:#F06D1F; font-variation-settings:'FILL' 1;">home</span>
+                            <span class="material-symbols-outlined" style="font-size:18px; color:rgba(255,255,255,0.3);">map</span>
+                            <div style="width:28px; height:28px; border-radius:50%; background:#F06D1F; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(240,109,31,0.5);">
+                                <span class="material-symbols-outlined" style="font-size:14px; color:#fff;">add</span>
                             </div>
-                            <span class="material-symbols-outlined text-base">bookmark</span>
-                            <span class="material-symbols-outlined text-base">person</span>
+                            <span class="material-symbols-outlined" style="font-size:18px; color:rgba(255,255,255,0.3);">bookmark</span>
+                            <span class="material-symbols-outlined" style="font-size:18px; color:rgba(255,255,255,0.3);">person</span>
                         </div>
-
                     </div>
 
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ── FEATURE PILL BAR ── -->
+        <div class="pill-bar" style="border-radius:9999px; padding:16px 28px; display:flex; align-items:center; justify-content:center; gap:8px; max-width:860px; margin:0 auto 50px;">
+
+            <div class="pill-features" style="display:flex; align-items:center; justify-content:center; gap:24px; flex:1;">
+
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <div style="width:36px; height:36px; border-radius:50%; background:rgba(240,109,31,0.15); border:1px solid rgba(240,109,31,0.3); display:flex; align-items:center; justify-content:center; box-shadow:0 0 10px rgba(240,109,31,0.25);">
+                        <span class="material-symbols-outlined" style="font-size:18px; color:#F06D1F; font-variation-settings:'FILL' 1;">location_on</span>
+                    </div>
+                    <span style="font-size:13px; font-weight:700; color:#fff;">Şehir Haritasında<br>Yerinizi Alın</span>
+                </div>
+
+                <div class="pill-divider" style="width:1px; height:28px; background:rgba(255,255,255,0.08);"></div>
+
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <div style="width:36px; height:36px; border-radius:50%; background:rgba(240,109,31,0.15); border:1px solid rgba(240,109,31,0.3); display:flex; align-items:center; justify-content:center; box-shadow:0 0 10px rgba(240,109,31,0.25);">
+                        <span class="material-symbols-outlined" style="font-size:18px; color:#F06D1F; font-variation-settings:'FILL' 1;">person</span>
+                    </div>
+                    <span style="font-size:13px; font-weight:700; color:#fff;">Müşteri Check-in'leri<br>& Paylaşımlar</span>
+                </div>
+
+                <div class="pill-divider" style="width:1px; height:28px; background:rgba(255,255,255,0.08);"></div>
+
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <div style="width:36px; height:36px; border-radius:50%; background:rgba(240,109,31,0.15); border:1px solid rgba(240,109,31,0.3); display:flex; align-items:center; justify-content:center; box-shadow:0 0 10px rgba(240,109,31,0.25);">
+                        <span class="material-symbols-outlined" style="font-size:18px; color:#F06D1F; font-variation-settings:'FILL' 1;">local_offer</span>
+                    </div>
+                    <span style="font-size:13px; font-weight:700; color:#fff;">Özel Kampanyalar<br>Tanımlayın</span>
                 </div>
 
             </div>
 
         </div>
 
-        <!-- Features Slider / Carousel Bar -->
-        <div class="pt-6">
-            <div class="bg-[#121722]/80 backdrop-blur-md border border-white/10 rounded-full py-4 px-6 flex items-center justify-between gap-4 max-w-4xl mx-auto shadow-lg">
-                <button type="button" class="text-slate-400 hover:text-white transition-colors">
-                    <span class="material-symbols-outlined text-sm">chevron_left</span>
-                </button>
-                
-                <div class="flex flex-wrap items-center justify-around w-full gap-4 text-center">
-                    
-                    <div class="flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-full bg-[#F06D1F]/20 text-[#F06D1F] flex items-center justify-center border border-[#F06D1F]/30 shadow-[0_0_10px_rgba(240,109,31,0.3)]">
-                            <span class="material-symbols-outlined text-lg">location_on</span>
-                        </div>
-                        <span class="text-xs sm:text-sm font-semibold text-white">Şehir Haritasında Yerinizi Alın</span>
-                    </div>
+        <!-- ── REGISTRATION FORM ── -->
+        <div id="register-form">
+            <div class="glass-form" style="border-radius:24px; padding:32px 36px;">
 
-                    <div class="hidden sm:block w-px h-6 bg-white/10"></div>
-
-                    <div class="flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-full bg-[#F06D1F]/20 text-[#F06D1F] flex items-center justify-center border border-[#F06D1F]/30 shadow-[0_0_10px_rgba(240,109,31,0.3)]">
-                            <span class="material-symbols-outlined text-lg">person</span>
-                        </div>
-                        <span class="text-xs sm:text-sm font-semibold text-white">Müşteri Check-in'leri & Paylaşımlar</span>
-                    </div>
-
-                    <div class="hidden md:block w-px h-6 bg-white/10"></div>
-
-                    <div class="flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-full bg-[#F06D1F]/20 text-[#F06D1F] flex items-center justify-center border border-[#F06D1F]/30 shadow-[0_0_10px_rgba(240,109,31,0.3)]">
-                            <span class="material-symbols-outlined text-lg">local_offer</span>
-                        </div>
-                        <span class="text-xs sm:text-sm font-semibold text-white">Özel Kampanyalar Tanımlayın</span>
-                    </div>
-
-                </div>
-
-                <button type="button" class="text-slate-400 hover:text-white transition-colors">
-                    <span class="material-symbols-outlined text-sm">chevron_right</span>
-                </button>
-            </div>
-        </div>
-
-        <!-- Form Section -->
-        <div id="register-form" class="pt-8">
-            <div class="glass-form-card rounded-3xl p-6 sm:p-10">
-                
-                <h2 class="text-2xl sm:text-3xl font-black text-white mb-8 tracking-tight">
+                <h2 style="font-size:24px; font-weight:800; margin-bottom:28px; letter-spacing:-0.5px;">
                     İşletme Kayıt Formu
                 </h2>
 
                 <?php if ($success): ?>
-                    <div class="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-6 text-center space-y-4">
-                        <div class="w-16 h-16 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mx-auto">
-                            <span class="material-symbols-outlined text-3xl">check_circle</span>
+                    <div style="background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.3); border-radius:20px; padding:32px; text-align:center;">
+                        <div style="width:56px; height:56px; background:rgba(16,185,129,0.15); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px;">
+                            <span class="material-symbols-outlined" style="font-size:28px; color:#10b981; font-variation-settings:'FILL' 1;">check_circle</span>
                         </div>
-                        <h3 class="text-xl font-bold text-emerald-300">Tebrikler! İşletmeniz Başarıyla Kaydedildi 🎉</h3>
-                        <p class="text-slate-300 text-sm max-w-lg mx-auto">
+                        <h3 style="font-size:20px; font-weight:700; color:#6ee7b7; margin-bottom:8px;">Tebrikler! İşletmeniz Başarıyla Kaydedildi 🎉</h3>
+                        <p style="color:rgba(255,255,255,0.5); font-size:14px; max-width:460px; margin:0 auto 20px;">
                             Mekanınız sisteme eklendi ve onaylandı. Artık kullanıcılar mekanınızda check-in yapabilir!
                         </p>
-                        <div class="pt-2 flex justify-center gap-4">
+                        <div style="display:flex; justify-content:center; gap:12px;">
                             <?php if ($createdVenueId): ?>
-                                <a href="<?php echo BASE_URL; ?>/venue?id=<?php echo $createdVenueId; ?>" class="bg-[#F06D1F] hover:bg-[#F06D1F]/90 text-white font-bold px-6 py-2.5 rounded-xl transition-all shadow-md">
+                                <a href="<?php echo BASE_URL; ?>/venue?id=<?php echo $createdVenueId; ?>" class="btn-orange" style="padding:12px 24px; font-size:14px; border-radius:12px;">
                                     Mekanı Görüntüle
                                 </a>
                             <?php endif; ?>
-                            <a href="<?php echo BASE_URL; ?>/business" class="bg-white/10 hover:bg-white/20 text-white font-semibold px-6 py-2.5 rounded-xl transition-all">
+                            <a href="<?php echo BASE_URL; ?>/business" style="display:inline-flex; align-items:center; gap:6px; padding:12px 24px; background:rgba(255,255,255,0.08); border-radius:12px; font-weight:600; font-size:14px; color:#fff; transition:background 0.2s;">
                                 Yeni Mekan Ekle
                             </a>
                         </div>
@@ -376,32 +384,31 @@ require_once __DIR__ . '/partials/app_header.php';
                 <?php else: ?>
 
                     <?php if ($error): ?>
-                        <div class="bg-red-500/10 border border-red-500/30 text-red-400 rounded-xl p-4 flex items-center gap-3 text-sm mb-6">
-                            <span class="material-symbols-outlined text-lg">error</span>
-                            <div><?php echo escape($error); ?></div>
+                        <div style="background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.3); border-radius:12px; padding:14px 18px; display:flex; align-items:center; gap:10px; font-size:14px; color:#f87171; margin-bottom:24px;">
+                            <span class="material-symbols-outlined" style="font-size:18px;">error</span>
+                            <?php echo escape($error); ?>
                         </div>
                     <?php endif; ?>
 
-                    <form method="POST" enctype="multipart/form-data" class="space-y-6">
+                    <form method="POST" enctype="multipart/form-data">
                         <?php echo csrfInput(); ?>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+
                             <!-- Left Column -->
-                            <div class="space-y-5">
+                            <div style="display:flex; flex-direction:column; gap:18px;">
                                 <div>
-                                    <label class="block text-slate-300 font-semibold mb-2 text-xs uppercase tracking-wider">
-                                        İşletme Adı <span class="text-[#F06D1F]">*</span>
+                                    <label style="display:block; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:rgba(255,255,255,0.5); margin-bottom:8px;">
+                                        İşletme Adı <span style="color:#F06D1F;">*</span>
                                     </label>
-                                    <input type="text" name="name" required placeholder="İşletme Kayıt Formu"
-                                           class="w-full form-input-dark placeholder-slate-600">
+                                    <input type="text" name="name" required placeholder="İşletme Kayıt Formu" class="form-input">
                                 </div>
 
                                 <div>
-                                    <label class="block text-slate-300 font-semibold mb-2 text-xs uppercase tracking-wider">
-                                        Kategori <span class="text-[#F06D1F]">*</span>
+                                    <label style="display:block; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:rgba(255,255,255,0.5); margin-bottom:8px;">
+                                        Kategori <span style="color:#F06D1F;">*</span>
                                     </label>
-                                    <select name="category" required class="w-full form-input-dark">
+                                    <select name="category" required class="form-input">
                                         <option value="">Bir kategori seçiniz...</option>
                                         <?php foreach ($categories as $key => $label): ?>
                                             <option value="<?php echo escape($key); ?>"><?php echo escape($label); ?></option>
@@ -410,51 +417,46 @@ require_once __DIR__ . '/partials/app_header.php';
                                 </div>
 
                                 <div>
-                                    <label class="block text-slate-300 font-semibold mb-2 text-xs uppercase tracking-wider">İletişim / Telefon</label>
-                                    <input type="text" name="phone" placeholder="Örn: 555-0199"
-                                           class="w-full form-input-dark placeholder-slate-600">
+                                    <label style="display:block; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:rgba(255,255,255,0.5); margin-bottom:8px;">İletişim / Telefon</label>
+                                    <input type="text" name="phone" placeholder="Örn: 555-0199" class="form-input">
                                 </div>
 
                                 <div>
-                                    <label class="block text-slate-300 font-semibold mb-2 text-xs uppercase tracking-wider">Adres / Konum</label>
-                                    <textarea name="address" rows="3" placeholder="Örn: Del Perro Boulevard No:42, Rockford Hills"
-                                              class="w-full form-input-dark placeholder-slate-600 resize-none"></textarea>
+                                    <label style="display:block; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:rgba(255,255,255,0.5); margin-bottom:8px;">Adres / Konum</label>
+                                    <textarea name="address" rows="3" placeholder="Örn: Del Perro Boulevard No:42" class="form-input" style="resize:none;"></textarea>
                                 </div>
                             </div>
 
                             <!-- Right Column -->
-                            <div class="space-y-5">
+                            <div style="display:flex; flex-direction:column; gap:18px;">
                                 <div>
-                                    <label class="block text-slate-300 font-semibold mb-2 text-xs uppercase tracking-wider">Mekan Görseli / Kapak Fotoğrafı</label>
-                                    <div class="border border-white/10 rounded-xl p-3 bg-black/40">
-                                        <input type="file" name="cover_image" accept="image/*" class="block w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-[#F06D1F] file:text-white hover:file:bg-[#F06D1F]/80 transition-all cursor-pointer">
+                                    <label style="display:block; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:rgba(255,255,255,0.5); margin-bottom:8px;">Sosyomel Kampanya</label>
+                                    <input type="text" name="facebrowser_url" placeholder="İşletme Kayıt Kategorisi" class="form-input">
+                                </div>
+
+                                <div>
+                                    <label style="display:block; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:rgba(255,255,255,0.5); margin-bottom:8px;">İşletme Adı</label>
+                                    <input type="url" name="website" placeholder="Sot Vanır" class="form-input">
+                                </div>
+
+                                <div>
+                                    <label style="display:block; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:rgba(255,255,255,0.5); margin-bottom:8px;">Açıklama</label>
+                                    <textarea name="description" rows="3" placeholder="Mekanınızın konsepti veya sunduğunuz imkanlar..." class="form-input" style="resize:none;"></textarea>
+                                </div>
+
+                                <div>
+                                    <label style="display:block; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:rgba(255,255,255,0.5); margin-bottom:8px;">Mekan Görseli</label>
+                                    <div style="border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:10px; background:rgba(0,0,0,0.3);">
+                                        <input type="file" name="cover_image" accept="image/*" style="width:100%; font-size:13px; color:rgba(255,255,255,0.5); cursor:pointer;">
                                     </div>
-                                </div>
-
-                                <div>
-                                    <label class="block text-slate-300 font-semibold mb-2 text-xs uppercase tracking-wider">Açıklama</label>
-                                    <textarea name="description" rows="3" placeholder="Mekanınızın konsepti veya sunduğunuz imkanlar..."
-                                              class="w-full form-input-dark placeholder-slate-600 resize-none"></textarea>
-                                </div>
-
-                                <div>
-                                    <label class="block text-slate-300 font-semibold mb-2 text-xs uppercase tracking-wider">Web Sitesi</label>
-                                    <input type="url" name="website" placeholder="https://..."
-                                           class="w-full form-input-dark placeholder-slate-600">
-                                </div>
-
-                                <div>
-                                    <label class="block text-slate-300 font-semibold mb-2 text-xs uppercase tracking-wider">Facebrowser URL</label>
-                                    <input type="url" name="facebrowser_url" placeholder="https://facebrowser.com/..."
-                                           class="w-full form-input-dark placeholder-slate-600">
                                 </div>
                             </div>
 
                         </div>
 
-                        <div class="pt-6 border-t border-white/10 flex justify-end">
-                            <button type="submit" class="btn-orange-glow px-10 py-3.5 text-base inline-flex items-center gap-2">
-                                <span class="material-symbols-outlined">send</span>
+                        <div style="margin-top:28px; padding-top:24px; border-top:1px solid rgba(255,255,255,0.06); display:flex; justify-content:flex-end;">
+                            <button type="submit" class="btn-orange" style="padding:14px 36px; font-size:15px; border-radius:14px;">
+                                <span class="material-symbols-outlined" style="font-size:20px;">send</span>
                                 İşletmeyi Kaydet & Yayınla
                             </button>
                         </div>
@@ -466,8 +468,14 @@ require_once __DIR__ . '/partials/app_header.php';
             </div>
         </div>
 
+        <!-- ── FOOTER ── -->
+        <div style="text-align:center; padding:40px 0 20px; color:rgba(255,255,255,0.2); font-size:12px;">
+            <a href="<?php echo BASE_URL; ?>" style="color:#F06D1F; font-weight:700;">Sociaera</a> &copy; <?php echo date('Y'); ?> — Tüm Hakları Saklıdır.
+        </div>
+
     </div>
 
 </div>
 
-<?php require_once __DIR__ . '/partials/app_footer.php'; ?>
+</body>
+</html>
