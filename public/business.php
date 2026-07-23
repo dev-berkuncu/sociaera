@@ -222,9 +222,6 @@ select.form-input option { background: #0f1520; color: #fff; }
                 <span style="font-size:22px; font-weight:800; color:#F06D1F; letter-spacing:-0.5px; text-shadow:0 0 12px rgba(240,109,31,0.4);">Sociaera</span>
                 <span style="font-size:22px; font-weight:300; color:rgba(255,255,255,0.85); letter-spacing:1px;">Business</span>
             </div>
-            <a href="#register-form" class="btn-orange" style="padding:10px 24px; font-size:14px;">
-                İşletmeni Kaydet
-            </a>
         </header>
 
         <!-- ── HERO ── -->
